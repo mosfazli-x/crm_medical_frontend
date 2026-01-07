@@ -1,0 +1,15 @@
+.dir-rtl {
+  direction: rtl !important;
+}
+
+.dir-ltr {
+  direction: ltr !important;
+}
+
+body {
+  overflow-x: hidden !important;
+}
+
+html {
+  overflow-x: hidden !important;
+}

@@ -1,0 +1,42 @@
+{
+  "name": "medical_crm",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev --host",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@fullcalendar/core": "^6.1.20",
+    "@fullcalendar/daygrid": "^6.1.20",
+    "@fullcalendar/interaction": "^6.1.20",
+    "@fullcalendar/timegrid": "^6.1.20",
+    "@fullcalendar/vue3": "^6.1.20",
+    "@mdi/font": "^7.4.47",
+    "@nuxt/eslint": "^1.12.1",
+    "@nuxt/fonts": "^0.12.1",
+    "@nuxt/hints": "^1.0.0-alpha.5",
+    "@nuxt/image": "^2.0.0",
+    "@nuxt/scripts": "^0.13.2",
+    "@tailwindcss/vite": "^4.1.18",
+    "@unhead/vue": "^2.1.1",
+    "eslint": "^9.39.2",
+    "install": "^0.13.0",
+    "mitt": "^3.0.1",
+    "moment": "^2.30.1",
+    "moment-jalaali": "^0.10.4",
+    "nuxt": "^4.2.2",
+    "tailwindcss": "^4.1.18",
+    "vue": "^3.5.26",
+    "vue-router": "^4.6.4",
+    "vue-sonner": "^2.0.9",
+    "vue3-persian-datetime-picker": "^1.2.2"
+  },
+  "devDependencies": {
+    "vite-plugin-vuetify": "^2.1.2",
+    "vuetify": "^3.11.5"
+  }
+}
