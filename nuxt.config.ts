@@ -8,13 +8,12 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: process.env.API_BASE_URL || 'http://localhost:3001', // پورت Fastify شما
+      apiBase: `https://${process.env.BACKEND_DOMAIN}` || 'http://localhost:3001',
     },
   },
-  // اگر CORS داری (در توسعه محلی)
   nitro: {
     routeRules: {
-      '/api/**': { proxy: 'http://localhost:3001/api/**' }, // پروکسی اختیاری
+      '/api/**': { proxy: 'http://localhost:3001/api/**' },
     },
   },
 
