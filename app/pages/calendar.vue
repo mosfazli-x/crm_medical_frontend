@@ -1,75 +1,101 @@
 <template>
-    <div class="calendar-container px-4 py-6 md:px-8 lg:px-12">
-        <div class="flex justify-between items-center mb-4">
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-800 truncate">تقویم کاری</h1>
+    <div class="mx-auto max-w-7xl px-4 py-8 md:px-8 min-h-screen">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">تقویم ویزیت‌ها</h1>
         </div>
 
-        <FullCalendar ref="calendarRef" :options="calendarOptions" />
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <FullCalendar ref="calendarRef" :options="calendarOptions" />
+        </div>
 
-        <!-- مدال ثبت/ویرایش نوبت - حالا responsive -->
-        <v-dialog v-model="visitDialog" persistent scrollable :fullscreen="isMobile" transition="dialog-bottom-transition">
-            <v-card class="rounded-t-3xl md:rounded-2xl shadow-2xl">
-                <v-card-title class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-5 px-6 md:py-6 md:px-8">
-                    <div class="flex items-center justify-between w-full">
-                        <h2 class="text-xl md:text-2xl font-bold">
-                            {{ isEditMode ? 'ویرایش نوبت ویزیت' : 'ثبت نوبت ویزیت جدید' }}
+        <v-dialog v-model="visitDialog" persistent scrollable :fullscreen="isMobile"
+            transition="dialog-bottom-transition" max-width="700px">
+            <v-card class="md:rounded-2xl shadow-2xl border-0 overflow-hidden bg-white">
+                <v-card-title class="bg-white border-b border-slate-100 py-5 px-6 md:px-8">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-bold text-slate-800">
+                            {{ isEditMode ? 'ویرایش اطلاعات نوبت' : 'ثبت نوبت جدید' }}
                         </h2>
-                        <v-btn icon variant="text" size="large" class="text-white hover:opacity-50" @click="closeVisitDialog">
-                            <CloseCircle class="w-7 h-7" />
+                        <v-btn icon variant="text"
+                            class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 rounded-full"
+                            @click="closeVisitDialog">
+                            <CloseCircle class="w-6 h-6" />
                         </v-btn>
                     </div>
                 </v-card-title>
 
-                <v-card-text class="pt-6 px-6 md:pt-8 md:px-8">
-                    <v-row dense>
-                        <!-- انتخاب بیمار -->
+                <v-card-text class="pt-6 px-6 md:pt-8 md:px-8 bg-slate-50/50">
+                    <v-row>
                         <v-col cols="12">
-                            <v-autocomplete v-model="selectedPatient" :items="patients" item-title="fullName" item-value="id" label="انتخاب بیمار *" variant="outlined" density="comfortable" prepend-inner-icon="mdi-account" clearable :loading="patientsLoading">
+                            <label class="text-sm font-semibold text-slate-700 mb-2 block">بیمار <span
+                                    class="text-red-500">*</span></label>
+                            <v-autocomplete v-model="newVisit.patientId" :items="patients" item-title="fullName"
+                                item-value="id" placeholder="جستجو و انتخاب بیمار..." variant="outlined"
+                                density="comfortable" prepend-inner-icon="mdi-account-search-outline" clearable
+                                hide-details="auto" bg-color="white" :loading="patientsLoading">
                                 <template v-slot:no-data>
-                                    <div class="pa-4 text-center text-slate-500">
-                                        {{ patientsLoading ? 'در حال بارگذاری...' : 'بیماری یافت نشد' }}
+                                    <div class="pa-4 text-center text-slate-500 text-sm">
+                                        {{ patientsLoading ? 'در حال جستجو...' : 'بیماری در سیستم یافت نشد.' }}
                                     </div>
                                 </template>
                             </v-autocomplete>
                         </v-col>
 
-                        <!-- زمان شروع و پایان -->
                         <v-col cols="12" md="6">
-                            <label class="text-sm font-medium text-slate-700 mb-2 block">زمان شروع *</label>
-                            <PersianDatetimePicker v-model="newVisit.start" type="datetime" display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#6366f1" auto-submit custom-input class="w-full" />
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <label class="text-sm font-medium text-slate-700 mb-2 block">زمان پایان</label>
-                            <PersianDatetimePicker v-model="newVisit.end" type="datetime" display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#6366f1" auto-submit custom-input class="w-full" />
+                            <label class="text-sm font-semibold text-slate-700 mb-2 block">زمان شروع <span
+                                    class="text-red-500">*</span></label>
+                            <PersianDatetimePicker v-model="newVisit.start" type="datetime"
+                                display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4f46e5"
+                                auto-submit custom-input class="w-full" />
                         </v-col>
 
-                        <!-- نوع ویزیت -->
                         <v-col cols="12" md="6">
-                            <v-select v-model="newVisit.type" :items="visitTypes" label="نوع ویزیت" variant="outlined" density="comfortable" prepend-inner-icon="mdi-stethoscope" />
+                            <label class="text-sm font-semibold text-slate-700 mb-2 block">زمان پایان</label>
+                            <PersianDatetimePicker v-model="newVisit.end" type="datetime"
+                                display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4f46e5"
+                                auto-submit custom-input class="w-full" />
                         </v-col>
 
-                        <!-- وضعیت نوبت -->
                         <v-col cols="12" md="6">
-                            <v-select v-model="newVisit.status" :items="['تایید شده', 'در انتظار', 'لغو شده']" label="وضعیت نوبت" variant="outlined" density="comfortable" prepend-inner-icon="mdi-calendar-check" />
+                            <label class="text-sm font-semibold text-slate-700 mb-2 block">نوع ویزیت</label>
+                            <v-select v-model="newVisit.type" :items="visitTypes" variant="outlined"
+                                density="comfortable" hide-details="auto" bg-color="white" />
                         </v-col>
 
-                        <!-- یادداشت -->
+                        <v-col cols="12" md="6">
+                            <label class="text-sm font-semibold text-slate-700 mb-2 block">وضعیت</label>
+                            <v-select v-model="newVisit.status" :items="['تایید شده', 'در انتظار', 'لغو شده']"
+                                variant="outlined" density="comfortable" hide-details="auto" bg-color="white" />
+                        </v-col>
+
                         <v-col cols="12">
-                            <v-textarea v-model="newVisit.notes" label="یادداشت پزشک (اختیاری)" variant="outlined" rows="4" density="comfortable" prepend-inner-icon="mdi-note-text" />
+                            <label class="text-sm font-semibold text-slate-700 mb-2 block">یادداشت پزشک</label>
+                            <v-textarea v-model="newVisit.notes" placeholder="در صورت نیاز توضیحاتی وارد کنید..."
+                                variant="outlined" rows="3" density="comfortable" hide-details="auto"
+                                bg-color="white" />
                         </v-col>
                     </v-row>
                 </v-card-text>
 
-                <v-card-actions class="px-6 py-5 md:px-8 md:py-6 bg-slate-50 border-t flex flex-col-reverse md:flex-row gap-3">
-                    <v-spacer class="hidden md:block" />
-                    <v-btn v-if="isEditMode" color="error" variant="outlined" size="large" @click="deleteVisit">
+                <v-card-actions
+                    class="px-6 py-5 md:px-8 md:py-6 bg-white border-t border-slate-100 flex flex-col-reverse md:flex-row gap-3">
+                    <v-btn v-if="isEditMode" color="red-darken-1" variant="text" size="large"
+                        class="w-full md:w-auto font-medium tracking-wide rounded-lg" @click="deleteVisit">
                         حذف نوبت
                     </v-btn>
-                    <v-btn color="grey-darken-1" variant="text" size="large" class="w-full md:w-auto" @click="closeVisitDialog">
+
+                    <v-spacer class="hidden md:block" />
+
+                    <v-btn color="slate-600" variant="tonal" size="large"
+                        class="w-full md:w-auto font-medium tracking-wide rounded-lg bg-slate-100 hover:bg-slate-200"
+                        @click="closeVisitDialog">
                         انصراف
                     </v-btn>
-                    <v-btn color="indigo-darken-1" variant="elevated" size="large" class="px-8 shadow-lg w-full md:w-auto" :loading="saving" @click="saveVisit">
-                        {{ isEditMode ? 'به‌روزرسانی نوبت' : 'ثبت نوبت' }}
+
+                    <v-btn color="indigo-accent-4" variant="flat" size="large"
+                        class="px-8 w-full md:w-auto font-medium tracking-wide rounded-lg shadow-md shadow-indigo-200"
+                        :loading="saving" @click="saveVisit">
+                        {{ isEditMode ? 'ذخیره تغییرات' : 'ثبت نوبت' }}
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -78,31 +104,32 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import faLocale from '@fullcalendar/core/locales/fa'
-import { ref, onMounted } from 'vue'
 import CloseCircle from '~/components/icons/CloseCircle.vue'
 import { useEventBus } from '~/composables/useEventBus'
 
-const calendarRef = ref<any>(null)
+// نوع دهی بهتر برای تقویم
+const calendarRef = ref<InstanceType<typeof FullCalendar> | null>(null)
 const isMobile = ref(window.innerWidth < 768)
 
 const { apiFetch } = useApi()
 const { $toast } = useNuxtApp()
 const { emit } = useEventBus()
 
-// لیست بیماران از بک‌اند
 const patients = ref<any[]>([])
 const patientsLoading = ref(false)
 
-// حالت مدال
 const visitDialog = ref(false)
 const saving = ref(false)
-const isEditMode = ref(false) // جدید: ویرایش یا ثبت جدید
-const currentVisitId = ref<string | null>(null) // id نوبت برای ویرایش/حذف
+const isEditMode = ref(false)
+const currentVisitId = ref<string | null>(null)
+
+const visitTypes = ['ویزیت اولیه', 'پیگیری', 'چکاپ بارداری', 'چکاپ دوره‌ای', 'اورژانسی']
 
 const newVisit = ref({
     start: '',
@@ -113,23 +140,13 @@ const newVisit = ref({
     notes: '',
 })
 
-const visitTypes = ['ویزیت اولیه', 'پیگیری', 'چکاپ بارداری', 'چکاپ دوره‌ای', 'اورژانسی']
-
-const selectedPatient = computed({
-    get: () => newVisit.value.patientId,
-    set: (val) => (newVisit.value.patientId = val),
-})
-
+// مدیریت ریسایز و ویو تقویم به صورت مستقیم
 const handleResize = () => {
-  isMobile.value = window.innerWidth < 768
-  const api = calendarRef.value?.getApi()
-  if (!api) return
-
-  if (isMobile.value) {
-    api.changeView('timeGridDay')
-  } else {
-    api.changeView('timeGridWeek')
-  }
+    isMobile.value = window.innerWidth < 768
+    const api = calendarRef.value?.getApi()
+    if (api) {
+        api.changeView(isMobile.value ? 'timeGridDay' : 'timeGridWeek')
+    }
 }
 
 const closeVisitDialog = () => {
@@ -146,7 +163,7 @@ const closeVisitDialog = () => {
     }
 }
 
-// دریافت لیست بیماران
+// در این تابع، دریافت دیتا مستقیما در mounted صدا زده میشود اما برای رفرش شدن دستی هم در دسترس است
 const fetchPatients = async () => {
     patientsLoading.value = true
     try {
@@ -161,16 +178,22 @@ const fetchPatients = async () => {
     }
 }
 
-// ثبت یا ویرایش نوبت
 const saveVisit = async () => {
     if (!newVisit.value.patientId || !newVisit.value.start) {
-        $toast.error('لطفاً بیمار و زمان شروع را انتخاب کنید')
+        $toast.error('لطفاً بیمار و زمان شروع را انتخاب کنید.')
         return
     }
 
     saving.value = true
     try {
+        // تبدیل امن‌تر تاریخ‌ها به استاندارد ISO
         const startISO = new Date(newVisit.value.start.replace(' ', 'T') + ':00').toISOString()
+        let durationMinutes = 30
+
+        if (newVisit.value.end) {
+            const endISO = new Date(newVisit.value.end.replace(' ', 'T') + ':00').toISOString()
+            durationMinutes = Math.round((new Date(endISO).getTime() - new Date(startISO).getTime()) / 60000)
+        }
 
         const payload = {
             patientId: newVisit.value.patientId,
@@ -178,30 +201,20 @@ const saveVisit = async () => {
             visitType: newVisit.value.type,
             reason: null,
             notes: newVisit.value.notes || null,
-            durationMinutes: newVisit.value.end
-                ? Math.round((new Date(newVisit.value.end.replace(' ', 'T') + ':00').getTime() - new Date(startISO).getTime()) / 60000)
-                : 30,
+            durationMinutes: durationMinutes > 0 ? durationMinutes : 30, // جلوگیری از زمان منفی
         }
 
-        let response
-        if (isEditMode.value && currentVisitId.value) {
-            response = await apiFetch(`/api/visits/${currentVisitId.value}`, {
-                method: 'PUT',
-                body: payload,
-            })
-        } else {
-            response = await apiFetch('/api/visits', {
-                method: 'POST',
-                body: payload,
-            })
-        }
+        const endpoint = isEditMode.value && currentVisitId.value ? `/api/visits/${currentVisitId.value}` : '/api/visits'
+        const method = isEditMode.value && currentVisitId.value ? 'PUT' : 'POST'
+
+        const response = await apiFetch(endpoint, { method, body: payload })
 
         if (response.success) {
-            $toast.success(isEditMode.value ? 'نوبت به‌روزرسانی شد' : 'نوبت ثبت شد')
+            $toast.success(isEditMode.value ? 'نوبت با موفقیت به‌روزرسانی شد.' : 'نوبت جدید ثبت شد.')
             closeVisitDialog()
             calendarRef.value?.getApi()?.refetchEvents()
         } else {
-            $toast.error(response.error || 'خطا')
+            $toast.error(response.error || 'خطایی رخ داد.')
         }
     } catch (err: any) {
         $toast.error(err.data?.error || 'خطا در ارتباط با سرور')
@@ -210,38 +223,31 @@ const saveVisit = async () => {
     }
 }
 
-
-// حذف نوبت
 const deleteVisit = async () => {
-    if (!currentVisitId.value || !confirm('آیا از حذف این نوبت مطمئن هستید؟')) return
+    if (!currentVisitId.value || !confirm('آیا از حذف دائم این نوبت اطمینان دارید؟')) return
 
     try {
-        const response = await apiFetch(`/api/visits/${currentVisitId.value}`, {
-            method: 'DELETE',
-        })
-
+        const response = await apiFetch(`/api/visits/${currentVisitId.value}`, { method: 'DELETE' })
         if (response.success) {
-            $toast.success('نوبت حذف شد')
+            $toast.success('نوبت با موفقیت حذف شد.')
             closeVisitDialog()
             calendarRef.value?.getApi()?.refetchEvents()
-            // تقویم اتوماتیک رفرش می‌شه
         } else {
-            $toast.error(response.error || 'خطا در حذف')
+            $toast.error(response.error || 'خطا در حذف نوبت')
         }
     } catch (err: any) {
-        $toast.error(err.data?.error || 'خطا')
+        $toast.error(err.data?.error || 'خطا در ارتباط با سرور')
     }
 }
 
-// دسترسی به API تقویم
-
+// تنظیمات تقویم مینیمال
 const calendarOptions = ref({
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
     initialView: 'timeGridWeek',
     headerToolbar: {
         left: 'prev,next today',
         center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        right: 'timeGridDay,timeGridWeek,dayGridMonth'
     },
     height: 'auto',
     locale: faLocale,
@@ -251,8 +257,9 @@ const calendarOptions = ref({
     selectable: true,
     selectMirror: true,
     slotMinTime: '08:00:00',
-    slotMaxTime: '20:00:00',
+    slotMaxTime: '21:00:00',
     slotDuration: '00:30:00',
+    allDaySlot: false, // برای نوبت دهی پزشکی معمولاً نیاز نیست
     buttonText: {
         today: 'امروز',
         month: 'ماه',
@@ -260,44 +267,49 @@ const calendarOptions = ref({
         day: 'روز'
     },
 
-    // دریافت ویزیت‌ها از بک‌اند
-    events: async (fetchInfo, successCallback, failureCallback) => {
+    events: async (fetchInfo: any, successCallback: Function, failureCallback: Function) => {
         try {
             const events = await apiFetch('/api/visits', {
-                query: {
-                    start: fetchInfo.startStr,
-                    end: fetchInfo.endStr,
-                },
+                query: { start: fetchInfo.startStr, end: fetchInfo.endStr },
             })
             successCallback(events)
         } catch (err) {
             failureCallback(err)
-            $toast.error('خطا در دریافت ویزیت‌ها')
+            $toast.error('خطا در بارگذاری تقویم')
         }
     },
 
-    eventDrop: async (info) => {
+    eventDrop: async (info: any) => {
         try {
+            await apiFetch(`/api/visits/${info.event.id}`, {
+                method: 'PUT',
+                body: { visitDate: info.event.start.toISOString() },
+            })
+            $toast.success('زمان ویزیت تغییر کرد.')
+        } catch {
+            info.revert()
+            $toast.error('امکان تغییر زمان وجود ندارد.')
+        }
+    },
+
+    eventResize: async (info: any) => {
+        try {
+            const diffMins = Math.round((info.event.end.getTime() - info.event.start.getTime()) / 60000)
             await apiFetch(`/api/visits/${info.event.id}`, {
                 method: 'PUT',
                 body: {
                     visitDate: info.event.start.toISOString(),
-                    // duration اگر تغییر کرده
+                    durationMinutes: diffMins
                 },
             })
-            $toast.success('زمان نوبت به‌روزرسانی شد')
-            calendarRef.value?.getApi()?.refetchEvents()
+            $toast.success('مدت زمان ویزیت تغییر کرد.')
         } catch {
             info.revert()
-            $toast.error('خطا در به‌روزرسانی')
+            $toast.error('امکان تغییر زمان وجود ندارد.')
         }
     },
-    eventResize: async (info) => {
-        // مشابه eventDrop اما برای تغییر مدت زمان
-    },
 
-    // انتخاب بازه زمانی برای نوبت جدید
-    select: (info) => {
+    select: (info: any) => {
         calendarRef.value?.getApi()?.unselect()
         newVisit.value.start = info.startStr.slice(0, 16).replace('T', ' ')
         newVisit.value.end = info.endStr ? info.endStr.slice(0, 16).replace('T', ' ') : ''
@@ -305,12 +317,10 @@ const calendarOptions = ref({
         isEditMode.value = false
         currentVisitId.value = null
         visitDialog.value = true
-        calendarRef.value?.getApi()
     },
 
-    eventClick: (info) => {
+    eventClick: (info: any) => {
         const event = info.event
-
         newVisit.value = {
             start: event.startStr.slice(0, 16).replace('T', ' '),
             end: event.endStr ? event.endStr.slice(0, 16).replace('T', ' ') : '',
@@ -319,12 +329,10 @@ const calendarOptions = ref({
             status: 'تایید شده',
             notes: event.extendedProps.notes || '',
         }
-
         currentVisitId.value = event.id
         isEditMode.value = true
         visitDialog.value = true
     },
-
 })
 
 onMounted(() => {
@@ -334,121 +342,170 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize)
+    window.removeEventListener('resize', handleResize)
 })
-
 
 useSeoMeta({
-    title: 'تقویم کاری',
-    ogTitle: 'تقویم',
+    title: 'تقویم نوبت‌دهی | سیستم مدیریت',
 })
-
 </script>
 
 <style scoped>
-.calendar-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    min-height: 100vh;
-}
-
-@media (max-width: 767px) {
-  :deep(.fc-toolbar) {
-    padding: 12px 16px !important;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  :deep(.fc-toolbar-chunk) {
-    display: flex;
-    justify-content: center;
-  }
-
-  :deep(.fc-toolbar-title) {
-    font-size: 1.4rem !important;
-  }
-
-  :deep(.fc-button) {
-    padding: 6px 12px !important;
-    font-size: 0.875rem !important;
-  }
-
-  :deep(.fc-timegrid-slot-label) {
-    font-size: 0.75rem !important;
-  }
-
-  :deep(.fc-event) {
-    font-size: 0.8rem !important;
-    padding: 4px 8px !important;
-  }
-}
-
+/* استایل‌های عمیق مینیمال شده برای تقویم */
 :deep(.fc) {
-    background: white;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    font-family: inherit;
+    color: #334155;
+    background: #ffffff;
 }
 
 :deep(.fc-toolbar) {
-    padding: 24px 32px 16px;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    color: white;
+    padding: 24px !important;
+    margin-bottom: 0 !important;
+    border-bottom: 1px solid #f1f5f9;
+    background-color: #ffffff;
 }
 
 :deep(.fc-toolbar-title) {
-    font-size: 1.8rem !important;
-    font-weight: 700;
+    font-size: 1.25rem !important;
+    font-weight: 800;
+    color: #1e293b;
 }
 
 :deep(.fc-button) {
-    background: rgba(255, 255, 255, 0.2) !important;
-    border: none !important;
-    color: white !important;
-    border-radius: 12px !important;
-    padding: 10px 20px !important;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-:deep(.fc-button:hover) {
-    background: rgba(255, 255, 255, 0.3) !important;
-    transform: translateY(-2px);
-}
-
-:deep(.fc-button-active) {
-    background: white !important;
-    color: #6366f1 !important;
-}
-
-:deep(.fc-event) {
-    border-radius: 12px;
-    padding: 8px 12px;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #475569 !important;
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+    font-weight: 500;
+    font-size: 0.875rem !important;
+    box-shadow: none !important;
+    text-transform: capitalize;
     transition: all 0.2s ease;
 }
 
+:deep(.fc-button:hover) {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+:deep(.fc-button-active) {
+    background-color: #4f46e5 !important;
+    border-color: #4f46e5 !important;
+    color: white !important;
+}
+
+:deep(.fc-button:focus) {
+    box-shadow: 0 0 0 2px #c7d2fe !important;
+}
+
+:deep(.fc-theme-standard th) {
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 12px 0;
+    background: #f8fafc;
+    font-weight: 600;
+    color: #64748b;
+}
+
+:deep(.fc-theme-standard td) {
+    border-color: #f1f5f9;
+}
+
+/* استایل زیبای کارت رویدادها */
+:deep(.fc-event) {
+    border: none;
+    border-right: 3px solid #4f46e5;
+    /* خط کنار رویداد (RTL) */
+    background-color: #eef2ff;
+    color: #3730a3;
+    border-radius: 6px;
+    padding: 3px 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    margin: 1px 2px;
+}
+
 :deep(.fc-event:hover) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    background-color: #e0e7ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1);
 }
 
-:deep(.fc-button-group) {
-    gap: 4px !important;
+:deep(.fc-timegrid-slot-label-cushion) {
+    color: #94a3b8;
+    font-weight: 500;
+    font-size: 0.8rem;
 }
 
+:deep(.fc-now-indicator-line) {
+    border-color: #ef4444;
+}
+
+:deep(.fc-now-indicator-arrow) {
+    border-color: #ef4444;
+    background-color: #ef4444;
+}
+
+/* استایل DatePicker که خواسته بودید مستقیم نوشته شود */
 :deep(.vpd-input-group input) {
-    border: 1px solid #ABABAB;
-    border-radius: 4px;
-    height: 49px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    height: 48px;
     padding: 0 16px;
-    font-size: 1rem;
-    background: white;
+    font-size: 0.95rem;
+    background: #ffffff;
     transition: all 0.2s;
+    color: #334155;
+    width: 100%;
+}
+
+:deep(.vpd-input-group input:focus) {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px #e0e7ff;
+    outline: none;
 }
 
 :deep(.vpd-icon-btn) {
     display: none;
+}
+
+:deep(.vpd-prev),
+:deep(.vpd-next),
+:deep(.vpd-up-arrow-btn),
+:deep(.vpd-down-arrow-btn) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+:deep(.vpd-up-arrow-btn) {
+    margin-bottom: 20px !important;
+}
+
+:deep(.vpd-time .vpd-time-h),
+:deep(.vpd-time .vpd-time-m) {
+    margin-top: 45px;
+}
+
+/* ریسپانسیو اختصاصی برای هدر تقویم در موبایل */
+@media (max-width: 767px) {
+    :deep(.fc-toolbar) {
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px !important;
+    }
+
+    :deep(.fc-toolbar-chunk) {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    :deep(.fc-toolbar-title) {
+        font-size: 1.1rem !important;
+    }
 }
 </style>

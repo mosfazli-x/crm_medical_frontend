@@ -1,285 +1,254 @@
-<!-- pages/users/index.vue -->
 <template>
-  <div class="p-2! md:p-6! lg:p-8! pt-8">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
-      <div>
-        <h1 class="text-4xl font-bold text-slate-800">مدیریت کاربران</h1>
-        <p class="text-slate-600 mt-3 text-lg">تأیید، رد یا تغییر وضعیت دسترسی کاربران سیستم</p>
-      </div>
+    <div class="mx-auto max-w-7xl px-4 py-8 md:px-8 min-h-screen">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">مدیریت کاربران</h1>
+                <p class="text-slate-500 mt-2 text-sm md:text-base font-medium">تأیید، رد یا تغییر وضعیت دسترسی کاربران سیستم</p>
+            </div>
 
-      <!-- تب‌ها با ظاهر حرفه‌ای‌تر -->
-      <v-tabs v-model="statusTab" color="cyan-600" bg-color="white" grow class="rounded-xl shadow-md overflow-hidden w-full md:w-auto">
-        <v-tab value="all" class="text-base font-medium">همه ({{ users.length }})</v-tab>
-        <v-tab value="pending" class="text-base font-medium">
-          در انتظار تأیید <v-chip size="small" color="yellow-600" class="mr-2">{{ pendingCount }}</v-chip>
-        </v-tab>
-        <v-tab value="approved" class="text-base font-medium">تأییدشده</v-tab>
-        <v-tab value="rejected" class="text-base font-medium">غیرفعال/ردشده</v-tab>
-      </v-tabs>
+            <v-tabs v-model="statusTab" color="indigo-600" bg-color="transparent" class="w-full md:w-auto border-b border-slate-200">
+                <v-tab value="all" class="text-sm font-semibold tracking-wide">
+                    همه ({{ users.length }})
+                </v-tab>
+                <v-tab value="pending" class="text-sm font-semibold tracking-wide">
+                    در انتظار تأیید
+                    <span v-if="pendingCount > 0" class="mr-2 inline-flex items-center justify-center bg-amber-100 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                        {{ pendingCount }}
+                    </span>
+                </v-tab>
+                <v-tab value="approved" class="text-sm font-semibold tracking-wide">تأییدشده</v-tab>
+                <v-tab value="rejected" class="text-sm font-semibold tracking-wide">غیرفعال/ردشده</v-tab>
+            </v-tabs>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                    <thead class="bg-slate-50 border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-4 text-sm font-bold text-slate-600 whitespace-nowrap">نام کامل</th>
+                            <th class="px-6 py-4 text-sm font-bold text-slate-600 whitespace-nowrap">شماره تلفن</th>
+                            <th class="px-6 py-4 text-sm font-bold text-slate-600 whitespace-nowrap">نقش سیستم</th>
+                            <th class="px-6 py-4 text-sm font-bold text-slate-600 whitespace-nowrap">سازمان / مرکز</th>
+                            <th class="px-6 py-4 text-sm font-bold text-slate-600 whitespace-nowrap">وضعیت</th>
+                            <th class="px-6 py-4 text-sm font-bold text-slate-600 whitespace-nowrap">تاریخ عضویت</th>
+                            <th class="px-6 py-4 text-sm font-bold text-slate-600 text-center whitespace-nowrap">عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr 
+                            v-for="user in filteredUsers" 
+                            :key="user.id" 
+                            class="hover:bg-slate-50/80 transition-colors duration-150"
+                        >
+                            <td class="px-6 py-4 text-sm font-semibold text-slate-800 whitespace-nowrap">
+                                {{ user.fullName || 'کاربر بی‌نام' }}
+                            </td>
+                            <td class="px-6 py-4 text-sm font-medium text-slate-500 font-mono tracking-wider">
+                                {{ user.phone }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span :class="['px-3 py-1 rounded-full text-xs font-semibold ring-1 ring-inset', roleConfig[user.role]?.bg || 'bg-slate-50', roleConfig[user.role]?.text || 'text-slate-600', roleConfig[user.role]?.ring || 'ring-slate-500/20']">
+                                    {{ roleConfig[user.role]?.label || user.role }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm font-medium text-slate-500 whitespace-nowrap">
+                                {{ user.organizationName || '---' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span :class="['px-3 py-1 rounded-full text-xs font-semibold ring-1 ring-inset', statusConfig[user.status]?.bg || 'bg-slate-50', statusConfig[user.status]?.text || 'text-slate-600', statusConfig[user.status]?.ring || 'ring-slate-500/20']">
+                                    {{ statusConfig[user.status]?.label || user.status }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm font-medium text-slate-500 whitespace-nowrap">
+                                {{ formatJalaliDate(user.createdAt) }}
+                            </td>
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
+                                <div class="flex justify-center items-center gap-1">
+                                    <template v-if="user.status === 'pending'">
+                                        <v-tooltip v-if="user.role !== 'patient'" text="تأیید کاربر" location="top">
+                                            <template v-slot:activator="{ props }">
+                                                <v-btn v-bind="props" icon variant="text" size="small" class="text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50" @click.stop="approveUser(user)">
+                                                    <v-icon size="20">mdi-check-circle-outline</v-icon>
+                                                </v-btn>
+                                            </template>
+                                        </v-tooltip>
+
+                                        <v-tooltip v-else text="تأیید و ایجاد پرونده بیمار" location="top">
+                                            <template v-slot:activator="{ props }">
+                                                <v-btn v-bind="props" icon variant="text" size="small" class="text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50" @click.stop="openApprovePatientDialog(user)">
+                                                    <v-icon size="20">mdi-account-plus-outline</v-icon>
+                                                </v-btn>
+                                            </template>
+                                        </v-tooltip>
+
+                                        <v-tooltip text="رد درخواست" location="top">
+                                            <template v-slot:activator="{ props }">
+                                                <v-btn v-bind="props" icon variant="text" size="small" class="text-red-400 hover:text-red-600 hover:bg-red-50" @click.stop="rejectUser(user)">
+                                                    <v-icon size="20">mdi-close-circle-outline</v-icon>
+                                                </v-btn>
+                                            </template>
+                                        </v-tooltip>
+                                    </template>
+
+                                    <template v-else>
+                                        <v-tooltip :text="user.status === 'approved' ? 'مسدودسازی موقت' : 'بازگردانی حساب'" location="top">
+                                            <template v-slot:activator="{ props }">
+                                                <v-btn v-bind="props" icon variant="text" size="small" :class="user.status === 'approved' ? 'text-red-400 hover:text-red-600 hover:bg-red-50' : 'text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50'" @click.stop="toggleStatus(user)">
+                                                    <v-icon size="20">{{ user.status === 'approved' ? 'mdi-account-cancel-outline' : 'mdi-account-check-outline' }}</v-icon>
+                                                </v-btn>
+                                            </template>
+                                        </v-tooltip>
+                                    </template>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div v-if="loading" class="flex flex-col items-center justify-center p-16">
+                <v-progress-circular indeterminate size="48" color="indigo-500" />
+                <p class="mt-4 text-sm font-medium text-slate-500">در حال دریافت اطلاعات...</p>
+            </div>
+
+            <div v-if="!loading && filteredUsers.length === 0" class="flex flex-col items-center justify-center p-16">
+                <div class="bg-slate-50 p-6 rounded-full mb-4">
+                    <v-icon size="48" color="slate-300">mdi-account-search-outline</v-icon>
+                </div>
+                <h3 class="text-lg font-bold text-slate-700">کاربری یافت نشد</h3>
+                <p class="mt-1 text-sm text-slate-500">در این دسته‌بندی هیچ کاربری برای نمایش وجود ندارد.</p>
+            </div>
+        </div>
+
+        <ApprovePatientDialog v-model="approvePatientDialog" :user="selectedUser" @approved="onUserApproved" />
     </div>
-
-    <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
-      <v-table class="min-w-full">
-        <thead class="bg-gradient-to-r from-cyan-50 to-blue-50 border-b-2 border-cyan-200">
-          <tr>
-            <th class="px-8 py-5 text-right text-base font-bold text-slate-700">نام کامل</th>
-            <th class="px-8 py-5 text-right text-base font-bold text-slate-700">شماره تلفن</th>
-            <th class="px-8 py-5 text-right text-base font-bold text-slate-700">نقش</th>
-            <th class="px-8 py-5 text-right text-base font-bold text-slate-700">سازمان</th>
-            <th class="px-8 py-5 text-right text-base font-bold text-slate-700">وضعیت دسترسی</th>
-            <th class="px-8 py-5 text-right text-base font-bold text-slate-700">تاریخ ثبت</th>
-            <th class="px-8 py-5 text-center text-base font-bold text-slate-700">عملیات</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="user in filteredUsers" :key="user.id" class="hover:bg-cyan-50/50 transition-all duration-200 border-b border-slate-100">
-            <td class="px-8 py-5 text-base text-slate-800 font-medium">{{ user.fullName || '-' }}</td>
-            <td class="px-8 py-5 text-base text-slate-600">{{ user.phone }}</td>
-            <td class="px-8 py-5">
-              <span class="px-4 py-2 rounded-full text-sm font-semibold shadow-sm" :class="roleClass(user.role)">
-                {{ roleLabel(user.role) }}
-              </span>
-            </td>
-            <td class="px-8 py-5 text-base text-slate-600">{{ user.organizationName || '-' }}</td>
-            <td class="px-8 py-5">
-              <span class="px-4 py-2 rounded-full text-sm font-semibold shadow-sm" :class="statusClass(user.status)">
-                {{ statusLabel(user.status) }}
-              </span>
-            </td>
-            <td class="px-8 py-5 text-base text-slate-600">{{ formatJalaliDate(user.createdAt) }}</td>
-            <td class="px-8 py-5 text-center">
-              <div class="flex justify-center items-center gap-3">
-                <!-- pending -->
-                <template v-if="user.status === 'pending'">
-                  <v-tooltip v-if="user.role !== 'patient'" text="تأیید کاربر">
-                    <template v-slot:activator="{ props }">
-                      <v-btn v-bind="props" icon size="large" color="green-600" variant="elevated" @click.stop="approveUser(user)">
-                        <v-icon>mdi-check-bold</v-icon>
-                      </v-btn>
-                    </template>
-                  </v-tooltip>
-
-                  <v-tooltip v-else v-bind="props" text="تأیید و ایجاد پرونده بیمار">
-                    <template v-slot:activator="{ props }">
-                      <v-btn  icon size="large" color="blue-600" variant="elevated" @click.stop="openApprovePatientDialog(user)">
-                        <v-icon>mdi-account-check</v-icon>
-                      </v-btn>
-                    </template>
-                  </v-tooltip>
-
-                  <v-tooltip text="رد درخواست">
-                    <template v-slot:activator="{ props }">
-                      <v-btn v-bind="props" icon size="large" color="red-600" variant="elevated" @click.stop="rejectUser(user)">
-                        <v-icon>mdi-close-thick</v-icon>
-                      </v-btn>
-                    </template>
-                  </v-tooltip>
-                </template>
-
-                <!-- approved یا rejected -->
-                <template v-else>
-                  <v-tooltip :text="user.status === 'approved' ? 'غیرفعال کردن دسترسی' : 'فعال کردن مجدد دسترسی'">
-                    <template v-slot:activator="{ props }">
-                      <v-btn v-bind="props" icon size="large" :color="user.status === 'approved' ? 'red-600' : 'green-600'" variant="elevated" @click.stop="toggleStatus(user)">
-                        <v-icon>{{ user.status === 'approved' ? 'mdi-account-off' : 'mdi-account-check' }}</v-icon>
-                      </v-btn>
-                    </template>
-                  </v-tooltip>
-                </template>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
-
-      <!-- loading state -->
-      <div v-if="loading" class="p-16 text-center">
-        <v-progress-circular indeterminate size="64" color="cyan-600" />
-        <p class="mt-6 text-xl text-slate-500">در حال بارگذاری کاربران...</p>
-      </div>
-
-      <!-- empty state -->
-      <div v-if="!loading && filteredUsers.length === 0" class="p-16 text-center">
-        <v-icon size="80" color="slate-300">mdi-account-multiple-off</v-icon>
-        <p class="mt-6 text-xl text-slate-500">کاربری با این وضعیت یافت نشد.</p>
-      </div>
-    </div>
-
-    <!-- modal تأیید بیمار -->
-    <ApprovePatientDialog v-model="approvePatientDialog" :user="selectedUser" @approved="onUserApproved" />
-  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useEventBus } from '~/composables/useEventBus'
 
 const { apiFetch } = useApi()
-const { emit } = useEventBus()
+const { emit, on: onEventBus } = useEventBus()
 const { $toast } = useNuxtApp()
 
 const users = ref<any[]>([])
 const loading = ref(true)
 const statusTab = ref<'all' | 'pending' | 'approved' | 'rejected'>('pending')
-
 const selectedUser = ref<any>(null)
 const approvePatientDialog = ref(false)
 
-// فیلتر کاربران
+// نگاشت تنظیمات نقش‌ها برای خوانایی بهتر کد
+const roleConfig: Record<string, { label: string, bg: string, text: string, ring: string }> = {
+    admin_doctor: { label: 'مدیر کلینیک', bg: 'bg-rose-50', text: 'text-rose-700', ring: 'ring-rose-600/20' },
+    doctor: { label: 'پزشک', bg: 'bg-blue-50', text: 'text-blue-700', ring: 'ring-blue-600/20' },
+    lab: { label: 'آزمایشگاه', bg: 'bg-purple-50', text: 'text-purple-700', ring: 'ring-purple-600/20' },
+    pharmacy: { label: 'داروخانه', bg: 'bg-teal-50', text: 'text-teal-700', ring: 'ring-teal-600/20' },
+    patient: { label: 'بیمار', bg: 'bg-orange-50', text: 'text-orange-700', ring: 'ring-orange-600/20' }
+}
+
+// نگاشت تنظیمات وضعیت‌ها
+const statusConfig: Record<string, { label: string, bg: string, text: string, ring: string }> = {
+    pending: { label: 'در انتظار بررسی', bg: 'bg-amber-50', text: 'text-amber-700', ring: 'ring-amber-600/20' },
+    approved: { label: 'فعال', bg: 'bg-emerald-50', text: 'text-emerald-700', ring: 'ring-emerald-600/20' },
+    rejected: { label: 'غیرفعال شده', bg: 'bg-slate-100', text: 'text-slate-600', ring: 'ring-slate-500/20' }
+}
+
 const filteredUsers = computed(() => {
-  if (statusTab.value === 'all') return users.value
-  return users.value.filter(u => u.status === statusTab.value)
+    if (statusTab.value === 'all') return users.value
+    return users.value.filter(u => u.status === statusTab.value)
 })
 
-// تعداد pending
 const pendingCount = computed(() => users.value.filter(u => u.status === 'pending').length)
 
-// fetch
 const fetchUsers = async () => {
-  loading.value = true
-  try {
-    const response = await apiFetch('/api/users')
-    if (response.success) {
-      users.value = response.data
-    } else {
-      $toast.error('خطا در دریافت لیست کاربران')
+    loading.value = true
+    try {
+        const response = await apiFetch('/api/users')
+        if (response.success) {
+            users.value = response.data
+        } else {
+            $toast.error('خطا در دریافت لیست کاربران.')
+        }
+    } catch (err) {
+        $toast.error('خطا در ارتباط با سرور.')
+    } finally {
+        loading.value = false
     }
-  } catch (err) {
-    $toast.error('خطا در ارتباط با سرور')
-  } finally {
-    loading.value = false
-  }
 }
 
-// تأیید ساده
 const approveUser = async (user: any) => {
-  if (!confirm(`آیا از تأیید کاربر "${user.fullName}" (${roleLabel(user.role)}) مطمئن هستید؟`)) return
+    const roleName = roleConfig[user.role]?.label || user.role
+    if (!confirm(`آیا از تأیید دسترسی حساب "${user.fullName}" (${roleName}) اطمینان دارید؟`)) return
 
-  try {
-    const response = await apiFetch(`/api/users/approve/${user.id}`, { method: 'POST' })
-    if (response.success) {
-      $toast.success('کاربر با موفقیت تأیید شد')
-      emit('user:changed')
+    try {
+        const response = await apiFetch(`/api/users/approve/${user.id}`, { method: 'POST' })
+        if (response.success) {
+            $toast.success('کاربر با موفقیت فعال شد.')
+            emit('user:changed')
+        }
+    } catch (err) {
+        $toast.error('خطا در انجام عملیات تأیید.')
     }
-  } catch (err) {
-    $toast.error('خطا در تأیید کاربر')
-  }
 }
 
-// رد کاربر
 const rejectUser = async (user: any) => {
-  if (!confirm(`آیا از رد درخواست "${user.fullName}" مطمئن هستید؟`)) return
+    if (!confirm(`آیا از رد درخواست حساب "${user.fullName}" اطمینان دارید؟`)) return
 
-  try {
-    const response = await apiFetch(`/api/users/reject/${user.id}`, { method: 'POST' })
-    if (response.success) {
-      $toast.success('کاربر با موفقیت رد و غیرفعال شد')
-      emit('user:changed')
+    try {
+        const response = await apiFetch(`/api/users/reject/${user.id}`, { method: 'POST' })
+        if (response.success) {
+            $toast.success('درخواست کاربر رد شد.')
+            emit('user:changed')
+        }
+    } catch (err) {
+        $toast.error('خطا در انجام عملیات رد کاربر.')
     }
-  } catch (err) {
-    $toast.error('خطا در رد کاربر')
-  }
 }
 
-// تغییر وضعیت (غیرفعال/فعال)
 const toggleStatus = async (user: any) => {
-  const newStatus = user.status === 'approved' ? 'rejected' : 'approved'
-  const action = newStatus === 'rejected' ? 'غیرفعال' : 'فعال'
+    const isApproved = user.status === 'approved'
+    const actionName = isApproved ? 'مسدود' : 'فعال'
+    const endpoint = isApproved ? 'deactivate' : 'activate'
 
-  if (!confirm(`آیا از ${action} کردن دسترسی "${user.fullName}" مطمئن هستید؟`)) return
+    if (!confirm(`آیا از ${actionName} کردن موقت حساب "${user.fullName}" اطمینان دارید؟`)) return
 
-  const endpoint = newStatus === 'rejected' ? 'deactivate' : 'activate'
-
-  try {
-    const response = await apiFetch(`/api/users/${endpoint}/${user.id}`, { method: 'POST' })
-    if (response.success) {
-      $toast.success(`کاربر با موفقیت ${action} شد`)
-      emit('user:changed')
+    try {
+        const response = await apiFetch(`/api/users/${endpoint}/${user.id}`, { method: 'POST' })
+        if (response.success) {
+            $toast.success(`حساب کاربری با موفقیت ${actionName} شد.`)
+            emit('user:changed')
+        }
+    } catch (err) {
+        $toast.error('خطا در تغییر وضعیت سیستم.')
     }
-  } catch (err) {
-    $toast.error('خطا در تغییر وضعیت دسترسی')
-  }
 }
 
-// modal بیمار
 const openApprovePatientDialog = (user: any) => {
-  selectedUser.value = user
-  approvePatientDialog.value = true
+    selectedUser.value = user
+    approvePatientDialog.value = true
 }
 
 const onUserApproved = () => {
-  $toast.success('بیمار با موفقیت تأیید و پرونده ایجاد شد')
-  emit('user:changed')
-  approvePatientDialog.value = false
-}
-
-// کلاس‌ها و لیبل‌ها
-const roleClass = (role: string) => {
-  switch (role) {
-    case 'admin_doctor': return 'bg-red-100 text-red-900'
-    case 'doctor': return 'bg-blue-100 text-blue-900'
-    case 'lab': return 'bg-purple-100 text-purple-900'
-    case 'pharmacy': return 'bg-green-100 text-green-900'
-    case 'patient': return 'bg-orange-100 text-orange-900'
-    default: return 'bg-gray-100 text-gray-900'
-  }
-}
-
-const roleLabel = (role: string) => {
-  switch (role) {
-    case 'admin_doctor': return 'مدیر کلینیک'
-    case 'doctor': return 'پزشک'
-    case 'lab': return 'آزمایشگاه'
-    case 'pharmacy': return 'داروخانه'
-    case 'patient': return 'بیمار'
-    default: return role
-  }
-}
-
-const statusClass = (status: string) => {
-  switch (status) {
-    case 'pending': return 'bg-yellow-100 text-yellow-900'
-    case 'approved': return 'bg-green-100 text-green-900'
-    case 'rejected': return 'bg-red-100 text-red-900'
-    default: return 'bg-gray-100 text-gray-900'
-  }
-}
-
-const statusLabel = (status: string) => {
-  switch (status) {
-    case 'pending': return 'در انتظار تأیید'
-    case 'approved': return 'فعال'
-    case 'rejected': return 'غیرفعال'
-    default: return status
-  }
+    $toast.success('پرونده بیمار ایجاد و حساب کاربری فعال شد.')
+    emit('user:changed')
+    approvePatientDialog.value = false
 }
 
 const formatJalaliDate = (date: string | null) => {
-  if (!date) return '-'
-  return new Intl.DateTimeFormat('fa-IR').format(new Date(date))
+    if (!date) return '---'
+    return new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(date))
 }
 
 onMounted(() => {
-  fetchUsers()
+    fetchUsers()
 })
 
-watch(statusTab, fetchUsers) // اگر بخوای هر تب جدا fetch کنه، اما فعلاً همه رو یکجا
-
-useEventBus().on('user:changed', () => {
-  console.log('کاربر تغییر کرد — لیست به‌روزرسانی می‌شه')
-  fetchUsers()
+onEventBus('user:changed', () => {
+    fetchUsers()
 })
 
-useSeoMeta({
-  title: 'مدیریت کاربران',
-})
+useSeoMeta({ title: 'مدیریت کاربران | سیستم یکپارچه' })
 </script>
-
-<style scoped>
-/* انیمیشن نرم‌تر برای hover جدول */
-tr:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-</style>

@@ -8,12 +8,12 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: `https://${process.env.BACKEND_DOMAIN}` || 'http://localhost:3001',
+      apiBase: 'http://localhost:3101',
     },
   },
   nitro: {
     routeRules: {
-      '/api/**': { proxy: 'http://localhost:3001/api/**' },
+      '/api/**': { proxy: 'http://localhost:3101/api/**' },
     },
   },
 
@@ -38,7 +38,6 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxt/eslint',
-    '@nuxt/fonts',
     '@nuxt/hints',
     '@nuxt/image',
     '@nuxt/scripts',

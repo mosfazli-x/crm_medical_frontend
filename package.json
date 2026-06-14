@@ -17,7 +17,6 @@
     "@fullcalendar/vue3": "^6.1.20",
     "@mdi/font": "^7.4.47",
     "@nuxt/eslint": "^1.12.1",
-    "@nuxt/fonts": "^0.12.1",
     "@nuxt/hints": "^1.0.0-alpha.5",
     "@nuxt/image": "^2.0.0",
     "@nuxt/scripts": "^0.13.2",

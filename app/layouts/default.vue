@@ -1,264 +1,180 @@
 <template>
   <v-locale-provider rtl>
-    <!-- Full-screen Loading Overlay -->
     <transition name="fade">
-      <div v-if="isLoading" class="fixed inset-0 z-[9999] flex items-center justify-center bg-[#F8FAFC]">
-        <!-- Background Blur Effect (هماهنگ با طراحی اصلی) -->
-        <div class="absolute inset-0 bg-blue-100/30 backdrop-blur-sm"></div>
+      <div v-if="isLoading" class="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-50 dark:bg-slate-600 transition-colors duration-300">
+        <div class="absolute inset-0 bg-blue-100/30 dark:bg-blue-500/20 backdrop-blur-sm"></div>
 
-        <!-- Large Blur Circle (مشابه افکت پس‌زمینه اصلی) -->
-        <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-200/40 rounded-full blur-[120px] translate-x-1/3 -translate-y-1/3"></div>
-        <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-100/40 rounded-full blur-[120px] -translate-x-1/3 translate-y-1/3"></div>
+        <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-200/40 dark:bg-blue-800/30 rounded-full blur-[120px] translate-x-1/3 -translate-y-1/3"></div>
+        <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-100/40 dark:bg-blue-900/30 rounded-full blur-[120px] -translate-x-1/3 translate-y-1/3"></div>
 
-        <!-- Content Centered -->
         <div class="relative z-10 flex flex-col items-center gap-8">
-          <!-- Medical Icon با انیمیشن نرم -->
-          <div class="p-8 rounded-3xl shadow-2xl shadow-blue-200/50">
-            <MedicalKit class="w-20 h-20 fill-blue-600" />
+          <div class="p-8 rounded-3xl shadow-2xl shadow-blue-200/50 dark:shadow-blue-900/50 backdrop-blur-md">
+            <MedicalKit class="w-20 h-20 fill-blue-600 dark:fill-blue-400" />
           </div>
 
-          <!-- Professional Spinner با رنگ آبی هماهنگ -->
-          <v-progress-circular indeterminate color="blue" size="80" width="8" class="drop-shadow-lg" />
+          <v-progress-circular indeterminate color="blue-darken-1" size="80" width="8" class="drop-shadow-lg" />
 
-          <!-- Text حرفه‌ای -->
           <div class="text-center">
-            <h3 class="text-2xl font-bold text-slate-800 mb-2">در حال بارگذاری پنل کلینیک</h3>
-            <p class="text-slate-500 text-lg">لطفاً صبر کنید...</p>
+            <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">در حال بارگذاری پنل کلینیک</h3>
+            <p class="fill-slate-300 dark:text-slate-400 text-lg">لطفاً صبر کنید...</p>
           </div>
 
-          <!-- Pulse Animation برای جذابیت بیشتر -->
           <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div class="w-96 h-96 bg-blue-300/20 rounded-full animate-ping-slow"></div>
+            <div class="w-96 h-96 bg-blue-300/20 dark:bg-blue-500/10 rounded-full animate-ping-slow"></div>
           </div>
         </div>
       </div>
     </transition>
 
-    <!-- Main App (فقط وقتی loading تمام شد نمایش داده می‌شود) -->
-    <v-app v-if="!isLoading" class="bg-[#F8FAFC] relative">
-      <!-- بقیه کد اصلی شما بدون تغییر -->
-      <div class="fixed top-0 right-0 w-[500px] h-[500px] bg-blue-100/50 rounded-full blur-[100px] -z-10 translate-x-1/2 -translate-y-1/2"></div>
-      <v-navigation-drawer v-model="drawer" :rail="rail" permanent width="290" rail-width="70" color="white" class="border-e border-slate-100 !shadow-xl !shadow-slate-200/40 transition-all duration-300 relative" elevation="0">
-
-        <!-- Collapse Button (FIXED & FLOATING) -->
-        <button @click="rail = !rail" class="absolute -left-3 top-8 z-50 w-6 h-6 bg-white border border-slate-200 rounded-full
-           flex items-center justify-center shadow-md hover:shadow-lg
-           transition-all duration-300">
-          <AltArrowLeft class="w-4 h-4 text-slate-500 transition-transform duration-300" :class="rail ? '' : 'rotate-180'" />
+    <v-app v-if="!isLoading" class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300 relative">
+      <div class="fixed top-0 right-0 w-[500px] h-[500px] bg-blue-100/50 dark:bg-blue-900/20 rounded-full blur-[100px] -z-10 translate-x-1/2 -translate-y-1/2"></div>
+      
+      <v-navigation-drawer 
+        v-model="drawer" 
+        :rail="rail && !isMobile" 
+        permanent 
+        width="290" 
+        rail-width="75" 
+        class="border-e border-slate-200 dark:border-slate-800 !bg-white dark:!bg-slate-600 transition-all duration-300"
+        elevation="0"
+        :temporary="isMobile"
+      >
+        <button 
+          v-if="!isMobile"
+          @click="rail = !rail" 
+          class="absolute -left-3 top-8 z-50 w-6 h-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300"
+        >
+          <AltArrowLeft class="w-4 h-4 fill-slate-300 dark:text-slate-400 transition-transform duration-300" :class="rail ? '' : 'rotate-180'" />
         </button>
 
-        <!-- Header -->
-        <div class="h-24 flex items-center gap-3" :class="rail ? 'justify-center px-0' : 'px-6'">
-          <MedicalKit class="w-10 h-10 shrink-0" />
-          <div v-if="!rail" class="flex flex-col">
-            <span class="font-bold text-lg text-slate-800 tracking-tight">
-              کلینیک دکتر حسینی
-            </span>
-            <span class="text-[11px] text-slate-400 font-medium">
-              پنل پزشک و مدیریت
-            </span>
+        <div class="h-24 flex items-center gap-3 transition-all" :class="rail && !isMobile ? 'justify-center px-0' : 'px-6'">
+          <MedicalKit class="w-10 h-10 shrink-0 fill-blue-600 dark:fill-blue-400" />
+          <div v-if="!rail || isMobile" class="flex flex-col overflow-hidden whitespace-nowrap">
+            <span class="font-bold text-lg text-slate-800 dark:text-slate-100 tracking-tight">کلینیک دکتر حسینی</span>
+            <span class="text-[11px] text-slate-400 dark:fill-slate-300 font-medium">پنل پزشک و مدیریت</span>
           </div>
         </div>
 
-        <!-- Action Button -->
-
-
-        <!-- Menu -->
-        <div class="space-y-8">
-
-          <!-- MAIN -->
+        <div class="space-y-6 mt-4">
           <div>
-            <div v-if="!rail" class="px-4 mb-3 text-[10px] font-bold text-slate-400 tracking-widest">
+            <div v-if="!rail || isMobile" class="px-6 mb-2 text-[10px] font-bold text-slate-400 dark:fill-slate-300 tracking-widest uppercase">
               اصلی
             </div>
-            <v-list nav>
-              <!-- داشبورد -->
-              <v-tooltip location="left" :disabled="!rail">
+            <v-list nav class="px-3">
+              <v-tooltip 
+                v-for="item in primaryMenu" 
+                :key="item.to"
+                location="left" 
+                :disabled="!rail || isMobile"
+              >
                 <template #activator="{ props }">
-                  <v-list-item v-bind="props" to="/" nuxt class="rounded-2xl transition-all" :class="rail ? 'px-0' : 'px-4'">
+                  <v-list-item 
+                    v-bind="props" 
+                    :to="item.to" 
+                    nuxt 
+                    class="rounded-xl transition-all mb-1 dark:hover:bg-slate-800" 
+                    :class="rail && !isMobile ? 'px-0 justify-center' : 'px-4'"
+                    active-class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                  >
                     <template #title>
-                      <div class="flex items-center" :class="rail ? 'justify-center w-full' : 'gap-3'">
-                        <HomeAngle class="w-5.5 h-5.5 shrink-0" />
-                        <span v-if="!rail" class="text-[14px] font-medium">داشبورد</span>
+                      <div class="flex items-center" :class="rail && !isMobile ? 'justify-center w-full' : 'gap-3'">
+                        <component :is="item.icon" class="w-5.5 h-5.5 shrink-0 fill-slate-300 dark:text-slate-400" />
+                        <span v-if="!rail || isMobile" class="text-[14px] font-medium text-slate-700 dark:text-slate-200">{{ item.title }}</span>
                       </div>
                     </template>
                   </v-list-item>
                 </template>
-                <span>داشبورد</span>
+                <span>{{ item.title }}</span>
               </v-tooltip>
-
-              <!-- تقویم کاری -->
-              <v-tooltip v-if="['admin_doctor', 'doctor'].includes(user?.role)" location="left" :disabled="!rail">
-                <template #activator="{ props }">
-                  <v-list-item v-bind="props" to="/calendar" nuxt class="rounded-2xl transition-all" :class="rail ? 'px-0' : 'px-4'">
-                    <template #title>
-                      <div class="flex items-center" :class="rail ? 'justify-center w-full' : 'gap-3'">
-                        <Calendar class="w-5.5 h-5.5 shrink-0" />
-                        <span v-if="!rail" class="text-[14px] font-medium">تقویم کاری</span>
-                      </div>
-                    </template>
-                  </v-list-item>
-                </template>
-                <span>تقویم کاری</span>
-              </v-tooltip>
-
-              <!-- لیست کاربران -->
-              <v-tooltip v-if="['admin_doctor', 'doctor'].includes(user?.role)" location="left" :disabled="!rail">
-                <template #activator="{ props }">
-                  <v-list-item v-bind="props" to="/users" nuxt class="rounded-2xl transition-all" :class="rail ? 'px-0' : 'px-4'">
-                    <template #title>
-                      <div class="flex items-center" :class="rail ? 'justify-center w-full' : 'gap-3'">
-                        <Users class="w-5.5 h-5.5 shrink-0" />
-                        <span v-if="!rail" class="text-[14px] font-medium">لیست کاربران</span>
-                      </div>
-                    </template>
-                  </v-list-item>
-                </template>
-                <span>لیست کاربران</span>
-              </v-tooltip>
-
-              <!-- نتایج آزمایش -->
-              <v-tooltip v-if="['lab'].includes(user?.role)" location="left" :disabled="!rail">
-                <template #activator="{ props }">
-                  <v-list-item v-bind="props" to="/lab-results" nuxt class="rounded-2xl transition-all" :class="rail ? 'px-0' : 'px-4'">
-                    <template #title>
-                      <div class="flex items-center" :class="rail ? 'justify-center w-full' : 'gap-3'">
-                        <Calendar class="w-5.5 h-5.5 shrink-0" />
-                        <span v-if="!rail" class="text-[14px] font-medium">نتایج آزمایش</span>
-                      </div>
-                    </template>
-                  </v-list-item>
-                </template>
-                <span>نتایج آزمایش</span>
-              </v-tooltip>
-
-              <!-- نسخه‌ها -->
-              <v-tooltip v-if="['pharmacy'].includes(user?.role)" location="left" :disabled="!rail">
-                <template #activator="{ props }">
-                  <v-list-item v-bind="props" to="/prescriptions" nuxt class="rounded-2xl transition-all" :class="rail ? 'px-0' : 'px-4'">
-                    <template #title>
-                      <div class="flex items-center" :class="rail ? 'justify-center w-full' : 'gap-3'">
-                        <Calendar class="w-5.5 h-5.5 shrink-0" />
-                        <span v-if="!rail" class="text-[14px] font-medium">نسخه‌ها</span>
-                      </div>
-                    </template>
-                  </v-list-item>
-                </template>
-                <span>نسخه‌ها</span>
-              </v-tooltip>
-
-              <!-- پرونده من -->
-              <v-tooltip v-if="['patient'].includes(user?.role)" location="left" :disabled="!rail">
-                <template #activator="{ props }">
-                  <v-list-item v-bind="props" to="/my-profile" nuxt class="rounded-2xl transition-all" :class="rail ? 'px-0' : 'px-4'">
-                    <template #title>
-                      <div class="flex items-center" :class="rail ? 'justify-center w-full' : 'gap-3'">
-                        <Calendar class="w-5.5 h-5.5 shrink-0" />
-                        <span v-if="!rail" class="text-[14px] font-medium">پرونده من</span>
-                      </div>
-                    </template>
-                  </v-list-item>
-                </template>
-                <span>پرونده من</span>
-              </v-tooltip>
-
             </v-list>
           </div>
 
-          <!-- PATIENTS -->
-          <div v-if="['admin_doctor', 'doctor'].includes(user?.role)">
-            <div v-if="!rail" class="px-4 mb-3 text-[10px] font-bold text-slate-400 tracking-widest">
+          <div v-if="patientMenu.length">
+            <div v-if="!rail || isMobile" class="px-6 mb-2 text-[10px] font-bold text-slate-400 dark:fill-slate-300 tracking-widest uppercase">
               بیماران
             </div>
-
-            <v-list nav>
-              <!-- لیست بیماران -->
-              <v-tooltip location="left" :disabled="!rail">
+            <v-list nav class="px-3">
+              <v-tooltip 
+                v-for="item in patientMenu" 
+                :key="item.to"
+                location="left" 
+                :disabled="!rail || isMobile"
+              >
                 <template #activator="{ props }">
-                  <v-list-item v-bind="props" to="/patients" nuxt class="rounded-2xl transition-all" :class="rail ? 'px-0' : 'px-4'">
+                  <v-list-item 
+                    v-bind="props" 
+                    :to="item.to" 
+                    nuxt 
+                    class="rounded-xl transition-all mb-1 dark:hover:bg-slate-800" 
+                    :class="rail && !isMobile ? 'px-0 justify-center' : 'px-4'"
+                    active-class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                  >
                     <template #title>
-                      <div class="flex items-center" :class="rail ? 'justify-center w-full' : 'gap-3'">
-                        <UsersGroup class="w-5.5 h-5.5 shrink-0" />
-                        <span v-if="!rail" class="text-[14px] font-medium">لیست بیماران</span>
+                      <div class="flex items-center" :class="rail && !isMobile ? 'justify-center w-full' : 'gap-3'">
+                        <component :is="item.icon" class="w-5.5 h-5.5 shrink-0 fill-slate-300 dark:text-slate-400" />
+                        <span v-if="!rail || isMobile" class="text-[14px] font-medium text-slate-700 dark:text-slate-200">{{ item.title }}</span>
                       </div>
                     </template>
                   </v-list-item>
                 </template>
-                <span>لیست بیماران</span>
+                <span>{{ item.title }}</span>
               </v-tooltip>
-
             </v-list>
           </div>
         </div>
 
-        <!-- Footer -->
         <template #append>
-          <div class="py-3! border-t border-slate-100 flex items-center" :class="rail ? 'justify-center' : 'px-4! gap-3'">
-
-            <!--
-            <v-avatar size="36">
-              <v-img src="https://i.pravatar.cc/300" />
-            </v-avatar>
-            -->
-
-            <div v-if="!rail" class="flex flex-col align-middle items-center justify-center">
-              <span class="text-sm font-bold text-slate-700">{{ user.fullName }}</span>
-              <span v-if="user.role === 'admin_doctor'" class="text-[10px] text-slate-400">مدیر کلینیک</span>
-              <span v-if="user.role === 'doctor'" class="text-[10px] text-slate-400">دکتر</span>
-              <span v-if="user.role === 'pharmacy'" class="text-[10px] text-slate-400">داروخانه</span>
-              <span v-if="user.role === 'lab'" class="text-[10px] text-slate-400">آزمایشگاه</span>
-              <span v-if="user.role === 'patient'" class="text-[10px] text-slate-400">بیمار</span>
+          <div class="py-4 border-t border-slate-100 dark:border-slate-800 flex items-center" :class="rail && !isMobile ? 'justify-center' : 'px-6 gap-3'">
+            <div class="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center shrink-0">
+              <span class="text-blue-600 dark:text-blue-300 font-bold text-sm">{{ userInitial }}</span>
+            </div>
+            <div v-if="!rail || isMobile" class="flex flex-col overflow-hidden whitespace-nowrap">
+              <span class="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{{ user?.fullName || 'کاربر مهمان' }}</span>
+              <span class="text-[10px] text-slate-400 dark:fill-slate-300">{{ roleLabel }}</span>
             </div>
           </div>
         </template>
-
       </v-navigation-drawer>
 
-      <v-app-bar height="80" class="!bg-white px-6" elevation="0">
+      <v-app-bar height="80" class="!bg-slate-200 dark:bg-slate-600/80 backdrop-blur-md px-4 md:px-6 border-b border-slate-200 dark:border-slate-800" elevation="0">
         <template v-slot:prepend>
-          <v-app-bar-nav-icon variant="text" @click="drawer = !drawer" class="text-slate-600 lg:hidden"></v-app-bar-nav-icon>
+          <v-app-bar-nav-icon variant="text" @click="drawer = !drawer" class="text-slate-600 dark:text-slate-300 lg:hidden !flex"></v-app-bar-nav-icon>
           <div class="hidden md:flex flex-col">
-            <div class="flex items-center gap-2 text-slate-400 text-xs mb-1 select-none pt-6">
-              <span class="truncate">پنل مدیریت</span>
-              <!--
-              <AltArrowLeft class="w-4 h-4" />
-              <span class="text-slate-600 font-medium">داشبورد</span>
-              -->
+            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-600 select-none">خوش آمدید</h2>
+            <div class="text-slate-400 dark:fill-slate-300 text-xs mt-1 select-none">
+              امروز یک روز عالی برای مدیریت کلینیک است.
             </div>
-            <h2 class="text-xl font-bold text-slate-800 select-none">خوش آمدید</h2>
           </div>
         </template>
 
         <v-spacer></v-spacer>
 
-        <div class="flex items-center gap-3">
-          <div class="hidden md:flex items-center bg-white border border-slate-200 rounded-lg px-4 h-11 w-80 transition-shadow focus-within:shadow-md focus-within:border-blue-300">
-            <Magnify class="w-8 h-8 pl-2"></Magnify>
-            <input type="text" placeholder="جستجو (نام بیمار، کدملی...)" class="w-full text-sm outline-none text-slate-700 placeholder:text-slate-400 h-full" />
+        <div class="flex items-center gap-2 md:gap-4">
+          <div class="hidden md:flex items-center bg-slate-50 dark:bg-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl px-4 h-11 w-80 transition-all focus-within:shadow-md focus-within:border-blue-400 dark:focus-within:border-blue-500">
+            <Magnify class="w-5 h-5 text-slate-800" />
+            <input type="text" placeholder="جستجو (نام بیمار، کدملی...)" class="w-full text-sm outline-none text-slate-700 dark:text-slate-200 placeholder:text-slate-600 bg-transparent pr-3 h-full" />
           </div>
 
-          <v-divider vertical inset class="mx-2 hidden md:block"></v-divider>
+          <v-divider vertical inset class="mx-2 hidden md:block dark:border-slate-700"></v-divider>
 
           <!--
-          <v-btn icon class="bg-white border border-slate-100 shadow-sm text-slate-500 hover:text-blue-600 hover:border-blue-100 rounded-xl w-11 h-11 transition-all">
-            <v-badge dot color="error">
-              <Bell class="w-5.5 h-5.5"></Bell>
-            </v-badge>
+          <v-btn icon variant="text" @click="toggleTheme" class="fill-slate-300 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
+             <span class="text-xl">{{ isDark ? '🌙' : '☀️' }}</span>
           </v-btn>
           -->
 
-          <v-btn icon class="bg-white border border-slate-100 shadow-sm text-slate-500 hover:text-blue-600 hover:border-blue-100 rounded-xl w-11 h-11 transition-all hidden sm:flex">
-            <Settings class="w-5.5 h-5.5"></Settings>
+          <v-btn icon variant="text" class="fill-slate-300 dark:fill-slate-400 hover:fill-blue-600 dark:hover:fill-blue-400 hidden sm:flex">
+            <Settings class="w-5.5 h-5.5" />
           </v-btn>
 
-          <v-btn icon class="bg-white border border-slate-100 shadow-sm text-slate-500 hover:text-blue-600 hover:border-blue-100 rounded-xl w-11 h-11 transition-all hidden sm:flex" @click="logout">
-            <TurnOffIcon class="w-5.5 h-5.5 fill-red-700"></TurnOffIcon>
+          <v-btn icon variant="text" class="fill-slate-300 dark:fill-slate-400 hover:fill-red-600 dark:hover:fill-red-400" @click="logout">
+            <TurnOffIcon class="w-5.5 h-5.5" />
           </v-btn>
         </div>
       </v-app-bar>
 
-      <v-main class="bg-transparent min-h-screen pt-[30px]">
-        <div class="md:px-10 pb-10 max-w-[1600px] mx-auto">
+      <v-main class="bg-transparent min-h-screen pt-20">
+        <div class="px-4 md:px-10 pb-10 max-w-[1600px] mx-auto">
           <slot />
         </div>
       </v-main>
@@ -268,65 +184,165 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import AltArrowLeft from '~/components/icons/AltArrowLeft.vue';
-import Calendar from '~/components/icons/Calendar.vue';
-import Clock from '~/components/icons/Clock.vue';
-import HomeAngle from '~/components/icons/HomeAngle.vue';
-import Magnify from '~/components/icons/Magnify.vue';
-import MedicalKit from '~/components/icons/MedicalKit.vue';
-import Settings from '~/components/icons/Settings.vue';
-import TurnOffIcon from '~/components/icons/TurnOffIcon.vue';
-import Users from '~/components/icons/Users.vue';
-import UsersGroup from '~/components/icons/UsersGroup.vue';
-const { logout } = useAuth()
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { useDisplay, useTheme } from 'vuetify'
 
+// Component Imports
+import AltArrowLeft from '~/components/icons/AltArrowLeft.vue'
+import Calendar from '~/components/icons/Calendar.vue'
+import HomeAngle from '~/components/icons/HomeAngle.vue'
+import Magnify from '~/components/icons/Magnify.vue'
+import MedicalKit from '~/components/icons/MedicalKit.vue'
+import Settings from '~/components/icons/Settings.vue'
+import TurnOffIcon from '~/components/icons/TurnOffIcon.vue'
+import Users from '~/components/icons/Users.vue'
+import UsersGroup from '~/components/icons/UsersGroup.vue'
+
+// Composables
+const { user, isAuthenticated, logout } = useAuth() // فرض بر این است که این Composable را دارید
+const { smAndDown } = useDisplay()
+const vuetifyTheme = useTheme()
+
+// State
 const drawer = ref(true)
 const rail = ref(false)
 const isLoading = ref(true)
-const { user, isAuthenticated } = useAuth()
+const isDark = ref(false)
 
+// Computed: Check Mobile View
+const isMobile = computed(() => smAndDown.value)
+
+// Mobile responsiveness handler
+const updateDrawerState = () => {
+  drawer.value = !isMobile.value
+}
+
+// Lifecycle Hooks
 onMounted(() => {
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      isLoading.value = false
-    }, 800)
-  })
+  // شبیه‌سازی لودینگ با یک تایمر تمیز (در پروژه‌های واقعی به هوک‌های Nuxt متصل می‌شود)
+  const timer = setTimeout(() => {
+    isLoading.value = false
+  }, 1200)
 
-  if (document.readyState === 'complete') {
-    setTimeout(() => {
-      isLoading.value = false
-    }, 1500)
+  // مدیریت حالت واکنش‌گرا در زمان لود
+  updateDrawerState()
+  window.addEventListener('resize', updateDrawerState)
+
+  // بازیابی حالت Dark Mode (اگر در localStorage ذخیره شده باشد)
+  const savedTheme = localStorage.getItem('theme')
+  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    setDarkMode(true)
   }
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateDrawerState)
+})
+
+// Functions: Theme Toggle
+const setDarkMode = (val) => {
+  isDark.value = val
+  vuetifyTheme.global.name.value = val ? 'dark' : 'light'
+  if (val) {
+    document.documentElement.classList.add('dark')
+    localStorage.setItem('theme', 'dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+    localStorage.setItem('theme', 'light')
+  }
+}
+
+const toggleTheme = () => {
+  setDarkMode(!isDark.value)
+}
+
+const roleLabel = computed(() => {
+  const roles = {
+    'admin_doctor': 'مدیر کلینیک',
+    'doctor': 'پزشک',
+    'pharmacy': 'مسئول داروخانه',
+    'lab': 'آزمایشگاه',
+    'patient': 'بیمار'
+  }
+  const currentRole = user?.value?.role || user?.role
+  return roles[currentRole] || 'کاربر سیستم'
+})
+
+const userInitial = computed(() => {
+  return user?.fullName ? user.fullName.charAt(0) : 'U'
+})
+
+// Data: Menu Configuration
+// با این روش اضافه کردن منوهای جدید نیازی به دستکاری HTML ندارد
+const ALL_MENUS = [
+  { title: 'داشبورد', to: '/', icon: HomeAngle, roles: ['all'], category: 'primary' },
+  { title: 'تقویم کاری', to: '/calendar', icon: Calendar, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: 'لیست کاربران', to: '/users', icon: Users, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: 'نتایج آزمایش', to: '/lab-results', icon: Calendar, roles: ['lab'], category: 'primary' },
+  { title: 'نسخه‌ها', to: '/prescriptions', icon: Calendar, roles: ['pharmacy'], category: 'primary' },
+  { title: 'پرونده من', to: '/my-profile', icon: Calendar, roles: ['patient'], category: 'primary' },
+  
+  { title: 'لیست بیماران', to: '/patients', icon: UsersGroup, roles: ['admin_doctor', 'doctor'], category: 'patient' }
+]
+
+const hasAccess = (itemRoles) => {
+  // اگر منو برای همه آزاد بود
+  if (itemRoles.includes('all')) return true
+  
+  // گرفتن نقش کاربر با احتیاط (اطمینان از وجود user و مقدار داخل آن)
+  const currentUserRole = user?.value?.role || user?.role
+  
+  if (!currentUserRole) return false
+  
+  return itemRoles.includes(currentUserRole)
+}
+
+
+const primaryMenu = computed(() => 
+  ALL_MENUS.filter(item => item.category === 'primary' && hasAccess(item.roles))
+)
+
+const patientMenu = computed(() => 
+  ALL_MENUS.filter(item => item.category === 'patient' && hasAccess(item.roles))
+)
+
+const filteredMenus = computed(() => {
+  // این خط باعث می‌شود هر زمان اطلاعات کاربر لود شد، منو دوباره محاسبه شود
+  const role = user?.value?.role || user?.role
+  
+  return ALL_MENUS.filter(item => {
+    if (item.roles.includes('all')) return true
+    return item.roles.includes(role)
+  })
 })
 
 definePageMeta({
   middleware: 'auth'
 })
+
 </script>
 
 <style>
+/* انیمیشن Loading Overlay */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.8s ease;
+  transition: opacity 0.5s ease, backdrop-filter 0.5s ease;
 }
 
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+  backdrop-filter: blur(0px);
 }
 
 @keyframes ping-slow {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: scale(0.8);
-    opacity: 0.3;
+    opacity: 0.2;
   }
-
   50% {
-    transform: scale(1.2);
-    opacity: 0.6;
+    transform: scale(1.3);
+    opacity: 0.5;
   }
 }
 
@@ -334,6 +350,7 @@ definePageMeta({
   animation: ping-slow 4s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
+/* Scrollbar Styling (پشتیبانی از Dark Mode) */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -348,20 +365,26 @@ definePageMeta({
   border-radius: 10px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
 
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* رفع باگ دکمه منوی موبایل در Vuetify */
 .v-app-bar-nav-icon {
-  display: none !important;
+  display: flex !important;
 }
-
-.v-list-item {
-  transition: all 0.2s ease;
-}
-
-.v-list-item:hover {
-  background-color: rgba(186, 230, 253, 0.35) !important;
+@media (min-width: 1024px) {
+  .v-app-bar-nav-icon {
+    display: none !important;
+  }
 }
 
 .v-list-item__content {
