@@ -157,11 +157,11 @@
 
           <v-divider vertical inset class="mx-2 hidden md:block dark:border-slate-700"></v-divider>
 
-          <!--
+          
           <v-btn icon variant="text" @click="toggleTheme" class="fill-slate-300 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
              <span class="text-xl">{{ isDark ? '🌙' : '☀️' }}</span>
           </v-btn>
-          -->
+        
 
           <v-btn icon variant="text" class="fill-slate-300 dark:fill-slate-400 hover:fill-blue-600 dark:hover:fill-blue-400 hidden sm:flex">
             <Settings class="w-5.5 h-5.5" />
