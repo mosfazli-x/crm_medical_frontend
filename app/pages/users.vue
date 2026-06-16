@@ -112,7 +112,7 @@
                 <p class="mt-4 text-sm font-medium text-slate-500">در حال دریافت اطلاعات...</p>
             </div>
 
-            <div v-if="!loading && filteredUsers.length === 0" class="flex flex-col items-center justify-center p-16">
+            <div v-if="!loading && filteredUsers.length === 0" class="flex flex-col items-center justify-center py-8">
                 <div class="bg-slate-50 p-6 rounded-full mb-4">
                     <v-icon size="48" color="slate-300">mdi-account-search-outline</v-icon>
                 </div>

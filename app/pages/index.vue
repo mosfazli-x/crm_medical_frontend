@@ -60,7 +60,7 @@
             <div class="text-3xl font-black text-slate-800">{{ availableSlotsCount }}</div>
           </div>
           <div class="p-3">
-            <Grid class="w-6 h-6 text-indigo-600 fill-current" />
+            <Grid class="w-6 h-6 text-indigo-600 stroke-current" />
           </div>
         </div>
       </div>

@@ -366,7 +366,7 @@ useSeoMeta({
 }
 
 :deep(.fc-toolbar-title) {
-    font-size: 1.25rem !important;
+    font-size: 1rem !important;
     font-weight: 800;
     color: #1e293b;
 }
@@ -447,6 +447,10 @@ useSeoMeta({
 :deep(.fc-now-indicator-arrow) {
     border-color: #ef4444;
     background-color: #ef4444;
+}
+
+:deep(.fc-button-group) {
+    gap: 4px
 }
 
 /* استایل DatePicker که خواسته بودید مستقیم نوشته شود */

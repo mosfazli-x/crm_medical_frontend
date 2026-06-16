@@ -46,7 +46,7 @@
 
                     <v-window-item value="attachments" transition="fade-transition">
                         <PatientTabsAttachments v-model:attachments="attachments"
-                            v-model:existingAttachments="existingAttachments" />
+                            v-model:existingAttachments="existingAttachments" :patient-id="patientId" />
                     </v-window-item>
                 </v-window>
             </v-card-text>

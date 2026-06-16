@@ -173,7 +173,7 @@
                     </v-btn>
                 </div>
 
-                <div v-if="selectedSmsPatient" class="mb-4 bg-indigo-50/50 p-4 px-3 rounded border border-indigo-100">
+                <div v-if="selectedSmsPatient" class="mb-4 bg-indigo-50/50 py-2 px-3 rounded border border-indigo-100">
                     <p class="text-sm text-slate-600">گیرنده:</p>
                     <p class="font-bold text-indigo-900 mt-1">{{ selectedSmsPatient.firstName }} {{
                         selectedSmsPatient.lastName
@@ -184,7 +184,7 @@
                 <div class="space-y-2 px-3">
                     <label class="text-sm font-bold text-slate-700 px-1">متن پیام</label>
                     <textarea v-model="smsText" rows="4"
-                        class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-4 transition-all outline-none resize-none"
+                        class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-4 transition-all outline-none resize-none py-1 px-2"
                         placeholder="متن پیامک خود را اینجا بنویسید..."></textarea>
                 </div>
 
@@ -287,11 +287,19 @@ const sendSms = async () => {
         return
     }
 
-    // منطق بک‌اند در آینده اینجا قرار می‌گیرد
-    console.log(`Sending SMS to ${selectedSmsPatient.value.phone}: ${smsText.value}`)
-
-    $toast.success('پیامک با موفقیت در صف ارسال قرار گرفت.')
-    smsDialog.value = false
+    try {
+        await apiFetch('/api/patients/send-sms', {
+            method: 'POST',
+            body: {
+                phone: selectedSmsPatient.value.phone,
+                text: smsText.value,
+            },
+        })
+        $toast.success('پیامک با موفقیت در صف ارسال قرار گرفت.')
+        smsDialog.value = false
+    } catch (err: any) {
+        $toast.error(err.data?.error || 'خطا در ارسال پیامک')
+    }
 }
 
 // حذف بیمار

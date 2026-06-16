@@ -8,9 +8,9 @@
       </div>
 
       <!-- Modern Date Selector -->
-      <div class="flex items-center py-4 px-3 bg-white border border-slate-200/80 rounded-xl gap-2 shadow-sm">
+      <div class="flex items-center py-1 px-1 bg-white border border-slate-200/80 rounded-xl gap-2 shadow-sm">
         <button @click="prevDay"
-          class="p-2 rounded-full hover:bg-slate-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-slate-200"
+          class="px-2 py-2 rounded-full hover:bg-slate-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-slate-200"
           aria-label="روز قبل">
           <AltArrowLeft
             class="w-5 h-5 text-slate-400 group-hover:text-slate-600 fill-current rotate-180 transition-colors" />
@@ -19,7 +19,7 @@
           {{ displayDate }}
         </span>
         <button @click="nextDay"
-          class="p-2 rounded-full hover:bg-slate-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-slate-200"
+          class="px-2 py-2 rounded-full hover:bg-slate-100 transition-colors group focus:outline-none focus:ring-2 focus:ring-slate-200"
           aria-label="روز بعد">
           <AltArrowLeft class="w-5 h-5 text-slate-400 group-hover:text-slate-600 fill-current transition-colors" />
         </button>

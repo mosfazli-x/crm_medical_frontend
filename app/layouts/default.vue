@@ -42,9 +42,9 @@
         <button 
           v-if="!isMobile"
           @click="rail = !rail" 
-          class="absolute -left-3 top-8 z-50 w-6 h-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300"
+          class="absolute -left-3 top-8 z-50 w-6 h-6 bg-info dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300"
         >
-          <AltArrowLeft class="w-4 h-4 fill-slate-300 dark:text-slate-400 transition-transform duration-300" :class="rail ? '' : 'rotate-180'" />
+          <AltArrowLeft class="w-4 h-4 dark:text-slate-400 transition-transform duration-300" :class="rail ? '' : 'rotate-180'" />
         </button>
 
         <div class="h-24 flex items-center gap-3 transition-all" :class="rail && !isMobile ? 'justify-center px-0' : 'px-6'">
@@ -139,7 +139,7 @@
       <v-app-bar height="80" class="!bg-slate-200 dark:bg-slate-600/80 backdrop-blur-md px-4 md:px-6 border-b border-slate-200 dark:border-slate-800" elevation="0">
         <template v-slot:prepend>
           <v-app-bar-nav-icon variant="text" @click="drawer = !drawer" class="text-slate-600 dark:text-slate-300 lg:hidden !flex"></v-app-bar-nav-icon>
-          <div class="hidden md:flex flex-col">
+          <div class="hidden lg:flex flex-col">
             <h2 class="text-xl font-bold text-slate-800 dark:text-slate-600 select-none">خوش آمدید</h2>
             <div class="text-slate-400 dark:fill-slate-300 text-xs mt-1 select-none">
               امروز یک روز عالی برای مدیریت کلینیک است.
@@ -150,11 +150,13 @@
         <v-spacer></v-spacer>
 
         <div class="flex items-center gap-2 md:gap-4">
+         <!--
           <div class="hidden md:flex items-center bg-slate-50 dark:bg-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl px-4 h-11 w-80 transition-all focus-within:shadow-md focus-within:border-blue-400 dark:focus-within:border-blue-500">
             <Magnify class="w-5 h-5 text-slate-800" />
             <input type="text" placeholder="جستجو (نام بیمار، کدملی...)" class="w-full text-sm outline-none text-slate-700 dark:text-slate-200 placeholder:text-slate-600 bg-transparent pr-3 h-full" />
           </div>
-
+          -->
+          
           <v-divider vertical inset class="mx-2 hidden md:block dark:border-slate-700"></v-divider>
 
           

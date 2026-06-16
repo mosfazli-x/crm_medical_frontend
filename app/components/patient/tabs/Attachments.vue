@@ -9,7 +9,7 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-2">
         <div v-for="cat in categories" :key="cat.key" class="bg-slate-50/50 p-4 rounded border border-slate-200 flex flex-col h-full">
           
-          <div class="flex items-center justify-between align-middle mb-4 py-2 px-2 border-b border-slate-200">
+          <div class="flex items-center justify-between align-middle mb-1 py-2 px-2 border-b border-slate-200">
             <div class="flex items-center gap-2 font-semibold text-slate-700 text-sm">
               <v-icon :icon="cat.icon" :color="cat.color" size="small" />
               {{ cat.title }}
@@ -19,10 +19,10 @@
             </v-chip>
           </div>
 
-          <div class="flex-1 space-y-2 mb-4 overflow-y-auto max-h-60 pr-1">
+          <div class="flex-1 space-y-2 mb-4 overflow-y-auto max-h-60 px-1">
             
             <div v-for="(file, idx) in existingAttachments[cat.key]" :key="'old-'+idx"
-                 class="flex items-center justify-between p-2.5 bg-white border border-slate-200 rounded-lg group hover:border-slate-300 transition-all gap-2">
+                 class="flex items-center justify-between p-2 my-1 bg-white border border-slate-200 rounded-lg group hover:border-slate-300 transition-all gap-2">
               
               <div class="flex items-center gap-2 overflow-hidden flex-1 px-1">
                 <v-icon icon="mdi-cloud-check-outline" size="small" class="text-emerald-500 shrink-0" />
@@ -32,7 +32,7 @@
                 </div>
               </div>
 
-              <div class="flex items-center gap-0.5 shrink-0">
+              <div class="flex items-center gap-0.5 shrink-0 px-1">
                 <v-btn v-if="file.filePath" icon="mdi-eye-outline" variant="text" color="slate-500" density="compact" size="small"
                        :href="config.public.apiBase + file.filePath" target="_blank" title="مشاهده فایل" />
                        
@@ -40,13 +40,15 @@
                        :href="config.public.apiBase + file.filePath" :download="file.name" title="دانلود فایل" />
 
                 <v-btn icon="mdi-trash-can-outline" variant="text" color="error" density="compact" size="small"
-                       @click="existingAttachments[cat.key].splice(idx, 1)"
-                       class="opacity-0 group-hover:opacity-100 transition-opacity" title="حذف" />
+                       @click="deleteExistingAttachment(cat.key, file, idx)"
+                       :loading="deleting.has(file.id)"
+                       :disabled="deleting.has(file.id)"
+                       class="opacity-100 group-hover:opacity-100 transition-opacity" title="حذف" />
               </div>
             </div>
 
             <div v-for="(file, idx) in attachments[cat.key]" :key="'new-'+idx"
-                 class="flex items-center justify-between p-2.5 bg-blue-50/70 border border-blue-100 rounded-lg group hover:border-blue-200 transition-all">
+                 class="flex items-center justify-between p-2.5 my-1 bg-blue-50/70 border border-blue-100 rounded-lg group hover:border-blue-200 transition-all">
               <div class="flex items-center gap-2 overflow-hidden w-full">
                 <v-icon icon="mdi-file-clock-outline" size="small" class="text-blue-500 shrink-0" />
                 <div class="flex flex-col min-w-0 w-full">
@@ -89,17 +91,44 @@
 </template>
 
 <script setup lang="ts">
-// دسترسی به تنظیمات دامنه بکند از فایل nuxt.config
+import { useApi } from '~/composables/useApi'
+
 const config = useRuntimeConfig()
+const { apiFetch } = useApi()
+const { $toast } = useNuxtApp()
+
+const props = defineProps<{ patientId: string | null }>()
 
 const attachments = defineModel<any>('attachments', { required: true })
 const existingAttachments = defineModel<any>('existingAttachments', { required: true })
+
+const deleting = reactive(new Set<string>())
 
 const categories = [
   { key: 'ultrasound', title: 'مدارک سونوگرافی', icon: 'mdi-camera-iris', color: 'purple-darken-1', accept: 'image/*,application/pdf' },
   { key: 'lab', title: 'گزارش‌های آزمایشگاه', icon: 'mdi-flask-outline', color: 'teal-darken-1', accept: '.pdf,.jpg,.jpeg,.png' },
   { key: 'prescription', title: 'نسخه‌های قبلی', icon: 'mdi-prescription', color: 'blue-darken-1', accept: 'image/*,application/pdf' }
 ]
+
+const deleteExistingAttachment = async (categoryKey: 'ultrasound' | 'lab' | 'prescription', file: any, index: number) => {
+  if (!props.patientId || !file.id) return
+  if (!confirm(`آیا از حذف این فایل اطمینان دارید؟ "${file.name || file.fileName}"`)) return
+
+  deleting.add(file.id)
+  try {
+    const response = await apiFetch<{ success: boolean; error?: string }>(`/api/patients/${props.patientId}/attachments/${file.id}`, { method: 'DELETE' })
+    if (response.success) {
+      existingAttachments.value[categoryKey].splice(index, 1)
+      $toast.success('فایل با موفقیت حذف شد.')
+    } else {
+      $toast.error(response.error || 'خطا در حذف فایل.')
+    }
+  } catch (err: any) {
+    $toast.error(err.data?.error || 'خطا در ارتباط با سرور.')
+  } finally {
+    deleting.delete(file.id)
+  }
+}
 
 if (!attachments.value) attachments.value = { ultrasound: [], lab: [], prescription: [] }
 if (!existingAttachments.value) existingAttachments.value = { ultrasound: [], lab: [], prescription: [] }
