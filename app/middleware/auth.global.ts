@@ -1,12 +1,10 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-  console.log('middleware running', process.server ? 'server' : 'client')
-
   const { isAuthenticated } = useAuth()
 
-  console.log('Auth Middleware executed on client!', {
-    path: to.path,
-    isAuthenticated: isAuthenticated.value,
-  })
+  const publicPaths = ['/auth/login', '/auth/register']
+  if (to.path.startsWith('/booking/')) {
+    return
+  }
 
   if (isAuthenticated.value && (to.path === '/auth/login' || to.path === '/auth/register')) {
     return navigateTo('/')

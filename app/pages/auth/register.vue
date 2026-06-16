@@ -2,9 +2,9 @@
   <v-locale-provider rtl>
     <div class="min-h-screen grid grid-cols-1 md:grid-cols-2" dir="rtl">
       <!-- سمت راست: فرم ثبت‌نام اولیه -->
-      <div class="flex items-center justify-center bg-gray-50 px-6!">
+      <div class="flex items-center justify-center bg-gray-50 px-4!">
         <Transition name="fade">
-          <div class="bg-white rounded-3xl shadow-2xl p-10! max-w-md w-full">
+          <div class="bg-white rounded-3xl shadow-2xl p-6! max-w-md w-full">
             <div class="text-center mb-10">
               <h2 class="text-3xl font-bold text-slate-800">ثبت‌نام اولیه</h2>
               <p class="text-slate-600 mt-3">اگر تاکنون حسابی ندارید، می‌توانید از این طریق حساب جدید بسازید</p>

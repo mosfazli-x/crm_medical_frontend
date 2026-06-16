@@ -190,6 +190,8 @@ import { useDisplay, useTheme } from 'vuetify'
 // Component Imports
 import AltArrowLeft from '~/components/icons/AltArrowLeft.vue'
 import Calendar from '~/components/icons/Calendar.vue'
+import Clock from '~/components/icons/Clock.vue'
+import Grid from '~/components/icons/Grid.vue'
 import HomeAngle from '~/components/icons/HomeAngle.vue'
 import Magnify from '~/components/icons/Magnify.vue'
 import MedicalKit from '~/components/icons/MedicalKit.vue'
@@ -277,6 +279,8 @@ const userInitial = computed(() => {
 const ALL_MENUS = [
   { title: 'داشبورد', to: '/', icon: HomeAngle, roles: ['all'], category: 'primary' },
   { title: 'تقویم کاری', to: '/calendar', icon: Calendar, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: 'تنظیم هفته کاری', to: '/scheduling', icon: Clock, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: 'نوبت‌های بیماران', to: '/appointments', icon: Grid, roles: ['admin_doctor', 'doctor'], category: 'primary' },
   { title: 'لیست کاربران', to: '/users', icon: Users, roles: ['admin_doctor', 'doctor'], category: 'primary' },
   { title: 'نتایج آزمایش', to: '/lab-results', icon: Calendar, roles: ['lab'], category: 'primary' },
   { title: 'نسخه‌ها', to: '/prescriptions', icon: Calendar, roles: ['pharmacy'], category: 'primary' },

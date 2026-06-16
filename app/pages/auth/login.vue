@@ -17,9 +17,9 @@
             </div>
 
             <!-- سمت راست: فرم ورود -->
-            <div class="flex items-center justify-center bg-gray-50 px-6">
+            <div class="flex items-center justify-center bg-gray-50 px-4!">
                 <Transition name="fade">
-                    <div class="bg-white rounded-3xl shadow-2xl p-10! max-w-md w-full">
+                    <div class="bg-white rounded-3xl shadow-2xl p-6! max-w-md w-full">
                         <div class="text-center mb-10">
                             <h2 class="text-3xl font-bold text-slate-800">ورود به سیستم</h2>
                             <p class="text-slate-600 mt-3">اطلاعات خود را وارد کنید</p>

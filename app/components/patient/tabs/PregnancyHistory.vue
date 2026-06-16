@@ -18,7 +18,7 @@
                end_date: null, outcome: null, delivery_method: null, anesthesia_type: null,
                maternal_complications: [],
                prenatal_screenings: { nt_done: false, anomaly_done: false, nipt_done: false, gdm_done: false },
-               newborns_details: [], notes: ''
+               newbornsDetails: [], notes: ''
              })">
         ثبت بارداری جدید
       </v-btn>
@@ -99,10 +99,10 @@
                 تست‌ها و غربالگری‌های انجام شده
               </h4>
               <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
-                <v-checkbox v-model="rec.prenatal_screenings.nt_done" label="سونوگرافی NT" density="compact" hide-details color="indigo" />
-                <v-checkbox v-model="rec.prenatal_screenings.anomaly_done" label="اسکن آنومالی" density="compact" hide-details color="indigo" />
-                <v-checkbox v-model="rec.prenatal_screenings.nipt_done" label="آزمایش NIPT" density="compact" hide-details color="indigo" />
-                <v-checkbox v-model="rec.prenatal_screenings.gdm_done" label="تست دیابت (GDM)" density="compact" hide-details color="indigo" />
+                <v-checkbox v-model="rec.prenatalScreenings.nt_done" label="سونوگرافی NT" density="compact" hide-details color="indigo" />
+                <v-checkbox v-model="rec.prenatalScreenings.anomaly_done" label="اسکن آنومالی" density="compact" hide-details color="indigo" />
+                <v-checkbox v-model="rec.prenatalScreenings.nipt_done" label="آزمایش NIPT" density="compact" hide-details color="indigo" />
+                <v-checkbox v-model="rec.prenatalScreenings.gdm_done" label="تست دیابت (GDM)" density="compact" hide-details color="indigo" />
               </div>
             </div>
 
@@ -113,19 +113,19 @@
                   عوارض مادر (Complications)
                 </h4>
                 <v-btn size="small" color="orange-darken-1" variant="tonal" prepend-icon="mdi-plus"
-                       @click="rec.maternal_complications.push({ title: '', severity: 'mild' })">
+                       @click="rec.maternalComplications.push({ title: '', severity: 'mild' })">
                   افزودن عارضه
                 </v-btn>
               </div>
 
               <div class="space-y-3">
-                <div v-for="(c, i) in rec.maternal_complications" :key="'comp-'+i" class="flex gap-3 items-start">
+                <div v-for="(c, i) in rec.maternalComplications" :key="'comp-'+i" class="flex gap-3 items-start">
                   <v-text-field v-model="c.title" label="عنوان عارضه (مثل مسمومیت حاملگی)" variant="outlined" density="compact" hide-details="auto" class="flex-1" />
                   <v-select v-model="c.severity" :items="severityOptions" label="شدت" variant="outlined" density="compact" hide-details="auto" class="w-32 shrink-0" />
                   <v-btn icon="mdi-close" variant="text" color="error" size="small" density="comfortable" class="mt-1"
-                         @click="rec.maternal_complications.splice(i, 1)" />
+                         @click="rec.maternalComplications.splice(i, 1)" />
                 </div>
-                <div v-if="!rec.maternal_complications.length" class="text-xs text-slate-400 font-medium py-2">
+                <div v-if="!rec.maternalComplications.length" class="text-xs text-slate-400 font-medium py-2">
                   هیچ عارضه‌ای ثبت نشده است.
                 </div>
               </div>
@@ -138,16 +138,16 @@
                   اطلاعات نوزادان
                 </h4>
                 <v-btn size="small" color="blue-darken-1" variant="tonal" prepend-icon="mdi-plus"
-                       @click="rec.newborns_details.push({ gender: '', weight: null, height: null, head_circumference: null, apgar1: null, apgar5: null, nicu: false })">
+                       @click="rec.newbornsDetails.push({ gender: '', weight: null, height: null, head_circumference: null, apgar1: null, apgar5: null, nicu: false })">
                   افزودن نوزاد (چندقلویی)
                 </v-btn>
               </div>
 
               <div class="space-y-4">
-                <div v-for="(b, i) in rec.newborns_details" :key="'baby-'+i" class="bg-slate-50 border border-slate-200 rounded-lg p-4 relative group">
+                <div v-for="(b, i) in rec.newbornsDetails" :key="'baby-'+i" class="bg-slate-50 border border-slate-200 rounded-lg p-4 relative group">
                   
                   <v-btn icon="mdi-close-circle" variant="text" color="error" size="small" density="compact" class="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                         @click="rec.newborns_details.splice(i, 1)" title="حذف نوزاد" />
+                         @click="rec.newbornsDetails.splice(i, 1)" title="حذف نوزاد" />
                          
                   <div class="px-2 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 items-center">
                     <v-text-field v-model="b.gender" label="جنسیت" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
@@ -159,7 +159,7 @@
                     <v-checkbox v-model="b.nicu" label="بستری NICU" density="compact" hide-details color="red" class="mx-auto" />
                   </div>
                 </div>
-                <div v-if="!rec.newborns_details.length" class="text-xs text-slate-400 font-medium py-2">
+                <div v-if="!rec.newbornsDetails.length" class="text-xs text-slate-400 font-medium py-2">
                   اطلاعات نوزادی ثبت نشده است.
                 </div>
               </div>

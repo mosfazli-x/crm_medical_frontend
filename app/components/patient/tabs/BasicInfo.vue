@@ -19,6 +19,28 @@
                 <v-text-field v-model="form.insurance_code" label="کد بیمه" variant="outlined" density="comfortable"
                     prepend-inner-icon="mdi-shield-check-outline" bg-color="white" />
             </v-col>
+            <v-col cols="12" md="6">
+                <v-select v-model="form.insurance_type" :items="insuranceOptions" item-title="title"
+                    item-value="value" label="نوع بیمه" variant="outlined" density="comfortable"
+                    prepend-inner-icon="mdi-shield-account-outline" bg-color="white" clearable>
+                    <template v-slot:selection="{ item }">
+                        <div class="flex items-center gap-2">
+                            <img v-if="item.raw" :src="item.raw.logo" alt="" class="w-5 h-5 object-contain" />
+                            <span>{{ item.raw.title }}</span>
+                        </div>
+                    </template>
+                    <template v-slot:item="{ props, item }">
+                        <v-list-item v-bind="props">
+                            <template v-slot:prepend>
+                                <img :src="item.raw.logo" alt="" class="w-5 h-5 object-contain" />
+                            </template>
+                            <template v-slot:title>
+                                <span class="text-sm">{{ item.raw.title }}</span>
+                            </template>
+                        </v-list-item>
+                    </template>
+                </v-select>
+            </v-col>
             <v-col cols="12" md="4">
                 <v-text-field v-model="form.phone" label="شماره تماس" variant="outlined" density="comfortable"
                     prepend-inner-icon="mdi-phone-outline" type="tel" dir="ltr" bg-color="white"
@@ -44,7 +66,16 @@
 </template>
 
 <script setup lang="ts">
+import { INSURANCE_TYPE_VALUES } from '~/types/insurance'
+
 const form = defineModel<any>({ required: true })
+const config = useRuntimeConfig()
+
+const insuranceOptions = INSURANCE_TYPE_VALUES.map(item => ({
+  title: item.label,
+  value: item.key,
+  logo: config.public.apiBase + item.logo,
+}))
 
 const iranMobileRule = (value: string) => {
     if (!value) return true

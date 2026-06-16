@@ -96,6 +96,7 @@ const form = reactive({
     last_name: '',
     national_id: '',
     insurance_code: '',
+    insurance_type: '',
     birth_date: null as string | null,
     phone: '',
     address: '',
@@ -131,6 +132,7 @@ const submitForm = async () => {
             last_name: form.last_name || '',
             national_id: form.national_id || '',
             insurance_code: form.insurance_code || '',
+            insurance_type: form.insurance_type || '',
             birth_date: form.birth_date,
             phone: form.phone || '',
             address: form.address || '',
@@ -217,6 +219,7 @@ const resetForm = () => {
     form.last_name = ''
     form.national_id = ''
     form.insurance_code = ''
+    form.insurance_type = ''
     form.birth_date = null
     form.phone = ''
     form.address = ''
@@ -251,6 +254,7 @@ const fillForm = (data: any) => {
     form.last_name = data.lastName ?? ''
     form.national_id = data.nationalId ?? ''
     form.insurance_code = data.insuranceCode ?? ''
+    form.insurance_type = data.insuranceType ?? ''
 
     form.birth_date = data.birth_date ?? null
 

@@ -13,6 +13,11 @@
           <div class="flex items-center gap-3 mt-1 text-sm text-gray-500">
             <span>کد ملی: <span class="font-medium text-gray-700">{{ patient.national_id }}</span></span>
             <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+            <span v-if="insuranceInfo" class="flex items-center gap-1.5">
+              <img :src="insuranceInfo.logo" :alt="insuranceInfo.label" class="w-5 h-5 object-contain" />
+              <span class="font-medium text-gray-700">{{ insuranceInfo.label }}</span>
+            </span>
+            <span class="w-1 h-1 bg-gray-300 rounded-full" v-if="insuranceInfo && patient.insurance_code"></span>
             <span>بیمه: <span class="font-medium text-gray-700">{{ patient.insurance_code || 'ندارد' }}</span></span>
           </div>
         </div>
@@ -100,14 +105,26 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { usePatientFormDialog } from '~/composables/usePatientFormDialog'
+import { getInsuranceInfo } from '~/types/insurance'
 
 // دریافت اطلاعات بیمار به عنوان پراپ از کامپوننت والد (مثلاً لیست بیماران)
-defineProps({
+const props = defineProps({
   patient: {
     type: Object,
     required: true,
     default: () => ({})
+  }
+})
+
+const config = useRuntimeConfig()
+const insuranceInfo = computed(() => {
+  const info = getInsuranceInfo(props.patient.insuranceType)
+  if (!info) return null
+  return {
+    ...info,
+    logo: config.public.apiBase + info.logo,
   }
 })
 
