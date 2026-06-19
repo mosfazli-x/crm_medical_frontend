@@ -1,7 +1,7 @@
 <template>
     <div class="max-w-7xl mx-auto p-4 md:p-8 pt-6 space-y-6">
         <div
-            class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white pb-1 border-b border-slate-100">
+            class="flex flex-col sm:flex-row justify-between items-center gap-4 pb-1 border-b border-slate-100">
             <div>
                 <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">لیست بیماران</h1>
                 <p class="text-sm text-slate-500 mt-1 font-medium">مدیریت و مشاهده پرونده بیماران کلینیک</p>
@@ -83,15 +83,25 @@
                                 <div
                                     class="flex items-center justify-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
 
-                                    <v-tooltip text="ارسال پیامک" location="top">
-                                        <template v-slot:activator="{ props }">
-                                            <v-btn v-bind="props" icon variant="text" size="small"
-                                                class="text-indigo-500 hover:bg-indigo-50"
-                                                @click.stop="openSmsModal(patient)">
-                                                <v-icon size="20">mdi-message-text-outline</v-icon>
-                                            </v-btn>
-                                        </template>
-                                    </v-tooltip>
+                            <v-tooltip text="پرونده کامل" location="top">
+                                <template v-slot:activator="{ props }">
+                                    <v-btn v-bind="props" icon variant="text" size="small"
+                                        class="text-electric-sapphire hover:bg-light-cyan"
+                                        @click.stop="navigateTo(`/patients/${patient.id}`)">
+                                        <v-icon size="20">mdi-file-document-outline</v-icon>
+                                    </v-btn>
+                                </template>
+                            </v-tooltip>
+
+                            <v-tooltip text="ارسال پیامک" location="top">
+                                <template v-slot:activator="{ props }">
+                                    <v-btn v-bind="props" icon variant="text" size="small"
+                                        class="text-cornflower-blue hover:bg-light-cyan"
+                                        @click.stop="openSmsModal(patient)">
+                                        <v-icon size="20">mdi-message-text-outline</v-icon>
+                                    </v-btn>
+                                </template>
+                            </v-tooltip>
 
                                     <v-tooltip text="ویرایش اطلاعات" location="top">
                                         <template v-slot:activator="{ props }">
@@ -125,7 +135,7 @@
             <div v-if="selectedProfile" class="bg-white rounded-3xl shadow-2xl overflow-hidden">
                 <div class="bg-slate-50 px-8 py-6 border-b border-slate-100 flex items-center gap-5">
                     <div
-                        class="w-16 h-16 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl font-bold shadow-sm">
+                        class="w-16 h-16 rounded-2xl bg-periwinkle text-electric-sapphire flex items-center justify-center text-2xl font-bold shadow-sm">
                         {{ selectedProfile.firstName?.charAt(0) }}{{ selectedProfile.lastName?.charAt(0) }}
                     </div>
                     <div>
@@ -173,18 +183,18 @@
                     </v-btn>
                 </div>
 
-                <div v-if="selectedSmsPatient" class="mb-4 bg-indigo-50/50 py-2 px-3 rounded border border-indigo-100">
+                <div v-if="selectedSmsPatient" class="mb-4 bg-light-cyan/50 py-2 px-3 rounded border border-periwinkle">
                     <p class="text-sm text-slate-600">گیرنده:</p>
-                    <p class="font-bold text-indigo-900 mt-1">{{ selectedSmsPatient.firstName }} {{
+                    <p class="font-bold text-electric-sapphire mt-1">{{ selectedSmsPatient.firstName }} {{
                         selectedSmsPatient.lastName
-                        }} <span class="font-mono text-indigo-600 text-sm mr-2" dir="ltr">({{ selectedSmsPatient.phone
+                        }} <span class="font-mono text-cornflower-blue text-sm mr-2" dir="ltr">({{ selectedSmsPatient.phone
                             }})</span></p>
                 </div>
 
                 <div class="space-y-2 px-3">
                     <label class="text-sm font-bold text-slate-700 px-1">متن پیام</label>
                     <textarea v-model="smsText" rows="4"
-                        class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-4 transition-all outline-none resize-none py-1 px-2"
+                        class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded focus:ring-2 focus:ring-electric-sapphire focus:border-electric-sapphire p-4 transition-all outline-none resize-none py-1 px-2"
                         placeholder="متن پیامک خود را اینجا بنویسید..."></textarea>
                 </div>
 
@@ -231,7 +241,7 @@ const smsText = ref('')
 // پیکربندی کلاس‌های وضعیت تأهل جهت خوانایی بالاتر (حذف switch-case)
 const maritalStatusConfig: Record<string, { bg: string, text: string, ring: string }> = {
     'متاهل': { bg: 'bg-emerald-50', text: 'text-emerald-700', ring: 'ring-emerald-600/20' },
-    'مجرد': { bg: 'bg-blue-50', text: 'text-blue-700', ring: 'ring-blue-600/20' },
+    'مجرد': { bg: 'bg-light-cyan', text: 'text-electric-sapphire', ring: 'ring-electric-sapphire/20' },
     'مطلقه': { bg: 'bg-amber-50', text: 'text-amber-700', ring: 'ring-amber-600/20' },
     'بیوه': { bg: 'bg-slate-100', text: 'text-slate-700', ring: 'ring-slate-500/20' }
 }

@@ -1,8 +1,17 @@
 <template>
   <div class="mx-auto max-w-7xl px-4 py-8 md:px-8 min-h-screen">
-    <div class="flex justify-between items-center mb-8">
-      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">تنظیم هفته کاری</h1>
-      <div class="text-sm text-slate-500">ساعات کاری: ۰۷:۰۰ تا ۲۲:۰۰</div>
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">تنظیم زمانبندی رزروها</h1>
+      <div class="flex items-center gap-3">
+        <a :href="`/booking/${user?.id}`" target="_blank"
+          class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 hover:border-electric-sapphire/40 hover:bg-light-cyan/30 rounded-xl text-sm font-bold text-electric-sapphire transition-all duration-200 shadow-sm">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          <span>مشاهده صفحه رزرو</span>
+        </a>
+        <div class="text-sm text-slate-500 hidden sm:block">ساعات کاری: ۰۷:۰۰ تا ۲۲:۰۰</div>
+      </div>
     </div>
 
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden p-4 md:p-6">
@@ -14,13 +23,16 @@
                 ساعت
               </th>
               <th v-for="day in dayHeaders" :key="day.dayOfWeek"
-                class="p-2 text-sm font-bold text-slate-600 border-b-2 border-slate-200 text-center min-w-[100px]">
+                class="p-2 text-sm font-bold text-slate-600 border-b-2 border-slate-200 text-center min-w-[110px] py-1">
                 <div class="flex items-center justify-center gap-1">
                   <span>{{ day.name }}</span>
                   <button @click="openAddRange(day.dayOfWeek)"
-                    class="w-5 h-5 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600 flex items-center justify-center text-xs font-bold transition-colors">
+                    class="w-5 h-5 rounded-full bg-periwinkle hover:bg-baby-blue-ice text-electric-sapphire flex items-center justify-center text-xs font-bold transition-colors">
                     +
                   </button>
+                </div>
+                <div class="text-[10px] text-slate-400 font-normal leading-tight">
+                  {{ jalaliDates[day.dayOfWeek] }}
                 </div>
               </th>
             </tr>
@@ -42,9 +54,9 @@
         </table>
       </div>
 
-      <div class="mt-4 flex items-center gap-4 text-xs text-slate-400">
+      <div class="mt-4 flex items-center gap-4 text-xs text-slate-400 py-2 px-2">
         <div class="flex items-center gap-1">
-          <div class="w-4 h-4 rounded bg-blue-100 border border-blue-200"></div>
+          <div class="w-4 h-4 rounded bg-periwinkle border border-periwinkle"></div>
           <span>بازه فعال</span>
         </div>
         <div class="flex items-center gap-1">
@@ -78,7 +90,7 @@
         <v-card-actions class="px-6 pb-6 pt-2 flex gap-3">
           <v-btn variant="text" color="slate-600" @click="closeAddDialog">انصراف</v-btn>
           <v-spacer />
-          <v-btn variant="flat" color="blue-darken-1" :loading="saving" @click="submitNewRange">ذخیره</v-btn>
+          <v-btn variant="flat" color="#5465ff" :loading="saving" @click="submitNewRange">ذخیره</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -101,6 +113,21 @@ const dayHeaders = [
   { name: 'پنج‌شنبه', dayOfWeek: 4 },
   { name: 'جمعه', dayOfWeek: 5 },
 ]
+
+const jalaliDates = computed(() => {
+  const today = new Date()
+  const todayDay = today.getDay()
+  const daysSinceSaturday = (todayDay + 1) % 7
+  const saturday = new Date(today)
+  saturday.setDate(today.getDate() - daysSinceSaturday)
+  const result: Record<number, string> = {}
+  dayHeaders.forEach((day, index) => {
+    const d = new Date(saturday)
+    d.setDate(saturday.getDate() + index)
+    result[day.dayOfWeek] = d.toLocaleDateString('fa-IR', { day: 'numeric', month: 'long' })
+  })
+  return result
+})
 
 const timeSlots = computed(() => {
   const slots: string[] = []
@@ -196,7 +223,7 @@ function getCellClasses(dayOfWeek: number, time: string) {
   const isRangeStart = rangeStart.value?.day === dayOfWeek && rangeStart.value?.time === time
   const isSelected = rangeStart.value?.day === dayOfWeek
 
-  if (inRange) return 'bg-blue-100 hover:bg-blue-200 border border-blue-200/50'
+  if (inRange) return 'bg-periwinkle hover:bg-baby-blue-ice border border-periwinkle/50'
   if (isSelected && !inRange) return 'bg-yellow-100 hover:bg-yellow-200 border border-yellow-200/50'
   return 'hover:bg-slate-100 border border-transparent'
 }
@@ -296,6 +323,6 @@ onMounted(() => {
 })
 
 useSeoMeta({
-  title: 'تنظیم هفته کاری | سیستم مدیریت',
+  title: 'تنظیم زمانبندی رزروها | سیستم مدیریت',
 })
 </script>

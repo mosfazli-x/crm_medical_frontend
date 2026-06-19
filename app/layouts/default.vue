@@ -2,17 +2,17 @@
   <v-locale-provider rtl>
     <transition name="fade">
       <div v-if="isLoading" class="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-50 dark:bg-slate-600 transition-colors duration-300">
-        <div class="absolute inset-0 bg-blue-100/30 dark:bg-blue-500/20 backdrop-blur-sm"></div>
+        <div class="absolute inset-0 bg-periwinkle/30 dark:bg-electric-sapphire/20 backdrop-blur-sm"></div>
 
-        <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-200/40 dark:bg-blue-800/30 rounded-full blur-[120px] translate-x-1/3 -translate-y-1/3"></div>
-        <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-100/40 dark:bg-blue-900/30 rounded-full blur-[120px] -translate-x-1/3 translate-y-1/3"></div>
+        <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-baby-blue-ice/40 dark:bg-electric-sapphire/30 rounded-full blur-[120px] translate-x-1/3 -translate-y-1/3"></div>
+        <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-periwinkle/40 dark:bg-electric-sapphire/30 rounded-full blur-[120px] -translate-x-1/3 translate-y-1/3"></div>
 
         <div class="relative z-10 flex flex-col items-center gap-8">
-          <div class="p-8 rounded-3xl shadow-2xl shadow-blue-200/50 dark:shadow-blue-900/50 backdrop-blur-md">
-            <MedicalKit class="w-20 h-20 fill-blue-600 dark:fill-blue-400" />
+          <div class="p-8 rounded-3xl shadow-2xl shadow-electric-sapphire/50 dark:shadow-electric-sapphire/50 backdrop-blur-md">
+            <MedicalKit class="w-20 h-20 fill-electric-sapphire dark:fill-cornflower-blue" />
           </div>
 
-          <v-progress-circular indeterminate color="blue-darken-1" size="80" width="8" class="drop-shadow-lg" />
+          <v-progress-circular indeterminate color="#5465ff" size="80" width="8" class="drop-shadow-lg" />
 
           <div class="text-center">
             <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">در حال بارگذاری پنل کلینیک</h3>
@@ -20,14 +20,14 @@
           </div>
 
           <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div class="w-96 h-96 bg-blue-300/20 dark:bg-blue-500/10 rounded-full animate-ping-slow"></div>
+            <div class="w-96 h-96 bg-baby-blue-ice/20 dark:bg-electric-sapphire/10 rounded-full animate-ping-slow"></div>
           </div>
         </div>
       </div>
     </transition>
 
     <v-app v-if="!isLoading" class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300 relative">
-      <div class="fixed top-0 right-0 w-[500px] h-[500px] bg-blue-100/50 dark:bg-blue-900/20 rounded-full blur-[100px] -z-10 translate-x-1/2 -translate-y-1/2"></div>
+      <div class="fixed top-0 right-0 w-[500px] h-[500px] bg-periwinkle/50 dark:bg-electric-sapphire/20 rounded-full blur-[100px] -z-10 translate-x-1/2 -translate-y-1/2"></div>
       
       <v-navigation-drawer 
         v-model="drawer" 
@@ -35,29 +35,29 @@
         permanent 
         width="290" 
         rail-width="75" 
-        class="border-e border-slate-200 dark:border-slate-800 !bg-white dark:!bg-slate-600 transition-all duration-300"
+        class="border-e border-slate-200 dark:border-slate-800 !bg-electric-sapphire transition-all duration-300"
         elevation="0"
         :temporary="isMobile"
       >
         <button 
           v-if="!isMobile"
           @click="rail = !rail" 
-          class="absolute -left-3 top-8 z-50 w-6 h-6 bg-info dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300"
+          class="absolute -left-3 top-8 z-50 w-6 h-6 !bg-baby-blue-ice border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300"
         >
           <AltArrowLeft class="w-4 h-4 dark:text-slate-400 transition-transform duration-300" :class="rail ? '' : 'rotate-180'" />
         </button>
 
         <div class="h-24 flex items-center gap-3 transition-all" :class="rail && !isMobile ? 'justify-center px-0' : 'px-6'">
-          <MedicalKit class="w-10 h-10 shrink-0 fill-blue-600 dark:fill-blue-400" />
+          <MedicalKit class="w-10 h-10 shrink-0 fill-periwinkle dark:fill-periwinkle" />
           <div v-if="!rail || isMobile" class="flex flex-col overflow-hidden whitespace-nowrap">
             <span class="font-bold text-lg text-slate-800 dark:text-slate-100 tracking-tight">کلینیک دکتر حسینی</span>
-            <span class="text-[11px] text-slate-400 dark:fill-slate-300 font-medium">پنل پزشک و مدیریت</span>
+            <span class="text-[11px] text-slate-200 dark:fill-slate-300 font-medium">پنل پزشک و مدیریت</span>
           </div>
         </div>
 
         <div class="space-y-6 mt-4">
           <div>
-            <div v-if="!rail || isMobile" class="px-6 mb-2 text-[10px] font-bold text-slate-400 dark:fill-slate-300 tracking-widest uppercase">
+            <div v-if="!rail || isMobile" class="px-6 mb-2 text-[10px] font-bold text-slate-200 dark:fill-slate-300 tracking-widest uppercase">
               اصلی
             </div>
             <v-list nav class="px-3">
@@ -74,7 +74,7 @@
                     nuxt 
                     class="rounded-xl transition-all mb-1 dark:hover:bg-slate-800" 
                     :class="rail && !isMobile ? 'px-0 justify-center' : 'px-4'"
-                    active-class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                    active-class="bg-light-cyan dark:bg-electric-sapphire/30 text-electric-sapphire dark:text-cornflower-blue"
                   >
                     <template #title>
                       <div class="flex items-center" :class="rail && !isMobile ? 'justify-center w-full' : 'gap-3'">
@@ -90,7 +90,7 @@
           </div>
 
           <div v-if="patientMenu.length">
-            <div v-if="!rail || isMobile" class="px-6 mb-2 text-[10px] font-bold text-slate-400 dark:fill-slate-300 tracking-widest uppercase">
+            <div v-if="!rail || isMobile" class="px-6 mb-2 text-[10px] font-bold text-slate-200 dark:fill-slate-300 tracking-widest uppercase">
               بیماران
             </div>
             <v-list nav class="px-3">
@@ -107,7 +107,7 @@
                     nuxt 
                     class="rounded-xl transition-all mb-1 dark:hover:bg-slate-800" 
                     :class="rail && !isMobile ? 'px-0 justify-center' : 'px-4'"
-                    active-class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                    active-class="bg-light-cyan dark:bg-electric-sapphire/30 text-electric-sapphire dark:text-cornflower-blue"
                   >
                     <template #title>
                       <div class="flex items-center" :class="rail && !isMobile ? 'justify-center w-full' : 'gap-3'">
@@ -125,8 +125,8 @@
 
         <template #append>
           <div class="py-4 border-t border-slate-100 dark:border-slate-800 flex items-center" :class="rail && !isMobile ? 'justify-center' : 'px-6 gap-3'">
-            <div class="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center shrink-0">
-              <span class="text-blue-600 dark:text-blue-300 font-bold text-sm">{{ userInitial }}</span>
+            <div class="w-9 h-9 rounded-full bg-periwinkle dark:bg-electric-sapphire/60 flex items-center justify-center shrink-0">
+              <span class="text-electric-sapphire dark:text-periwinkle font-bold text-sm">{{ userInitial }}</span>
             </div>
             <div v-if="!rail || isMobile" class="flex flex-col overflow-hidden whitespace-nowrap">
               <span class="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{{ user?.fullName || 'کاربر مهمان' }}</span>
@@ -136,12 +136,12 @@
         </template>
       </v-navigation-drawer>
 
-      <v-app-bar height="80" class="!bg-slate-200 dark:bg-slate-600/80 backdrop-blur-md px-4 md:px-6 border-b border-slate-200 dark:border-slate-800" elevation="0">
+      <v-app-bar height="80" class="!bg-electric-sapphire/80 backdrop-blur-md px-4 md:px-6 border-b border-slate-200 dark:border-slate-800" elevation="0">
         <template v-slot:prepend>
-          <v-app-bar-nav-icon variant="text" @click="drawer = !drawer" class="text-slate-600 dark:text-slate-300 lg:hidden !flex"></v-app-bar-nav-icon>
+          <v-app-bar-nav-icon variant="text" @click="drawer = !drawer" class="!text-light-cyan lg:hidden !flex"></v-app-bar-nav-icon>
           <div class="hidden lg:flex flex-col">
-            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-600 select-none">خوش آمدید</h2>
-            <div class="text-slate-400 dark:fill-slate-300 text-xs mt-1 select-none">
+            <h2 class="text-xl font-bold text-slate-100 select-none">خوش آمدید</h2>
+            <div class="text-slate-200 text-xs mt-1 select-none">
               امروز یک روز عالی برای مدیریت کلینیک است.
             </div>
           </div>
@@ -151,32 +151,32 @@
 
         <div class="flex items-center gap-2 md:gap-4">
          <!--
-          <div class="hidden md:flex items-center bg-slate-50 dark:bg-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl px-4 h-11 w-80 transition-all focus-within:shadow-md focus-within:border-blue-400 dark:focus-within:border-blue-500">
+          <div class="hidden md:flex items-center bg-slate-50 dark:bg-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl px-4 h-11 w-80 transition-all focus-within:shadow-md focus-within:border-cornflower-blue">
             <Magnify class="w-5 h-5 text-slate-800" />
             <input type="text" placeholder="جستجو (نام بیمار، کدملی...)" class="w-full text-sm outline-none text-slate-700 dark:text-slate-200 placeholder:text-slate-600 bg-transparent pr-3 h-full" />
           </div>
           -->
           
-          <v-divider vertical inset class="mx-2 hidden md:block dark:border-slate-700"></v-divider>
+          <v-divider vertical inset class="mx-2 hidden md:block border-slate-100"></v-divider>
 
           
-          <v-btn icon variant="text" @click="toggleTheme" class="fill-slate-300 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
+          <v-btn icon variant="text" @click="toggleTheme" class="fill-slate-100 dark:text-slate-400 hover:text-electric-sapphire dark:hover:text-cornflower-blue">
              <span class="text-xl">{{ isDark ? '🌙' : '☀️' }}</span>
           </v-btn>
         
 
-          <v-btn icon variant="text" class="fill-slate-300 dark:fill-slate-400 hover:fill-blue-600 dark:hover:fill-blue-400 hidden sm:flex">
+          <v-btn icon variant="text" class="fill-slate-100 hover:fill-slate-300 hidden sm:flex">
             <Settings class="w-5.5 h-5.5" />
           </v-btn>
 
-          <v-btn icon variant="text" class="fill-slate-300 dark:fill-slate-400 hover:fill-red-600 dark:hover:fill-red-400" @click="logout">
+          <v-btn icon variant="text" class="fill-slate-100 hover:fill-red-600 dark:hover:fill-red-400" @click="logout">
             <TurnOffIcon class="w-5.5 h-5.5" />
           </v-btn>
         </div>
       </v-app-bar>
 
       <v-main class="bg-transparent min-h-screen pt-20">
-        <div class="px-4 md:px-10 pb-10 max-w-[1600px] mx-auto">
+        <div class="px-4 md:px-10 pb-10 max-w-[1600px] mx-auto bg-light-cyan/50">
           <slot />
         </div>
       </v-main>
@@ -201,6 +201,13 @@ import Settings from '~/components/icons/Settings.vue'
 import TurnOffIcon from '~/components/icons/TurnOffIcon.vue'
 import Users from '~/components/icons/Users.vue'
 import UsersGroup from '~/components/icons/UsersGroup.vue'
+import DocumentText from '~/components/icons/DocumentText.vue'
+import ShieldCheck from '~/components/icons/ShieldCheck.vue'
+import HeartPulse from '~/components/icons/HeartPulse.vue'
+import ChatDots from '~/components/icons/ChatDots.vue'
+import Calculator from '~/components/icons/Calculator.vue'
+import Wallet from '~/components/icons/Wallet.vue'
+import Profile from '~/components/icons/Profile.vue'
 
 // Composables
 const { user, isAuthenticated, logout } = useAuth() // فرض بر این است که این Composable را دارید
@@ -281,12 +288,17 @@ const userInitial = computed(() => {
 const ALL_MENUS = [
   { title: 'داشبورد', to: '/', icon: HomeAngle, roles: ['all'], category: 'primary' },
   { title: 'تقویم کاری', to: '/calendar', icon: Calendar, roles: ['admin_doctor', 'doctor'], category: 'primary' },
-  { title: 'تنظیم هفته کاری', to: '/scheduling', icon: Clock, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: 'تنظیم زمانبندی رزروها', to: '/scheduling', icon: Clock, roles: ['admin_doctor', 'doctor'], category: 'primary' },
   { title: 'نوبت‌های بیماران', to: '/appointments', icon: Grid, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: 'انواع نوبت', to: '/visit-types', icon: DocumentText, roles: ['admin_doctor', 'doctor'], category: 'primary' },
   { title: 'لیست کاربران', to: '/users', icon: Users, roles: ['admin_doctor', 'doctor'], category: 'primary' },
-  { title: 'نتایج آزمایش', to: '/lab-results', icon: Calendar, roles: ['lab'], category: 'primary' },
+  { title: 'پیام‌ها', to: '/messaging', icon: ChatDots, roles: ['admin_doctor', 'doctor', 'lab', 'pharmacy'], category: 'primary' },
+  { title: 'ابزارهای بالینی', to: '/clinical-tools', icon: Calculator, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: 'صورتحساب', to: '/billing', icon: Wallet, roles: ['admin_doctor'], category: 'primary' },
+  { title: 'غربالگری', to: '/screening', icon: ShieldCheck, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: 'نتایج آزمایش', to: '/lab-results', icon: DocumentText, roles: ['admin_doctor', 'doctor', 'lab'], category: 'primary' },
   { title: 'نسخه‌ها', to: '/prescriptions', icon: Calendar, roles: ['pharmacy'], category: 'primary' },
-  { title: 'پرونده من', to: '/my-profile', icon: Calendar, roles: ['patient'], category: 'primary' },
+  { title: 'پرونده من', to: '/my-profile', icon: Profile, roles: ['patient'], category: 'primary' },
   
   { title: 'لیست بیماران', to: '/patients', icon: UsersGroup, roles: ['admin_doctor', 'doctor'], category: 'patient' }
 ]
@@ -396,4 +408,14 @@ definePageMeta({
 .v-list-item__content {
   min-width: 0px !important;
 }
+
+
+.v-navigation-drawer__content {
+    -ms-overflow-style: none !important;  /* Internet Explorer 10+ */
+    scrollbar-width: none !important;  /* Firefox, Safari 18.2+, Chromium 121+ */
+}
+.v-navigation-drawer__content::-webkit-scrollbar { 
+    display: none !important;  /* Older Safari and Chromium */
+}
+
 </style>

@@ -28,7 +28,7 @@
         <div class="bg-white border border-slate-200 rounded p-5 shadow-sm">
             <div class="flex justify-between items-center border-b border-slate-100 py-2 mb-3 px-2">
                 <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                    <v-icon icon="mdi-pill" color="blue-darken-2" size="small" /> داروهای مصرفی
+                    <v-icon icon="mdi-pill" color="#5465ff" size="small" /> داروهای مصرفی
                 </h3>
                 <v-btn variant="tonal" color="black" size="small" prepend-icon="mdi-plus" class="rounded-lg" 
                     @click="form.medications.push({ name: '', dosage: '' })">افزودن</v-btn>

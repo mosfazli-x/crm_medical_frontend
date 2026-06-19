@@ -6,7 +6,7 @@
                 <p class="text-slate-500 mt-2 text-sm md:text-base font-medium">تأیید، رد یا تغییر وضعیت دسترسی کاربران سیستم</p>
             </div>
 
-            <v-tabs v-model="statusTab" color="indigo-600" bg-color="transparent" class="w-full md:w-auto border-b border-slate-200">
+            <v-tabs v-model="statusTab" color="#5465ff" bg-color="transparent" class="w-full md:w-auto border-b border-slate-200">
                 <v-tab value="all" class="text-sm font-semibold tracking-wide">
                     همه ({{ users.length }})
                 </v-tab>
@@ -76,7 +76,7 @@
 
                                         <v-tooltip v-else text="تأیید و ایجاد پرونده بیمار" location="top">
                                             <template v-slot:activator="{ props }">
-                                                <v-btn v-bind="props" icon variant="text" size="small" class="text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50" @click.stop="openApprovePatientDialog(user)">
+                                                <v-btn v-bind="props" icon variant="text" size="small" class="text-electric-sapphire hover:text-electric-sapphire hover:bg-light-cyan" @click.stop="openApprovePatientDialog(user)">
                                                     <v-icon size="20">mdi-account-plus-outline</v-icon>
                                                 </v-btn>
                                             </template>
@@ -108,7 +108,7 @@
             </div>
 
             <div v-if="loading" class="flex flex-col items-center justify-center p-16">
-                <v-progress-circular indeterminate size="48" color="indigo-500" />
+                <v-progress-circular indeterminate size="48" color="#5465ff" />
                 <p class="mt-4 text-sm font-medium text-slate-500">در حال دریافت اطلاعات...</p>
             </div>
 
@@ -143,7 +143,7 @@ const approvePatientDialog = ref(false)
 // نگاشت تنظیمات نقش‌ها برای خوانایی بهتر کد
 const roleConfig: Record<string, { label: string, bg: string, text: string, ring: string }> = {
     admin_doctor: { label: 'مدیر کلینیک', bg: 'bg-rose-50', text: 'text-rose-700', ring: 'ring-rose-600/20' },
-    doctor: { label: 'پزشک', bg: 'bg-blue-50', text: 'text-blue-700', ring: 'ring-blue-600/20' },
+    doctor: { label: 'پزشک', bg: 'bg-light-cyan', text: 'text-electric-sapphire', ring: 'ring-electric-sapphire/20' },
     lab: { label: 'آزمایشگاه', bg: 'bg-purple-50', text: 'text-purple-700', ring: 'ring-purple-600/20' },
     pharmacy: { label: 'داروخانه', bg: 'bg-teal-50', text: 'text-teal-700', ring: 'ring-teal-600/20' },
     patient: { label: 'بیمار', bg: 'bg-orange-50', text: 'text-orange-700', ring: 'ring-orange-600/20' }

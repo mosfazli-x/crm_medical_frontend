@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+@theme {
+  --color-electric-sapphire: #5465ff;
+  --color-cornflower-blue: #788bff;
+  --color-baby-blue-ice: #9bb1ff;
+  --color-periwinkle: #bfd7ff;
+  --color-light-cyan: #e2fdff;
+}

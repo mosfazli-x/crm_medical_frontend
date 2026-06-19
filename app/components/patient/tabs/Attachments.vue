@@ -2,7 +2,7 @@
   <div class="max-w-6xl mx-auto space-y-6">
     <div class="bg-white p-6 shadow-sm rounded-2xl border border-slate-100">
       <h4 class="text-base font-bold text-slate-800 mb-6 flex items-center gap-2 py-3 px-2 border-b border-slate-100">
-        <v-icon icon="mdi-folder-account-outline" class="text-blue-600" />
+        <v-icon icon="mdi-folder-account-outline" class="text-electric-sapphire" />
         مدیریت مستندات و سوابق بیمار
       </h4>
 
@@ -36,7 +36,7 @@
                 <v-btn v-if="file.filePath" icon="mdi-eye-outline" variant="text" color="slate-500" density="compact" size="small"
                        :href="config.public.apiBase + file.filePath" target="_blank" title="مشاهده فایل" />
                        
-                <v-btn v-if="file.filePath" icon="mdi-download-outline" variant="text" color="blue-600" density="compact" size="small"
+                <v-btn v-if="file.filePath" icon="mdi-download-outline" variant="text" color="#5465ff" density="compact" size="small"
                        :href="config.public.apiBase + file.filePath" :download="file.name" title="دانلود فایل" />
 
                 <v-btn icon="mdi-trash-can-outline" variant="text" color="error" density="compact" size="small"
@@ -48,12 +48,12 @@
             </div>
 
             <div v-for="(file, idx) in attachments[cat.key]" :key="'new-'+idx"
-                 class="flex items-center justify-between p-2.5 my-1 bg-blue-50/70 border border-blue-100 rounded-lg group hover:border-blue-200 transition-all">
+                 class="flex items-center justify-between p-2.5 my-1 bg-light-cyan/70 border border-periwinkle rounded-lg group hover:border-baby-blue-ice transition-all">
               <div class="flex items-center gap-2 overflow-hidden w-full">
-                <v-icon icon="mdi-file-clock-outline" size="small" class="text-blue-500 shrink-0" />
+                <v-icon icon="mdi-file-clock-outline" size="small" class="text-electric-sapphire shrink-0" />
                 <div class="flex flex-col min-w-0 w-full">
-                  <span class="text-xs text-blue-700 truncate dir-ltr text-left font-medium">{{ file.name }}</span>
-                  <span class="text-[10px] text-blue-400 mt-0.5 font-normal">آماده آپلود</span>
+                  <span class="text-xs text-electric-sapphire truncate dir-ltr text-left font-medium">{{ file.name }}</span>
+                  <span class="text-[10px] text-cornflower-blue mt-0.5 font-normal">آماده آپلود</span>
                 </div>
               </div>
               <v-btn icon="mdi-close" variant="text" color="error" density="compact" size="small"
@@ -68,8 +68,8 @@
           </div>
 
           <div class="mt-auto pt-2">
-            <label class="cursor-pointer flex flex-col items-center justify-center w-full py-3 bg-white border-2 border-dashed border-slate-300 hover:border-blue-400 hover:bg-blue-50 rounded-lg transition-all group">
-              <div class="flex items-center gap-2 text-slate-500 group-hover:text-blue-600 transition-colors">
+            <label class="cursor-pointer flex flex-col items-center justify-center w-full py-3 bg-white border-2 border-dashed border-slate-300 hover:border-baby-blue-ice hover:bg-light-cyan rounded-lg transition-all group">
+              <div class="flex items-center gap-2 text-slate-500 group-hover:text-electric-sapphire transition-colors">
                 <v-icon icon="mdi-plus" size="small" />
                 <span class="text-xs font-bold">افزودن فایل جدید</span>
               </div>
@@ -107,7 +107,7 @@ const deleting = reactive(new Set<string>())
 const categories = [
   { key: 'ultrasound', title: 'مدارک سونوگرافی', icon: 'mdi-camera-iris', color: 'purple-darken-1', accept: 'image/*,application/pdf' },
   { key: 'lab', title: 'گزارش‌های آزمایشگاه', icon: 'mdi-flask-outline', color: 'teal-darken-1', accept: '.pdf,.jpg,.jpeg,.png' },
-  { key: 'prescription', title: 'نسخه‌های قبلی', icon: 'mdi-prescription', color: 'blue-darken-1', accept: 'image/*,application/pdf' }
+  { key: 'prescription', title: 'نسخه‌های قبلی', icon: 'mdi-prescription', color: '#5465ff', accept: 'image/*,application/pdf' }
 ]
 
 const deleteExistingAttachment = async (categoryKey: 'ultrasound' | 'lab' | 'prescription', file: any, index: number) => {

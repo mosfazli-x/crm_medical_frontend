@@ -45,14 +45,14 @@
                             <label class="text-sm font-semibold text-slate-700 mb-2 block">زمان شروع <span
                                     class="text-red-500">*</span></label>
                             <PersianDatetimePicker v-model="newVisit.start" type="datetime"
-                                display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4f46e5"
+                                display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#5465ff"
                                 auto-submit custom-input class="w-full" />
                         </v-col>
 
                         <v-col cols="12" md="6">
                             <label class="text-sm font-semibold text-slate-700 mb-2 block">زمان پایان</label>
                             <PersianDatetimePicker v-model="newVisit.end" type="datetime"
-                                display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4f46e5"
+                                display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#5465ff"
                                 auto-submit custom-input class="w-full" />
                         </v-col>
 
@@ -92,8 +92,8 @@
                         انصراف
                     </v-btn>
 
-                    <v-btn color="indigo-accent-4" variant="flat" size="large"
-                        class="px-8 w-full md:w-auto font-medium tracking-wide rounded-lg shadow-md shadow-indigo-200"
+                    <v-btn color="#5465ff" variant="flat" size="large"
+                        class="px-8 w-full md:w-auto font-medium tracking-wide rounded-lg shadow-md shadow-periwinkle"
                         :loading="saving" @click="saveVisit">
                         {{ isEditMode ? 'ذخیره تغییرات' : 'ثبت نوبت' }}
                     </v-btn>
@@ -256,8 +256,8 @@ const calendarOptions = ref({
     editable: true,
     selectable: true,
     selectMirror: true,
-    slotMinTime: '08:00:00',
-    slotMaxTime: '21:00:00',
+    slotMinTime: '07:00:00',
+    slotMaxTime: '22:00:00',
     slotDuration: '00:30:00',
     allDaySlot: false, // برای نوبت دهی پزشکی معمولاً نیاز نیست
     buttonText: {
@@ -390,13 +390,13 @@ useSeoMeta({
 }
 
 :deep(.fc-button-active) {
-    background-color: #4f46e5 !important;
-    border-color: #4f46e5 !important;
+    background-color: #5465ff !important;
+    border-color: #5465ff !important;
     color: white !important;
 }
 
 :deep(.fc-button:focus) {
-    box-shadow: 0 0 0 2px #c7d2fe !important;
+    box-shadow: 0 0 0 2px #bfd7ff !important;
 }
 
 :deep(.fc-theme-standard th) {
@@ -415,10 +415,10 @@ useSeoMeta({
 /* استایل زیبای کارت رویدادها */
 :deep(.fc-event) {
     border: none;
-    border-right: 3px solid #4f46e5;
+    border-right: 3px solid #5465ff;
     /* خط کنار رویداد (RTL) */
-    background-color: #eef2ff;
-    color: #3730a3;
+    background-color: #e2fdff;
+    color: #5465ff;
     border-radius: 6px;
     padding: 3px 6px;
     font-size: 0.8rem;
@@ -429,9 +429,9 @@ useSeoMeta({
 }
 
 :deep(.fc-event:hover) {
-    background-color: #e0e7ff;
+    background-color: #bfd7ff;
     transform: translateY(-1px);
-    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(84, 101, 255, 0.1);
 }
 
 :deep(.fc-timegrid-slot-label-cushion) {
@@ -467,8 +467,8 @@ useSeoMeta({
 }
 
 :deep(.vpd-input-group input:focus) {
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px #e0e7ff;
+    border-color: #5465ff;
+    box-shadow: 0 0 0 3px #bfd7ff;
     outline: none;
 }
 

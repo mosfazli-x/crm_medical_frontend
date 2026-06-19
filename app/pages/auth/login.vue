@@ -3,7 +3,7 @@
         <div class="min-h-screen grid grid-cols-1 md:grid-cols-2" dir="rtl">
             <!-- سمت چپ: Illustration پزشکی -->
             <div
-                class="hidden md:flex flex-col items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-700 text-white p-12!">
+                class="hidden md:flex flex-col items-center justify-center bg-gradient-to-br from-electric-sapphire to-cornflower-blue text-white p-12!">
                 <div class="text-center max-w-lg">
                     <h1 class="text-5xl font-bold mb-6">سیستم مدیریت کلینیک</h1>
                     <p class="text-xl opacity-90">مدیریت هوشمند بیماران، ویزیت‌ها و پرونده‌های پزشکی</p>
@@ -46,7 +46,7 @@
 
                         <div class="text-center mt-8 text-sm text-slate-600">
                             اولین بار است؟
-                            <nuxt-link to="/auth/register" class="text-blue-600 font-medium hover:underline">
+                            <nuxt-link to="/auth/register" class="text-electric-sapphire font-medium hover:underline">
                                 ثبت‌نام اولیه
                             </nuxt-link>
                         </div>

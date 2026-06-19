@@ -21,7 +21,7 @@
             <div class="text-3xl font-black text-slate-800">{{ todayAppointments.length }}</div>
           </div>
           <div class="p-3">
-            <Calendar class="w-6 h-6 text-blue-600 fill-current" />
+            <Calendar class="w-6 h-6 text-electric-sapphire fill-current" />
           </div>
         </div>
       </div>
@@ -60,7 +60,7 @@
             <div class="text-3xl font-black text-slate-800">{{ availableSlotsCount }}</div>
           </div>
           <div class="p-3">
-            <Grid class="w-6 h-6 text-indigo-600 stroke-current" />
+            <Grid class="w-6 h-6 text-electric-sapphire stroke-current" />
           </div>
         </div>
       </div>
@@ -70,14 +70,14 @@
       <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
         <h2 class="text-lg font-bold text-slate-800">برنامه امروز شما</h2>
         <NuxtLink to="/appointments"
-          class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors flex items-center gap-1">
+          class="text-sm font-semibold text-electric-sapphire hover:text-electric-sapphire transition-colors flex items-center gap-1">
           مشاهده همه
           <span aria-hidden="true">&larr;</span>
         </NuxtLink>
       </div>
 
       <div v-if="loading" class="flex flex-col items-center justify-center py-20">
-        <svg class="animate-spin h-8 w-8 text-indigo-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+        <svg class="animate-spin h-8 w-8 text-electric-sapphire mb-4" xmlns="http://www.w3.org/2000/svg" fill="none"
           viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor"
@@ -88,7 +88,7 @@
       </div>
 
       <div v-else-if="!todayAppointments.length"
-        class="flex flex-col items-center justify-center py-20 px-4 text-center">
+        class="flex flex-col items-center justify-center py-20 px-4 text-center my-6">
         <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4 border border-slate-100">
           <Calendar class="w-8 h-8 text-slate-300 fill-current" />
         </div>
@@ -108,7 +108,7 @@
           </div>
 
           <div class="flex-1 min-w-0">
-            <h4 class="text-base font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">
+            <h4 class="text-base font-bold text-slate-800 group-hover:text-electric-sapphire transition-colors">
               {{ appt.patientFirstName }} {{ appt.patientLastName }}
             </h4>
             <div class="flex flex-wrap items-center gap-2 mt-1.5 text-sm text-slate-500 font-medium">
@@ -179,7 +179,7 @@ const pendingCount = computed(() =>
 function badgeStyle(status: string) {
   const map: Record<string, string> = {
     pending: 'bg-amber-50 text-amber-700 border-amber-200/60',
-    confirmed: 'bg-blue-50 text-blue-700 border-blue-200/60',
+    confirmed: 'bg-light-cyan text-electric-sapphire border-periwinkle/60',
     rejected: 'bg-slate-100 text-slate-600 border-slate-200',
     cancelled: 'bg-red-50 text-red-700 border-red-200/60',
     completed: 'bg-emerald-50 text-emerald-700 border-emerald-200/60',

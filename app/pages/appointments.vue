@@ -31,7 +31,7 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="flex flex-col items-center justify-center py-24">
-        <svg class="animate-spin h-8 w-8 text-indigo-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+        <svg class="animate-spin h-8 w-8 text-electric-sapphire mb-4" xmlns="http://www.w3.org/2000/svg" fill="none"
           viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor"
@@ -42,7 +42,7 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else-if="!appointments.length" class="flex flex-col items-center justify-center py-24 px-4 text-center">
+      <div v-else-if="!appointments.length" class="flex flex-col items-center justify-center py-24 px-4 text-center my-3">
         <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-5 border border-slate-100">
           <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg">
@@ -88,6 +88,12 @@
               </div>
 
               <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mt-2 text-sm text-slate-500 font-medium">
+                <div v-if="appt.visitTypeName" class="flex items-center gap-1.5">
+                  <div class="w-2.5 h-2.5 rounded-full shrink-0"
+                    :style="{ backgroundColor: appt.visitTypeColor || '#3B82F6' }"></div>
+                  <span class="text-slate-700 font-medium">{{ appt.visitTypeName }}</span>
+                </div>
+                <span v-if="appt.visitTypeName" class="w-1 h-1 rounded-full bg-slate-300 hidden sm:inline-block"></span>
                 <div class="flex items-center gap-1">
                   <span class="text-slate-400 text-xs">کد ملی:</span>
                   <span class="text-slate-700">{{ appt.patientNationalId }}</span>
@@ -123,7 +129,7 @@
               <!-- Confirmed Actions -->
               <template v-else-if="appt.status === 'confirmed'">
                 <button @click="updateStatus(appt.id, 'completed')"
-                  class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/60 rounded-xl text-xs font-bold transition-colors focus:ring-2 focus:ring-indigo-200 focus:outline-none">
+                  class="px-4 py-2 bg-light-cyan hover:bg-periwinkle text-electric-sapphire border border-periwinkle/60 rounded-xl text-xs font-bold transition-colors focus:ring-2 focus:ring-periwinkle focus:outline-none">
                   تکمیل شد
                 </button>
                 <button @click="updateStatus(appt.id, 'cancelled')"
@@ -192,7 +198,7 @@ function formatDate(dateStr: string) {
 function badgeStyle(status: string) {
   const map: Record<string, string> = {
     pending: 'bg-amber-50 text-amber-700 border-amber-200/60',
-    confirmed: 'bg-blue-50 text-blue-700 border-blue-200/60',
+    confirmed: 'bg-light-cyan text-electric-sapphire border-periwinkle/60',
     rejected: 'bg-slate-100 text-slate-600 border-slate-200',
     cancelled: 'bg-red-50 text-red-700 border-red-200/60',
     completed: 'bg-emerald-50 text-emerald-700 border-emerald-200/60',

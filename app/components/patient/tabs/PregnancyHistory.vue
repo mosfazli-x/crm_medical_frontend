@@ -9,7 +9,7 @@
         </h3>
       </div>
       
-      <v-btn color="blue-600" variant="flat" prepend-icon="mdi-plus" class="rounded" size="small"
+      <v-btn color="#5465ff" variant="flat" prepend-icon="mdi-plus" class="rounded" size="small"
              @click="records.push({
                gravida_index: records.length + 1,
                status: 'current',
@@ -36,7 +36,7 @@
           <div class="flex justify-between w-full items-center pr-2">
             
             <div class="flex items-center gap-4">
-              <span class="bg-blue-50 border border-blue-100 text-blue-700 w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold shadow-sm">
+              <span class="bg-light-cyan border border-periwinkle text-electric-sapphire w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold shadow-sm">
                 G{{ rec.gravida_index }}
               </span>
               <div class="flex flex-col">
@@ -66,13 +66,13 @@
               <div class="relative">
                 <PersianDatetimePicker v-model="rec.lmp" type="date" placeholder="تاریخ LMP"
                   display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#000000" auto-submit clearable
-                  custom-input class="w-full !h-[40px] border border-slate-400 hover:border-slate-800 text-sm text-slate-700 outline-none focus:border-blue-600 rounded px-3 bg-white transition-colors" />
+                  custom-input class="w-full !h-[40px] border border-slate-400 hover:border-slate-800 text-sm text-slate-700 outline-none focus:border-electric-sapphire rounded px-3 bg-white transition-colors" />
               </div>
 
               <div class="relative">
                 <PersianDatetimePicker v-model="rec.edd" type="date" placeholder="تاریخ EDD"
                   display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#000000" auto-submit clearable
-                  custom-input class="w-full !h-[40px] border border-slate-400 hover:border-slate-800 text-sm text-slate-700 outline-none focus:border-blue-600 rounded px-3 bg-white transition-colors" />
+                  custom-input class="w-full !h-[40px] border border-slate-400 hover:border-slate-800 text-sm text-slate-700 outline-none focus:border-electric-sapphire rounded px-3 bg-white transition-colors" />
               </div>
 
               <v-text-field v-model.number="rec.gestational_age_weeks" label="سن بارداری (هفته)" type="number" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
@@ -81,7 +81,7 @@
               <div v-if="rec.status === 'completed'" class="relative">
                 <PersianDatetimePicker v-model="rec.end_date" type="date" placeholder="تاریخ پایان (زایمان/سقط)"
                   display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#000000" auto-submit clearable
-                  custom-input class="w-full !h-[40px] border border-slate-400 hover:border-slate-800 text-sm text-slate-700 outline-none focus:border-blue-600 rounded px-3 bg-white transition-colors" />
+                  custom-input class="w-full !h-[40px] border border-slate-400 hover:border-slate-800 text-sm text-slate-700 outline-none focus:border-electric-sapphire rounded px-3 bg-white transition-colors" />
               </div>
             </div>
 
@@ -95,14 +95,14 @@
 
             <div class="bg-white border border-slate-200 rounded p-4 px-2 shadow-sm">
               <h4 class="font-bold text-slate-700 text-sm my-3 flex items-center gap-2">
-                <v-icon icon="mdi-microscope" size="small" class="text-indigo-500" />
+                <v-icon icon="mdi-microscope" size="small" class="text-electric-sapphire" />
                 تست‌ها و غربالگری‌های انجام شده
               </h4>
               <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
-                <v-checkbox v-model="rec.prenatalScreenings.nt_done" label="سونوگرافی NT" density="compact" hide-details color="indigo" />
-                <v-checkbox v-model="rec.prenatalScreenings.anomaly_done" label="اسکن آنومالی" density="compact" hide-details color="indigo" />
-                <v-checkbox v-model="rec.prenatalScreenings.nipt_done" label="آزمایش NIPT" density="compact" hide-details color="indigo" />
-                <v-checkbox v-model="rec.prenatalScreenings.gdm_done" label="تست دیابت (GDM)" density="compact" hide-details color="indigo" />
+                <v-checkbox v-model="rec.prenatalScreenings.nt_done" label="سونوگرافی NT" density="compact" hide-details color="#5465ff" />
+                <v-checkbox v-model="rec.prenatalScreenings.anomaly_done" label="اسکن آنومالی" density="compact" hide-details color="#5465ff" />
+                <v-checkbox v-model="rec.prenatalScreenings.nipt_done" label="آزمایش NIPT" density="compact" hide-details color="#5465ff" />
+                <v-checkbox v-model="rec.prenatalScreenings.gdm_done" label="تست دیابت (GDM)" density="compact" hide-details color="#5465ff" />
               </div>
             </div>
 
@@ -134,10 +134,10 @@
             <div class="bg-white border border-slate-200 rounded p-4 my-2 shadow-sm">
               <div class="flex justify-between items-center my-2 py-2 px-2 border-b border-slate-100">
                 <h4 class="font-bold text-slate-700 text-sm flex items-center gap-2">
-                  <v-icon icon="mdi-baby-face-outline" size="small" class="text-blue-500" />
+                  <v-icon icon="mdi-baby-face-outline" size="small" class="text-electric-sapphire" />
                   اطلاعات نوزادان
                 </h4>
-                <v-btn size="small" color="blue-darken-1" variant="tonal" prepend-icon="mdi-plus"
+                <v-btn size="small" color="#5465ff" variant="tonal" prepend-icon="mdi-plus"
                        @click="rec.newbornsDetails.push({ gender: '', weight: null, height: null, head_circumference: null, apgar1: null, apgar5: null, nicu: false })">
                   افزودن نوزاد (چندقلویی)
                 </v-btn>
