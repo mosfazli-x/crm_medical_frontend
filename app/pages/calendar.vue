@@ -1,40 +1,40 @@
 <template>
     <div class="mx-auto max-w-7xl px-4 py-8 md:px-8 min-h-screen">
         <div class="flex justify-between items-center mb-8">
-            <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">تقویم ویزیت‌ها</h1>
+            <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">تقویم ویزیت‌ها</h1>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white dark:bg-slate-800! rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
             <FullCalendar ref="calendarRef" :options="calendarOptions" />
         </div>
 
         <v-dialog v-model="visitDialog" persistent scrollable :fullscreen="isMobile"
             transition="dialog-bottom-transition" max-width="700px">
-            <v-card class="md:rounded-2xl shadow-2xl border-0 overflow-hidden bg-white">
-                <v-card-title class="bg-white border-b border-slate-100 py-5 px-6 md:px-8">
+            <v-card class="md:rounded-2xl shadow-2xl border-0 overflow-hidden bg-white dark:bg-slate-800">
+                <v-card-title class="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 py-5 px-6 md:px-8">
                     <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-bold text-slate-800">
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">
                             {{ isEditMode ? 'ویرایش اطلاعات نوبت' : 'ثبت نوبت جدید' }}
                         </h2>
                         <v-btn icon variant="text"
-                            class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 rounded-full"
+                            class="text-slate-400 dark:text-slate-500 hover:text-slate-600 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-full"
                             @click="closeVisitDialog">
                             <CloseCircle class="w-6 h-6" />
                         </v-btn>
                     </div>
                 </v-card-title>
 
-                <v-card-text class="pt-6 px-6 md:pt-8 md:px-8 bg-slate-50/50">
+                <v-card-text class="pt-6 px-6 md:pt-8 md:px-8 bg-slate-50/50 dark:bg-slate-800/50">
                     <v-row>
                         <v-col cols="12">
-                            <label class="text-sm font-semibold text-slate-700 mb-2 block">بیمار <span
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">بیمار <span
                                     class="text-red-500">*</span></label>
                             <v-autocomplete v-model="newVisit.patientId" :items="patients" item-title="fullName"
                                 item-value="id" placeholder="جستجو و انتخاب بیمار..." variant="outlined"
                                 density="comfortable" prepend-inner-icon="mdi-account-search-outline" clearable
-                                hide-details="auto" bg-color="white" :loading="patientsLoading">
+                                hide-details="auto" :loading="patientsLoading">
                                 <template v-slot:no-data>
-                                    <div class="pa-4 text-center text-slate-500 text-sm">
+                                    <div class="pa-4 text-center text-slate-500 dark:text-slate-400 text-sm">
                                         {{ patientsLoading ? 'در حال جستجو...' : 'بیماری در سیستم یافت نشد.' }}
                                     </div>
                                 </template>
@@ -42,7 +42,7 @@
                         </v-col>
 
                         <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 mb-2 block">زمان شروع <span
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">زمان شروع <span
                                     class="text-red-500">*</span></label>
                             <PersianDatetimePicker v-model="newVisit.start" type="datetime"
                                 display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#5465ff"
@@ -50,35 +50,34 @@
                         </v-col>
 
                         <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 mb-2 block">زمان پایان</label>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">زمان پایان</label>
                             <PersianDatetimePicker v-model="newVisit.end" type="datetime"
                                 display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#5465ff"
                                 auto-submit custom-input class="w-full" />
                         </v-col>
 
                         <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 mb-2 block">نوع ویزیت</label>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">نوع ویزیت</label>
                             <v-select v-model="newVisit.type" :items="visitTypes" variant="outlined"
-                                density="comfortable" hide-details="auto" bg-color="white" />
+                                density="comfortable" hide-details="auto" />
                         </v-col>
 
                         <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 mb-2 block">وضعیت</label>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">وضعیت</label>
                             <v-select v-model="newVisit.status" :items="['تایید شده', 'در انتظار', 'لغو شده']"
-                                variant="outlined" density="comfortable" hide-details="auto" bg-color="white" />
+                                variant="outlined" density="comfortable" hide-details="auto" />
                         </v-col>
 
                         <v-col cols="12">
-                            <label class="text-sm font-semibold text-slate-700 mb-2 block">یادداشت پزشک</label>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">یادداشت پزشک</label>
                             <v-textarea v-model="newVisit.notes" placeholder="در صورت نیاز توضیحاتی وارد کنید..."
-                                variant="outlined" rows="3" density="comfortable" hide-details="auto"
-                                bg-color="white" />
+                                variant="outlined" rows="3" density="comfortable" hide-details="auto" />
                         </v-col>
                     </v-row>
                 </v-card-text>
 
                 <v-card-actions
-                    class="px-6 py-5 md:px-8 md:py-6 bg-white border-t border-slate-100 flex flex-col-reverse md:flex-row gap-3">
+                    class="px-6 py-5 md:px-8 md:py-6 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 flex flex-col-reverse md:flex-row gap-3">
                     <v-btn v-if="isEditMode" color="red-darken-1" variant="text" size="large"
                         class="w-full md:w-auto font-medium tracking-wide rounded-lg" @click="deleteVisit">
                         حذف نوبت
@@ -87,7 +86,7 @@
                     <v-spacer class="hidden md:block" />
 
                     <v-btn color="slate-600" variant="tonal" size="large"
-                        class="w-full md:w-auto font-medium tracking-wide rounded-lg bg-slate-100 hover:bg-slate-200"
+                        class="w-full md:w-auto font-medium tracking-wide rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600"
                         @click="closeVisitDialog">
                         انصراف
                     </v-btn>
@@ -358,6 +357,11 @@ useSeoMeta({
     background: #ffffff;
 }
 
+.dark :deep(.fc) {
+    color: #e2e8f0;
+    background: #1e293b;
+}
+
 :deep(.fc-toolbar) {
     padding: 24px !important;
     margin-bottom: 0 !important;
@@ -365,10 +369,19 @@ useSeoMeta({
     background-color: #ffffff;
 }
 
+.dark :deep(.fc-toolbar) {
+    border-bottom: 1px solid #334155;
+    background-color: #1e293b;
+}
+
 :deep(.fc-toolbar-title) {
     font-size: 1rem !important;
     font-weight: 800;
     color: #1e293b;
+}
+
+.dark :deep(.fc-toolbar-title) {
+    color: #e2e8f0;
 }
 
 :deep(.fc-button) {
@@ -384,9 +397,20 @@ useSeoMeta({
     transition: all 0.2s ease;
 }
 
+.dark :deep(.fc-button) {
+    background-color: #334155 !important;
+    border-color: #475569 !important;
+    color: #e2e8f0 !important;
+}
+
 :deep(.fc-button:hover) {
     background-color: #f1f5f9 !important;
     color: #0f172a !important;
+}
+
+.dark :deep(.fc-button:hover) {
+    background-color: #475569 !important;
+    color: #f8fafc !important;
 }
 
 :deep(.fc-button-active) {
@@ -408,8 +432,211 @@ useSeoMeta({
     color: #64748b;
 }
 
+.dark :deep(.fc-theme-standard th) {
+    border-bottom: 1px solid #334155;
+    background: #1e293b;
+    color: #94a3b8;
+}
+
 :deep(.fc-theme-standard td) {
     border-color: #f1f5f9;
+}
+
+.dark :deep(.fc-theme-standard td) {
+    border-color: #334155;
+}
+
+:deep(.fc-scrollgrid) {
+    border-color: #f1f5f9;
+}
+
+.dark :deep(.fc-scrollgrid) {
+    border-color: #334155;
+}
+
+:deep(.fc-timegrid-col),
+:deep(.fc-daygrid-day) {
+    background: #ffffff;
+}
+
+.dark :deep(.fc-timegrid-col),
+.dark :deep(.fc-daygrid-day) {
+    background: #1e293b;
+}
+
+:deep(.fc-day-today) {
+    background: #eef2ff !important;
+}
+
+.dark :deep(.fc-day-today) {
+    background: #1a2744 !important;
+}
+
+:deep(.fc-non-business) {
+    background: #f8fafc;
+}
+
+.dark :deep(.fc-non-business) {
+    background: #162032;
+}
+
+:deep(.fc-highlight) {
+    background: #bfd7ff !important;
+    opacity: 0.3;
+}
+
+.dark :deep(.fc-highlight) {
+    background: #3b5a9a !important;
+}
+
+:deep(.fc-timegrid-now-indicator-line) {
+    border-color: #ef4444;
+}
+
+.dark :deep(.fc-timegrid-now-indicator-line) {
+    border-color: #f87171;
+}
+
+.dark :deep(.fc-timegrid-slot) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-timegrid-slot-lane) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-scrollgrid-section > td) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-scrollgrid-section-header > td) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-scrollgrid-sync-table) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-timegrid-axis) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-timegrid-axis-frame) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-timegrid-axis-cushion) {
+    color: #64748b;
+}
+
+.dark :deep(.fc-col-header-cell-cushion) {
+    color: #94a3b8;
+}
+
+.dark :deep(.fc-daygrid-day-top) {
+    color: #cbd5e1;
+}
+
+.dark :deep(.fc-daygrid-day-number) {
+    color: #cbd5e1;
+}
+
+.dark :deep(.fc-daygrid-day-events) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-timegrid-col-events) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-timegrid-col-frame) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-view-harness) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-timegrid-slots) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-daygrid-body) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-daygrid-body-unbalanced) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-timegrid-body) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-bg-event) {
+    opacity: 0.15;
+}
+
+.dark :deep(.fc-popover) {
+    background: #1e293b;
+    border-color: #475569;
+}
+
+.dark :deep(.fc-popover-title) {
+    color: #e2e8f0;
+}
+
+.dark :deep(.fc-daygrid-more-popover .fc-daygrid-event) {
+    background: #1e3a5f;
+    color: #93c5fd;
+}
+
+.dark :deep(.fc-view-harness-active) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-scrollgrid-liquid) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-scroller::-webkit-scrollbar) {
+    width: 8px;
+    height: 8px;
+}
+
+.dark :deep(.fc-scroller::-webkit-scrollbar-track) {
+    background: #1e293b;
+}
+
+.dark :deep(.fc-scroller::-webkit-scrollbar-thumb) {
+    background: #475569;
+    border-radius: 4px;
+}
+
+.dark :deep(.fc-scroller::-webkit-scrollbar-thumb:hover) {
+    background: #64748b;
+}
+
+:deep(.fc-more-popover) {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+.dark :deep(.fc-more-popover) {
+    background: #1e293b;
+    border-color: #475569;
+}
+
+.dark :deep(.fc-more-popover .fc-popover-title) {
+    color: #e2e8f0;
+}
+
+.dark :deep(.fc-popover-header) {
+    background: #334155;
+}
+
+.dark :deep(.fc-popover-body) {
+    background: #1e293b;
 }
 
 /* استایل زیبای کارت رویدادها */
@@ -434,10 +661,25 @@ useSeoMeta({
     box-shadow: 0 4px 6px -1px rgba(84, 101, 255, 0.1);
 }
 
+.dark :deep(.fc-event) {
+    border-right-color: #788bff;
+    background-color: #1e3a5f;
+    color: #93c5fd;
+}
+
+.dark :deep(.fc-event:hover) {
+    background-color: #2a4a7a;
+    box-shadow: 0 4px 6px -1px rgba(120, 139, 255, 0.2);
+}
+
 :deep(.fc-timegrid-slot-label-cushion) {
     color: #94a3b8;
     font-weight: 500;
     font-size: 0.8rem;
+}
+
+.dark :deep(.fc-timegrid-slot-label-cushion) {
+    color: #64748b;
 }
 
 :deep(.fc-now-indicator-line) {
@@ -453,6 +695,20 @@ useSeoMeta({
     gap: 4px
 }
 
+:deep(.fc-daygrid-more-link) {
+    color: #5465ff;
+    font-weight: 600;
+}
+
+.dark :deep(.fc-daygrid-more-link) {
+    color: #93c5fd;
+}
+
+:deep(.fc-event-time),
+:deep(.fc-event-title) {
+    color: inherit;
+}
+
 /* استایل DatePicker که خواسته بودید مستقیم نوشته شود */
 :deep(.vpd-input-group input) {
     border: 1px solid #cbd5e1;
@@ -466,10 +722,21 @@ useSeoMeta({
     width: 100%;
 }
 
+.dark :deep(.vpd-input-group input) {
+    border-color: #475569;
+    background: #334155;
+    color: #e2e8f0;
+}
+
 :deep(.vpd-input-group input:focus) {
     border-color: #5465ff;
     box-shadow: 0 0 0 3px #bfd7ff;
     outline: none;
+}
+
+.dark :deep(.vpd-input-group input:focus) {
+    border-color: #788bff;
+    box-shadow: 0 0 0 3px #3b5a9a;
 }
 
 :deep(.vpd-icon-btn) {

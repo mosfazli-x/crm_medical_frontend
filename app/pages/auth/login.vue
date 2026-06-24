@@ -38,6 +38,13 @@
                                 :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                                 @click:append-inner="showPassword = !showPassword" required />
 
+                            <div class="text-left pb-2">
+                                <nuxt-link to="/auth/forgot-password"
+                                    class="text-sm text-electric-sapphire font-medium hover:underline">
+                                    رمز عبور را فراموش کرده‌اید؟
+                                </nuxt-link>
+                            </div>
+
                             <v-btn type="submit" variant="elevated" color="primary" size="x-large" block
                                 :loading="loading" class="font-semibold tracking-normal!">
                                 ورود

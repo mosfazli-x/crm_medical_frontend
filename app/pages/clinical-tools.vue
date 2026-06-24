@@ -1,287 +1,370 @@
 <template>
-  <div class="max-w-7xl mx-auto p-4 md:p-8 pt-6 space-y-6">
-    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pb-1 border-b border-slate-100">
-      <div>
-        <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">ابزارهای تصمیم‌گیری بالینی</h1>
-        <p class="text-sm text-slate-500 mt-1 font-medium">ابزارهای کمک تشخیصی و ارزیابی بالینی</p>
+  <div class="!max-w-7xl !mx-auto !p-4 md:!p-8 !pt-6 !space-y-8 !font-sans">
+    <div class="!flex !flex-col sm:!flex-row !justify-between !items-center !gap-4 !pb-4 !border-b !border-slate-200 dark:!border-slate-700">
+      <div class="!text-right !w-full">
+        <h1 class="!text-3xl !font-extrabold !text-slate-800 dark:!text-slate-100 !tracking-tight">ابزارهای تصمیم‌گیری بالینی</h1>
+        <p class="!text-sm !text-slate-500 dark:!text-slate-400 !mt-2 !font-medium">ابزارهای کمک تشخیصی و ارزیابی بالینی بیماران</p>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <v-card class="rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
-        <v-card-text class="p-6">
-          <div class="flex items-center gap-3 mb-5">
-            <div class="w-11 h-11 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
-              <v-icon size="24">mdi-clipboard-pulse-outline</v-icon>
+    <div class="!grid !grid-cols-1 lg:!grid-cols-2 !gap-8">
+      
+      <div class="!bg-white dark:!bg-slate-800 !rounded-3xl !border !border-slate-200/70 dark:!border-slate-700 !shadow-sm lg:!col-span-2 !overflow-hidden !transition-all hover:!shadow-md hover:!border-periwinkle dark:hover:!border-electric-sapphire/50">
+        <div class="!p-6 md:!p-8">
+          <div class="!flex !items-center !gap-4 !mb-8">
+            <div class="!w-14 !h-14 !rounded-2xl !bg-light-cyan dark:!bg-electric-sapphire/20 !text-electric-sapphire !flex !items-center !justify-center !shadow-inner">
+              <svg class="!w-7 !h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
             </div>
             <div>
-              <h3 class="font-bold text-slate-800">ارزیابی PCOS (Rotterdam)</h3>
-              <p class="text-xs text-slate-500">تشخیص سندرم تخمدان پلی‌کیستیک بر اساس معیارهای Rotterdam</p>
+              <h3 class="!text-xl !font-bold !text-slate-800 dark:!text-slate-100">ارزیابی PCOS (Rotterdam)</h3>
+              <p class="!text-sm !text-slate-500 dark:!text-slate-400 !mt-1">تشخیص سندرم تخمدان پلی‌کیستیک بر اساس معیارهای Rotterdam</p>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
-            <v-text-field v-model.number="pcos.age" label="سن" type="number" variant="outlined" density="compact" hide-details="auto" min="0" />
-            <v-text-field v-model.number="pcos.bmi" label="BMI" type="number" variant="outlined" density="compact" hide-details="auto" min="0" step="0.1" />
-            <v-text-field v-model.number="pcos.cycle_length_days" label="طول سیکل (روز)" type="number" variant="outlined" density="compact" hide-details="auto" min="0" />
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
-              <div class="flex items-center gap-2 mb-3">
-                <span class="w-6 h-6 rounded-full bg-purple-200 text-purple-700 flex items-center justify-center text-xs font-bold">1</span>
-                <span class="text-sm font-bold text-slate-700">الیگو / آنوولاسیون</span>
-              </div>
-              <v-checkbox v-model="pcos.oligo_anovulation" label="الیگو-تخمک‌گذاری / آنوولاسیون" hide-details density="compact" color="purple" class="text-slate-700" />
+          <div class="!grid !grid-cols-1 md:!grid-cols-3 !gap-5 !mb-8">
+            <div class="!space-y-2">
+              <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">سن</label>
+              <input v-model.number="pcos.age" type="number" min="0" class="!w-full !px-4 !py-3 !bg-slate-50 dark:!bg-slate-700 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!bg-white dark:!bg-slate-800 focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100" />
             </div>
-
-            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
-              <div class="flex items-center gap-2 mb-3">
-                <span class="w-6 h-6 rounded-full bg-purple-200 text-purple-700 flex items-center justify-center text-xs font-bold">2a</span>
-                <span class="text-sm font-bold text-slate-700">هیپرآندروژنیسم بالینی</span>
-              </div>
-              <div class="space-y-0">
-                <v-checkbox v-model="pcos.hirsutism" label="هیرسوتیسم" hide-details density="compact" color="purple" />
-                <v-checkbox v-model="pcos.acne" label="آکنه" hide-details density="compact" color="purple" />
-                <v-checkbox v-model="pcos.alopecia" label="آلوپسی" hide-details density="compact" color="purple" />
-                <v-checkbox v-model="pcos.acanthosis_nigricans" label="آکانتوزیس نیگریکانس" hide-details density="compact" color="purple" />
-              </div>
+            <div class="!space-y-2">
+              <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">BMI</label>
+              <input v-model.number="pcos.bmi" type="number" min="0" step="0.1" class="!w-full !px-4 !py-3 !bg-slate-50 dark:!bg-slate-700 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!bg-white dark:!bg-slate-800 focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100" />
             </div>
-
-            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
-              <div class="flex items-center gap-2 mb-3">
-                <span class="w-6 h-6 rounded-full bg-purple-200 text-purple-700 flex items-center justify-center text-xs font-bold">2b</span>
-                <span class="text-sm font-bold text-slate-700">هیپرآندروژنیسم بیوشیمیایی</span>
-              </div>
-              <div class="space-y-0">
-                <v-checkbox v-model="pcos.testosterone_elevated" label="تستوسترون بالا" hide-details density="compact" color="purple" />
-                <v-checkbox v-model="pcos.dheas_elevated" label="DHEAS بالا" hide-details density="compact" color="purple" />
-                <v-checkbox v-model="pcos.free_androgen_index_elevated" label="شاخص آندروژن آزاد (FAI) بالا" hide-details density="compact" color="purple" />
-              </div>
-            </div>
-
-            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
-              <div class="flex items-center gap-2 mb-3">
-                <span class="w-6 h-6 rounded-full bg-purple-200 text-purple-700 flex items-center justify-center text-xs font-bold">3</span>
-                <span class="text-sm font-bold text-slate-700">تخمدان پلی‌کیستیک در سونوگرافی</span>
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <v-checkbox v-model="pcos.polycystic_ovaries_us" label="PCO در سونوگرافی" hide-details density="compact" color="purple" />
-                <v-text-field v-model.number="pcos.follicle_count_per_ovary" label="تعداد فولیکول" type="number" variant="outlined" density="compact" hide-details="auto" min="0" />
-                <v-text-field v-model.number="pcos.ovarian_volume_ml" label="حجم تخمدان (ml)" type="number" variant="outlined" density="compact" hide-details="auto" min="0" step="0.1" />
-              </div>
+            <div class="!space-y-2">
+              <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">طول سیکل (روز)</label>
+              <input v-model.number="pcos.cycle_length_days" type="number" min="0" class="!w-full !px-4 !py-3 !bg-slate-50 dark:!bg-slate-700 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!bg-white dark:!bg-slate-800 focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100" />
             </div>
           </div>
 
-          <div class="bg-amber-50 rounded-xl p-4 border border-amber-200 mb-6">
-            <div class="flex items-center gap-2 mb-3">
-              <v-icon size="small" color="amber-darken-3">mdi-alert-outline</v-icon>
-              <span class="text-sm font-bold text-amber-800">بیماری‌های رد شده (Exclusions)</span>
-            </div>
-            <div class="flex flex-wrap gap-4">
-              <v-checkbox v-model="pcos.excluded_cah" label="CAH رد شده" hide-details density="compact" color="amber" />
-              <v-checkbox v-model="pcos.excluded_cushing" label="کوشینگ رد شده" hide-details density="compact" color="amber" />
-              <v-checkbox v-model="pcos.excluded_tumor" label="تومور رد شده" hide-details density="compact" color="amber" />
-            </div>
-          </div>
-
-          <v-textarea v-model="pcos.notes" label="یادداشت‌های بالینی" variant="outlined" density="compact" rows="2" hide-details="auto" class="mb-4" />
-
-          <v-btn block color="purple-darken-1" variant="flat" :loading="pcosLoading" @click="assessPCOS">
-            ارزیابی PCOS
-          </v-btn>
-
-          <v-card v-if="pcosResult" variant="tonal" color="purple-lighten-5" class="mt-5 rounded-xl border border-purple-200">
-            <v-card-text class="p-5 space-y-4">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <v-chip :color="pcosResult.diagnosed ? 'red' : 'green'" variant="flat" size="large" class="font-bold px-4">
-                    {{ pcosResult.diagnosis }}
-                  </v-chip>
-                  <v-chip v-if="pcosResult.phenotype" color="purple" variant="outlined" size="small">
-                    {{ pcosResult.phenotype }}
-                  </v-chip>
+          <div class="!grid !grid-cols-1 md:!grid-cols-2 lg:!grid-cols-3 !gap-5 !mb-8">
+            <div class="!bg-slate-50/50 dark:!bg-slate-700/50 !rounded-2xl !p-5 !border !border-slate-200 dark:!border-slate-700">
+              <div class="!flex !items-center !gap-3 !mb-4 !pb-3 !border-b !border-slate-200 dark:!border-slate-700">
+                <span class="!w-7 !h-7 !rounded-full !bg-baby-blue-ice !text-electric-sapphire !flex !items-center !justify-center !text-sm !font-bold">1</span>
+                <span class="!text-sm !font-bold !text-slate-800 dark:!text-slate-100">الیگو / آنوولاسیون</span>
+              </div>
+              <label class="!flex !items-center !gap-3 !cursor-pointer !group">
+                <div class="!relative !flex !items-center !justify-center">
+                  <input type="checkbox" v-model="pcos.oligo_anovulation" class="!peer !sr-only" />
+                  <div class="!w-5 !h-5 !border-2 !border-slate-300 !rounded-md peer-checked:!bg-electric-sapphire peer-checked:!border-electric-sapphire !transition-colors"></div>
+                  <svg class="!absolute !w-3 !h-3 !text-white !opacity-0 peer-checked:!opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                 </div>
-                <div class="text-center">
-                  <div class="text-2xl font-black" :class="pcosResult.diagnosed ? 'text-red-600' : 'text-green-600'">
-                    {{ pcosResult.criteriaMet }}/{{ pcosResult.criteriaRequired }}
+                <span class="!text-sm !font-medium !text-slate-700 dark:!text-slate-300 group-hover:!text-electric-sapphire !transition-colors">الیگو-تخمک‌گذاری / آنوولاسیون</span>
+              </label>
+            </div>
+
+            <div class="!bg-slate-50/50 dark:!bg-slate-700/50 !rounded-2xl !p-5 !border !border-slate-200 dark:!border-slate-700">
+              <div class="!flex !items-center !gap-3 !mb-4 !pb-3 !border-b !border-slate-200 dark:!border-slate-700">
+                <span class="!w-7 !h-7 !rounded-full !bg-baby-blue-ice !text-electric-sapphire !flex !items-center !justify-center !text-sm !font-bold">2a</span>
+                <span class="!text-sm !font-bold !text-slate-800 dark:!text-slate-100">هیپرآندروژنیسم بالینی</span>
+              </div>
+              <div class="!space-y-3">
+                <label v-for="(label, key) in { hirsutism: 'هیرسوتیسم', acne: 'آکنه', alopecia: 'آلوپسی', acanthosis_nigricans: 'آکانتوزیس نیگریکانس' }" :key="key" class="!flex !items-center !gap-3 !cursor-pointer !group">
+                  <div class="!relative !flex !items-center !justify-center">
+                    <input type="checkbox" v-model="pcos[key]" class="!peer !sr-only" />
+                    <div class="!w-5 !h-5 !border-2 !border-slate-300 !rounded-md peer-checked:!bg-electric-sapphire peer-checked:!border-electric-sapphire !transition-colors"></div>
+                    <svg class="!absolute !w-3 !h-3 !text-white !opacity-0 peer-checked:!opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                   </div>
-                  <div class="text-[10px] text-slate-500 font-medium">معیار مثبت</div>
-                </div>
+                  <span class="!text-sm !font-medium !text-slate-700 dark:!text-slate-300 group-hover:!text-electric-sapphire !transition-colors">{{ label }}</span>
+                </label>
               </div>
+            </div>
 
-              <v-divider />
-
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div v-for="c in pcosResult.criteriaDetails" :key="c.key" class="flex items-center gap-2 p-2 rounded-lg" :class="c.met ? 'bg-green-50' : 'bg-red-50'">
-                  <v-icon size="small" :color="c.met ? 'green' : 'red'">{{ c.met ? 'mdi-check-circle' : 'mdi-close-circle' }}</v-icon>
-                  <div class="text-xs">
-                    <div class="font-bold" :class="c.met ? 'text-green-700' : 'text-red-700'">{{ c.label }}</div>
-                    <div class="text-slate-500 mt-0.5">{{ c.description }}</div>
+            <div class="!bg-slate-50/50 dark:!bg-slate-700/50 !rounded-2xl !p-5 !border !border-slate-200 dark:!border-slate-700">
+              <div class="!flex !items-center !gap-3 !mb-4 !pb-3 !border-b !border-slate-200 dark:!border-slate-700">
+                <span class="!w-7 !h-7 !rounded-full !bg-baby-blue-ice !text-electric-sapphire !flex !items-center !justify-center !text-sm !font-bold">2b</span>
+                <span class="!text-sm !font-bold !text-slate-800 dark:!text-slate-100">هیپرآندروژنیسم بیوشیمیایی</span>
+              </div>
+              <div class="!space-y-3">
+                <label v-for="(label, key) in { testosterone_elevated: 'تستوسترون بالا', dheas_elevated: 'DHEAS بالا', free_androgen_index_elevated: 'شاخص آندروژن آزاد (FAI) بالا' }" :key="key" class="!flex !items-center !gap-3 !cursor-pointer !group">
+                  <div class="!relative !flex !items-center !justify-center">
+                    <input type="checkbox" v-model="pcos[key]" class="!peer !sr-only" />
+                    <div class="!w-5 !h-5 !border-2 !border-slate-300 !rounded-md peer-checked:!bg-electric-sapphire peer-checked:!border-electric-sapphire !transition-colors"></div>
+                    <svg class="!absolute !w-3 !h-3 !text-white !opacity-0 peer-checked:!opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                   </div>
+                  <span class="!text-sm !font-medium !text-slate-700 dark:!text-slate-300 group-hover:!text-electric-sapphire !transition-colors">{{ label }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="!bg-slate-50/50 dark:!bg-slate-700/50 !rounded-2xl !p-5 !border !border-slate-200 dark:!border-slate-700 lg:!col-span-3">
+              <div class="!flex !items-center !gap-3 !mb-4 !pb-3 !border-b !border-slate-200 dark:!border-slate-700">
+                <span class="!w-7 !h-7 !rounded-full !bg-baby-blue-ice !text-electric-sapphire !flex !items-center !justify-center !text-sm !font-bold">3</span>
+                <span class="!text-sm !font-bold !text-slate-800 dark:!text-slate-100">تخمدان پلی‌کیستیک در سونوگرافی</span>
+              </div>
+              <div class="!grid !grid-cols-1 sm:!grid-cols-3 !gap-5 !items-center">
+                <label class="!flex !items-center !gap-3 !cursor-pointer !group">
+                  <div class="!relative !flex !items-center !justify-center">
+                    <input type="checkbox" v-model="pcos.polycystic_ovaries_us" class="!peer !sr-only" />
+                    <div class="!w-5 !h-5 !border-2 !border-slate-300 !rounded-md peer-checked:!bg-electric-sapphire peer-checked:!border-electric-sapphire !transition-colors"></div>
+                    <svg class="!absolute !w-3 !h-3 !text-white !opacity-0 peer-checked:!opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  </div>
+                  <span class="!text-sm !font-medium !text-slate-700 dark:!text-slate-300 group-hover:!text-electric-sapphire !transition-colors">PCO در سونوگرافی</span>
+                </label>
+                
+                <div class="!space-y-2">
+                  <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">تعداد فولیکول</label>
+                  <input v-model.number="pcos.follicle_count_per_ovary" type="number" min="0" class="!w-full !px-4 !py-2.5 !bg-white dark:!bg-slate-800 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100" />
+                </div>
+                <div class="!space-y-2">
+                  <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">حجم تخمدان (ml)</label>
+                  <input v-model.number="pcos.ovarian_volume_ml" type="number" min="0" step="0.1" class="!w-full !px-4 !py-2.5 !bg-white dark:!bg-slate-800 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="!bg-orange-50/50 dark:!bg-orange-900/20 !rounded-2xl !p-5 !border !border-orange-200 !mb-8">
+            <div class="!flex !items-center !gap-2 !mb-4">
+              <svg class="!w-5 !h-5 !text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+              <span class="!text-sm !font-bold !text-orange-800 dark:!text-orange-300">بیماری‌های رد شده (Exclusions)</span>
+            </div>
+            <div class="!flex !flex-wrap !gap-6">
+              <label v-for="(label, key) in { excluded_cah: 'CAH رد شده', excluded_cushing: 'کوشینگ رد شده', excluded_tumor: 'تومور رد شده' }" :key="key" class="!flex !items-center !gap-3 !cursor-pointer !group">
+                <div class="!relative !flex !items-center !justify-center">
+                  <input type="checkbox" v-model="pcos[key]" class="!peer !sr-only" />
+                  <div class="!w-5 !h-5 !border-2 !border-orange-300 !bg-white dark:!bg-slate-800 !rounded-md peer-checked:!bg-orange-500 peer-checked:!border-orange-500 !transition-colors"></div>
+                  <svg class="!absolute !w-3 !h-3 !text-white !opacity-0 peer-checked:!opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span class="!text-sm !font-medium !text-orange-900 dark:!text-orange-300 group-hover:!text-orange-700 !transition-colors">{{ label }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="!space-y-5">
+            <textarea v-model="pcos.notes" rows="2" placeholder="یادداشت‌های بالینی..." class="!w-full !px-4 !py-3 !bg-slate-50 dark:!bg-slate-700 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!bg-white dark:!bg-slate-800 focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100 !resize-y"></textarea>
+
+            <button @click="assessPCOS" :disabled="pcosLoading" class="!w-full !py-4 !px-6 !bg-electric-sapphire hover:!bg-cornflower-blue !text-white !font-extrabold !text-lg !rounded-2xl !shadow-lg !shadow-electric-sapphire/30 !transition-all !flex !justify-center !items-center !gap-3 disabled:!opacity-70 disabled:!cursor-not-allowed">
+              <svg v-if="pcosLoading" class="!w-6 !h-6 !text-white !animate-spin" fill="none" viewBox="0 0 24 24"><circle class="!opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="!opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              <span v-else>ارزیابی نهایی PCOS</span>
+            </button>
+          </div>
+
+          <div v-if="pcosResult" class="!mt-8 !p-6 !rounded-3xl !border" :class="pcosResult.diagnosed ? '!bg-red-50 dark:!bg-red-900/30 !border-red-200' : '!bg-green-50 dark:!bg-green-900/30 !border-green-200'">
+            <div class="!flex !flex-col sm:!flex-row !items-center !justify-between !gap-4 !mb-6">
+              <div class="!flex !items-center !gap-3">
+                <span class="!px-5 !py-2 !rounded-full !font-black !text-white !shadow-sm" :class="pcosResult.diagnosed ? '!bg-red-500' : '!bg-green-500'">
+                  {{ pcosResult.diagnosis }}
+                </span>
+                <span v-if="pcosResult.phenotype" class="!px-4 !py-1.5 !rounded-full !border-2 !font-bold !text-sm" :class="pcosResult.diagnosed ? '!border-red-200 !text-red-700' : '!border-green-200 !text-green-700'">
+                  {{ pcosResult.phenotype }}
+                </span>
+              </div>
+              <div class="!text-center !bg-white dark:!bg-slate-800 !px-6 !py-2 !rounded-2xl !shadow-sm">
+                <div class="!text-3xl !font-black" :class="pcosResult.diagnosed ? '!text-red-600' : '!text-green-600'">
+                  {{ pcosResult.criteriaMet }}<span class="!text-lg !text-slate-400 dark:!text-slate-500">/{{ pcosResult.criteriaRequired }}</span>
+                </div>
+                <div class="!text-[11px] !text-slate-500 dark:!text-slate-400 !font-bold">معیار مثبت</div>
+              </div>
+            </div>
+
+            <div class="!grid !grid-cols-1 sm:!grid-cols-3 !gap-4">
+              <div v-for="c in pcosResult.criteriaDetails" :key="c.key" class="!flex !items-start !gap-3 !p-4 !rounded-2xl !bg-white dark:!bg-slate-800 !border !shadow-sm" :class="c.met ? '!border-green-200' : '!border-red-100'">
+                <div class="!mt-0.5">
+                  <svg v-if="c.met" class="!w-5 !h-5 !text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  <svg v-else class="!w-5 !h-5 !text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </div>
+                <div>
+                  <div class="!text-sm !font-bold" :class="c.met ? '!text-green-700' : '!text-red-600'">{{ c.label }}</div>
+                  <div class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !leading-relaxed">{{ c.description }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="pcosResult.recommendation" class="!mt-5 !bg-light-cyan dark:!bg-electric-sapphire/20 !border !border-periwinkle dark:!border-electric-sapphire/50 !rounded-2xl !p-4 !flex !gap-3 !items-start">
+              <svg class="!w-5 !h-5 !text-electric-sapphire !shrink-0 !mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <p class="!text-sm !text-electric-sapphire !font-bold !leading-relaxed">{{ pcosResult.recommendation }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="!bg-white dark:!bg-slate-800 !rounded-3xl !border !border-slate-200/70 dark:!border-slate-700 !shadow-sm !overflow-hidden !transition-all hover:!shadow-md hover:!border-periwinkle dark:hover:!border-electric-sapphire/50">
+        <div class="!p-6 md:!p-8">
+          <div class="!flex !items-center !gap-4 !mb-8">
+            <div class="!w-14 !h-14 !rounded-2xl !bg-orange-50 dark:!bg-orange-900/20 !text-orange-500 !flex !items-center !justify-center !shadow-inner">
+              <svg class="!w-7 !h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"></path></svg>
+            </div>
+            <div>
+              <h3 class="!text-xl !font-bold !text-slate-800 dark:!text-slate-100">امتیاز یائسگی (Menopause)</h3>
+              <p class="!text-sm !text-slate-500 dark:!text-slate-400 !mt-1">ارزیابی شدت علائم یائسگی</p>
+            </div>
+          </div>
+
+          <div class="!space-y-4 !mb-8">
+            <div class="!space-y-2">
+              <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">سن</label>
+              <input v-model.number="menopause.age" type="number" min="0" max="120" class="!w-full !px-4 !py-3 !bg-slate-50 dark:!bg-slate-700 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!bg-white dark:!bg-slate-800 focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100" />
+            </div>
+
+            <div class="!space-y-6 !pt-4">
+              <div v-for="symptom in menopauseSymptoms" :key="symptom.key">
+                <div class="!flex !justify-between !text-sm !mb-3">
+                  <span class="!font-bold !text-slate-700 dark:!text-slate-300">{{ symptom.label }}</span>
+                  <span class="!font-black !text-orange-500 !bg-orange-50 dark:!bg-orange-900/20 !px-3 !py-0.5 !rounded-full">{{ menopause[symptom.key] }}</span>
+                </div>
+                <input type="range" v-model.number="menopause[symptom.key]" min="0" max="3" step="1" class="!w-full !h-2.5 !bg-slate-200 dark:!bg-slate-700 !rounded-lg !appearance-none !cursor-pointer accent-orange-500 hover:accent-orange-600 !transition-all" />
+                <div class="!flex !justify-between !text-[10px] !font-bold !text-slate-400 dark:!text-slate-500 !mt-2 !px-1">
+                  <span>بدون</span><span>خفیف</span><span>متوسط</span><span>شدید</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button @click="assessMenopause" :disabled="menopauseLoading" class="!w-full !py-4 !px-6 !bg-orange-500 hover:!bg-orange-600 !text-white !font-extrabold !text-lg !rounded-2xl !shadow-lg !shadow-orange-500/30 !transition-all !flex !justify-center !items-center !gap-3 disabled:!opacity-70 disabled:!cursor-not-allowed">
+            <svg v-if="menopauseLoading" class="!w-6 !h-6 !text-white !animate-spin" fill="none" viewBox="0 0 24 24"><circle class="!opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="!opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <span v-else>محاسبه امتیاز</span>
+          </button>
+
+          <div v-if="menopauseResult" class="!mt-6 !p-5 !rounded-2xl !border !text-center" :class="menopauseResult.score <= 5 ? '!bg-green-50 dark:!bg-green-900/30 !border-green-200 !text-green-800' : menopauseResult.score <= 10 ? '!bg-orange-50 dark:!bg-orange-900/20 !border-orange-200 !text-orange-800 dark:!text-orange-300' : '!bg-red-50 dark:!bg-red-900/30 !border-red-200 !text-red-800'">
+            <div class="!inline-block !px-5 !py-1.5 !rounded-full !border-2 !font-black !text-lg !mb-3 !bg-white dark:!bg-slate-800" :class="menopauseResult.score <= 5 ? '!border-green-300' : menopauseResult.score <= 10 ? '!border-orange-300' : '!border-red-300'">
+              امتیاز: {{ menopauseResult.score }}
+            </div>
+            <div class="!text-lg !font-extrabold">{{ menopauseResult.interpretation }}</div>
+            <div class="!text-sm !mt-1 !font-medium !opacity-80">{{ menopauseResult.severity }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="!bg-white dark:!bg-slate-800 !rounded-3xl !border !border-slate-200/70 dark:!border-slate-700 !shadow-sm !overflow-hidden !transition-all hover:!shadow-md hover:!border-periwinkle dark:hover:!border-electric-sapphire/50">
+        <div class="!p-6 md:!p-8">
+          <div class="!flex !items-center !gap-4 !mb-8">
+            <div class="!w-14 !h-14 !rounded-2xl !bg-pink-50 !text-pink-500 !flex !items-center !justify-center !shadow-inner">
+               <svg class="!w-7 !h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            </div>
+            <div>
+              <h3 class="!text-xl !font-bold !text-slate-800 dark:!text-slate-100">امتیاز بیشاپ (Bishop Score)</h3>
+              <p class="!text-sm !text-slate-500 dark:!text-slate-400 !mt-1">ارزیابی آمادگی دهانه رحم برای القای زایمان</p>
+            </div>
+          </div>
+
+          <div class="!grid !grid-cols-2 !gap-5 !mb-8">
+            <div class="!space-y-2">
+              <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">اتساع (0-5)</label>
+              <input v-model.number="bishop.dilation" type="number" min="0" max="5" class="!w-full !px-4 !py-3 !bg-slate-50 dark:!bg-slate-700 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!bg-white dark:!bg-slate-800 focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100" />
+            </div>
+            <div class="!space-y-2">
+              <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">محو شدن (0-3)</label>
+              <input v-model.number="bishop.effacement" type="number" min="0" max="3" class="!w-full !px-4 !py-3 !bg-slate-50 dark:!bg-slate-700 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!bg-white dark:!bg-slate-800 focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100" />
+            </div>
+            <div class="!space-y-2">
+              <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">استیشن (3- تا 3)</label>
+              <input v-model.number="bishop.station" type="number" min="-3" max="3" class="!w-full !px-4 !py-3 !bg-slate-50 dark:!bg-slate-700 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!bg-white dark:!bg-slate-800 focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100" />
+            </div>
+            <div class="!space-y-2">
+              <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">قوام</label>
+              <select v-model="bishop.consistency" class="!w-full !px-4 !py-3 !bg-slate-50 dark:!bg-slate-700 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!bg-white dark:!bg-slate-800 focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100 !appearance-none">
+                <option v-for="opt in consistencyOptions" :key="opt" :value="opt">{{ opt }}</option>
+              </select>
+            </div>
+            <div class="!space-y-2 !col-span-2 sm:!col-span-1">
+              <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">موقعیت</label>
+              <select v-model="bishop.position" class="!w-full !px-4 !py-3 !bg-slate-50 dark:!bg-slate-700 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!bg-white dark:!bg-slate-800 focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100 !appearance-none">
+                <option v-for="opt in positionOptions" :key="opt" :value="opt">{{ opt }}</option>
+              </select>
+            </div>
+          </div>
+
+          <button @click="assessBishop" :disabled="bishopLoading" class="!w-full !py-4 !px-6 !bg-pink-500 hover:!bg-pink-600 !text-white !font-extrabold !text-lg !rounded-2xl !shadow-lg !shadow-pink-500/30 !transition-all !flex !justify-center !items-center !gap-3 disabled:!opacity-70 disabled:!cursor-not-allowed">
+            <svg v-if="bishopLoading" class="!w-6 !h-6 !text-white !animate-spin" fill="none" viewBox="0 0 24 24"><circle class="!opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="!opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <span v-else>محاسبه امتیاز بیشاپ</span>
+          </button>
+
+          <div v-if="bishopResult" class="!mt-6 !p-5 !rounded-2xl !border !text-center" :class="bishopResult.score <= 4 ? '!bg-red-50 dark:!bg-red-900/30 !border-red-200 !text-red-800' : bishopResult.score <= 8 ? '!bg-orange-50 dark:!bg-orange-900/20 !border-orange-200 !text-orange-800 dark:!text-orange-300' : '!bg-green-50 dark:!bg-green-900/30 !border-green-200 !text-green-800'">
+            <div class="!inline-block !px-5 !py-1.5 !rounded-full !border-2 !font-black !text-lg !mb-3 !bg-white dark:!bg-slate-800" :class="bishopResult.score <= 4 ? '!border-red-300' : bishopResult.score <= 8 ? '!border-orange-300' : '!border-green-300'">
+              امتیاز: {{ bishopResult.score }}
+            </div>
+            <div class="!text-lg !font-extrabold">{{ bishopResult.interpretation }}</div>
+            <div class="!text-sm !mt-1 !font-medium !opacity-80">{{ bishopResult.detail }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="!bg-white dark:!bg-slate-800 !rounded-3xl !border !border-slate-200/70 dark:!border-slate-700 !shadow-sm !overflow-hidden !transition-all hover:!shadow-md hover:!border-periwinkle dark:hover:!border-electric-sapphire/50 lg:!col-span-2">
+        <div class="!p-6 md:!p-8">
+          <div class="!flex !items-center !gap-4 !mb-8">
+            <div class="!w-14 !h-14 !rounded-2xl !bg-red-50 dark:!bg-red-900/30 !text-red-500 !flex !items-center !justify-center !shadow-inner">
+               <svg class="!w-7 !h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+            </div>
+            <div>
+              <h3 class="!text-xl !font-bold !text-slate-800 dark:!text-slate-100">ریسک سرطان پستان</h3>
+              <p class="!text-sm !text-slate-500 dark:!text-slate-400 !mt-1">ارزیابی ریسک ابتلا به سرطان پستان</p>
+            </div>
+          </div>
+
+          <div class="!grid !grid-cols-1 md:!grid-cols-2 !gap-x-8 !gap-y-6 !mb-8">
+            <div class="!space-y-6">
+              <div class="!grid !grid-cols-2 !gap-5">
+                <div class="!space-y-2">
+                  <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">سن</label>
+                  <input v-model.number="breastCancer.age" type="number" min="0" class="!w-full !px-4 !py-3 !bg-slate-50 dark:!bg-slate-700 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!bg-white dark:!bg-slate-800 focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100" />
+                </div>
+                <div class="!space-y-2">
+                  <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">سن اولین قاعدگی</label>
+                  <input v-model.number="breastCancer.menarche_age" type="number" min="0" class="!w-full !px-4 !py-3 !bg-slate-50 dark:!bg-slate-700 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!bg-white dark:!bg-slate-800 focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100" />
                 </div>
               </div>
 
-              <v-card v-if="pcosResult.recommendation" variant="text" color="info" class="bg-light-cyan rounded-lg">
-                <v-card-text class="text-sm text-electric-sapphire p-3">
-                  <v-icon size="small" color="#5465ff" class="ml-1">mdi-lightbulb-outline</v-icon>
-                  {{ pcosResult.recommendation }}
-                </v-card-text>
-              </v-card>
-            </v-card-text>
-          </v-card>
-        </v-card-text>
-      </v-card>
-
-      <v-card class="rounded-2xl border border-slate-200 shadow-sm">
-        <v-card-text class="p-6">
-          <div class="flex items-center gap-3 mb-5">
-            <div class="w-11 h-11 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center">
-              <v-icon size="24">mdi-fire</v-icon>
-            </div>
-            <div>
-              <h3 class="font-bold text-slate-800">امتیاز یائسگی (Menopause)</h3>
-              <p class="text-xs text-slate-500">ارزیابی شدت علائم یائسگی</p>
-            </div>
-          </div>
-
-          <v-text-field v-model.number="menopause.age" label="سن" type="number" variant="outlined" density="compact" hide-details="auto" class="mb-4" min="0" max="120" />
-
-          <div class="space-y-1">
-            <div v-for="symptom in menopauseSymptoms" :key="symptom.key" class="mb-4">
-              <div class="flex justify-between text-xs mb-1">
-                <span class="text-slate-700 font-medium">{{ symptom.label }}</span>
-                <span class="text-slate-400 font-bold">{{ menopause[symptom.key as keyof typeof menopause] }}</span>
+              <div class="!space-y-2 !bg-slate-50 dark:!bg-slate-700 !p-4 !rounded-2xl !border !border-slate-200 dark:!border-slate-700">
+                 <label class="!flex !items-center !gap-3 !cursor-pointer !group !mb-3">
+                  <div class="!relative !flex !items-center !justify-center">
+                    <input type="checkbox" v-model="breastCancer.noLiveBirth" @change="onNoLiveBirthChange($event.target.checked)" class="!peer !sr-only" />
+                    <div class="!w-5 !h-5 !border-2 !border-slate-300 !bg-white dark:!bg-slate-800 !rounded-md peer-checked:!bg-red-500 peer-checked:!border-red-500 !transition-colors"></div>
+                    <svg class="!absolute !w-3 !h-3 !text-white !opacity-0 peer-checked:!opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  </div>
+                  <span class="!text-sm !font-bold !text-slate-700 dark:!text-slate-300 group-hover:!text-red-600 !transition-colors">عدم سابقه زایمان</span>
+                </label>
+                <div class="!space-y-2" :class="breastCancer.noLiveBirth ? '!opacity-50' : ''">
+                  <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">سن اولین زایمان</label>
+                  <input v-model.number="breastCancer.first_live_birth_age" :disabled="breastCancer.noLiveBirth" type="number" min="0" class="!w-full !px-4 !py-3 !bg-white dark:!bg-slate-800 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100 disabled:!cursor-not-allowed" />
+                </div>
               </div>
-              <v-slider
-                v-model.number="menopause[symptom.key as keyof typeof menopause]"
-                :min="0" :max="3" :step="1"
-                show-ticks="always"
-                :tick-labels="['بدون', 'خفیف', 'متوسط', 'شدید']"
-                hide-details
-                density="compact"
-                color="orange-darken-1"
-                track-color="orange-lighten-4"
-                thumb-size="16"
-              />
+            </div>
+
+            <div class="!space-y-6">
+              <div class="!bg-slate-50 dark:!bg-slate-700 !p-5 !rounded-2xl !border !border-slate-200 dark:!border-slate-700 !space-y-4">
+                <label class="!flex !items-center !gap-3 !cursor-pointer !group">
+                  <div class="!relative !flex !items-center !justify-center">
+                    <input type="checkbox" v-model="breastCancer.family_history_breast_cancer" class="!peer !sr-only" />
+                    <div class="!w-5 !h-5 !border-2 !border-slate-300 !bg-white dark:!bg-slate-800 !rounded-md peer-checked:!bg-red-500 peer-checked:!border-red-500 !transition-colors"></div>
+                    <svg class="!absolute !w-3 !h-3 !text-white !opacity-0 peer-checked:!opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  </div>
+                  <span class="!text-sm !font-bold !text-slate-700 dark:!text-slate-300 group-hover:!text-red-600 !transition-colors">سابقه خانوادگی سرطان پستان</span>
+                </label>
+                <div class="!w-full !h-px !bg-slate-200 dark:!bg-slate-700"></div>
+                <label class="!flex !items-center !gap-3 !cursor-pointer !group">
+                  <div class="!relative !flex !items-center !justify-center">
+                    <input type="checkbox" v-model="breastCancer.previous_biopsy" class="!peer !sr-only" />
+                    <div class="!w-5 !h-5 !border-2 !border-slate-300 !bg-white dark:!bg-slate-800 !rounded-md peer-checked:!bg-red-500 peer-checked:!border-red-500 !transition-colors"></div>
+                    <svg class="!absolute !w-3 !h-3 !text-white !opacity-0 peer-checked:!opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                  </div>
+                  <span class="!text-sm !font-bold !text-slate-700 dark:!text-slate-300 group-hover:!text-red-600 !transition-colors">بیوپسی قبلی پستان</span>
+                </label>
+              </div>
+
+              <div class="!space-y-2">
+                <label class="!text-xs !font-bold !text-slate-700 dark:!text-slate-300 !px-1">جهش BRCA</label>
+                <select v-model="breastCancer.brca_mutation" class="!w-full !px-4 !py-3 !bg-slate-50 dark:!bg-slate-700 !border !border-slate-200 dark:!border-slate-700 !rounded-xl focus:!bg-white dark:!bg-slate-800 focus:!border-electric-sapphire focus:!ring-4 focus:!ring-light-cyan !transition-all !outline-none !text-slate-800 dark:!text-slate-100 !appearance-none">
+                  <option v-for="opt in brcaOptions" :key="opt.title" :value="opt.value">{{ opt.title }}</option>
+                </select>
+              </div>
             </div>
           </div>
 
-          <v-btn block color="orange-darken-1" variant="flat" :loading="menopauseLoading" @click="assessMenopause" class="mt-2">
-            محاسبه امتیاز یائسگی
-          </v-btn>
+          <button @click="assessBreastCancer" :disabled="breastCancerLoading" class="!w-full md:!w-1/2 !mx-auto !block !py-4 !px-6 !bg-red-500 hover:!bg-red-600 !text-white !font-extrabold !text-lg !rounded-2xl !shadow-lg !shadow-red-500/30 !transition-all !flex !justify-center !items-center !gap-3 disabled:!opacity-70 disabled:!cursor-not-allowed">
+            <svg v-if="breastCancerLoading" class="!w-6 !h-6 !text-white !animate-spin" fill="none" viewBox="0 0 24 24"><circle class="!opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="!opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <span v-else>ارزیابی ریسک</span>
+          </button>
 
-          <v-card v-if="menopauseResult" variant="tonal" :color="menopauseResult.color" class="mt-4 rounded-xl">
-            <v-card-text class="text-center py-4">
-              <v-chip :color="menopauseResult.color" size="large" variant="outlined" class="font-bold mb-2">
-                امتیاز: {{ menopauseResult.score }}
-              </v-chip>
-              <div class="text-sm font-bold">{{ menopauseResult.interpretation }}</div>
-              <div class="text-xs mt-1 opacity-80">{{ menopauseResult.severity }}</div>
-            </v-card-text>
-          </v-card>
-        </v-card-text>
-      </v-card>
-
-      <v-card class="rounded-2xl border border-slate-200 shadow-sm">
-        <v-card-text class="p-6">
-          <div class="flex items-center gap-3 mb-5">
-            <div class="w-11 h-11 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
-              <v-icon size="24">mdi-human-pregnant</v-icon>
+          <div v-if="breastCancerResult" class="!mt-8 !p-6 !rounded-3xl !border !text-center" :class="breastCancerResult.color === 'red-darken-1' ? '!bg-red-50 dark:!bg-red-900/30 !border-red-200 !text-red-800' : breastCancerResult.color === 'orange-darken-1' ? '!bg-orange-50 dark:!bg-orange-900/20 !border-orange-200 !text-orange-800 dark:!text-orange-300' : '!bg-green-50 dark:!bg-green-900/30 !border-green-200 !text-green-800'">
+             <div class="!inline-block !px-8 !py-2 !rounded-full !border-2 !font-black !text-xl !mb-4 !bg-white dark:!bg-slate-800" :class="breastCancerResult.color === 'red-darken-1' ? '!border-red-300' : breastCancerResult.color === 'orange-darken-1' ? '!border-orange-300' : '!border-green-300'">
+              {{ breastCancerResult.risk }}
             </div>
-            <div>
-              <h3 class="font-bold text-slate-800">امتیاز بیشاپ (Bishop Score)</h3>
-              <p class="text-xs text-slate-500">ارزیابی آمادگی دهانه رحم برای القای زایمان</p>
-            </div>
+            <div class="!text-xl !font-extrabold">{{ breastCancerResult.interpretation }}</div>
+            <div class="!text-sm !mt-2 !font-medium !opacity-80">{{ breastCancerResult.detail }}</div>
           </div>
+        </div>
+      </div>
 
-          <div class="grid grid-cols-2 gap-3 mb-4">
-            <v-text-field v-model.number="bishop.dilation" label="اتساع (0-5)" type="number" variant="outlined" density="compact" hide-details="auto" min="0" max="5" step="1" />
-            <v-text-field v-model.number="bishop.effacement" label="محو شدن (0-3)" type="number" variant="outlined" density="compact" hide-details="auto" min="0" max="3" step="1" />
-            <v-text-field v-model.number="bishop.station" label="استیشن (3- تا 3)" type="number" variant="outlined" density="compact" hide-details="auto" min="-3" max="3" step="1" />
-            <v-select v-model="bishop.consistency" :items="consistencyOptions" label="قوام" variant="outlined" density="compact" hide-details="auto" />
-            <v-select v-model="bishop.position" :items="positionOptions" label="موقعیت" variant="outlined" density="compact" hide-details="auto" class="col-span-2 sm:col-span-1" />
-          </div>
-
-          <v-btn block color="pink-darken-1" variant="flat" :loading="bishopLoading" @click="assessBishop">
-            محاسبه امتیاز بیشاپ
-          </v-btn>
-
-          <v-card v-if="bishopResult" variant="tonal" :color="bishopResult.color" class="mt-4 rounded-xl">
-            <v-card-text class="text-center py-4">
-              <v-chip :color="bishopResult.color" size="large" variant="outlined" class="font-bold mb-2">
-                امتیاز: {{ bishopResult.score }}
-              </v-chip>
-              <div class="text-sm font-bold">{{ bishopResult.interpretation }}</div>
-              <div class="text-xs mt-1 opacity-80">{{ bishopResult.detail }}</div>
-            </v-card-text>
-          </v-card>
-        </v-card-text>
-      </v-card>
-
-      <v-card class="rounded-2xl border border-slate-200 shadow-sm">
-        <v-card-text class="p-6">
-          <div class="flex items-center gap-3 mb-5">
-            <div class="w-11 h-11 rounded-xl bg-red-100 text-red-600 flex items-center justify-center">
-              <v-icon size="24">mdi-ribbon</v-icon>
-            </div>
-            <div>
-              <h3 class="font-bold text-slate-800">ریسک سرطان پستان</h3>
-              <p class="text-xs text-slate-500">ارزیابی ریسک ابتلا به سرطان پستان</p>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3 mb-4">
-            <v-text-field v-model.number="breastCancer.age" label="سن" type="number" variant="outlined" density="compact" hide-details="auto" min="0" />
-            <v-text-field v-model.number="breastCancer.menarche_age" label="سن اولین قاعدگی" type="number" variant="outlined" density="compact" hide-details="auto" min="0" />
-          </div>
-
-          <div class="flex items-center gap-2 mb-4">
-            <v-checkbox v-model="breastCancer.noLiveBirth" label="عدم سابقه زایمان" hide-details density="compact" color="red" class="text-slate-700 shrink-0" @update:model-value="onNoLiveBirthChange" />
-            <v-text-field
-              v-model.number="breastCancer.first_live_birth_age"
-              label="سن اولین زایمان"
-              type="number"
-              variant="outlined"
-              density="compact"
-              hide-details="auto"
-              min="0"
-              :disabled="breastCancer.noLiveBirth"
-              class="flex-1"
-            />
-          </div>
-
-          <div class="space-y-1 mb-2">
-            <v-checkbox v-model="breastCancer.family_history_breast_cancer" label="سابقه خانوادگی سرطان پستان" hide-details density="compact" color="red" class="text-slate-700" />
-            <v-checkbox v-model="breastCancer.previous_biopsy" label="بیوپسی قبلی پستان" hide-details density="compact" color="red" class="text-slate-700" />
-          </div>
-
-          <v-select
-            v-model="breastCancer.brca_mutation"
-            :items="brcaOptions"
-            label="جهش BRCA"
-            variant="outlined"
-            density="compact"
-            hide-details="auto"
-            class="mb-4"
-          />
-
-          <v-btn block color="red-darken-1" variant="flat" :loading="breastCancerLoading" @click="assessBreastCancer">
-            ارزیابی ریسک
-          </v-btn>
-
-          <v-card v-if="breastCancerResult" variant="tonal" :color="breastCancerResult.color" class="mt-4 rounded-xl">
-            <v-card-text class="text-center py-4">
-              <v-icon :color="breastCancerResult.color" size="36" class="mb-1">{{ breastCancerResult.icon }}</v-icon>
-              <v-chip :color="breastCancerResult.color" size="large" variant="outlined" class="font-bold mb-2">
-                {{ breastCancerResult.risk }}
-              </v-chip>
-              <div class="text-sm font-bold">{{ breastCancerResult.interpretation }}</div>
-              <div class="text-xs mt-1 opacity-80">{{ breastCancerResult.detail }}</div>
-            </v-card-text>
-          </v-card>
-        </v-card-text>
-      </v-card>
     </div>
   </div>
 </template>
@@ -292,6 +375,7 @@ import { ref, reactive } from 'vue'
 const { apiFetch } = useApi()
 const { $toast } = useNuxtApp()
 
+// --- PCOS Logic ---
 const pcos = reactive({
   oligo_anovulation: false,
   clinical_hyperandrogenism: false,
@@ -398,6 +482,7 @@ const assessPCOS = async () => {
   }
 }
 
+// --- Menopause Logic ---
 const menopauseSymptoms = [
   { key: 'hot_flashes', label: 'گرگرفتگی' },
   { key: 'night_sweats', label: 'عرق شبانه' },
@@ -464,6 +549,7 @@ const assessMenopause = async () => {
   }
 }
 
+// --- Bishop Score Logic ---
 const consistencyOptions = ['firm', 'medium', 'soft']
 const positionOptions = ['posterior', 'mid', 'anterior']
 
@@ -495,9 +581,10 @@ const assessBishop = async () => {
     if (res.success) {
       const d = res.data
       const score = d.total_score ?? 0
+      const interpretation = d.interpretation || (score <= 4 ? 'نامطلوب' : score <= 8 ? 'نسبتاً مطلوب' : 'مطلوب')
       bishopResult.value = {
         score,
-        interpretation: d.interpretation || (score <= 4 ? 'نامطلوب' : score <= 8 ? 'نسبتاً مطلوب' : 'مطلوب'),
+        interpretation,
         detail: d.detail || '',
         color: score <= 4 ? 'red-darken-1' : score <= 8 ? 'orange-darken-1' : 'green-darken-1',
       }
@@ -511,6 +598,7 @@ const assessBishop = async () => {
   }
 }
 
+// --- Breast Cancer Risk Logic ---
 const brcaOptions = [
   { title: 'مشخص نشده', value: null },
   { title: 'مثبت', value: true },

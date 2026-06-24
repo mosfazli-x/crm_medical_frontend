@@ -1,16 +1,16 @@
 <template>
   <div class="mx-auto max-w-7xl px-4 py-8 md:px-8 min-h-screen">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">تنظیم زمانبندی رزروها</h1>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">تنظیم زمانبندی رزروها</h1>
       <div class="flex items-center gap-3">
         <a :href="`/booking/${user?.id}`" target="_blank"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 hover:border-electric-sapphire/40 hover:bg-light-cyan/30 rounded-xl text-sm font-bold text-electric-sapphire transition-all duration-200 shadow-sm">
+          class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-600! border border-slate-200 hover:border-white/60 hover:bg-light-cyan/80! dark:text-white! dark:hover:bg-slate-500! rounded-xl text-sm font-bold text-electric-sapphire transition-all duration-200 shadow-sm">
           <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
           <span>مشاهده صفحه رزرو</span>
         </a>
-        <div class="text-sm text-slate-500 hidden sm:block">ساعات کاری: ۰۷:۰۰ تا ۲۲:۰۰</div>
+        <div class="text-sm text-slate-500 dark:text-slate-300 hidden sm:block">ساعات کاری: ۰۷:۰۰ تا ۲۲:۰۰</div>
       </div>
     </div>
 

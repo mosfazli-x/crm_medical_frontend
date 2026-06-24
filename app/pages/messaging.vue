@@ -2,7 +2,7 @@
   <div class="mx-auto max-w-7xl px-4 py-8 md:px-8 min-h-screen">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
       <div>
-        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">پیام‌ها</h1>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-100 tracking-tight">پیام‌ها</h1>
         <p class="text-slate-500 mt-2 text-sm md:text-base font-medium">ارسال و دریافت پیام‌های داخلی</p>
       </div>
     </div>
@@ -52,8 +52,7 @@
             >
               <div class="flex items-start gap-2.5">
                 <div class="flex-1 min-w-0 py-2">
-                  <div class="flex items-center gap-2 mb-0.5">
-                    {{ msg }}
+                  <div class="flex items-center gap-2 mb-1">
                     <span v-if="!msg.read && tab === 'inbox'" class="w-2 h-2 rounded-full bg-electric-sapphire shrink-0" />
                     <span v-if="msg.priority === 'urgent'" class="w-2 h-2 rounded-full bg-red-500 shrink-0" title="فوری" />
                     <span class="text-sm font-bold text-slate-800 truncate">
@@ -83,7 +82,7 @@
       </div>
 
       <!-- Right Panel -->
-      <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden flex flex-col px-3 py-2">
+      <div class="flex-1 bg-white dark:bg-blue-grey! rounded-2xl shadow-sm border border-slate-200/60 dark:border-slate-600! overflow-hidden flex flex-col px-3 py-2">
         <!-- Compose Form -->
         <template v-if="composing">
           <div class="p-6 border-b border-slate-100">
@@ -193,7 +192,7 @@
         <!-- Empty State -->
         <template v-else-if="!selected">
           <div class="flex-1 flex flex-col items-center justify-center p-8 text-center">
-            <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-5 border border-slate-100">
+            <div class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
               <v-icon size="36" color="slate-300">mdi-email-open-outline</v-icon>
             </div>
             <h3 class="text-lg font-bold text-slate-700">پیامی را انتخاب کنید</h3>

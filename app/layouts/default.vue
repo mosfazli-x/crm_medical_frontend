@@ -35,7 +35,7 @@
         permanent 
         width="290" 
         rail-width="75" 
-        class="border-e border-slate-200 dark:border-slate-800 !bg-electric-sapphire transition-all duration-300"
+        class="border-e border-slate-200 dark:border-slate-800 !bg-electric-sapphire dark:bg-electric-sapphire/20! transition-all duration-300"
         elevation="0"
         :temporary="isMobile"
       >
@@ -44,13 +44,13 @@
           @click="rail = !rail" 
           class="absolute -left-3 top-8 z-50 w-6 h-6 !bg-baby-blue-ice border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300"
         >
-          <AltArrowLeft class="w-4 h-4 dark:text-slate-400 transition-transform duration-300" :class="rail ? '' : 'rotate-180'" />
+          <AltArrowLeft class="w-4 h-4 fill-white dark:fill-black! transition-transform duration-300" :class="rail ? '' : 'rotate-180'" />
         </button>
 
         <div class="h-24 flex items-center gap-3 transition-all" :class="rail && !isMobile ? 'justify-center px-0' : 'px-6'">
           <MedicalKit class="w-10 h-10 shrink-0 fill-periwinkle dark:fill-periwinkle" />
           <div v-if="!rail || isMobile" class="flex flex-col overflow-hidden whitespace-nowrap">
-            <span class="font-bold text-lg text-slate-800 dark:text-slate-100 tracking-tight">کلینیک دکتر حسینی</span>
+            <span class="font-bold text-lg text-slate-50 dark:text-slate-100 tracking-tight">کلینیک دکتر حسینی</span>
             <span class="text-[11px] text-slate-200 dark:fill-slate-300 font-medium">پنل پزشک و مدیریت</span>
           </div>
         </div>
@@ -79,7 +79,7 @@
                     <template #title>
                       <div class="flex items-center" :class="rail && !isMobile ? 'justify-center w-full' : 'gap-3'">
                         <component :is="item.icon" class="w-5.5 h-5.5 shrink-0 fill-slate-300 dark:text-slate-400" />
-                        <span v-if="!rail || isMobile" class="text-[14px] font-medium text-slate-700 dark:text-slate-200">{{ item.title }}</span>
+                        <span v-if="!rail || isMobile" class="text-[14px] font-medium text-slate-50 dark:text-slate-200">{{ item.title }}</span>
                       </div>
                     </template>
                   </v-list-item>
@@ -112,7 +112,7 @@
                     <template #title>
                       <div class="flex items-center" :class="rail && !isMobile ? 'justify-center w-full' : 'gap-3'">
                         <component :is="item.icon" class="w-5.5 h-5.5 shrink-0 fill-slate-300 dark:text-slate-400" />
-                        <span v-if="!rail || isMobile" class="text-[14px] font-medium text-slate-700 dark:text-slate-200">{{ item.title }}</span>
+                        <span v-if="!rail || isMobile" class="text-[14px] font-medium text-slate-50 dark:text-slate-200">{{ item.title }}</span>
                       </div>
                     </template>
                   </v-list-item>
@@ -129,19 +129,19 @@
               <span class="text-electric-sapphire dark:text-periwinkle font-bold text-sm">{{ userInitial }}</span>
             </div>
             <div v-if="!rail || isMobile" class="flex flex-col overflow-hidden whitespace-nowrap">
-              <span class="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{{ user?.fullName || 'کاربر مهمان' }}</span>
-              <span class="text-[10px] text-slate-400 dark:fill-slate-300">{{ roleLabel }}</span>
+              <span class="text-sm font-bold text-slate-50 dark:text-slate-200 truncate">{{ user?.fullName || 'کاربر مهمان' }}</span>
+              <span class="text-[10px] text-slate-200 dark:fill-slate-300">{{ roleLabel }}</span>
             </div>
           </div>
         </template>
       </v-navigation-drawer>
 
-      <v-app-bar height="80" class="!bg-electric-sapphire/80 backdrop-blur-md px-4 md:px-6 border-b border-slate-200 dark:border-slate-800" elevation="0">
+      <v-app-bar height="80" class="!bg-electric-sapphire/60 dark:!bg-electric-sapphire/30 backdrop-blur-md px-4 md:px-6 border-b border-slate-200 dark:border-slate-800" elevation="0">
         <template v-slot:prepend>
           <v-app-bar-nav-icon variant="text" @click="drawer = !drawer" class="!text-light-cyan lg:hidden !flex"></v-app-bar-nav-icon>
           <div class="hidden lg:flex flex-col">
-            <h2 class="text-xl font-bold text-slate-100 select-none">خوش آمدید</h2>
-            <div class="text-slate-200 text-xs mt-1 select-none">
+            <h2 class="text-xl font-bold text-slate-50 select-none">خوش آمدید</h2>
+            <div class="text-slate-100 text-xs mt-1 select-none">
               امروز یک روز عالی برای مدیریت کلینیک است.
             </div>
           </div>
@@ -165,9 +165,11 @@
           </v-btn>
         
 
-          <v-btn icon variant="text" class="fill-slate-100 hover:fill-slate-300 hidden sm:flex">
-            <Settings class="w-5.5 h-5.5" />
-          </v-btn>
+          <NuxtLink to="/my-profile">
+            <v-btn icon variant="text" class="fill-slate-100 hover:fill-slate-300 hidden sm:flex">
+              <Settings class="w-5.5 h-5.5" />
+            </v-btn>
+          </NuxtLink>
 
           <v-btn icon variant="text" class="fill-slate-100 hover:fill-red-600 dark:hover:fill-red-400" @click="logout">
             <TurnOffIcon class="w-5.5 h-5.5" />
@@ -176,7 +178,7 @@
       </v-app-bar>
 
       <v-main class="bg-transparent min-h-screen pt-20">
-        <div class="px-4 md:px-10 pb-10 max-w-[1600px] mx-auto bg-light-cyan/50">
+        <div class="px-4 md:px-10 pb-10 max-w-[1600px] mx-auto bg-white dark:bg-dark-grey!">
           <slot />
         </div>
       </v-main>
@@ -187,7 +189,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { useDisplay, useTheme } from 'vuetify'
+import { useDisplay } from 'vuetify'
 
 // Component Imports
 import AltArrowLeft from '~/components/icons/AltArrowLeft.vue'
@@ -195,7 +197,6 @@ import Calendar from '~/components/icons/Calendar.vue'
 import Clock from '~/components/icons/Clock.vue'
 import Grid from '~/components/icons/Grid.vue'
 import HomeAngle from '~/components/icons/HomeAngle.vue'
-import Magnify from '~/components/icons/Magnify.vue'
 import MedicalKit from '~/components/icons/MedicalKit.vue'
 import Settings from '~/components/icons/Settings.vue'
 import TurnOffIcon from '~/components/icons/TurnOffIcon.vue'
@@ -203,22 +204,20 @@ import Users from '~/components/icons/Users.vue'
 import UsersGroup from '~/components/icons/UsersGroup.vue'
 import DocumentText from '~/components/icons/DocumentText.vue'
 import ShieldCheck from '~/components/icons/ShieldCheck.vue'
-import HeartPulse from '~/components/icons/HeartPulse.vue'
 import ChatDots from '~/components/icons/ChatDots.vue'
 import Calculator from '~/components/icons/Calculator.vue'
 import Wallet from '~/components/icons/Wallet.vue'
 import Profile from '~/components/icons/Profile.vue'
 
 // Composables
-const { user, isAuthenticated, logout } = useAuth() // فرض بر این است که این Composable را دارید
+const { user, isAuthenticated, logout } = useAuth()
 const { smAndDown } = useDisplay()
-const vuetifyTheme = useTheme()
+const { isDark, toggleTheme, initTheme } = useThemeMode()
 
 // State
 const drawer = ref(true)
 const rail = ref(false)
 const isLoading = ref(true)
-const isDark = ref(false)
 
 // Computed: Check Mobile View
 const isMobile = computed(() => smAndDown.value)
@@ -239,33 +238,15 @@ onMounted(() => {
   updateDrawerState()
   window.addEventListener('resize', updateDrawerState)
 
-  // بازیابی حالت Dark Mode (اگر در localStorage ذخیره شده باشد)
-  const savedTheme = localStorage.getItem('theme')
-  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    setDarkMode(true)
-  }
+  // بازیابی حالت Dark Mode
+  initTheme()
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateDrawerState)
 })
 
-// Functions: Theme Toggle
-const setDarkMode = (val) => {
-  isDark.value = val
-  vuetifyTheme.global.name.value = val ? 'dark' : 'light'
-  if (val) {
-    document.documentElement.classList.add('dark')
-    localStorage.setItem('theme', 'dark')
-  } else {
-    document.documentElement.classList.remove('dark')
-    localStorage.setItem('theme', 'light')
-  }
-}
-
-const toggleTheme = () => {
-  setDarkMode(!isDark.value)
-}
+// Functions: Theme Toggle (now handled by useThemeMode composable)
 
 const roleLabel = computed(() => {
   const roles = {
@@ -286,7 +267,7 @@ const userInitial = computed(() => {
 // Data: Menu Configuration
 // با این روش اضافه کردن منوهای جدید نیازی به دستکاری HTML ندارد
 const ALL_MENUS = [
-  { title: 'داشبورد', to: '/', icon: HomeAngle, roles: ['all'], category: 'primary' },
+  { title: 'داشبورد', to: '/dashboard', icon: HomeAngle, roles: ['all'], category: 'primary' },
   { title: 'تقویم کاری', to: '/calendar', icon: Calendar, roles: ['admin_doctor', 'doctor'], category: 'primary' },
   { title: 'تنظیم زمانبندی رزروها', to: '/scheduling', icon: Clock, roles: ['admin_doctor', 'doctor'], category: 'primary' },
   { title: 'نوبت‌های بیماران', to: '/appointments', icon: Grid, roles: ['admin_doctor', 'doctor'], category: 'primary' },
@@ -298,7 +279,7 @@ const ALL_MENUS = [
   { title: 'غربالگری', to: '/screening', icon: ShieldCheck, roles: ['admin_doctor', 'doctor'], category: 'primary' },
   { title: 'نتایج آزمایش', to: '/lab-results', icon: DocumentText, roles: ['admin_doctor', 'doctor', 'lab'], category: 'primary' },
   { title: 'نسخه‌ها', to: '/prescriptions', icon: Calendar, roles: ['pharmacy'], category: 'primary' },
-  { title: 'پرونده من', to: '/my-profile', icon: Profile, roles: ['patient'], category: 'primary' },
+  { title: 'پروفایل من', to: '/my-profile', icon: Profile, roles: ['all'], category: 'primary' },
   
   { title: 'لیست بیماران', to: '/patients', icon: UsersGroup, roles: ['admin_doctor', 'doctor'], category: 'patient' }
 ]

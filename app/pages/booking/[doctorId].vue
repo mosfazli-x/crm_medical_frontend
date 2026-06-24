@@ -14,11 +14,9 @@
     <div
       class="w-full max-w-2xl bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden transition-all duration-300">
 
-      <!-- Stepper -->
       <div class="px-6 sm:px-10 pt-6 sm:pt-10 pb-2">
         <div class="flex items-center gap-2 justify-center mb-6">
-          <div v-for="(step, i) in steps" :key="i"
-            class="flex items-center gap-2"
+          <div v-for="(step, i) in steps" :key="i" class="flex items-center gap-2"
             :class="i < steps.length - 1 ? 'flex-1' : ''">
             <div class="flex items-center gap-2 shrink-0">
               <div
@@ -42,54 +40,46 @@
 
       <div v-if="!success" class="p-6 sm:p-10 pt-2">
 
-        <!-- Step 1: Date Selection -->
-        <div v-show="currentStep === 0">
-          <div
-            class="flex items-center justify-between bg-slate-50 rounded-2xl border border-slate-100 mx-8">
+        <div class="pb-2" v-show="currentStep === 0">
+          <div class="flex items-center justify-between bg-slate-50 rounded-2xl border border-slate-100 mx-8">
             <div class="flex flex-col items-center w-full py-2">
               <span class="text-xs font-medium text-slate-400 mb-0.5">تاریخ نوبت</span>
               <span class="text-sm sm:text-base font-bold text-slate-800">{{ persianDate }}</span>
             </div>
           </div>
 
-          <HijriCalendar
-            v-model="selectedJalaliDate"
-            :marked-dates="markedDates"
-            :loading="calendarLoading"
-            @month-change="onMonthChange"
-          />
+          <HijriCalendar v-model="selectedJalaliDate" :marked-dates="markedDates" :loading="calendarLoading"
+            @month-change="onMonthChange" />
 
           <div v-if="selectedJalaliDate && !fetchingSlots && !availableSlots.length"
             class="mt-4 flex items-center gap-2 justify-center py-3 px-4 bg-amber-50 border border-amber-200/60 rounded-xl mx-6">
             <svg class="w-5 h-5 shrink-0 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <span class="text-sm font-medium text-amber-700">برای این روز نوبتی ثبت نشده است</span>
           </div>
 
-          <div class="my-2 flex justify-center">
+          <div v-if="!selectedJalaliDate || fetchingSlots || availableSlots.length" class="my-2 flex justify-center">
             <v-btn variant="flat" color="#5465ff" size="large"
-              class="px-14 font-bold rounded-xl shadow-md shadow-electric-sapphire/30"
-              :disabled="!selectedJalaliDate"
+              class="px-14 font-bold rounded-xl shadow-md shadow-electric-sapphire/30" :disabled="!selectedJalaliDate"
               @click="currentStep = 1">
               ادامه
             </v-btn>
           </div>
         </div>
 
-        <!-- Step 2: Visit Type Selection -->
         <div v-show="currentStep === 1">
           <div class="flex items-center justify-between mb-6 px-2">
             <h2 class="text-lg font-bold text-slate-800">نوع نوبت</h2>
             <v-progress-circular v-if="fetchingVisitTypes" indeterminate color="#5465ff" size="20" width="2" />
           </div>
 
-          <div v-if="!fetchingVisitTypes && visitTypes.length" class="space-y-3 px-2">
+          <div v-if="!fetchingVisitTypes && visitTypes.length" class="space-y-3 px-2 gap-1 flex flex-col">
             <button v-for="vt in visitTypes" :key="vt.id" @click="selectVisitType(vt)"
-              class="w-full text-right p-4 rounded-xl border-2 transition-all duration-200 px-2 py-2"
-              :class="selectedVisitType?.id === vt.id
-                ? 'border-electric-sapphire! bg-light-cyan/30! shadow-sm shadow-electric-sapphire/20'
-                : 'border-slate-600! hover:border-periwinkle hover:bg-slate-50! bg-slate-200!'">
+              class="w-full text-right p-4 rounded-xl border-2 transition-all duration-200 px-3 py-2" :class="selectedVisitType?.id === vt.id
+                ? 'border-electric-sapphire! bg-light-cyan! shadow-sm shadow-electric-sapphire/20!'
+                : 'border-slate-100! hover:border-periwinkle hover:bg-slate-50! bg-slate-50! border-slate-500'">
               <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                   :style="{ backgroundColor: vt.color + '20' }">
@@ -104,6 +94,8 @@
                 </div>
                 <div class="text-left shrink-0">
                   <span class="text-sm font-bold text-electric-sapphire">{{ formatPrice(vt.price) }}</span>
+                  <div class="text-[10px] text-slate-400 mt-0.5 whitespace-nowrap">{{ numberToWords(vt.price) }} تومان
+                  </div>
                 </div>
               </div>
             </button>
@@ -111,7 +103,8 @@
 
           <div v-if="!fetchingVisitTypes && !visitTypes.length"
             class="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-slate-100">
+            <div
+              class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-slate-100">
               <span class="text-2xl">📋</span>
             </div>
             <h3 class="text-slate-700 font-bold mb-1">نوع نوبتی تعریف نشده</h3>
@@ -119,7 +112,8 @@
           </div>
 
           <div class="mt-8 flex items-center gap-3 justify-between px-2 py-2">
-            <v-btn variant="text" color="slate-500" size="large" class="rounded-lg font-medium" @click="currentStep = 0">
+            <v-btn variant="text" color="slate-500" size="large" class="rounded-lg font-medium"
+              @click="currentStep = 0">
               بازگشت
             </v-btn>
             <v-btn variant="flat" color="#5465ff" size="large" :disabled="!selectedVisitType"
@@ -129,18 +123,17 @@
           </div>
         </div>
 
-        <!-- Step 3: Time Slot Selection -->
-        <div v-show="currentStep === 2">
+        <div class="px-2" v-show="currentStep === 2">
           <div class="flex items-center justify-between mb-4 px-2">
             <h2 class="text-lg font-bold text-slate-800">انتخاب ساعت</h2>
             <v-progress-circular v-if="fetchingSlots" indeterminate color="#5465ff" size="20" width="2" />
           </div>
 
-          <div
-            class="bg-light-cyan/40 border border-periwinkle/40 rounded-xl px-4 py-3 mb-6 flex items-center gap-3">
+          <div class="bg-light-cyan/40 border border-periwinkle/40 rounded-xl px-4 py-3 mb-6 flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
               :style="{ backgroundColor: (selectedVisitType?.color || '#3B82F6') + '20' }">
-              <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: selectedVisitType?.color || '#3B82F6' }"></div>
+              <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: selectedVisitType?.color || '#3B82F6' }">
+              </div>
             </div>
             <div class="text-sm">
               <span class="text-slate-600">نوع نوبت: </span>
@@ -161,25 +154,25 @@
 
           <div v-if="!fetchingSlots && !availableSlots.length"
             class="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200 px-2">
-            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-slate-100">
+            <div
+              class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-slate-100">
               <span class="text-2xl">📅</span>
             </div>
             <h3 class="text-slate-700 font-bold mb-1">نوبتی یافت نشد</h3>
             <p class="text-sm text-slate-500">لطفاً روز دیگری را بررسی کنید.</p>
           </div>
 
-          <div class="mt-8 flex items-center gap-3 justify-between px-2">
-            <v-btn variant="text" color="slate-500" size="large" class="rounded-lg font-medium" @click="currentStep = 1">
+          <div class="mt-8 flex items-center gap-3 justify-between px-2 pb-2">
+            <v-btn variant="text" color="slate-500" size="large" class="rounded-lg font-medium"
+              @click="currentStep = 1">
               بازگشت
             </v-btn>
           </div>
         </div>
 
-        <!-- Step 4: Patient Info Form -->
-        <v-expand-transition>
+        <v-expand-transition class="px-2">
           <div v-if="selectedSlot">
             <div class="h-px w-full bg-slate-100 my-8"></div>
-
             <div class="flex items-center justify-between mb-6 px-2">
               <h3 class="text-lg font-bold text-slate-800">اطلاعات مراجعه‌کننده</h3>
               <span class="bg-light-cyan text-electric-sapphire px-3 py-1 rounded-lg text-xs font-bold">
@@ -190,21 +183,24 @@
             <v-form ref="formRef" @submit.prevent="bookAppointment">
               <v-row class="mt-2 px-2">
                 <v-col cols="12" md="6" class="py-2">
-                  <label class="text-sm font-semibold text-slate-700 mb-2 block">نام <span class="text-red-500">*</span></label>
+                  <label class="text-sm font-semibold text-slate-700 mb-2 block">نام <span
+                      class="text-red-500">*</span></label>
                   <v-text-field v-model="form.firstName" variant="outlined" density="comfortable"
                     placeholder="مثال: علی" hide-details="auto" bg-color="white" rounded="lg" dir="rtl"
                     :rules="[v => !!v || 'نام الزامی است']" />
                 </v-col>
 
                 <v-col cols="12" md="6" class="py-2">
-                  <label class="text-sm font-semibold text-slate-700 mb-2 block">نام خانوادگی <span class="text-red-500">*</span></label>
+                  <label class="text-sm font-semibold text-slate-700 mb-2 block">نام خانوادگی <span
+                      class="text-red-500">*</span></label>
                   <v-text-field v-model="form.lastName" variant="outlined" density="comfortable"
                     placeholder="مثال: محمدی" hide-details="auto" bg-color="white" rounded="lg" dir="rtl"
                     :rules="[v => !!v || 'نام خانوادگی الزامی است']" />
                 </v-col>
 
                 <v-col cols="12" md="6" class="py-2">
-                  <label class="text-sm font-semibold text-slate-700 mb-2 block">کد ملی <span class="text-red-500">*</span></label>
+                  <label class="text-sm font-semibold text-slate-700 mb-2 block">کد ملی <span
+                      class="text-red-500">*</span></label>
                   <v-text-field v-model="form.nationalId" variant="outlined" density="comfortable"
                     placeholder="۱۰ رقم بدون خط تیره" maxlength="10" hide-details="auto" bg-color="white" rounded="lg"
                     dir="ltr" :rules="[
@@ -214,7 +210,8 @@
                 </v-col>
 
                 <v-col cols="12" md="6" class="py-2">
-                  <label class="text-sm font-semibold text-slate-700 mb-2 block">شماره موبایل <span class="text-red-500">*</span></label>
+                  <label class="text-sm font-semibold text-slate-700 mb-2 block">شماره موبایل <span
+                      class="text-red-500">*</span></label>
                   <v-text-field v-model="form.phone" variant="outlined" density="comfortable" placeholder="۰۹۱۲۳۴۵۶۷۸۹"
                     hide-details="auto" bg-color="white" rounded="lg" :rules="[v => !!v || 'شماره موبایل الزامی است']"
                     dir="ltr" class="text-right" />
@@ -223,7 +220,8 @@
 
               <div class="mt-8 flex flex-col-reverse sm:flex-row items-center gap-3 py-3 px-3 justify-between">
                 <div>
-                  <v-btn variant="text" color="slate-500" size="large" class="rounded-lg font-medium" @click="goBackToSlots">
+                  <v-btn variant="text" color="slate-500" size="large" class="rounded-lg font-medium"
+                    @click="goBackToSlots">
                     بازگشت
                   </v-btn>
                 </div>
@@ -257,7 +255,8 @@
           </div>
           <div class="flex justify-between items-center px-2 py-3">
             <span class="text-sm font-medium text-slate-500">ساعت مراجعه:</span>
-            <span class="text-sm font-bold text-electric-sapphire">{{ selectedSlot?.startTime }} الی {{ selectedSlot?.endTime }}</span>
+            <span class="text-sm font-bold text-electric-sapphire">{{ selectedSlot?.startTime }} الی {{
+              selectedSlot?.endTime }}</span>
           </div>
         </div>
 
@@ -346,8 +345,64 @@ watch(selectedJalaliDate, () => {
   fetchSlots()
 }, { immediate: true })
 
+// === تابع جدید تبدیل عدد به حروف با افزودن صحیح حرف «و» ===
+function numberToWords(num: number): string {
+  if (num === 0) return 'صفر'
+
+  const ones = ['', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه']
+  const teens = ['ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده']
+  const tens = ['', '', 'بیست', 'سی', 'چهل', 'پنجاه', 'شصت', 'هفتاد', 'هشتاد', 'نود']
+  const hundreds = ['', 'صد', 'دویست', 'سیصد', 'چهارصد', 'پانصد', 'ششصد', 'هفتصد', 'هشتصد', 'نهصد']
+  const units = ['', 'هزار', 'میلیون', 'میلیارد', 'تریلیون']
+
+  function convertTriplet(n: number): string {
+    const h = Math.floor(n / 100)
+    const t = Math.floor((n % 100) / 10)
+    const o = n % 10
+
+    const parts = []
+    if (h > 0) parts.push(hundreds[h])
+
+    if (t === 1) {
+      parts.push(teens[o])
+    } else {
+      if (t > 1) parts.push(tens[t])
+      if (o > 0) parts.push(ones[o])
+    }
+
+    // متصل کردن اعداد با حرف «و»
+    return parts.join(' و ')
+  }
+
+  const tripletWords = []
+  let groupIndex = 0
+
+  while (num > 0) {
+    const triplet = num % 1000
+    if (triplet > 0) {
+      const tripletWord = convertTriplet(triplet)
+      const unitWord = units[groupIndex] ? ' ' + units[groupIndex] : ''
+      tripletWords.push(tripletWord + unitWord)
+    }
+    num = Math.floor(num / 1000)
+    groupIndex++
+  }
+
+  // برعکس کردن آرایه و متصل کردن بخش‌های هزارتایی/میلیونی با حرف «و»
+  return tripletWords.reverse().join(' و ')
+}
+
+// === تابع جدید فرمت قیمت با جداسازی ۳ رقمی دقیق ===
 function formatPrice(price: number) {
-  return price.toLocaleString('fa-IR') + ' تومان'
+  if (price == null) return '۰ تومان'
+
+  // جداسازی سه رقم سه رقم با RegEx برای جلوگیری از مشکلات hydration
+  const separated = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+  // تبدیل اعداد انگلیسی به فارسی 
+  const persianDigits = separated.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d)])
+
+  return persianDigits + ' تومان'
 }
 
 function selectVisitType(vt: any) {

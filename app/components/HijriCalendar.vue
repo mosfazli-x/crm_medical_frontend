@@ -1,23 +1,23 @@
 <template>
-  <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden select-none relative mx-8 my-1">
-    <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+  <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden select-none relative mx-8 my-1">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700">
       <button @click="prevMonth"
-        class="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-slate-100 active:bg-slate-200 transition-colors">
-        <AltArrowLeft class="w-5 h-5 fill-slate-500 rotate-180" />
+        class="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 transition-colors">
+        <AltArrowLeft class="w-5 h-5 fill-slate-500 dark:fill-slate-400 rotate-180" />
       </button>
       <div class="flex flex-col items-center gap-0.5">
-        <span class="text-sm font-bold text-slate-800 leading-tight">{{ monthName }}</span>
-        <span class="text-[11px] font-medium text-slate-400 leading-tight">{{ yearName }}</span>
+        <span class="text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight">{{ monthName }}</span>
+        <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500 leading-tight">{{ yearName }}</span>
       </div>
       <button @click="nextMonth"
-        class="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-slate-100 active:bg-slate-200 transition-colors">
-        <AltArrowLeft class="w-5 h-5 fill-slate-500" />
+        class="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 transition-colors">
+        <AltArrowLeft class="w-5 h-5 fill-slate-500 dark:fill-slate-400" />
       </button>
     </div>
 
     <div class="grid grid-cols-7 gap-px px-3 pt-3 pb-1">
       <div v-for="d in weekdays" :key="d"
-        class="text-center text-[11px] font-bold text-slate-400 py-1">
+        class="text-center text-[11px] font-bold text-slate-400 dark:text-slate-500 py-1">
         {{ d }}
       </div>
     </div>
@@ -39,7 +39,7 @@
     </div>
 
     <div v-if="loading"
-      class="absolute inset-0 bg-white/70 backdrop-blur-[1px] flex items-center justify-center rounded-2xl z-10">
+      class="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-[1px] flex items-center justify-center rounded-2xl z-10">
       <svg class="animate-spin h-6 w-6 text-electric-sapphire" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
@@ -143,8 +143,8 @@ const calendarDays = computed(() => {
 function cellClasses(cell: CalendarCell): Record<string, boolean> {
   return {
     'opacity-0 pointer-events-none': !cell.isCurrentMonth,
-    'bg-electric-sapphire/10 border border-electric-sapphire/30': cell.isSelected && !cell.isPast,
-    'hover:bg-slate-100': cell.isCurrentMonth && !cell.isSelected && !cell.isPast,
+    'bg-electric-sapphire/10 dark:bg-electric-sapphire/20 border border-electric-sapphire/30 dark:border-electric-sapphire/50': cell.isSelected && !cell.isPast,
+    'hover:bg-slate-100 dark:hover:bg-slate-700': cell.isCurrentMonth && !cell.isSelected && !cell.isPast,
     'cursor-default': cell.isPast,
   }
 }
@@ -152,15 +152,15 @@ function cellClasses(cell: CalendarCell): Record<string, boolean> {
 function dayTextClasses(cell: CalendarCell): Record<string, boolean> {
   return {
     'text-electric-sapphire font-bold': cell.isSelected,
-    'text-slate-800': !cell.isSelected && !cell.isPast && !cell.isToday,
-    'text-slate-400': cell.isPast,
+    'text-slate-800 dark:text-slate-100': !cell.isSelected && !cell.isPast && !cell.isToday,
+    'text-slate-400 dark:text-slate-500': cell.isPast,
     'text-electric-sapphire': cell.isToday && !cell.isSelected,
   }
 }
 
 function dotClasses(cell: CalendarCell): Record<string, boolean> {
   return {
-    'bg-white': cell.isSelected,
+    'bg-white dark:bg-slate-100': cell.isSelected,
     'bg-electric-sapphire': !cell.isSelected,
   }
 }

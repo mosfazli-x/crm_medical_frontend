@@ -1,9 +1,9 @@
 <template>
-  <div class="mx-auto max-w-7xl px-4 py-10 md:px-8 min-h-screen bg-slate-50/50">
+  <div class="mx-auto max-w-7xl px-4 py-10 md:px-8 min-h-screen">
     <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10">
       <div>
-        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">انواع نوبت</h1>
-        <p class="text-sm font-medium text-slate-500 mt-2">مدیریت انواع نوبت‌های خود را تنظیم کنید</p>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">انواع نوبت</h1>
+        <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-2">مدیریت انواع نوبت‌های خود را تنظیم کنید</p>
       </div>
       <v-btn variant="flat" color="#5465ff" size="large" class="font-bold rounded-xl shadow-md shadow-electric-sapphire/30 px-6"
         prepend-icon="mdi-plus" @click="openCreateDialog">
@@ -11,7 +11,7 @@
       </v-btn>
     </header>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden">
+    <div class="bg-white dark:bg-blue-grey! rounded-2xl shadow-sm border border-slate-200/60 dark:border-slate-600! overflow-hidden">
       <div v-if="loading" class="flex flex-col items-center justify-center py-24!">
         <svg class="animate-spin h-8 w-8 text-electric-sapphire mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
@@ -21,13 +21,13 @@
       </div>
 
       <div v-else-if="!visitTypes.length" class="flex flex-col items-center justify-center py-24 px-4 text-center my-3">
-        <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-5 border border-slate-100">
-          <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
+          <svg class="w-8 h-8 text-slate-300 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         </div>
-        <h3 class="text-lg font-bold text-slate-700">هیچ نوع نوبتی تعریف نشده است</h3>
-        <p class="text-sm text-slate-500 mt-2 max-w-sm">برای شروع، یک نوع نوبت جدید اضافه کنید.</p>
+        <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">هیچ نوع نوبتی تعریف نشده است</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">برای شروع، یک نوع نوبت جدید اضافه کنید.</p>
       </div>
 
       <template v-else>
@@ -90,7 +90,7 @@
 
     <v-dialog v-model="dialog" max-width="580" :persistent="saving">
       <v-card class="rounded-2xl">
-        <v-card-title class="text-lg font-bold text-slate-800 px-6 pt-6 pb-4 border-b border-slate-100">
+        <v-card-title class="text-lg font-bold! text-slate-800 dark:text-slate-100 px-6 pt-6 pb-4 border-b border-slate-100">
           {{ editingId ? 'ویرایش نوع نوبت' : 'افزودن نوع نوبت' }}
         </v-card-title>
 
@@ -98,35 +98,35 @@
           <v-form ref="formRef" @submit.prevent="saveVisitType">
             <v-row>
               <v-col cols="12" class="py-2">
-                <label class="text-sm font-semibold text-slate-700 mb-2 block">نام نوع نوبت <span class="text-red-500">*</span></label>
+                <label class="text-sm font-semibold text-slate-700 mb-2 block dark:text-slate-200">نام نوع نوبت <span class="text-red-500">*</span></label>
                 <v-text-field v-model="form.name" variant="outlined" density="comfortable"
                   placeholder="مثال: ویزیت عمومی" hide-details="auto" bg-color="white" rounded="lg"
                   :rules="[v => !!v?.trim() || 'نام الزامی است']" />
               </v-col>
 
               <v-col cols="12" class="py-2">
-                <label class="text-sm font-semibold text-slate-700 mb-2 block">توضیحات</label>
+                <label class="text-sm font-semibold text-slate-700 mb-2 block dark:text-slate-200">توضیحات</label>
                 <v-textarea v-model="form.description" variant="outlined" density="comfortable"
                   placeholder="توضیحات کوتاه درباره این نوع نوبت" hide-details="auto" bg-color="white" rounded="lg"
                   rows="3" />
               </v-col>
 
               <v-col cols="12" md="6" class="py-2">
-                <label class="text-sm font-semibold text-slate-700 mb-2 block">مدت زمان (دقیقه) <span class="text-red-500">*</span></label>
+                <label class="text-sm font-semibold text-slate-700 mb-2 block dark:text-slate-200">مدت زمان (دقیقه) <span class="text-red-500">*</span></label>
                 <v-text-field v-model.number="form.durationMinutes" variant="outlined" density="comfortable"
                   type="number" min="5" max="480" placeholder="۳۰" hide-details="auto" bg-color="white" rounded="lg"
                   :rules="[v => !!v || 'مدت زمان الزامی است', v => v >= 5 || 'حداقل ۵ دقیقه']" />
               </v-col>
 
               <v-col cols="12" md="6" class="py-2">
-                <label class="text-sm font-semibold text-slate-700 mb-2 block">قیمت (تومان) <span class="text-red-500">*</span></label>
+                <label class="text-sm font-semibold text-slate-700 mb-2 block dark:text-slate-200">قیمت (تومان) <span class="text-red-500">*</span></label>
                 <v-text-field v-model.number="form.price" variant="outlined" density="comfortable"
                   type="number" min="0" placeholder="۱۰۰۰۰۰" hide-details="auto" bg-color="white" rounded="lg"
                   :rules="[v => v >= 0 || 'قیمت نمی‌تواند منفی باشد']" />
               </v-col>
 
               <v-col cols="12" md="6" class="py-2">
-                <label class="text-sm font-semibold text-slate-700 mb-2 block">رنگ <span class="text-red-500">*</span></label>
+                <label class="text-sm font-semibold text-slate-700 mb-2 block dark:text-slate-200">رنگ <span class="text-red-500">*</span></label>
                 <div class="flex items-center gap-3">
                   <v-text-field v-model="form.color" variant="outlined" density="comfortable"
                     placeholder="#3B82F6" maxlength="7" hide-details="auto" bg-color="white" rounded="lg"
@@ -150,7 +150,7 @@
           </v-btn>
           <v-spacer />
           <v-btn variant="flat" color="#5465ff" size="large" :loading="saving"
-            class="px-8 font-bold rounded-lg shadow-md shadow-electric-sapphire/30" @click="saveVisitType">
+            class="px-8 font-bold rounded-lg shadow-md shadow-electric-sapphire/30 hover:bg-electric-sapphire/80!" @click="saveVisitType">
             {{ editingId ? 'ذخیره تغییرات' : 'ایجاد نوع نوبت' }}
           </v-btn>
         </v-card-actions>

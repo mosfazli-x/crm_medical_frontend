@@ -1,14 +1,14 @@
 <template>
   <div class="max-w-7xl mx-auto p-4 md:p-8 pt-6 space-y-6">
-    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pb-3 border-slate-100">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pb-3 border-slate-100 dark:border-slate-700">
       <div>
-        <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">مدیریت صورتحساب‌ها</h1>
-        <p class="text-sm text-slate-500 mt-1 font-medium">مدیریت هزینه‌ها، کدهای خدمات و وضعیت پرداخت بیماران</p>
+        <h1 class="text-2xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">مدیریت صورتحساب‌ها</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">مدیریت هزینه‌ها، کدهای خدمات و وضعیت پرداخت بیماران</p>
       </div>
     </div>
 
     <!-- Tabs -->
-    <div class="border-slate-200">
+    <div class="border-slate-200 dark:border-slate-700">
       <nav class="flex gap-6 pb-2">
         <button
           v-for="tab in tabs"
@@ -17,8 +17,8 @@
           :class="[
             'pb-3 text-sm font-bold transition-colors relative',
             activeTab === tab.key
-              ?           'text-electric-sapphire after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-electric-sapphire after:rounded-full'
-              : 'text-slate-500 hover:text-slate-700'
+              ? 'text-electric-sapphire after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-electric-sapphire after:rounded-full'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
           ]"
         >
           {{ tab.label }}
@@ -30,17 +30,17 @@
     <template v-if="activeTab === 'records'">
       <!-- Summary Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-2">
-        <div class="bg-white/80 rounded-2xl border border-slate-200/60 p-5 shadow-sm px-3 py-2">
-          <div class="text-sm font-medium text-slate-500 mb-1">مجموع صورتحساب‌ها</div>
-          <div class="text-2xl font-black text-slate-800">{{ formatPrice(summary.totalBilled) }}</div>
+        <div class="bg-white/80 dark:bg-slate-800/80 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-5 shadow-sm px-3 py-2">
+          <div class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">مجموع صورتحساب‌ها</div>
+          <div class="text-2xl font-black text-slate-800 dark:text-slate-100">{{ formatPrice(summary.totalBilled) }}</div>
         </div>
-        <div class="bg-white/80 rounded-2xl border border-slate-200/60 p-5 shadow-sm px-3 py-2">
-          <div class="text-sm font-medium text-slate-500 mb-1">وصول شده</div>
-          <div class="text-2xl font-black text-emerald-600">{{ formatPrice(summary.totalCollected) }}</div>
+        <div class="bg-white/80 dark:bg-slate-800/80 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-5 shadow-sm px-3 py-2">
+          <div class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">وصول شده</div>
+          <div class="text-2xl font-black text-emerald-600 dark:text-emerald-400">{{ formatPrice(summary.totalCollected) }}</div>
         </div>
-        <div class="bg-white/80 rounded-2xl border border-slate-200/60 p-5 shadow-sm px-3 py-2">
-          <div class="text-sm font-medium text-slate-500 mb-1">در انتظار پرداخت</div>
-          <div class="text-2xl font-black text-amber-600">{{ formatPrice(summary.totalPending) }}</div>
+        <div class="bg-white/80 dark:bg-slate-800/80 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-5 shadow-sm px-3 py-2">
+          <div class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">در انتظار پرداخت</div>
+          <div class="text-2xl font-black text-amber-600 dark:text-amber-400">{{ formatPrice(summary.totalPending) }}</div>
         </div>
       </div>
 
@@ -69,22 +69,22 @@
       </div>
 
       <!-- Billing Records Table -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div class="overflow-x-auto">
           <table class="min-w-full text-right border-collapse">
-            <thead class="bg-slate-50 border-b border-slate-200">
+            <thead class="bg-slate-50 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-600">
               <tr>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">بیمار</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">خدمت</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">تاریخ</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">مبلغ</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">سهم بیمه</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">سهم بیمار</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">وضعیت</th>
-                <th class="px-6 py-4 text-center text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">عملیات</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">بیمار</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">خدمت</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">تاریخ</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">مبلغ</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">سهم بیمه</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">سهم بیمار</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">وضعیت</th>
+                <th class="px-6 py-4 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">عملیات</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
               <tr v-if="recordsLoading" v-for="i in 4" :key="`sk-${i}`">
                 <td colspan="8" class="p-4">
                   <v-skeleton-loader type="list-item" class="bg-transparent" />
@@ -93,10 +93,10 @@
               <tr v-else-if="filteredRecords.length === 0">
                 <td colspan="8" class="py-16 text-center">
                   <div class="flex flex-col items-center justify-center space-y-3">
-                    <div class="bg-slate-50 p-4 rounded-full">
+                    <div class="bg-slate-50 dark:bg-slate-700 p-4 rounded-full">
                       <v-icon icon="mdi-cash-remove" size="48" color="slate-400" />
                     </div>
-                    <p class="text-slate-500 font-medium text-lg">هیچ صورتحسابی یافت نشد.</p>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium text-lg">هیچ صورتحسابی یافت نشد.</p>
                   </div>
                 </td>
               </tr>
@@ -104,24 +104,24 @@
                 v-else
                 v-for="record in filteredRecords"
                 :key="record.id"
-                class="hover:bg-slate-50/80 transition-colors"
+                class="hover:bg-slate-50/80 dark:hover:bg-slate-700/60 transition-colors"
               >
-                <td class="px-6 py-4 text-sm font-semibold text-slate-800 whitespace-nowrap">
+                <td class="px-6 py-4 text-sm font-semibold text-slate-800 dark:text-slate-100 whitespace-nowrap">
                   {{ record.patient_name || record.patient?.firstName + ' ' + record.patient?.lastName || '---' }}
                 </td>
-                <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">
+                <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300 whitespace-nowrap">
                   {{ record.procedure_name || record.procedureCode?.name || '---' }}
                 </td>
-                <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">
+                <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 whitespace-nowrap">
                   {{ formatJalaliDate(record.billing_date) }}
                 </td>
-                <td class="px-6 py-4 text-sm font-mono font-semibold text-slate-800 whitespace-nowrap" dir="ltr">
+                <td class="px-6 py-4 text-sm font-mono font-semibold text-slate-800 dark:text-slate-100 whitespace-nowrap" dir="ltr">
                   {{ formatPrice(record.amount) }}
                 </td>
-                <td class="px-6 py-4 text-sm font-mono text-emerald-600 whitespace-nowrap" dir="ltr">
+                <td class="px-6 py-4 text-sm font-mono text-emerald-600 dark:text-emerald-400 whitespace-nowrap" dir="ltr">
                   {{ formatPrice(record.insurance_portion) }}
                 </td>
-                <td class="px-6 py-4 text-sm font-mono text-amber-700 whitespace-nowrap" dir="ltr">
+                <td class="px-6 py-4 text-sm font-mono text-amber-700 dark:text-amber-300 whitespace-nowrap" dir="ltr">
                   {{ formatPrice(record.patient_portion) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
@@ -141,7 +141,7 @@
                             icon
                             variant="text"
                             size="small"
-                            class="text-emerald-500 hover:bg-emerald-50"
+                            class="text-emerald-500 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
                             @click="updateRecordStatus(record.id, 'paid')"
                           >
                             <v-icon size="20">mdi-check-circle-outline</v-icon>
@@ -155,7 +155,7 @@
                             icon
                             variant="text"
                             size="small"
-                            class="text-red-500 hover:bg-red-50"
+                            class="text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
                             @click="updateRecordStatus(record.id, 'cancelled')"
                           >
                             <v-icon size="20">mdi-cancel</v-icon>
@@ -171,7 +171,7 @@
                             icon
                             variant="text"
                             size="small"
-                            class="text-emerald-500 hover:bg-emerald-50"
+                            class="text-emerald-500 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
                             @click="updateRecordStatus(record.id, 'paid')"
                           >
                             <v-icon size="20">mdi-check-all</v-icon>
@@ -211,20 +211,20 @@
         </v-btn>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div class="overflow-x-auto">
           <table class="min-w-full text-right border-collapse">
-            <thead class="bg-slate-50 border-b border-slate-200">
+            <thead class="bg-slate-50 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-600">
               <tr>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">کد</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">نام خدمت</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">توضیحات</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">قیمت</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">پوشش بیمه</th>
-                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">دسته‌بندی</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">کد</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">نام خدمت</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">توضیحات</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">قیمت</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">پوشش بیمه</th>
+                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">دسته‌بندی</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
               <tr v-if="codesLoading" v-for="i in 4" :key="`sk-code-${i}`">
                 <td colspan="6" class="p-4">
                   <v-skeleton-loader type="list-item" class="bg-transparent" />
@@ -233,10 +233,10 @@
               <tr v-else-if="filteredCodes.length === 0">
                 <td colspan="6" class="py-16 text-center">
                   <div class="flex flex-col items-center justify-center space-y-3">
-                    <div class="bg-slate-50 p-4 rounded-full">
+                    <div class="bg-slate-50 dark:bg-slate-700 p-4 rounded-full">
                       <v-icon icon="mdi-clipboard-text-outline" size="48" color="slate-400" />
                     </div>
-                    <p class="text-slate-500 font-medium text-lg">هیچ کد خدمتی یافت نشد.</p>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium text-lg">هیچ کد خدمتی یافت نشد.</p>
                   </div>
                 </td>
               </tr>
@@ -244,19 +244,19 @@
                 v-else
                 v-for="code in filteredCodes"
                 :key="code.id"
-                class="hover:bg-slate-50/80 transition-colors"
+                class="hover:bg-slate-50/80 dark:hover:bg-slate-700/60 transition-colors"
               >
-                <td class="px-6 py-4 text-sm font-mono font-bold text-slate-800 whitespace-nowrap">{{ code.code }}</td>
-                <td class="px-6 py-4 text-sm font-semibold text-slate-800 whitespace-nowrap">{{ code.name }}</td>
-                <td class="px-6 py-4 text-sm text-slate-500 max-w-xs truncate">{{ code.description || '---' }}</td>
-                <td class="px-6 py-4 text-sm font-mono font-semibold text-slate-800 whitespace-nowrap" dir="ltr">
+                <td class="px-6 py-4 text-sm font-mono font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap">{{ code.code }}</td>
+                <td class="px-6 py-4 text-sm font-semibold text-slate-800 dark:text-slate-100 whitespace-nowrap">{{ code.name }}</td>
+                <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 max-w-xs truncate">{{ code.description || '---' }}</td>
+                <td class="px-6 py-4 text-sm font-mono font-semibold text-slate-800 dark:text-slate-100 whitespace-nowrap" dir="ltr">
                   {{ formatPrice(code.price) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="text-sm font-mono font-bold text-electric-sapphire">{{ code.insurance_coverage_percent }}%</span>
+                  <span class="text-sm font-mono font-bold text-electric-sapphire dark:text-cornflower-blue">{{ code.insurance_coverage_percent }}%</span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 ring-1 ring-slate-500/20">
+                  <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 ring-1 ring-slate-500/20 dark:ring-slate-400/20">
                     {{ categoryLabels[code.category] || code.category }}
                   </span>
                 </td>
@@ -269,9 +269,9 @@
 
     <!-- ==================== Add Billing Record Dialog ==================== -->
     <v-dialog v-model="recordDialog" max-width="600" class="backdrop-blur-sm">
-      <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
-        <div class="bg-slate-50 px-8 py-5 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="text-xl font-extrabold text-slate-800">ثبت صورتحساب جدید</h2>
+      <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl overflow-hidden">
+        <div class="bg-slate-50 dark:bg-slate-700 px-8 py-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+          <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100">ثبت صورتحساب جدید</h2>
           <v-btn icon variant="text" size="small" @click="recordDialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
@@ -356,7 +356,7 @@
             hide-details="auto"
           />
         </div>
-        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-700 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
           <v-btn variant="tonal" color="red" @click="recordDialog = false">انصراف</v-btn>
           <v-btn variant="tonal" color="green" :loading="savingRecord" @click="saveBillingRecord">
             ذخیره صورتحساب
@@ -367,9 +367,9 @@
 
     <!-- ==================== Add Procedure Code Dialog ==================== -->
     <v-dialog v-model="codeDialog" max-width="550" class="backdrop-blur-sm">
-      <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
-        <div class="bg-slate-50 px-8 py-5 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="text-xl font-extrabold text-slate-800">افزودن کد خدمت</h2>
+      <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl overflow-hidden">
+        <div class="bg-slate-50 dark:bg-slate-700 px-8 py-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+          <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100">افزودن کد خدمت</h2>
           <v-btn icon variant="text" size="small" @click="codeDialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
@@ -431,7 +431,7 @@
             hide-details="auto"
           />
         </div>
-        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-700 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
           <v-btn variant="tonal" color="red" @click="codeDialog = false">انصراف</v-btn>
           <v-btn variant="tonal" color="green" :loading="savingCode" @click="saveProcedureCode">
             ذخیره کد خدمت
@@ -442,9 +442,9 @@
 
     <!-- ==================== Patient Balance Dialog ==================== -->
     <v-dialog v-model="balanceDialog" max-width="500" class="backdrop-blur-sm">
-      <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
-        <div class="bg-slate-50 px-8 py-5 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="text-xl font-extrabold text-slate-800">مشاهده حساب بیمار</h2>
+      <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl overflow-hidden">
+        <div class="bg-slate-50 dark:bg-slate-700 px-8 py-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+          <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100">مشاهده حساب بیمار</h2>
           <v-btn icon variant="text" size="small" @click="balanceDialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
@@ -468,19 +468,19 @@
           >
             نمایش حساب
           </v-btn>
-          <div v-if="patientBalance !== null" class="bg-slate-50 rounded-2xl p-5 space-y-3 border border-slate-200">
+          <div v-if="patientBalance !== null" class="bg-slate-50 dark:bg-slate-700 rounded-2xl p-5 space-y-3 border border-slate-200 dark:border-slate-600">
             <div class="flex justify-between items-center">
-              <span class="text-sm font-medium text-slate-500">مجموع صورتحساب‌ها</span>
-              <span class="text-lg font-bold text-slate-800" dir="ltr">{{ formatPrice(patientBalance.total_billed || 0) }}</span>
+              <span class="text-sm font-medium text-slate-500 dark:text-slate-400">مجموع صورتحساب‌ها</span>
+              <span class="text-lg font-bold text-slate-800 dark:text-slate-100" dir="ltr">{{ formatPrice(patientBalance.total_billed || 0) }}</span>
             </div>
             <div class="flex justify-between items-center">
-              <span class="text-sm font-medium text-slate-500">پرداخت شده</span>
-              <span class="text-lg font-bold text-emerald-600" dir="ltr">{{ formatPrice(patientBalance.total_paid || 0) }}</span>
+              <span class="text-sm font-medium text-slate-500 dark:text-slate-400">پرداخت شده</span>
+              <span class="text-lg font-bold text-emerald-600 dark:text-emerald-400" dir="ltr">{{ formatPrice(patientBalance.total_paid || 0) }}</span>
             </div>
-            <div class="border-t border-slate-200 pt-3 flex justify-between items-center">
-              <span class="text-sm font-bold text-slate-600">مانده حساب</span>
+            <div class="border-t border-slate-200 dark:border-slate-600 pt-3 flex justify-between items-center">
+              <span class="text-sm font-bold text-slate-600 dark:text-slate-300">مانده حساب</span>
               <span
-                :class="['text-xl font-black', (patientBalance.balance || 0) > 0 ? 'text-red-600' : 'text-emerald-600']"
+                :class="['text-xl font-black', (patientBalance.balance || 0) > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400']"
                 dir="ltr"
               >
                 {{ formatPrice(patientBalance.balance || 0) }}
@@ -488,7 +488,7 @@
             </div>
           </div>
         </div>
-        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-700 border-t border-slate-100 dark:border-slate-700 flex justify-end">
           <v-btn variant="tonal" color="red" @click="balanceDialog = false">بستن</v-btn>
         </div>
       </div>
@@ -518,10 +518,10 @@ const statusLabels: Record<string, string> = {
 }
 
 const statusConfig: Record<string, { bg: string; text: string; ring: string }> = {
-  paid: { bg: 'bg-emerald-50', text: 'text-emerald-700', ring: 'ring-emerald-600/20' },
-  pending: { bg: 'bg-amber-50', text: 'text-amber-700', ring: 'ring-amber-600/20' },
-  cancelled: { bg: 'bg-red-50', text: 'text-red-700', ring: 'ring-red-600/20' },
-  partial: { bg: 'bg-light-cyan', text: 'text-electric-sapphire', ring: 'ring-electric-sapphire/20' },
+  paid: { bg: 'bg-emerald-50 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-300', ring: 'ring-emerald-600/20 dark:ring-emerald-400/20' },
+  pending: { bg: 'bg-amber-50 dark:bg-amber-900/30', text: 'text-amber-700 dark:text-amber-300', ring: 'ring-amber-600/20 dark:ring-amber-400/20' },
+  cancelled: { bg: 'bg-red-50 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-300', ring: 'ring-red-600/20 dark:ring-red-400/20' },
+  partial: { bg: 'bg-light-cyan dark:bg-electric-sapphire/20', text: 'text-electric-sapphire dark:text-cornflower-blue', ring: 'ring-electric-sapphire/20 dark:ring-cornflower-blue/20' },
 }
 
 const categoryLabels: Record<string, string> = {

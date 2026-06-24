@@ -2,11 +2,11 @@
     <div class="mx-auto max-w-7xl px-4 py-8 md:px-8 min-h-screen">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
             <div>
-                <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">مدیریت کاربران</h1>
-                <p class="text-slate-500 mt-2 text-sm md:text-base font-medium">تأیید، رد یا تغییر وضعیت دسترسی کاربران سیستم</p>
+                <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">مدیریت کاربران</h1>
+                <p class="text-sm font-medium text-slate-500 dark:text-slate-300 dark:text-slate-400 mt-2">تأیید، رد یا تغییر وضعیت دسترسی کاربران سیستم</p>
             </div>
 
-            <v-tabs v-model="statusTab" color="#5465ff" bg-color="transparent" class="w-full md:w-auto border-b border-slate-200">
+            <v-tabs v-model="statusTab" color="#5465ff" bg-color="transparent" class="w-full md:w-auto border-b border-slate-200 text-slate-800 dark:text-slate-200!">
                 <v-tab value="all" class="text-sm font-semibold tracking-wide">
                     همه ({{ users.length }})
                 </v-tab>
@@ -21,30 +21,30 @@
             </v-tabs>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white dark:bg-slate-800! rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-right border-collapse">
-                    <thead class="bg-slate-50 border-b border-slate-200">
+                    <thead class="bg-slate-50 dark:bg-slate-700! border-b border-slate-200 text-slate-800 dark:text-slate-200!">
                         <tr>
-                            <th class="px-6 py-4 text-sm font-bold text-slate-600 whitespace-nowrap">نام کامل</th>
-                            <th class="px-6 py-4 text-sm font-bold text-slate-600 whitespace-nowrap">شماره تلفن</th>
-                            <th class="px-6 py-4 text-sm font-bold text-slate-600 whitespace-nowrap">نقش سیستم</th>
-                            <th class="px-6 py-4 text-sm font-bold text-slate-600 whitespace-nowrap">سازمان / مرکز</th>
-                            <th class="px-6 py-4 text-sm font-bold text-slate-600 whitespace-nowrap">وضعیت</th>
-                            <th class="px-6 py-4 text-sm font-bold text-slate-600 whitespace-nowrap">تاریخ عضویت</th>
-                            <th class="px-6 py-4 text-sm font-bold text-slate-600 text-center whitespace-nowrap">عملیات</th>
+                            <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">نام کامل</th>
+                            <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">شماره تلفن</th>
+                            <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">نقش سیستم</th>
+                            <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">سازمان / مرکز</th>
+                            <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">وضعیت</th>
+                            <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">تاریخ عضویت</th>
+                            <th class="px-6 py-4 text-sm font-bold text-center whitespace-nowrap">عملیات</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         <tr 
                             v-for="user in filteredUsers" 
                             :key="user.id" 
-                            class="hover:bg-slate-50/80 transition-colors duration-150"
+                            class="hover:bg-slate-50/80 dark:hover:bg-slate-700/60 transition-colors duration-150"
                         >
-                            <td class="px-6 py-4 text-sm font-semibold text-slate-800 whitespace-nowrap">
+                            <td class="px-6 py-4 text-sm font-semibold text-slate-800 dark:text-slate-200 whitespace-nowrap">
                                 {{ user.fullName || 'کاربر بی‌نام' }}
                             </td>
-                            <td class="px-6 py-4 text-sm font-medium text-slate-500 font-mono tracking-wider">
+                            <td class="px-6 py-4 text-sm font-medium text-slate-500 dark:text-slate-300 font-mono tracking-wider">
                                 {{ user.phone }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -52,7 +52,7 @@
                                     {{ roleConfig[user.role]?.label || user.role }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-sm font-medium text-slate-500 whitespace-nowrap">
+                            <td class="px-6 py-4 text-sm font-medium text-slate-500 dark:text-slate-300 whitespace-nowrap">
                                 {{ user.organizationName || '---' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -60,7 +60,7 @@
                                     {{ statusConfig[user.status]?.label || user.status }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-sm font-medium text-slate-500 whitespace-nowrap">
+                            <td class="px-6 py-4 text-sm font-medium text-slate-500 dark:text-slate-300 whitespace-nowrap">
                                 {{ formatJalaliDate(user.createdAt) }}
                             </td>
                             <td class="px-6 py-4 text-center whitespace-nowrap">
@@ -94,7 +94,7 @@
                                     <template v-else>
                                         <v-tooltip :text="user.status === 'approved' ? 'مسدودسازی موقت' : 'بازگردانی حساب'" location="top">
                                             <template v-slot:activator="{ props }">
-                                                <v-btn v-bind="props" icon variant="text" size="small" :class="user.status === 'approved' ? 'text-red-400 hover:text-red-600 hover:bg-red-50' : 'text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50'" @click.stop="toggleStatus(user)">
+                                                <v-btn v-bind="props" icon variant="text" size="small" :class="user.status === 'approved' ? 'text-red-600! dark:text-red-600/80! hover:text-red-500! hover:bg-red-50' : 'text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50'" @click.stop="toggleStatus(user)">
                                                     <v-icon size="20">{{ user.status === 'approved' ? 'mdi-account-cancel-outline' : 'mdi-account-check-outline' }}</v-icon>
                                                 </v-btn>
                                             </template>
@@ -109,12 +109,12 @@
 
             <div v-if="loading" class="flex flex-col items-center justify-center p-16">
                 <v-progress-circular indeterminate size="48" color="#5465ff" />
-                <p class="mt-4 text-sm font-medium text-slate-500">در حال دریافت اطلاعات...</p>
+                <p class="mt-4 text-sm font-medium text-slate-500 dark:text-slate-300">در حال دریافت اطلاعات...</p>
             </div>
 
             <div v-if="!loading && filteredUsers.length === 0" class="flex flex-col items-center justify-center py-8">
-                <div class="bg-slate-50 p-6 rounded-full mb-4">
-                    <v-icon size="48" color="slate-300">mdi-account-search-outline</v-icon>
+                <div class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
+                    <v-icon size="48" color="w-8 h-8 text-slate-300 dark:text-slate-500">mdi-account-search-outline</v-icon>
                 </div>
                 <h3 class="text-lg font-bold text-slate-700">کاربری یافت نشد</h3>
                 <p class="mt-1 text-sm text-slate-500">در این دسته‌بندی هیچ کاربری برای نمایش وجود ندارد.</p>

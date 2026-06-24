@@ -28,7 +28,7 @@ export const useApi = () => {
 
       if (status === 403) {
         nuxtApp.$toast.error('دسترسی ممنوع — نقش کافی نیست')
-        await navigateTo('/')
+        await navigateTo('/dashboard')
         return {} as T
       }
 

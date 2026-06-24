@@ -1,26 +1,26 @@
 <template>
     <v-dialog :model-value="isOpen" @update:model-value="val => !val && close()" max-width="1100" persistent scrollable
         transition="dialog-bottom-transition" @keydown.esc="close">
-        <v-card class="rounded-2xl shadow-2xl bg-slate-50 overflow-hidden" elevation="0">
+        <v-card class="rounded-2xl shadow-2xl bg-slate-50 dark:bg-slate-700 overflow-hidden" elevation="0">
 
-            <v-card-title class="bg-white border-b border-slate-200 py-5 px-8">
+            <v-card-title class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 py-5 px-8">
                 <div class="flex items-center justify-between w-full">
                     <div class="flex flex-col">
-                        <h2 class="text-xl font-bold text-slate-800">
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">
                             {{ mode === 'edit' ? 'پرونده پزشکی بیمار' : 'ثبت بیمار جدید' }}
                         </h2>
-                        <span class="text-xs text-slate-500 mt-1 font-normal">
+                        <span class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-normal">
                             {{ mode === 'edit' ? 'ویرایش اطلاعات و سوابق' : 'تکمیل اطلاعات اولیه و اولین ویزیت' }}
                         </span>
                     </div>
-                    <v-btn icon variant="text" size="small" class="text-slate-400 hover:text-slate-800 bg-slate-100"
+                    <v-btn icon variant="text" size="small" class="text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-100 bg-slate-100 dark:bg-slate-700"
                         @click="close">
                         <CloseCircle class="w-6 h-6" />
                     </v-btn>
                 </div>
             </v-card-title>
 
-            <div class="bg-white px-8 border-b border-slate-200">
+            <div class="bg-white dark:bg-slate-800 px-8 border-b border-slate-200 dark:border-slate-700">
                 <v-tabs v-model="activeTab" color="black" bg-color="transparent" slider-color="black" height="56">
                     <v-tab value="basic" class="text-sm font-medium tracking-wide">اطلاعات پایه</v-tab>
                     <v-tab value="medical" class="text-sm font-medium tracking-wide">سابقه پزشکی</v-tab>
@@ -51,7 +51,7 @@
                 </v-window>
             </v-card-text>
 
-            <v-card-actions class="bg-white border-t border-slate-200 px-8 py-4 z-10">
+            <v-card-actions class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 px-8 py-4 z-10">
                 <v-spacer />
                 <v-btn color="slate-600" variant="text" class="px-4 font-medium" @click="close">انصراف</v-btn>
                 <v-btn color="black" variant="flat" class="px-8 font-medium rounded-lg" :loading="loading"

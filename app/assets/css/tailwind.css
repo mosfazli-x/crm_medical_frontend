@@ -1,9 +1,14 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-electric-sapphire: #5465ff;
   --color-cornflower-blue: #788bff;
   --color-baby-blue-ice: #9bb1ff;
   --color-periwinkle: #bfd7ff;
   --color-light-cyan: #e2fdff;
+
+  --color-dark-grey: #1D232A;
+  --color-blue-grey: #191E24;
 }

@@ -43,11 +43,34 @@ export const useAuth = () => {
       if (response.success) {
         token.value = response.token
         user.value = response.user
-        await navigateTo('/')
+        await navigateTo('/dashboard')
         useNuxtApp().$toast.success('خوش آمدید!')
+      } else {
+        useNuxtApp().$toast.error(response.message || 'ورود ناموفق بود')
       }
     } catch (err: any) {
-      useNuxtApp().$toast.error(err.data?.error || 'خطا در ورود')
+      const status = err?.response?.status
+
+      let message: string
+      if (err?.name === 'NetworkError' || (!process.server && !navigator.onLine)) {
+        message = 'خطا در اتصال به سرور. اتصال اینترنت خود را بررسی کنید'
+      } else if (status === 401) {
+        message = 'ایمیل یا رمز عبور اشتباه است'
+      } else if (status === 403) {
+        message = 'حساب کاربری شما غیرفعال شده است'
+      } else if (status === 422) {
+        message = err.data?.error || 'اطلاعات وارد شده معتبر نیست'
+      } else if (status === 429) {
+        message = 'تعداد درخواست‌ها بیش از حد مجاز است. کمی بعد تلاش کنید'
+      } else if (status && status >= 500) {
+        message = 'خطای سرور. لطفاً چند لحظه بعد دوباره تلاش کنید'
+      } else if (err?.code === 'ECONNABORTED') {
+        message = 'مدت زمان پاسخ‌دهی سرور به پایان رسید. دوباره تلاش کنید'
+      } else {
+        message = err.data?.error || 'خطا در ورود به سیستم'
+      }
+
+      useNuxtApp().$toast.error(message)
     }
   }
 
@@ -61,7 +84,7 @@ export const useAuth = () => {
       if (response.success) {
         token.value = response.token
         user.value = response.user
-        await navigateTo('/')
+        await navigateTo('/dashboard')
         useNuxtApp().$toast.success('کاربر با موفقیت ساخته شد!')
       }
     } catch (err: any) {
