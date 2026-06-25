@@ -2,24 +2,24 @@
   <div class="mx-auto max-w-7xl px-4 py-8 md:px-8 min-h-screen">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
       <div>
-        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-100 tracking-tight">پیام‌ها</h1>
-        <p class="text-slate-500 mt-2 text-sm md:text-base font-medium">ارسال و دریافت پیام‌های داخلی</p>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">پیام‌ها</h1>
+        <p class="text-sm font-medium text-slate-500 dark:text-slate-300 dark:text-slate-400 mt-2">ارسال و دریافت پیام‌های داخلی</p>
       </div>
     </div>
 
     <div class="flex flex-col lg:flex-row gap-5 h-[calc(100vh-16rem)] min-h-[600px]">
       <!-- Left Sidebar -->
-      <div class="min-w-[360px] shrink-0 bg-slate-50 rounded-2xl border border-slate-200/60 flex flex-col overflow-hidden">
+      <div class="min-w-[360px] shrink-0 bg-white dark:bg-blue-grey! rounded-2xl border border-slate-200/60 dark:border-slate-600! flex flex-col overflow-hidden">
         <div class="px-2 pt-2 border-b border-slate-200/60 space-y-3">
           <div class="flex items-center gap-2">
             <v-btn color="#5465ff" class="flex-1 font-bold" prepend-icon="mdi-pencil" @click="startCompose">
               نوشتن پیام جدید
             </v-btn>
-            <v-btn icon variant="text" color="slate" @click="refreshMessages">
+            <v-btn icon variant="text" color="slate" class="dark:text-slate-400!" @click="refreshMessages">
               <v-icon>mdi-refresh</v-icon>
             </v-btn>
           </div>
-          <v-tabs v-model="tab" color="#5465ff" bg-color="transparent" density="compact" class="border-b border-slate-200">
+          <v-tabs v-model="tab" color="#5465ff" bg-color="transparent" density="compact" class="border-b border-slate-200 text-slate-800 dark:text-slate-300!">
             <v-tab value="inbox" class="text-xs font-bold tracking-wide">
               صندوق دریافتی
               <v-badge v-if="unreadCount > 0" :content="unreadCount" color="red" inline class="mr-1" />
@@ -35,11 +35,11 @@
           </div>
 
           <div v-else-if="!messages.length" class="flex flex-col items-center justify-center py-16 px-4">
-            <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-4 border border-slate-100">
+            <div class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
               <v-icon size="28" color="slate-300">mdi-email-outline</v-icon>
             </div>
-            <h3 class="text-sm font-bold text-slate-600">{{ tab === 'inbox' ? 'صندوق دریافتی خالی است' : 'پیامی ارسال نکرده‌اید' }}</h3>
-            <p class="text-xs text-slate-400 mt-1 text-center">{{ tab === 'inbox' ? 'هیچ پیامی برای شما ارسال نشده است' : 'روی دکمه بالا کلیک کنید تا پیام جدیدی ارسال کنید' }}</p>
+            <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">{{ tab === 'inbox' ? 'صندوق دریافتی خالی است' : 'پیامی ارسال نکرده‌اید' }}</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">{{ tab === 'inbox' ? 'هیچ پیامی برای شما ارسال نشده است' : 'روی دکمه بالا کلیک کنید تا پیام جدیدی ارسال کنید' }}</p>
           </div>
 
           <div v-else class="divide-y divide-slate-100">
@@ -87,7 +87,7 @@
         <template v-if="composing">
           <div class="p-6 border-b border-slate-100">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-extrabold text-slate-800">ارسال پیام جدید</h2>
+              <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-300">ارسال پیام جدید</h2>
               <v-btn icon variant="text" size="small" color="slate" @click="cancelCompose">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -137,6 +137,7 @@
                 variant="outlined"
                 density="compact"
                 hide-details
+                class="dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
                 placeholder="یا نام کاربر را وارد کنید..."
               />
             </div>
@@ -147,7 +148,7 @@
               label="اولویت"
               variant="outlined"
               density="compact"
-              class="mb-4"
+              class="mb-4 dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
               hide-details
             />
             <v-text-field
@@ -155,7 +156,7 @@
               label="موضوع"
               variant="outlined"
               density="compact"
-              class="mb-4"
+              class="mb-4 dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
               hide-details
             />
             <v-textarea
@@ -163,7 +164,7 @@
               label="متن پیام"
               variant="outlined"
               density="compact"
-              class="mb-4"
+              class="mb-4 dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
               rows="8"
               hide-details
             />
@@ -173,10 +174,10 @@
               color="amber"
               density="compact"
               hide-details
-              class="mb-4"
+              class="mb-4 dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
             />
             <div class="flex justify-end gap-3 pt-2">
-              <v-btn variant="tonal" color="slate" @click="cancelCompose">انصراف</v-btn>
+              <v-btn variant="tonal" color="slate" class="bg-slate-100/80!" @click="cancelCompose">انصراف</v-btn>
               <v-btn
                 color="#5465ff"
                 :loading="sending"
@@ -195,8 +196,8 @@
             <div class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
               <v-icon size="36" color="slate-300">mdi-email-open-outline</v-icon>
             </div>
-            <h3 class="text-lg font-bold text-slate-700">پیامی را انتخاب کنید</h3>
-            <p class="text-sm text-slate-500 mt-2 max-w-sm">برای مشاهده متن پیام، یکی از پیام‌های سمت چپ را انتخاب کنید</p>
+            <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">پیامی را انتخاب کنید</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">برای مشاهده متن پیام، یکی از پیام‌های سمت چپ را انتخاب کنید</p>
           </div>
         </template>
 

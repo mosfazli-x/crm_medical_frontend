@@ -107,7 +107,7 @@
                 </table>
             </div>
 
-            <div v-if="loading" class="flex flex-col items-center justify-center p-16">
+            <div v-if="loading" class="flex flex-col items-center justify-center p-16!">
                 <v-progress-circular indeterminate size="48" color="#5465ff" />
                 <p class="mt-4 text-sm font-medium text-slate-500 dark:text-slate-300">در حال دریافت اطلاعات...</p>
             </div>
@@ -116,8 +116,8 @@
                 <div class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
                     <v-icon size="48" color="w-8 h-8 text-slate-300 dark:text-slate-500">mdi-account-search-outline</v-icon>
                 </div>
-                <h3 class="text-lg font-bold text-slate-700">کاربری یافت نشد</h3>
-                <p class="mt-1 text-sm text-slate-500">در این دسته‌بندی هیچ کاربری برای نمایش وجود ندارد.</p>
+                <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">کاربری یافت نشد</h3>
+                <p class="mtext-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">در این دسته‌بندی هیچ کاربری برای نمایش وجود ندارد.</p>
             </div>
         </div>
 

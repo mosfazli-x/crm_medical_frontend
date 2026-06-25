@@ -1,5 +1,5 @@
 <template>
-  <div class="!max-w-7xl !mx-auto !p-4 md:!p-8 !pt-6 !space-y-8 !font-sans">
+  <div class="!max-w-7xl !mx-auto !p-4 md:!p-8 !pt-6 !space-y-8">
     <div class="!flex !flex-col sm:!flex-row !justify-between !items-center !gap-4 !pb-4 !border-b !border-slate-200 dark:!border-slate-700">
       <div class="!text-right !w-full">
         <h1 class="!text-3xl !font-extrabold !text-slate-800 dark:!text-slate-100 !tracking-tight">ابزارهای تصمیم‌گیری بالینی</h1>

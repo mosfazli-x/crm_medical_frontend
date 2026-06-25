@@ -5,7 +5,7 @@
         <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">انواع نوبت</h1>
         <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-2">مدیریت انواع نوبت‌های خود را تنظیم کنید</p>
       </div>
-      <v-btn variant="flat" color="#5465ff" size="large" class="font-bold rounded-xl shadow-md shadow-electric-sapphire/30 px-6"
+      <v-btn variant="flat" color="#5465ff" size="large" class="font-bold rounded-xl shadow-md shadow-electric-sapphire/30 px-6 overflow-hidden"
         prepend-icon="mdi-plus" @click="openCreateDialog">
         افزودن نوع نوبت
       </v-btn>

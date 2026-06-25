@@ -160,8 +160,9 @@
           <v-divider vertical inset class="mx-2 hidden md:block border-slate-100"></v-divider>
 
           
-          <v-btn icon variant="text" @click="toggleTheme" class="fill-slate-100 dark:text-slate-400 hover:text-electric-sapphire dark:hover:text-cornflower-blue">
-             <span class="text-xl">{{ isDark ? '🌙' : '☀️' }}</span>
+          <v-btn icon variant="text" @click="toggleTheme" class="hidden sm:flex">
+             <Sun v-if="!isDark" class="w-5.5 h-5.5 stroke-slate-100!" />
+             <Moon v-else class="w-5.5 h-5.5 fill-slate-200" />
           </v-btn>
         
 
@@ -208,6 +209,8 @@ import ChatDots from '~/components/icons/ChatDots.vue'
 import Calculator from '~/components/icons/Calculator.vue'
 import Wallet from '~/components/icons/Wallet.vue'
 import Profile from '~/components/icons/Profile.vue'
+import Sun from '~/components/icons/Sun.vue'
+import Moon from '~/components/icons/Moon.vue'
 
 // Composables
 const { user, isAuthenticated, logout } = useAuth()
