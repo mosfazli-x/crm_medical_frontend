@@ -1,37 +1,37 @@
 <template>
-  <div class="mx-auto max-w-7xl px-4 py-8 md:px-8 min-h-screen">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">تنظیم زمانبندی رزروها</h1>
-      <div class="flex items-center gap-3">
-        <a :href="`/booking/${user?.id}`" target="_blank"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-600! border border-slate-200 hover:border-white/60 hover:bg-light-cyan/80! dark:text-white! dark:hover:bg-slate-500! rounded-xl text-sm font-bold text-electric-sapphire transition-all duration-200 shadow-sm">
-          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-          </svg>
-          <span>مشاهده صفحه رزرو</span>
-        </a>
-        <div class="text-sm text-slate-500 dark:text-slate-300 hidden sm:block">ساعات کاری: ۰۷:۰۰ تا ۲۲:۰۰</div>
-      </div>
-    </div>
+  <UiPageContainer>
+    <UiPageHeader title="تنظیم زمانبندی رزروها">
+      <template #actions>
+        <div class="flex items-center gap-3 flex-wrap justify-end">
+          <a :href="`/booking/${user?.id}`" target="_blank" class="crm-btn crm-btn-primary">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            مشاهده صفحه رزرو
+          </a>
+          <span class="text-sm text-slate-500 dark:text-slate-400 hidden sm:inline">ساعات کاری: ۰۷:۰۰ تا ۲۲:۰۰</span>
+        </div>
+      </template>
+    </UiPageHeader>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden p-4 md:p-6">
+    <UiContentCard card-class="p-1 md:p-2!">
       <div class="overflow-x-auto">
         <table class="w-full border-collapse select-none" style="min-width: 850px;">
           <thead>
             <tr>
-              <th class="p-2 text-sm font-bold text-slate-500 border-b-2 border-slate-200 sticky right-0 bg-white min-w-[70px]">
+              <th class="p-2 text-sm font-bold text-slate-500 dark:text-slate-300 border-b-2 border-slate-200 dark:border-slate-700 sticky right-0 min-w-[70px]">
                 ساعت
               </th>
               <th v-for="day in dayHeaders" :key="day.dayOfWeek"
-                class="p-2 text-sm font-bold text-slate-600 border-b-2 border-slate-200 text-center min-w-[110px] py-1">
+                class="p-2 text-sm font-bold text-slate-600 dark:text-slate-300 border-b-2 border-slate-200 dark:border-slate-700 text-center min-w-[110px] py-1">
                 <div class="flex items-center justify-center gap-1">
                   <span>{{ day.name }}</span>
                   <button @click="openAddRange(day.dayOfWeek)"
-                    class="w-5 h-5 rounded-full bg-periwinkle hover:bg-baby-blue-ice text-electric-sapphire flex items-center justify-center text-xs font-bold transition-colors">
+                    class="w-5 h-5 rounded-full bg-periwinkle dark:bg-indigo-600/20 hover:bg-baby-blue-ice dark:hover:bg-indigo-500/40 text-electric-sapphire dark:text-indigo-400 flex items-center justify-center text-xs font-bold transition-colors">
                     +
                   </button>
                 </div>
-                <div class="text-[10px] text-slate-400 font-normal leading-tight">
+                <div class="text-[10px] text-slate-400 dark:text-slate-500 font-normal leading-tight">
                   {{ jalaliDates[day.dayOfWeek] }}
                 </div>
               </th>
@@ -39,8 +39,8 @@
           </thead>
           <tbody>
             <tr v-for="time in timeSlots" :key="time"
-              class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-              <td class="p-1 text-xs text-slate-400 font-medium text-center sticky right-0 bg-white">
+              class="border-b border-slate-50 dark:border-slate-800/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+              <td class="p-1 text-xs text-slate-600 dark:text-slate-300 font-medium text-center sticky right-0 dark:bg-slate-900">
                 {{ time }}
               </td>
               <td v-for="day in dayHeaders" :key="day.dayOfWeek"
@@ -54,47 +54,47 @@
         </table>
       </div>
 
-      <div class="mt-4 flex items-center gap-4 text-xs text-slate-400 py-2 px-2">
+      <div class="mt-4 flex items-center gap-4 text-xs text-slate-400 dark:text-slate-500 py-2 px-2">
         <div class="flex items-center gap-1">
-          <div class="w-4 h-4 rounded bg-periwinkle border border-periwinkle"></div>
+          <div class="w-4 h-4 rounded bg-periwinkle dark:bg-indigo-600/30 border border-periwinkle/50 dark:border-indigo-500/40"></div>
           <span>بازه فعال</span>
         </div>
         <div class="flex items-center gap-1">
-          <div class="w-4 h-4 rounded bg-yellow-200 border border-yellow-300"></div>
+          <div class="w-4 h-4 rounded bg-yellow-200 dark:bg-yellow-950/40 border border-yellow-300 dark:border-yellow-700/40"></div>
           <span>در حال انتخاب</span>
         </div>
         <div class="flex items-center gap-1">
           <span>روی دو نقطه در یک روز کلیک کنید تا بازه زمانی ایجاد شود</span>
         </div>
       </div>
-    </div>
+    </UiContentCard>
 
     <v-dialog v-model="addDialog" persistent max-width="450px">
-      <v-card class="rounded-2xl">
-        <v-card-title class="text-lg font-bold text-slate-800 px-6 pt-6">
+      <v-card class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+        <v-card-title class="text-lg font-bold text-slate-800 dark:text-slate-100 px-6 pt-6">
           افزودن بازه زمانی جدید
         </v-card-title>
         <v-card-text class="px-6 pb-2">
-          <div class="text-sm text-slate-500 mb-4">روز: <span class="font-bold text-slate-700">{{ selectedDayName }}</span></div>
+          <div class="text-sm text-slate-500 dark:text-slate-400 mb-4">روز: <span class="font-bold text-slate-700 dark:text-slate-200">{{ selectedDayName }}</span></div>
           <v-row>
             <v-col cols="6">
-              <label class="text-sm font-semibold text-slate-700 mb-2 block">زمان شروع</label>
-              <v-select v-model="newRangeStart" :items="timeSlots" variant="outlined" density="comfortable" hide-details="auto" bg-color="white" />
+              <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">زمان شروع</label>
+              <v-select v-model="newRangeStart" :items="timeSlots" variant="outlined" density="comfortable" hide-details="auto" />
             </v-col>
             <v-col cols="6">
-              <label class="text-sm font-semibold text-slate-700 mb-2 block">زمان پایان</label>
-              <v-select v-model="newRangeEnd" :items="timeSlotsEnd" variant="outlined" density="comfortable" hide-details="auto" bg-color="white" />
+              <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">زمان پایان</label>
+              <v-select v-model="newRangeEnd" :items="timeSlotsEnd" variant="outlined" density="comfortable" hide-details="auto" />
             </v-col>
           </v-row>
         </v-card-text>
-        <v-card-actions class="px-6 pb-6 pt-2 flex gap-3">
-          <v-btn variant="text" color="slate-600" @click="closeAddDialog">انصراف</v-btn>
+        <v-card-actions class="px-6 pb-6 pt-2 flex gap-3 bg-white dark:bg-slate-800">
+          <v-btn variant="text" color="slate-600" class="dark:text-slate-400" @click="closeAddDialog">انصراف</v-btn>
           <v-spacer />
           <v-btn variant="flat" color="#5465ff" :loading="saving" @click="submitNewRange">ذخیره</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </UiPageContainer>
 </template>
 
 <script setup lang="ts">
@@ -153,11 +153,6 @@ interface Availability {
   startTime: string
   endTime: string
   isActive: boolean
-}
-
-interface Range {
-  startTime: string
-  endTime: string
 }
 
 const availability = ref<Availability[]>([])
@@ -223,9 +218,13 @@ function getCellClasses(dayOfWeek: number, time: string) {
   const isRangeStart = rangeStart.value?.day === dayOfWeek && rangeStart.value?.time === time
   const isSelected = rangeStart.value?.day === dayOfWeek
 
-  if (inRange) return 'bg-periwinkle hover:bg-baby-blue-ice border border-periwinkle/50'
-  if (isSelected && !inRange) return 'bg-yellow-100 hover:bg-yellow-200 border border-yellow-200/50'
-  return 'hover:bg-slate-100 border border-transparent'
+  if (inRange) {
+    return 'bg-periwinkle dark:bg-indigo-600/30 hover:bg-baby-blue-ice dark:hover:bg-indigo-500/40 border border-periwinkle/50 dark:border-indigo-500/30'
+  }
+  if (isSelected && !inRange) {
+    return 'bg-yellow-100 dark:bg-yellow-950/40 hover:bg-yellow-200 dark:hover:bg-yellow-900/40 border border-yellow-200/50 dark:border-yellow-700/30'
+  }
+  return 'hover:bg-slate-100 dark:hover:bg-slate-800/60 border border-transparent'
 }
 
 function isInRange(dayOfWeek: number, time: string): boolean {

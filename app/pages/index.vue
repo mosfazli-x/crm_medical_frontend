@@ -236,10 +236,9 @@
                 </div>
               </div>
               <div class="p-8! -mt-16! relative z-10">
-                <div
+                <img src="../assets/images/dr_hosseini.jpg"
                   class="w-24! h-24! rounded-2xl! bg-gradient-to-br! from-electric-sapphire! to-cornflower-blue! flex items-center justify-center mx-auto shadow-2xl! shadow-electric-sapphire/30! border-[5px]! border-white! mb-6!">
-                  <span class="text-white! font-black! text-3xl!">{{ doctor.name.charAt(0) }}</span>
-                </div>
+                </img>
                 <div class="text-center">
                   <h3 class="text-2xl! font-bold! text-slate-800! mb-1!">{{ doctor.name }}</h3>
                   <span
@@ -485,7 +484,7 @@
                 </li>
                 <li class="flex items-center gap-3! text-slate-400!">
                   <span class="mdi mdi-email text-electric-sapphire! text-xl! shrink-0!"></span>
-                  info@clinic-salamat.ir
+                  info@ladiesneeds.com
                 </li>
               </ul>
             </div>
@@ -579,7 +578,7 @@ const contactInfo = [
   {
     icon: 'mdi-map-marker',
     label: 'آدرس',
-    value: 'تهران، خیابان ولیعصر، نبش خیابان مطهری، ساختمان پزشکان سلامت، طبقه ۳',
+    value: 'تهران، پاسداران، بوستان هشتم، پلاک 146 ساختمان مهرا، طبقه 5 واحد 10',
   },
   {
     icon: 'mdi-phone',
@@ -589,7 +588,7 @@ const contactInfo = [
   {
     icon: 'mdi-email',
     label: 'ایمیل',
-    value: 'info@clinic-salamat.ir',
+    value: 'info@ladiesneeds.com',
   },
   {
     icon: 'mdi-clock-outline',
@@ -599,10 +598,8 @@ const contactInfo = [
 ]
 
 const socialLinks = [
-  { name: 'اینستاگرام', icon: 'mdi-instagram', href: '#' },
-  { name: 'تلگرام', icon: 'mdi-telegram', href: '#' },
-  { name: 'واتساپ', icon: 'mdi-whatsapp', href: '#' },
-  { name: 'لینکدین', icon: 'mdi-linkedin', href: '#' },
+  { name: 'اینستاگرام', icon: 'mdi-instagram', href: 'https://www.instagram.com/hastihoseiniclinic/' },
+  { name: 'واتساپ', icon: 'mdi-whatsapp', href: 'https:/wa.me/09119478965' },
 ]
 
 const footerLinks = [

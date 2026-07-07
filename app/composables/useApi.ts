@@ -2,12 +2,17 @@ export const useApi = () => {
   const { token, logout } = useAuth()
   const nuxtApp = useNuxtApp()
 
+  const apiLoadingCount = useState<number>('api-loading-count', () => 0)
+
+  const apiLoading = computed(() => apiLoadingCount.value > 0)
+
   const apiFetch = async <T>(url: string, options: FetchOptions = {}): Promise<T> => {
     const headers = {
       Authorization: token.value ? `Bearer ${token.value}` : '',
       ...options.headers,
     }
 
+    apiLoadingCount.value++
     try {
       return await $fetch<T>(url, {
         baseURL: useRuntimeConfig().public.apiBase,
@@ -32,10 +37,11 @@ export const useApi = () => {
         return {} as T
       }
 
-      nuxtApp.$toast.error(err.data?.error || 'خطای سرور — بعداً امتحان کنید')
       throw err
+    } finally {
+      apiLoadingCount.value--
     }
   }
 
-  return { apiFetch }
+  return { apiFetch, apiLoading }
 }

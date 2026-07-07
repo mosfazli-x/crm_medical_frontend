@@ -1,17 +1,15 @@
 <template>
-  <div class="mx-auto max-w-7xl px-4 py-10 md:px-8 min-h-screen">
-    <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-10">
-      <div>
-        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">انواع نوبت</h1>
-        <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-2">مدیریت انواع نوبت‌های خود را تنظیم کنید</p>
-      </div>
-      <v-btn variant="flat" color="#5465ff" size="large" class="font-bold rounded-xl shadow-md shadow-electric-sapphire/30 px-6 overflow-hidden"
-        prepend-icon="mdi-plus" @click="openCreateDialog">
-        افزودن نوع نوبت
-      </v-btn>
-    </header>
+  <UiPageContainer>
+    <UiPageHeader title="انواع نوبت" subtitle="مدیریت انواع نوبت‌های خود را تنظیم کنید">
+      <template #actions>
+        <button class="crm-btn crm-btn-accent px-6! py-3!" @click="openCreateDialog">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          افزودن نوع نوبت
+        </button>
+      </template>
+    </UiPageHeader>
 
-    <div class="bg-white dark:bg-blue-grey! rounded-2xl shadow-sm border border-slate-200/60 dark:border-slate-600! overflow-hidden">
+    <UiContentCard>
       <div v-if="loading" class="flex flex-col items-center justify-center py-24!">
         <svg class="animate-spin h-8 w-8 text-electric-sapphire mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
@@ -31,13 +29,13 @@
       </div>
 
       <template v-else>
-        <div class="px-6 py-4 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-500 tracking-wide">{{ visitTypes.length }} نوع نوبت</span>
+        <div class="px-6 py-4 bg-slate-100 dark:bg-slate-800 border-b border-slate-100 flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-700 dark:text-slate-200 tracking-wide">{{ visitTypes.length }} نوع نوبت</span>
         </div>
 
         <div class="divide-y divide-slate-100/80">
           <div v-for="vt in visitTypes" :key="vt.id"
-            class="p-5 md:p-6 py-2 px-2 flex flex-col md:flex-row md:items-center gap-5 hover:bg-slate-50/60 transition-colors group">
+            class="p-5 md:p-6 py-2 px-2 flex flex-col md:flex-row md:items-center gap-5 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors group">
             <div class="flex items-center gap-4 shrink-0 md:w-14">
               <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm border"
                 :style="{ backgroundColor: vt.color + '20', borderColor: vt.color + '40' }">
@@ -47,7 +45,7 @@
 
             <div class="flex-1 min-w-0 px-2">
               <div class="flex flex-wrap items-center gap-3 mb-1">
-                <h3 class="text-base font-bold text-slate-800">{{ vt.name }}</h3>
+                <h3 class="text-base font-bold text-slate-800 dark:text-slate-300">{{ vt.name }}</h3>
                 <span v-if="!vt.isActive"
                   class="px-2 py-0.5 text-[11px] font-bold rounded-lg border bg-slate-100 text-slate-500 border-slate-200">
                   غیرفعال
@@ -86,7 +84,7 @@
           </div>
         </div>
       </template>
-    </div>
+    </UiContentCard>
 
     <v-dialog v-model="dialog" max-width="580" :persistent="saving">
       <v-card class="rounded-2xl">
@@ -181,7 +179,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </UiPageContainer>
 </template>
 
 <script setup lang="ts">

@@ -34,14 +34,20 @@ export default defineNuxtConfig({
       },
     },
   },
-  css: ['./app/assets/css/tailwind.css', './app/assets/css/fonts.css', './app/assets/css/main.css'],
+  css: [
+    './app/assets/css/tailwind.css',
+    './app/assets/css/fonts.css',
+    './app/assets/css/main.css',
+    './app/assets/css/design-system.css',
+  ],
 
   modules: [
     '@nuxt/eslint',
     '@nuxt/hints',
     '@nuxt/image',
     '@nuxt/scripts',
-    'vue-sonner/nuxt'
+    'vue-sonner/nuxt',
+    '@nuxt/icon',
   ],
 
 })

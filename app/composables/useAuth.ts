@@ -1,10 +1,11 @@
 import { computed, watch, onMounted } from 'vue'
+import type { User } from '~/types/user'
 
 export const useAuth = () => {
   const token = useCookie<string | null>('auth_token', {
     sameSite: 'lax',
   })
-  const user = useState<any>('auth_user', () => null)
+  const user = useState<User | null>('auth_user', () => null)
 
   onMounted(() => {
     if (process.client) {
@@ -82,9 +83,9 @@ export const useAuth = () => {
         baseURL: useRuntimeConfig().public.apiBase,
       })
       if (response.success) {
-        token.value = response.token
-        user.value = response.user
-        await navigateTo('/dashboard')
+        //token.value = response.token
+        //user.value = response.user
+        await navigateTo('/auth/login')
         useNuxtApp().$toast.success('کاربر با موفقیت ساخته شد!')
       }
     } catch (err: any) {

@@ -1,5 +1,5 @@
 // composables/usePatientFormDialog.ts
-import { ref } from 'vue'
+import { ref, readonly } from 'vue'
 
 const isOpen = ref(false)
 const mode = ref<'create' | 'edit'>('create')

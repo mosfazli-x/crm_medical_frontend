@@ -1,40 +1,30 @@
 <template>
-  <v-card class="flex items-center p-5" :class="[bgClass, darkBgClass]">
-    <v-icon size="36" class="mr-4">{{ icon }}</v-icon>
+  <v-card class="crm-stat-card flex! items-center! gap-4! p-5!" :class="colorClass">
+    <div v-if="$slots.icon" class="shrink-0">
+      <slot name="icon" />
+    </div>
     <div>
-      <div class="text-xl font-semibold text-white">
-        {{ value }}
-      </div>
-      <div class="text-sm text-white/80">
-        {{ title }}
-      </div>
+      <div class="crm-stat-value text-xl!">{{ value }}</div>
+      <div class="crm-stat-label mb-0!">{{ title }}</div>
     </div>
   </v-card>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 
-const props = defineProps({
-  title: String,
-  value: String,
-  icon: String,
-  color: String
-});
+const props = defineProps<{
+  title: string
+  value: string | number
+  color?: string
+}>()
 
-const bgClass = `bg-${props.color}-600`;
+const colorMap: Record<string, string> = {
+  blue: 'bg-electric-sapphire! text-white! [&_.crm-stat-value]:text-white! [&_.crm-stat-label]:text-white/80!',
+  green: 'bg-emerald-600! text-white! [&_.crm-stat-value]:text-white! [&_.crm-stat-label]:text-white/80!',
+  red: 'bg-red-600! text-white! [&_.crm-stat-value]:text-white! [&_.crm-stat-label]:text-white/80!',
+  orange: 'bg-amber-500! text-white! [&_.crm-stat-value]:text-white! [&_.crm-stat-label]:text-white/80!',
+}
 
-const darkBgMap = {
-  blue: 'dark:bg-blue-800',
-  green: 'dark:bg-green-800',
-  red: 'dark:bg-red-800',
-  orange: 'dark:bg-orange-800',
-  purple: 'dark:bg-purple-800',
-  teal: 'dark:bg-teal-800',
-  indigo: 'dark:bg-indigo-800',
-  pink: 'dark:bg-pink-800',
-  yellow: 'dark:bg-yellow-800',
-};
-
-const darkBgClass = computed(() => darkBgMap[props.color] || '');
+const colorClass = computed(() => colorMap[props.color || ''] || '')
 </script>

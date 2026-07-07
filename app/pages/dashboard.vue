@@ -1,239 +1,980 @@
 <template>
-  <div class="mx-auto max-w-7xl px-4 py-10 md:px-8 min-h-screen">
-    <header class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-      <div>
-        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight dark:text-white">داشبورد</h1>
-        <p class="text-sm font-medium text-slate-500 dark:text-slate-300 mt-2">{{ todayPersian }}</p>
-      </div>
+  <UiPageContainer class="!space-y-8">
+    <!-- ─── Dashboard Header ─── -->
+    <UiPageHeader :title="'داشبورد'" :subtitle="todayPersian">
+      <template v-if="!isPatient && canViewDashboard && !loading" #badge>
+        <div class="!flex !items-center !gap-2 !px-3 !py-1 !rounded-full !border !border-emerald-500/10 !bg-emerald-500/5 !text-xs !font-medium !text-emerald-600 dark:!text-emerald-400">
+          <span class="!w-1.5 !h-1.5 !rounded-full !bg-emerald-500 !animate-pulse !shrink-0" />
+          به پنل مدیریت کلینیک خوش آمدید
+        </div>
+      </template>
+    </UiPageHeader>
 
-      <div v-if="!isDoctor && !isLoading"
-        class="px-4 py-2 bg-white dark:bg-blue-grey! rounded-full border border-slate-200/70 dark:border-slate-600/70 shadow-sm text-sm text-slate-600 dark:text-slate-400 font-medium">
-        👋 به پنل مدیریت کلینیک خوش آمدید
-      </div>
-    </header>
+    <template v-if="loading">
+      <UiLoadingSpinner />
+    </template>
 
-    <div v-if="isDoctor" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+    <!-- ─── Patient Dashboard ─── -->
+    <template v-else-if="isPatient && patientData">
+      <!-- Unread Messages Banner -->
       <div
-        class="bg-white dark:bg-blue-grey! rounded-2xl border border-slate-200/60 dark:border-slate-600! p-6 shadow-sm hover:shadow-md transition-shadow duration-200 px-3 py-3">
-        <div class="flex justify-between items-start">
-          <div>
-            <div class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">نوبت‌های امروز</div>
-            <div class="text-3xl font-black text-slate-800 dark:text-slate-100">{{ todayAppointments.length }}</div>
+        v-if="patientData.messages.unread > 0"
+        class="!relative !overflow-hidden !rounded-2xl !border !border-amber-200/60 dark:!border-amber-900/30 !bg-amber-50/40 dark:!bg-amber-950/10 !p-5 !flex !items-center !justify-between !gap-4"
+      >
+        <div class="!flex !items-center !gap-4">
+          <div class="!relative !shrink-0">
+            <div class="!w-10 !h-10 !flex !items-center !justify-center !rounded-xl !bg-amber-500/10 !text-amber-600 dark:!text-amber-400">
+              <Bell class="!w-5 !h-5 !fill-current" />
+            </div>
+            <span class="!absolute -!top-1 -!end-1 !w-4 !h-4 !bg-rose-500 !border-2 !border-white dark:!border-zinc-900 !rounded-full !flex !items-center !justify-center !text-[10px] !font-bold !text-white">
+              {{ patientData.messages.unread }}
+            </span>
           </div>
-          <div class="p-3">
-            <Calendar class="w-6 h-6 text-electric-sapphire fill-current" />
+          <div class="!flex-1 !min-w-0">
+            <p class="!text-sm !font-semibold !text-amber-900 dark:!text-amber-300">
+              {{ patientData.messages.unread }} پیام خوانده نشده دارید
+            </p>
+            <p class="!text-xs !text-amber-700/80 dark:!text-amber-400/60 !mt-0.5">
+              برای مشاهده و پاسخ به پیام‌های جدید به بخش پیام‌ها مراجعه کنید.
+            </p>
           </div>
         </div>
-      </div>
-
-      <div
-        class="bg-white dark:bg-blue-grey! rounded-2xl border border-slate-200/60 dark:border-slate-600! p-6 shadow-sm hover:shadow-md transition-shadow duration-200 px-3 py-3">
-        <div class="flex justify-between items-start">
-          <div>
-            <div class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">تکمیل شده</div>
-            <div class="text-3xl font-black text-slate-800 dark:text-slate-100">{{ completedCount }}</div>
-          </div>
-          <div class="p-3">
-            <UsersGroup class="w-6 h-6 text-emerald-600 fill-current" />
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="bg-white dark:bg-blue-grey! rounded-2xl border border-slate-200/60 dark:border-slate-600! p-6 shadow-sm hover:shadow-md transition-shadow duration-200 px-3 py-3">
-        <div class="flex justify-between items-start">
-          <div>
-            <div class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">در انتظار تایید</div>
-            <div class="text-3xl font-black text-slate-800 dark:text-slate-100">{{ pendingCount }}</div>
-          </div>
-          <div class="p-3">
-            <Clock class="w-6 h-6 text-amber-600 fill-current" />
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="bg-white dark:bg-blue-grey! rounded-2xl border border-slate-200/60 dark:border-slate-600! p-6 shadow-sm hover:shadow-md transition-shadow duration-200 px-3 py-3">
-        <div class="flex justify-between items-start">
-          <div>
-            <div class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">وقت خالی امروز</div>
-            <div class="text-3xl font-black text-slate-800 dark:text-slate-100">{{ availableSlotsCount }}</div>
-          </div>
-          <div class="p-3">
-            <Grid class="w-6 h-6 text-electric-sapphire stroke-current" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="isDoctor" class="bg-white dark:bg-blue-grey! rounded-2xl shadow-sm border border-slate-200/60 dark:border-slate-600! overflow-hidden">
-      <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/30 dark:bg-slate-700/30">
-        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100">برنامه امروز شما</h2>
-        <NuxtLink to="/appointments"
-          class="text-sm font-semibold text-electric-sapphire hover:text-electric-sapphire transition-colors flex items-center gap-1">
-          مشاهده همه
-          <span aria-hidden="true">&larr;</span>
+        <NuxtLink
+          to="/patient/messaging"
+          class="!shrink-0 !px-4 !py-2 !bg-amber-600 hover:!bg-amber-700 active:!bg-amber-800 !text-white !text-xs !font-medium !rounded-xl !transition-all !duration-200"
+        >
+          مشاهده پیام‌ها
         </NuxtLink>
       </div>
 
-      <div v-if="loading" class="flex flex-col items-center justify-center py-20">
-        <svg class="animate-spin h-8 w-8 text-electric-sapphire mb-4" xmlns="http://www.w3.org/2000/svg" fill="none"
-          viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-          </path>
-        </svg>
-        <span class="text-sm text-slate-500 dark:text-slate-400 font-medium">در حال دریافت اطلاعات...</span>
-      </div>
-
-      <div v-else-if="!todayAppointments.length"
-        class="flex flex-col items-center justify-center py-20 px-4 text-center my-6">
-        <div class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-4 border border-slate-100 dark:border-slate-700">
-          <Calendar class="w-8 h-8 text-slate-300 dark:text-slate-500 fill-current" />
+      <!-- Welcome Card -->
+      <div class="!rounded-2xl !bg-gradient-to-br !from-blue-600 !to-blue-800 dark:!from-blue-700 dark:!to-blue-950 !p-8 !text-white">
+        <div class="!flex !items-start !justify-between !gap-6">
+          <div class="!space-y-3 !flex-1">
+            <h1 class="!text-2xl !font-bold !tracking-tight">
+              {{ patientData.patient.first_name ? `خوش آمدید، ${patientData.patient.first_name} عزیز` : 'خوش آمدید' }}
+            </h1>
+            <p class="!text-blue-100 !text-sm !leading-relaxed !max-w-lg">
+              به پنل کاربری خود خوش آمدید. از اینجا می‌توانید پیام‌های خود را مشاهده کنید، نوبت‌های آتی را ببینید و اطلاعات پرونده خود را به‌روزرسانی کنید.
+            </p>
+          </div>
+          <div class="!shrink-0 !hidden sm:!block">
+            <div class="!w-16 !h-16 !rounded-2xl !bg-white/15 !flex !items-center !justify-center !backdrop-blur-sm">
+              <Profile class="!w-8 !h-8 !fill-current" />
+            </div>
+          </div>
         </div>
-        <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">هیچ نوبتی برای امروز ثبت نشده است</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">برنامه امروز شما خالی است. می‌توانید به کارهای دیگر خود برسید یا
-          استراحت کنید.</p>
       </div>
 
-      <div v-else class="divide-y divide-slate-100/80 dark:divide-slate-700/80">
-        <div v-for="appt in todayAppointments" :key="appt.id"
-          class="p-6 flex flex-col sm:flex-row sm:items-center gap-5 hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors group px-3 py-2">
-          <div
-            class="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center sm:border-l border-slate-200/60 dark:border-slate-600/60 sm:pl-6 shrink-0 sm:w-28">
-            <span class="text-lg font-black text-slate-800 dark:text-slate-100 tracking-tight">{{ appt.startTime?.slice(0, 5) }}</span>
-            <span class="text-xs font-medium text-slate-400 dark:text-slate-500 mt-0.5">تا {{ appt.endTime?.slice(0, 5) }}</span>
+      <!-- ── Stats Cards ── -->
+      <div class="!grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-3 !gap-6">
+        <!-- Messages Card -->
+        <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
+          <div class="!flex !items-start !justify-between">
+            <div class="!space-y-2">
+              <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">پیام‌ها</p>
+              <p class="!text-3xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
+                {{ formatNumber(patientData.messages.total) }}
+              </p>
+            </div>
+            <div class="!p-3 !rounded-xl !bg-amber-50 dark:!bg-amber-950/30 !text-amber-600 dark:!text-amber-400">
+              <ChatDots class="!w-5 !h-5 !fill-current" />
+            </div>
+          </div>
+          <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !gap-1.5 !text-xs">
+            <span v-if="patientData.messages.unread > 0" class="!text-rose-500 dark:!text-rose-400 !font-semibold">
+              {{ formatNumber(patientData.messages.unread) }} پیام خوانده نشده
+            </span>
+            <span v-else class="!text-emerald-500 !font-semibold">هیچ پیام خوانده نشده‌ای ندارید</span>
+          </div>
+        </div>
+
+        <!-- Appointments Card -->
+        <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
+          <div class="!flex !items-start !justify-between">
+            <div class="!space-y-2">
+              <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">نوبت‌های پیش رو</p>
+              <p class="!text-3xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
+                {{ formatNumber(patientData.appointments.length) }}
+              </p>
+            </div>
+            <div class="!p-3 !rounded-xl !bg-emerald-50 dark:!bg-emerald-950/30 !text-emerald-600 dark:!text-emerald-400">
+              <Calendar class="!w-5 !h-5 !fill-current" />
+            </div>
+          </div>
+          <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !text-xs !text-slate-400 dark:!text-zinc-500">
+            نوبت‌های فعال و آتی شما
+          </div>
+        </div>
+
+        <!-- Profile Status Card -->
+        <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
+          <div class="!flex !items-start !justify-between">
+            <div class="!space-y-2">
+              <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">وضعیت پرونده</p>
+              <p class="!text-sm !font-semibold !text-slate-900 dark:!text-white !tracking-tight">
+                {{ profileComplete ? 'تکمیل شده' : 'ناقص' }}
+              </p>
+            </div>
+            <div class="!p-3 !rounded-xl !bg-violet-50 dark:!bg-violet-950/30 !text-violet-600 dark:!text-violet-400">
+              <DocumentText class="!w-5 !h-5 !fill-current" />
+            </div>
+          </div>
+          <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !gap-1.5 !text-xs">
+            <span v-if="profileComplete" class="!text-emerald-500 !font-semibold">مشخصات شما کامل است</span>
+            <span v-else class="!text-amber-500 !font-semibold">برای تکمیل پرونده کلیک کنید</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Upcoming Appointments ── -->
+      <section>
+        <div class="!flex !items-center !gap-2 !mb-6">
+          <div class="!w-1 !h-4 !rounded-full !bg-emerald-600 dark:!bg-emerald-500" />
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">نوبت‌های پیش رو</h2>
+        </div>
+
+        <div class="!rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !overflow-hidden">
+          <div v-if="!patientData.appointments.length" class="!py-16 !text-center">
+            <Calendar class="!w-10 !h-10 !text-slate-300 dark:!text-zinc-600 !fill-current !mx-auto !mb-4" />
+            <p class="!text-sm !font-semibold !text-slate-500 dark:!text-zinc-400">نوبتی ثبت نشده است</p>
+            <p class="!text-xs !text-slate-400 dark:!text-zinc-500 !mt-2">نوبت‌های آتی شما در این قسمت نمایش داده می‌شوند.</p>
           </div>
 
-          <div class="flex-1 min-w-0">
-            <h4 class="text-base font-bold text-slate-800 dark:text-slate-100 group-hover:text-electric-sapphire transition-colors">
-              {{ appt.patientFirstName }} {{ appt.patientLastName }}
-            </h4>
-            <div class="flex flex-wrap items-center gap-2 mt-1.5 text-sm text-slate-500 dark:text-slate-400 font-medium">
-              <span>{{ appt.patientPhone }}</span>
-              <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600 hidden sm:inline-block"></span>
-              <span>کد ملی: {{ appt.patientNationalId }}</span>
+          <div v-else class="!divide-y !divide-slate-100/60 dark:!divide-zinc-800/60">
+            <div
+              v-for="appt in patientData.appointments"
+              :key="appt.id"
+              class="!p-5 !flex !items-center !justify-between !gap-4 hover:!bg-slate-50/50 dark:hover:!bg-zinc-800/20 !transition-all"
+            >
+              <div class="!flex !items-center !gap-6">
+                <div class="!flex !flex-col !items-center !justify-center !px-4 !py-2 !rounded-xl !bg-emerald-50 dark:!bg-emerald-950/20 !border !border-emerald-100 dark:!border-emerald-900/30 !min-w-[80px]">
+                  <span class="!text-lg !font-bold !text-emerald-700 dark:!text-emerald-400">
+                    {{ formatJalaliDate(appt.date) }}
+                  </span>
+                  <span class="!text-[10px] !text-emerald-500 dark:!text-emerald-500 !mt-0.5">
+                    {{ appt.time ? appt.time.slice(0, 5) : '---' }}
+                  </span>
+                </div>
+
+                <div class="!space-y-1">
+                  <h4 class="!text-sm !font-semibold !text-slate-900 dark:!text-white">
+                    {{ appt.doctor_name || 'پزشک' }}
+                  </h4>
+                  <p class="!text-xs !text-slate-400 dark:!text-zinc-500">
+                    {{ appt.status ? statusLabel(appt.status) : 'در انتظار تایید' }}
+                  </p>
+                </div>
+              </div>
+
+              <UiStatusBadge :status="appt.status || 'pending'" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Patient Profile Info ── -->
+      <section>
+        <div class="!flex !items-center !gap-2 !mb-6">
+          <div class="!w-1 !h-4 !rounded-full !bg-blue-600 dark:!bg-blue-500" />
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">اطلاعات پرونده</h2>
+        </div>
+
+        <div class="!rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !overflow-hidden">
+          <div class="!p-6 !space-y-5">
+            <div class="!grid !grid-cols-1 md:!grid-cols-2 lg:!grid-cols-3 !gap-5">
+              <div>
+                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">نام</p>
+                <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">
+                  {{ patientData.patient.first_name || '---' }} {{ patientData.patient.last_name || '' }}
+                </p>
+              </div>
+              <div>
+                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">کد ملی</p>
+                <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200" dir="ltr">{{ patientData.patient.national_id || '---' }}</p>
+              </div>
+              <div>
+                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">تلفن همراه</p>
+                <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200" dir="ltr">{{ patientData.patient.phone || '---' }}</p>
+              </div>
+              <div>
+                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">تاریخ تولد</p>
+                <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">{{ formatJalaliDate(patientData.patient.birth_date) }}</p>
+              </div>
+              <div>
+                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">بیمه</p>
+                <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">{{ insuranceLabel(patientData.patient.insurance_type) }}</p>
+              </div>
+              <div>
+                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">آدرس</p>
+                <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">{{ patientData.patient.address || '---' }}</p>
+              </div>
             </div>
           </div>
 
-          <div class="shrink-0 flex items-center mt-3 sm:mt-0">
-            <span :class="['px-2 py-1 text-xs font-bold rounded-md border', badgeStyle(appt.status)]">
-              {{ statusLabel(appt.status) }}
-            </span>
+          <div class="!px-6 !py-4 !bg-slate-50/50 dark:!bg-zinc-800/30 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !justify-between">
+            <p class="!text-xs !text-slate-400 dark:!text-zinc-500">
+              {{ profileComplete ? 'پرونده شما کامل است' : 'برخی اطلاعات مانند تلفن، آدرس یا بیمه ثبت نشده است' }}
+            </p>
+            <button
+              class="!shrink-0 !px-5 !py-2 !bg-blue-600 hover:!bg-blue-700 active:!bg-blue-800 !text-white !text-xs !font-medium !rounded-xl !transition-all !duration-200 !flex !items-center !gap-2"
+              @click="openEditDialog"
+            >
+              <v-icon size="16" color="white">mdi-pencil-outline</v-icon>
+              ویرایش اطلاعات
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Edit Profile Dialog ── -->
+      <v-dialog v-model="editDialogOpen" max-width="600" persistent scrollable transition="dialog-bottom-transition" @keydown.esc="editDialogOpen = false">
+        <v-card class="crm-dialog overflow-hidden!" elevation="0">
+          <div class="crm-dialog-header">
+            <div>
+              <h2 class="crm-dialog-title text-xl!">ویرایش اطلاعات پرونده</h2>
+              <span class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !block !font-normal">تکمیل اطلاعات تماس و بیمه</span>
+            </div>
+            <v-btn icon variant="text" size="small" class="!text-slate-400 hover:!text-slate-800" @click="editDialogOpen = false">
+              <CloseCircle class="!w-6 !h-6 !fill-slate-600! dark:!fill-slate-200!" />
+            </v-btn>
           </div>
 
+          <v-card-text class="!p-8 !bg-slate-50/30 dark:!bg-slate-900/30">
+            <div class="!space-y-5">
+              <div>
+                <label class="!text-xs !font-medium !text-slate-600 dark:!text-zinc-400 !mb-1.5 !block">تلفن همراه</label>
+                <v-text-field
+                  v-model="editForm.phone"
+                  variant="outlined"
+                  density="comfortable"
+                  placeholder="09123456789"
+                  dir="ltr"
+                  hide-details
+                  class="!rounded-xl"
+                />
+              </div>
+              <div>
+                <label class="!text-xs !font-medium !text-slate-600 dark:!text-zinc-400 !mb-1.5 !block">آدرس</label>
+                <v-textarea
+                  v-model="editForm.address"
+                  variant="outlined"
+                  density="comfortable"
+                  placeholder="تهران، خیابان ..."
+                  rows="2"
+                  hide-details
+                  class="!rounded-xl"
+                />
+              </div>
+              <div>
+                <label class="!text-xs !font-medium !text-slate-600 dark:!text-zinc-400 !mb-1.5 !block">نوع بیمه</label>
+                <v-select
+                  v-model="editForm.insurance_type"
+                  :items="insuranceOptions"
+                  item-title="label"
+                  item-value="key"
+                  variant="outlined"
+                  density="comfortable"
+                  placeholder="نوع بیمه خود را انتخاب کنید"
+                  hide-details
+                  class="!rounded-xl"
+                />
+              </div>
+            </div>
+          </v-card-text>
+
+          <v-card-actions class="!px-8 !py-4 !border-t !border-slate-100 dark:!border-zinc-800">
+            <v-spacer />
+            <button class="crm-btn crm-btn-ghost" @click="editDialogOpen = false">انصراف</button>
+            <button class="crm-btn crm-btn-accent" :disabled="saving" @click="saveProfile">
+              {{ saving ? 'در حال ذخیره...' : 'ذخیره تغییرات' }}
+            </button>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </template>
+
+    <!-- ─── Restricted Access (non-patient, non-admin) ─── -->
+    <template v-else-if="!isPatient && !canViewDashboard">
+      <UiEmptyState title="دسترسی محدود" description="شما دسترسی لازم برای مشاهده داشبورد را ندارید.">
+        <template #icon>
+          <ShieldCheck class="!w-8 !h-8 !text-slate-300 dark:!text-zinc-600 !fill-current" />
+        </template>
+      </UiEmptyState>
+    </template>
+
+    <!-- ─── Full Dashboard ─── -->
+    <template v-else-if="data">
+      <!-- Unread Messages Banner -->
+      <div
+        v-if="data.messages.unread > 0"
+        class="!relative !overflow-hidden !rounded-2xl !border !border-amber-200/60 dark:!border-amber-900/30 !bg-amber-50/40 dark:!bg-amber-950/10 !p-5 !flex !items-center !justify-between !gap-4"
+      >
+        <div class="!flex !items-center !gap-4">
+          <div class="!relative !shrink-0">
+            <div class="!w-10 !h-10 !flex !items-center !justify-center !rounded-xl !bg-amber-500/10 !text-amber-600 dark:!text-amber-400">
+              <Bell class="!w-5 !h-5 !fill-current" />
+            </div>
+            <span class="!absolute -!top-1 -!end-1 !w-4 !h-4 !bg-rose-500 !border-2 !border-white dark:!border-zinc-900 !rounded-full !flex !items-center !justify-center !text-[10px] !font-bold !text-white">
+              {{ data.messages.unread }}
+            </span>
+          </div>
+          <div class="!flex-1 !min-w-0">
+            <p class="!text-sm !font-semibold !text-amber-900 dark:!text-amber-300">
+              {{ data.messages.unread }} پیام خوانده نشده دارید
+            </p>
+            <p class="!text-xs !text-amber-700/80 dark:!text-amber-400/60 !mt-0.5">
+              برای مشاهده و پاسخ به پیام‌های جدید به بخش پیام‌ها مراجعه کنید.
+            </p>
+          </div>
         </div>
+        <NuxtLink
+          to="/messaging"
+          class="!shrink-0 !px-4 !py-2 !bg-amber-600 hover:!bg-amber-700 active:!bg-amber-800 !text-white !text-xs !font-medium !rounded-xl !transition-all !duration-200"
+        >
+          مشاهده پیام‌ها
+        </NuxtLink>
       </div>
-    </div>
-  </div>
+
+      <!-- ── Key Metrics ── -->
+      <section>
+        <div class="!flex !items-center !gap-2 !mb-6">
+          <div class="!w-1 !h-4 !rounded-full !bg-blue-600 dark:!bg-blue-500" />
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">آمار کلی</h2>
+        </div>
+        
+        <div class="!grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4 !gap-6">
+          <!-- Total Patients Card -->
+          <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
+            <div class="!flex !items-start !justify-between">
+              <div class="!space-y-2">
+                <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">کل بیماران</p>
+                <p class="!text-3xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
+                  {{ formatNumber(data.patients.total) }}
+                </p>
+              </div>
+              <div class="!p-3 !rounded-xl !bg-blue-50 dark:!bg-blue-950/30 !text-blue-600 dark:!text-blue-400">
+                <UsersGroup class="!w-5 !h-5 !fill-current" />
+              </div>
+            </div>
+            <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !gap-1.5 !text-xs !text-slate-400 dark:!text-zinc-500">
+              <span class="!inline-block !w-1.5 !h-1.5 !rounded-full !bg-emerald-500" />
+              <span>+{{ formatNumber(data.patients.yesterday) }} دیروز</span>
+            </div>
+          </div>
+
+          <!-- Appointments Card -->
+          <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
+            <div class="!flex !items-start !justify-between">
+              <div class="!space-y-2">
+                <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">نوبت‌های امروز</p>
+                <p class="!text-3xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
+                  {{ formatNumber(data.appointments.today) }}
+                </p>
+              </div>
+              <div class="!p-3 !rounded-xl !bg-emerald-50 dark:!bg-emerald-950/30 !text-emerald-600 dark:!text-emerald-400">
+                <Calendar class="!w-5 !h-5 !fill-current" />
+              </div>
+            </div>
+            <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !gap-3 !text-xs !text-slate-400 dark:!text-zinc-500">
+              <span>دیروز: {{ formatNumber(data.appointments.yesterday) }}</span>
+              <span class="!w-1 !h-1 !rounded-full !bg-slate-200 dark:!bg-zinc-700" />
+              <span>فردا: {{ formatNumber(data.appointments.tomorrow) }}</span>
+            </div>
+          </div>
+
+          <!-- Messages Card -->
+          <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
+            <div class="!flex !items-start !justify-between">
+              <div class="!space-y-2">
+                <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">پیام‌های امروز</p>
+                <p class="!text-3xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
+                  {{ formatNumber(data.messages.today) }}
+                </p>
+              </div>
+              <div class="!p-3 !rounded-xl !bg-amber-50 dark:!bg-amber-950/30 !text-amber-600 dark:!text-amber-400">
+                <ChatDots class="!w-5 !h-5 !fill-current" />
+              </div>
+            </div>
+            <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !gap-3 !text-xs !text-slate-400 dark:!text-zinc-500">
+              <span>دیروز: {{ formatNumber(data.messages.yesterday) }}</span>
+              <span class="!w-1 !h-1 !rounded-full !bg-slate-200 dark:!bg-zinc-700" />
+              <span v-if="data.messages.unread > 0" class="!text-rose-500 dark:!text-rose-400 !font-semibold">
+                {{ formatNumber(data.messages.unread) }} نخوانده
+              </span>
+              <span v-else>0 نخوانده</span>
+            </div>
+          </div>
+
+          <!-- Visits Card -->
+          <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
+            <div class="!flex !items-start !justify-between">
+              <div class="!space-y-2">
+                <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">ویزیت‌های امروز</p>
+                <p class="!text-3xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
+                  {{ formatNumber(data.visits.today) }}
+                </p>
+              </div>
+              <div class="!p-3 !rounded-xl !bg-rose-50 dark:!bg-rose-950/30 !text-rose-600 dark:!text-rose-400">
+                <HeartPulse class="!w-5 !h-5 !fill-current" />
+              </div>
+            </div>
+            <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !gap-3 !text-xs !text-slate-400 dark:!text-zinc-500">
+              <span>دیروز: {{ formatNumber(data.visits.yesterday) }}</span>
+              <span class="!w-1 !h-1 !rounded-full !bg-slate-200 dark:!bg-zinc-700" />
+              <span>کل: {{ formatNumber(data.visits.total) }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Resource Status ── -->
+      <section>
+        <div class="!flex !items-center !gap-2 !mb-6">
+          <div class="!w-1 !h-4 !rounded-full !bg-violet-600 dark:!bg-violet-500" />
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">وضعیت منابع</h2>
+        </div>
+
+        <div class="!grid !grid-cols-1 lg:!grid-cols-2 !gap-6">
+          <!-- SMS Credit -->
+          <div class="!rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6">
+            <div class="!flex !items-center !gap-3 !mb-6">
+              <div class="!p-2.5 !rounded-xl !bg-blue-50 dark:!bg-blue-950/30 !text-blue-600 dark:!text-blue-400">
+                <ChatDots class="!w-5 !h-5 !fill-current" />
+              </div>
+              <div>
+                <h3 class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">اعتبار پیامک</h3>
+                <p class="!text-xs !text-slate-400 dark:!text-zinc-500">وضعیت کلی لوکال پنل سامانه</p>
+              </div>
+            </div>
+
+            <div v-if="smsAvailable" class="!space-y-4">
+              <div class="!flex !items-baseline !justify-between">
+                <span class="!text-2xl !font-bold !text-slate-900 dark:!text-white !tracking-tight" dir="ltr">
+                  {{ formatNumber(data.sms_credit!.remaining) }}
+                </span>
+                <span class="!text-xs !text-slate-400 dark:!text-zinc-500">
+                  از {{ formatNumber(data.sms_credit!.sent + data.sms_credit!.remaining) }} پیامک
+                </span>
+              </div>
+
+              <div class="!relative !h-1.5 !bg-slate-100 dark:!bg-zinc-800 !rounded-full !overflow-hidden">
+                <div
+                  class="!h-full !rounded-full !transition-all !duration-1000 !ease-out"
+                  :class="smsPercent > 20 ? '!bg-blue-600 dark:!bg-blue-500' : smsPercent > 5 ? '!bg-amber-500' : '!bg-rose-500'"
+                  :style="{ width: smsPercent + '%' }"
+                />
+              </div>
+
+              <div class="!flex !items-center !justify-between !text-xs">
+                <span
+                  class="!font-medium !px-2.5 !py-0.5 !rounded-full"
+                  :class="smsPercent > 20 ? '!bg-emerald-500/5 !text-emerald-600 dark:!text-emerald-400' : smsPercent > 5 ? '!bg-amber-500/5 !text-amber-600 dark:!text-amber-400' : '!bg-rose-500/5 !text-rose-600 dark:!text-rose-400'"
+                >
+                  {{ smsPercent }}% باقی‌مانده
+                </span>
+                <span class="!text-slate-400 dark:!text-zinc-500">
+                  {{ formatNumber(data.sms_credit!.sent) }} ارسال شده
+                </span>
+              </div>
+            </div>
+
+            <div v-else class="!text-center !py-6">
+              <p class="!text-xs !text-slate-400 dark:!text-zinc-500">اطلاعات اعتبار پیامک در دسترس نیست</p>
+            </div>
+          </div>
+
+          <!-- Storage -->
+          <div class="!rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6">
+            <div class="!flex !items-center !gap-3 !mb-6">
+              <div class="!p-2.5 !rounded-xl !bg-violet-50 dark:!bg-violet-950/30 !text-violet-600 dark:!text-violet-400">
+                <DocumentText class="!w-5 !h-5 !fill-current" />
+              </div>
+              <div>
+                <h3 class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">فضای ذخیره‌سازی</h3>
+                <p class="!text-xs !text-slate-400 dark:!text-zinc-500">حجم استفاده شده از فایل‌های کلینیک</p>
+              </div>
+            </div>
+
+            <div class="!space-y-4">
+              <div class="!flex !items-baseline !justify-between">
+                <span class="!text-2xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
+                  {{ data.storage.usedFormatted }}
+                </span>
+                <span class="!text-xs !text-slate-400 dark:!text-zinc-500">کل ظرفیت تخصیص یافته</span>
+              </div>
+
+              <div class="!relative !h-1.5 !bg-slate-100 dark:!bg-zinc-800 !rounded-full !overflow-hidden">
+                <div
+                  class="!h-full !rounded-full !bg-violet-600 dark:!bg-violet-500 !transition-all !duration-1000 !ease-out"
+                  :style="{ width: storagePercent + '%' }"
+                />
+              </div>
+
+              <div class="!flex !items-center !justify-between !text-xs">
+                <span class="!font-medium !px-2.5 !py-0.5 !rounded-full !bg-violet-500/5 !text-violet-600 dark:!text-violet-400">
+                  {{ storagePercent }}% استفاده شده
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Daily Breakdowns ── -->
+      <section>
+        <div class="!flex !items-center !gap-2 !mb-6">
+          <div class="!w-1 !h-4 !rounded-full !bg-emerald-600 dark:!bg-emerald-500" />
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">گزارش‌های روزانه</h2>
+        </div>
+
+        <div class="!grid !grid-cols-1 lg:!grid-cols-3 !gap-6">
+          <!-- Patients Breakdown -->
+          <UiContentCard title="بیماران" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
+            <template #headerAction>
+              <NuxtLink to="/patients" class="!text-xs !font-medium !text-blue-600 dark:!text-blue-400 hover:!underline">
+                مشاهده همه &larr;
+              </NuxtLink>
+            </template>
+            <div class="!divide-y !divide-slate-100/60 dark:!divide-zinc-800/60">
+              <BreakdownRow label="دیروز" :value="data.patients.yesterday" class="!p-4" />
+              <BreakdownRow label="امروز" :value="data.patients.today" highlight class="!p-4 !bg-slate-50/40 dark:!bg-zinc-800/20" />
+              <BreakdownRow label="فردا" :value="data.patients.tomorrow" muted class="!p-4" />
+            </div>
+          </UiContentCard>
+
+          <!-- Appointments Breakdown -->
+          <UiContentCard title="نوبت‌ها" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
+            <template #headerAction>
+              <NuxtLink to="/appointments" class="!text-xs !font-medium !text-blue-600 dark:!text-blue-400 hover:!underline">
+                مشاهده همه &larr;
+              </NuxtLink>
+            </template>
+            <div class="!divide-y !divide-slate-100/60 dark:!divide-zinc-800/60">
+              <BreakdownRow label="دیروز" :value="data.appointments.yesterday" class="!p-4" />
+              <BreakdownRow label="امروز" :value="data.appointments.today" highlight class="!p-4 !bg-slate-50/40 dark:!bg-zinc-800/20" />
+              <BreakdownRow label="فردا" :value="data.appointments.tomorrow" class="!p-4" />
+            </div>
+          </UiContentCard>
+
+          <!-- Messages Breakdown -->
+          <UiContentCard title="پیام‌ها" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
+            <template #headerAction>
+              <NuxtLink to="/messaging" class="!text-xs !font-medium !text-blue-600 dark:!text-blue-400 hover:!underline">
+                مشاهده همه &larr;
+              </NuxtLink>
+            </template>
+            <div class="!divide-y !divide-slate-100/60 dark:!divide-zinc-800/60">
+              <BreakdownRow label="دیروز" :value="data.messages.yesterday" class="!p-4" />
+              <BreakdownRow label="امروز" :value="data.messages.today" highlight class="!p-4 !bg-slate-50/40 dark:!bg-zinc-800/20" />
+              <BreakdownRow label="فردا" :value="data.messages.tomorrow" muted class="!p-4" />
+              <div class="!flex !items-center !justify-between !px-4 !py-3.5">
+                <span class="!text-xs !font-medium !text-slate-500 dark:!text-zinc-400">خوانده نشده</span>
+                <span v-if="data.messages.unread > 0" class="!inline-flex !items-center !gap-1.5 !px-2.5 !py-0.5 !bg-rose-500/5 !text-rose-600 dark:!text-rose-400 !text-xs !font-semibold !rounded-full">
+                  <span class="!w-1 !h-1 !rounded-full !bg-rose-500 !animate-pulse" />
+                  {{ data.messages.unread }} پیام
+                </span>
+                <span v-else class="!text-xs !font-medium !text-emerald-600 dark:!text-emerald-400">0</span>
+              </div>
+            </div>
+          </UiContentCard>
+        </div>
+      </section>
+
+      <!-- ── Visits + Billing ── -->
+      <section>
+        <div class="!flex !items-center !gap-2 !mb-6">
+          <div class="!w-1 !h-4 !rounded-full !bg-amber-600 dark:!bg-amber-500" />
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">گزارش‌های تکمیلی</h2>
+        </div>
+
+        <div class="!grid !grid-cols-1 lg:!grid-cols-2 !gap-6">
+          <!-- Site Visits -->
+          <UiContentCard title="بازدیدهای سایت" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
+            <div class="!p-6">
+              <div class="!grid !grid-cols-3 !gap-4">
+                <div class="!text-center !p-4 !rounded-xl !border !border-slate-100 dark:!border-zinc-800/80">
+                  <div class="!text-xl !font-bold !text-slate-900 dark:!text-white !mb-1">{{ formatNumber(data.visits.total) }}</div>
+                  <div class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500">کل بازدیدها</div>
+                </div>
+                <div class="!text-center !p-4 !rounded-xl !border !border-slate-100 dark:!border-zinc-800/80">
+                  <div class="!text-xl !font-bold !text-slate-700 dark:!text-zinc-300 !mb-1">{{ formatNumber(data.visits.yesterday) }}</div>
+                  <div class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500">دیروز</div>
+                </div>
+                <div class="!text-center !p-4 !rounded-xl !border !border-blue-500/10 !bg-blue-500/5">
+                  <div class="!text-xl !font-bold !text-blue-600 dark:!text-blue-400 !mb-1">{{ formatNumber(data.visits.today) }}</div>
+                  <div class="!text-[11px] !font-medium !text-blue-600/80 dark:!text-blue-400">امروز</div>
+                </div>
+              </div>
+            </div>
+          </UiContentCard>
+
+          <!-- Billing Summary -->
+          <UiContentCard title="خلاصه مالی" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
+            <template #headerAction>
+              <NuxtLink to="/billing" class="!text-xs !font-medium !text-blue-600 dark:!text-blue-400 hover:!underline">
+                مشاهده همه &larr;
+              </NuxtLink>
+            </template>
+            <div class="!p-6 !space-y-5">
+              <div class="!grid !grid-cols-2 !gap-4">
+                <div class="!p-4 !rounded-xl !border !border-emerald-500/10 !bg-emerald-500/5">
+                  <div class="!flex !items-center !gap-1.5 !mb-1">
+                    <span class="!w-1 !h-1 !rounded-full !bg-emerald-500" />
+                    <span class="!text-[11px] !font-medium !text-emerald-600 dark:!text-emerald-400">درآمد کل</span>
+                  </div>
+                  <div class="!text-lg !font-bold !text-emerald-700 dark:!text-emerald-400" dir="ltr">{{ formatToman(data.billing.total_revenue) }}</div>
+                </div>
+                
+                <div class="!p-4 !rounded-xl !border !border-amber-500/10 !bg-amber-500/5">
+                  <div class="!flex !items-center !gap-1.5 !mb-1">
+                    <span class="!w-1 !h-1 !rounded-full !bg-amber-500" />
+                    <span class="!text-[11px] !font-medium !text-amber-600 dark:!text-amber-400">در انتظار پرداخت</span>
+                  </div>
+                  <div class="!text-lg !font-bold !text-amber-700 dark:!text-amber-400" dir="ltr">{{ formatToman(data.billing.pending_revenue) }}</div>
+                </div>
+              </div>
+
+              <div class="!flex !items-center !justify-between !text-xs !text-slate-400 dark:!text-zinc-500 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80">
+                <span>صورتحساب‌ها: <strong class="!text-slate-700 dark:!text-zinc-300">{{ data.billing.total }}</strong></span>
+                <span>پرداخت شده: <strong class="!text-emerald-600 dark:!text-emerald-400">{{ data.billing.paid }}</strong></span>
+                <span>در انتظار: <strong class="!text-amber-600 dark:!text-amber-400">{{ data.billing.pending }}</strong></span>
+              </div>
+            </div>
+          </UiContentCard>
+        </div>
+      </section>
+    </template>
+
+    <!-- ─── Doctor Schedule Block ─── -->
+    <template v-if="hasSchedule && data">
+      <section>
+        <div class="!flex !items-center !gap-2 !mb-6">
+          <div class="!w-1 !h-4 !rounded-full !bg-blue-600 dark:!bg-blue-500" />
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">برنامه امروز شما</h2>
+        </div>
+
+        <div class="!rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !overflow-hidden">
+          <UiLoadingSpinner v-if="loadingSchedule" class="!my-8" />
+
+          <UiEmptyState
+            v-else-if="!todayAppointments.length"
+            title="هیچ نوبتی برای امروز ثبت نشده است"
+            description="برنامه امروز شما خالی است."
+            class="!py-12"
+          >
+            <template #icon>
+              <Calendar class="!w-8 !h-8 !text-slate-300 dark:!text-zinc-600 !fill-current" />
+            </template>
+          </UiEmptyState>
+
+          <div v-else class="!divide-y !divide-slate-100/60 dark:!divide-zinc-800/60">
+            <div
+              v-for="appt in todayAppointments"
+              :key="appt.id"
+              class="!p-5 !flex !items-center !justify-between !gap-4 hover:!bg-slate-50/50 dark:hover:!bg-zinc-800/20 !transition-all"
+            >
+              <div class="!flex !items-center !gap-6">
+                <!-- Clean Modernized Timeline Block -->
+                <div class="!flex !flex-col !items-center !justify-center !px-3 !py-1.5 !rounded-xl !bg-slate-50 dark:!bg-zinc-800/50 !border !border-slate-100 dark:!border-zinc-800 !min-w-[70px]" dir="ltr">
+                  <span class="!text-xs !font-bold !text-slate-800 dark:!text-zinc-200">{{ appt.startTime?.slice(0, 5) }}</span>
+                  <span class="!text-[10px] !text-slate-400 dark:!text-zinc-500 !mt-0.5">تا {{ appt.endTime?.slice(0, 5) }}</span>
+                </div>
+
+                <div class="!space-y-1">
+                  <h4 class="!text-sm !font-semibold !text-slate-900 dark:!text-white">
+                    {{ appt.patientFirstName }} {{ appt.patientLastName }}
+                  </h4>
+                  <div class="!flex !items-center !gap-2 !text-xs !text-slate-400 dark:!text-zinc-500">
+                    <span>{{ appt.patientPhone }}</span>
+                    <span class="!w-1 !h-1 !rounded-full !bg-slate-200 dark:!bg-zinc-700" />
+                    <span>کد ملی: {{ appt.patientNationalId }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="!shrink-0">
+                <UiStatusBadge :status="appt.status" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </template>
+  </UiPageContainer>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import Calendar from '~/components/icons/Calendar.vue'
-import Clock from '~/components/icons/Clock.vue'
-import Grid from '~/components/icons/Grid.vue'
 import UsersGroup from '~/components/icons/UsersGroup.vue'
+import ChatDots from '~/components/icons/ChatDots.vue'
+import HeartPulse from '~/components/icons/HeartPulse.vue'
+import DocumentText from '~/components/icons/DocumentText.vue'
+import Bell from '~/components/icons/Bell.vue'
+import ShieldCheck from '~/components/icons/ShieldCheck.vue'
+import Profile from '~/components/icons/Profile.vue'
+import CloseCircle from '~/components/icons/CloseCircle.vue'
+import BreakdownRow from '~/components/dashboard/BreakdownRow.vue'
+import { INSURANCE_TYPES, INSURANCE_TYPE_KEYS } from '~/types/insurance'
+import type { InsuranceTypeKey } from '~/types/insurance'
+
+interface DashboardSmsCredit {
+  sent: number
+  remaining: number
+}
+
+interface DashboardStorage {
+  usedBytes: number
+  usedFormatted: string
+}
+
+interface DashboardCounts {
+  total: number
+  yesterday: number
+  today: number
+  tomorrow: number
+}
+
+interface DashboardMessages extends DashboardCounts {
+  unread: number
+}
+
+interface DashboardVisits {
+  total: number
+  yesterday: number
+  today: number
+}
+
+interface DashboardBilling {
+  total: number
+  pending: number
+  paid: number
+  total_revenue: number
+  pending_revenue: number
+}
+
+interface DashboardData {
+  sms_credit: DashboardSmsCredit | null
+  storage: DashboardStorage
+  patients: DashboardCounts
+  appointments: Omit<DashboardCounts, 'total'>
+  messages: DashboardMessages
+  visits: DashboardVisits
+  billing: DashboardBilling
+}
+
+// ─── Patient Dashboard Types ───
+interface PatientDashboardPatient {
+  id: string
+  first_name?: string
+  last_name?: string
+  national_id?: string
+  phone?: string
+  address?: string
+  insurance_type?: string
+  birth_date?: string
+  marital_status?: string
+}
+
+interface PatientDashboardMessage {
+  unread: number
+  total: number
+}
+
+interface PatientDashboardAppointment {
+  id: string
+  doctor_name?: string
+  date?: string
+  time?: string
+  status?: string
+}
+
+interface PatientDashboardData {
+  patient: PatientDashboardPatient
+  messages: PatientDashboardMessage
+  appointments: PatientDashboardAppointment[]
+}
 
 const { apiFetch } = useApi()
 const { user } = useAuth()
+const { formatJalaliLong, formatJalaliDate, toDateStr } = useFormatting()
+
+const data = ref<DashboardData | null>(null)
+const loading = ref(true)
 
 const todayAppointments = ref<any[]>([])
-const availableSlotsCount = ref(0)
-const loading = ref(true)
-const isLoading = ref(true)
+const loadingSchedule = ref(false)
 
-const isDoctor = computed(() => {
-  const role = user?.value?.role || user?.role
-  return role === 'admin_doctor' || role === 'doctor'
+const role = computed(() => user?.value?.role || (user as any)?.role)
+
+const isPatient = computed(() => role.value === 'patient')
+
+const canViewDashboard = computed(() => {
+  return ['admin_doctor', 'doctor', 'lab', 'pharmacy'].includes(role.value)
 })
 
-const todayPersian = computed(() => {
-  return new Date().toLocaleDateString('fa-IR', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+const hasSchedule = computed(() => {
+  return role.value === 'admin_doctor' || role.value === 'doctor'
 })
 
-const todayDateStr = computed(() => {
-  const d = new Date()
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
+const todayPersian = computed(() => formatJalaliLong())
+const todayDateStr = computed(() => toDateStr(new Date()))
+
+const smsAvailable = computed(() => data.value?.sms_credit != null)
+
+const smsPercent = computed(() => {
+  if (!data.value?.sms_credit) return 0
+  const { sent, remaining } = data.value.sms_credit
+  const total = sent + remaining
+  return total > 0 ? Math.round((remaining / total) * 100) : 0
 })
 
-const completedCount = computed(() =>
-  todayAppointments.value.filter((a) => a.status === 'completed').length
+const storagePercent = computed(() => {
+  if (!data.value?.storage) return 0
+  const used = data.value.storage.usedBytes
+  const maxStorage = 5 * 1024 * 1024 * 1024
+  return Math.min(100, Math.round((used / maxStorage) * 100))
+})
+
+// ─── Patient Dashboard State ───
+const patientData = ref<PatientDashboardData | null>(null)
+
+const profileComplete = computed(() => {
+  const p = patientData.value?.patient
+  if (!p) return false
+  return !!(p.phone && p.address && p.insurance_type)
+})
+
+const insuranceOptions = computed(() =>
+  INSURANCE_TYPE_KEYS.map((key: InsuranceTypeKey) => ({
+    key,
+    label: INSURANCE_TYPES[key].label,
+  }))
 )
 
-const pendingCount = computed(() =>
-  todayAppointments.value.filter((a) => a.status === 'pending').length
-)
+function insuranceLabel(key: string | undefined | null): string {
+  if (!key) return '---'
+  const info = INSURANCE_TYPES[key as InsuranceTypeKey]
+  return info?.label || key
+}
 
-  function badgeStyle(status: string) {
-    const map: Record<string, string> = {
-      pending: 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-700/50',
-      confirmed: 'bg-light-cyan dark:bg-electric-sapphire/20 text-electric-sapphire border-periwinkle/60',
-      rejected: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-600',
-      cancelled: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200/60',
-      completed: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200/60',
-    }
-    return map[status] || 'bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-600'
-  }
-
-function statusLabel(status: string) {
+function statusLabel(status: string): string {
   const map: Record<string, string> = {
     pending: 'در انتظار تایید',
     confirmed: 'تایید شده',
     rejected: 'رد شده',
     cancelled: 'لغو شده',
-    completed: 'تکمیل شده',
+    completed: 'انجام شده',
   }
   return map[status] || status
 }
 
-async function fetchTodayAppointments() {
-  if (!isDoctor.value) return
-  loading.value = true
+// ─── Edit Profile State ───
+const editDialogOpen = ref(false)
+const saving = ref(false)
+const editForm = reactive({
+  phone: '',
+  address: '',
+  insurance_type: '',
+})
+
+function openEditDialog() {
+  const p = patientData.value?.patient
+  if (p) {
+    editForm.phone = p.phone || ''
+    editForm.address = p.address || ''
+    editForm.insurance_type = p.insurance_type || ''
+  }
+  editDialogOpen.value = true
+}
+
+async function saveProfile() {
+  saving.value = true
   try {
-    const res = await apiFetch<any>(`/api/scheduling/appointments?date=${todayDateStr.value}`)
-    if (res.success) {
-      todayAppointments.value = res.data
+    const res = await apiFetch<{ success: boolean; message: string; patient: PatientDashboardPatient }>('/api/patient/me', {
+      method: 'PATCH',
+      body: {
+        phone: editForm.phone,
+        address: editForm.address,
+        insurance_type: editForm.insurance_type,
+      },
+    })
+    if (res.success && patientData.value) {
+      patientData.value.patient = res.patient
+      useNuxtApp().$toast.success(res.message || 'پروفایل با موفقیت به‌روزرسانی شد.')
+      editDialogOpen.value = false
     }
-  } catch {
-    // silently fail
+  } catch (err: any) {
+    useNuxtApp().$toast.error(err?.data?.error || 'خطا در به‌روزرسانی پروفایل')
   } finally {
-    loading.value = false
-    isLoading.value = false
+    saving.value = false
   }
 }
 
-async function fetchAvailableSlots() {
-  if (!isDoctor.value) return
-  const doctorId = user?.value?.id || (user as any)?.id
-  if (!doctorId) return
+// ─── Shared ───
+function formatNumber(n: number): string {
+  return new Intl.NumberFormat('fa-IR').format(n)
+}
+
+function formatToman(rials: number): string {
+  const toman = Math.round(rials / 10)
+  return new Intl.NumberFormat('fa-IR').format(toman) + ' تومان'
+}
+
+async function fetchDashboard() {
+  loading.value = true
   try {
-    const res = await apiFetch<any>(`/api/scheduling/slots/${doctorId}?date=${todayDateStr.value}`)
+    const res = await apiFetch<{ success: boolean; data: DashboardData }>('/api/dashboard')
     if (res.success) {
-      availableSlotsCount.value = res.data.length
+      data.value = res.data
     }
   } catch {
-    // silently fail
+    // Degrade gracefully
+  } finally {
+    loading.value = false
+  }
+}
+
+async function fetchPatientDashboard() {
+  loading.value = true
+  try {
+    const res = await apiFetch<{ success: boolean; data: PatientDashboardData }>('/api/dashboard')
+    if (res.success) {
+      patientData.value = res.data
+    }
+  } catch {
+    // Degrade gracefully
+  } finally {
+    loading.value = false
+  }
+}
+
+async function fetchDoctorSchedule() {
+  if (!hasSchedule.value) return
+  loadingSchedule.value = true
+  try {
+    const apptRes = await apiFetch<any>(`/api/scheduling/appointments?date=${todayDateStr.value}`)
+    if (apptRes.success) todayAppointments.value = apptRes.data
+  } catch {
+    // Silently fail
+  } finally {
+    loadingSchedule.value = false
   }
 }
 
 onMounted(() => {
-  fetchTodayAppointments()
-  fetchAvailableSlots()
-  setTimeout(() => { isLoading.value = false }, 500)
+  if (isPatient.value) {
+    fetchPatientDashboard()
+  } else if (canViewDashboard.value) {
+    fetchDashboard()
+  } else {
+    loading.value = false
+  }
+  if (hasSchedule.value) {
+    fetchDoctorSchedule()
+  }
 })
 
-useSeoMeta({
-  title: 'داشبورد | سیستم مدیریت',
-  ogTitle: 'صفحه اصلی',
-})
+useSeoMeta({ title: 'داشبورد | سیستم مدیریت', ogTitle: 'صفحه اصلی' })
 </script>

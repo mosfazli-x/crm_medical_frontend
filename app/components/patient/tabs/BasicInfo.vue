@@ -1,28 +1,28 @@
 <template>
-    <div class="bg-white p-6 rounded-xl">
-        <h3 class="text-base font-bold text-slate-800 mb-6 pb-3">هویت و اطلاعات تماس</h3>
+    <div class="p-6 rounded-xl">
+        <h3 class="text-base font-bold text-slate-800! dark:text-slate-300! mb-6 pb-3">هویت و اطلاعات تماس</h3>
         <v-row dense class="mt-2">
             <v-col cols="12" md="6">
                 <v-text-field v-model="form.first_name" label="نام *" variant="outlined" density="comfortable"
-                    prepend-inner-icon="mdi-account-outline" bg-color="white" />
+                    prepend-inner-icon="mdi-account-outline" />
             </v-col>
             <v-col cols="12" md="6">
-                <v-text-field v-model="form.last_name" label="نام خانوادگی *" variant="outlined" density="comfortable"
-                    bg-color="white" />
+                <v-text-field v-model="form.last_name" label="نام خانوادگی *" variant="outlined"
+                    density="comfortable" />
             </v-col>
             <v-col cols="12" md="6">
                 <v-text-field v-model="form.national_id" label="کد ملی *" variant="outlined" density="comfortable"
-                    prepend-inner-icon="mdi-card-account-details-outline" maxlength="10" bg-color="white"
-                    inputmode="numeric" :rules="[nationalCodeRule]" />
+                    prepend-inner-icon="mdi-card-account-details-outline" maxlength="10" inputmode="numeric"
+                    :rules="[nationalCodeRule]" />
             </v-col>
             <v-col cols="12" md="6">
                 <v-text-field v-model="form.insurance_code" label="کد بیمه" variant="outlined" density="comfortable"
-                    prepend-inner-icon="mdi-shield-check-outline" bg-color="white" />
+                    prepend-inner-icon="mdi-shield-check-outline" />
             </v-col>
             <v-col cols="12" md="6">
-                <v-select v-model="form.insurance_type" :items="insuranceOptions" item-title="title"
-                    item-value="value" label="نوع بیمه" variant="outlined" density="comfortable"
-                    prepend-inner-icon="mdi-shield-account-outline" bg-color="white" clearable>
+                <v-select v-model="form.insurance_type" :items="insuranceOptions" item-title="title" item-value="value"
+                    label="نوع بیمه" variant="outlined" density="comfortable"
+                    prepend-inner-icon="mdi-shield-account-outline" clearable>
                     <template v-slot:selection="{ item }">
                         <div class="flex items-center gap-2">
                             <img v-if="item.raw" :src="item.raw.logo" alt="" class="w-5 h-5 object-contain" />
@@ -43,12 +43,11 @@
             </v-col>
             <v-col cols="12" md="4">
                 <v-text-field v-model="form.phone" label="شماره تماس" variant="outlined" density="comfortable"
-                    prepend-inner-icon="mdi-phone-outline" type="tel" dir="ltr" bg-color="white"
-                    :rules="[iranMobileRule]" />
+                    prepend-inner-icon="mdi-phone-outline" type="tel" dir="ltr" :rules="[iranMobileRule]" />
             </v-col>
             <v-col cols="12" md="4">
                 <v-select v-model="form.marital_status" :items="['مجرد', 'متاهل', 'مطلقه', 'بیوه']" label="وضعیت تأهل"
-                    variant="outlined" density="comfortable" prepend-inner-icon="mdi-ring" bg-color="white" />
+                    variant="outlined" density="comfortable" prepend-inner-icon="mdi-ring" />
             </v-col>
             <v-col cols="12" md="4">
                 <div class="relative">
@@ -59,7 +58,7 @@
             </v-col>
             <v-col cols="12">
                 <v-textarea v-model="form.address" label="آدرس سکونت" variant="outlined" rows="2" density="comfortable"
-                    prepend-inner-icon="mdi-map-marker-outline" bg-color="white" hide-details />
+                    prepend-inner-icon="mdi-map-marker-outline" hide-details />
             </v-col>
         </v-row>
     </div>
@@ -72,9 +71,9 @@ const form = defineModel<any>({ required: true })
 const config = useRuntimeConfig()
 
 const insuranceOptions = INSURANCE_TYPE_VALUES.map(item => ({
-  title: item.label,
-  value: item.key,
-  logo: config.public.apiBase + item.logo,
+    title: item.label,
+    value: item.key,
+    logo: config.public.apiBase + item.logo,
 }))
 
 const iranMobileRule = (value: string) => {

@@ -102,7 +102,7 @@
           </div>
 
           <div v-if="!fetchingVisitTypes && !visitTypes.length"
-            class="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+            class="text-center mx-4 py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
             <div
               class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-slate-100">
               <span class="text-2xl">📋</span>

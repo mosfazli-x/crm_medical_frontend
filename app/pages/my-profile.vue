@@ -1,16 +1,8 @@
 <template>
-  <div class="!mx-auto !max-w-5xl !px-4 !py-10 md:!px-8 !min-h-screen !bg-slate-50/50 dark:!bg-slate-900">
-    <header class="!mb-10 !flex !flex-col !gap-2">
-      <h1 class="!text-3xl md:!text-4xl !font-extrabold !text-slate-900 dark:!text-white !tracking-tight">
-        پروفایل من
-      </h1>
-      <p class="!text-sm md:!text-base !font-medium !text-slate-500 dark:!text-slate-400">
-        مدیریت اطلاعات و تنظیمات امنیتی حساب کاربری شما
-      </p>
-    </header>
+  <UiPageContainer>
+    <UiPageHeader title="پروفایل من" subtitle="مدیریت اطلاعات و تنظیمات امنیتی حساب کاربری شما" />
 
-    <div
-      class="!bg-white dark:!bg-slate-800 !rounded-3xl !border !border-slate-200 dark:!border-slate-700 !p-6 md:!p-8 !shadow-sm hover:!shadow-md !transition-shadow !duration-300 !mb-8">
+    <UiContentCard card-class="mb-8! p-6 md:p-8!">
       <div class="!flex !items-center !gap-6">
         <div
           class="!w-20 !h-20 !rounded-full !bg-gradient-to-tr !from-blue-600 !to-indigo-500 !p-1 !shadow-md !shrink-0">
@@ -33,9 +25,9 @@
           </div>
         </div>
       </div>
-    </div>
+    </UiContentCard>
 
-    <div class="!grid !grid-cols-1 lg:!grid-cols-2 !gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
       <div
         class="!bg-white dark:!bg-slate-800 !rounded-3xl !border !border-slate-200 dark:!border-slate-700 !shadow-sm !overflow-hidden !transition-all !duration-300 hover:!shadow-md">
@@ -140,18 +132,251 @@
       </div>
 
     </div>
-  </div>
+
+    <div v-if="isDoctor"
+      class="!bg-white dark:!bg-slate-800 !rounded-3xl !border !border-slate-200 dark:!border-slate-700 !shadow-sm !overflow-hidden !transition-all !duration-300 hover:!shadow-md !mt-8">
+      <div
+        class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-700/80 !bg-slate-50/50 dark:!bg-slate-800/50">
+        <div class="!flex !items-center !gap-3">
+          <v-icon color="primary" size="x-large">mdi-bell-ring-outline</v-icon>
+          <div>
+            <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">تنظیمات اعلان‌ها</h2>
+            <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">مدیریت ارسال اعلان‌ها از طریق پیامک و تلگرام</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="!p-8">
+        <div v-if="!prefsLoaded" class="!space-y-4">
+          <div v-for="i in 2" :key="i" class="!flex !items-center !gap-4 !p-4 !rounded-xl !bg-slate-50 dark:!bg-slate-900/30 !animate-pulse">
+            <div class="!w-10 !h-10 !rounded-full !bg-slate-200 dark:!bg-slate-700"></div>
+            <div class="!flex-1 !space-y-2">
+              <div class="!h-4 !w-28 !rounded !bg-slate-200 dark:!bg-slate-700"></div>
+              <div class="!h-3 !w-44 !rounded !bg-slate-100 dark:!bg-slate-800"></div>
+            </div>
+            <div class="!w-10 !h-6 !rounded-full !bg-slate-200 dark:!bg-slate-700"></div>
+          </div>
+        </div>
+
+        <div v-else class="!space-y-3">
+          <div class="!flex !items-center !justify-between !gap-4 !p-4 !rounded-xl !border !border-slate-200 dark:!border-slate-700 !transition-all !duration-200 hover:!border-blue-300 dark:hover:!border-blue-700 hover:!shadow-sm">
+            <div class="!flex !items-center !gap-3">
+              <div class="!w-10 !h-10 !rounded-full !bg-blue-50 dark:!bg-blue-900/30 !flex !items-center !justify-center !shrink-0">
+                <v-icon color="primary" size="22">mdi-message-text-outline</v-icon>
+              </div>
+              <div>
+                <p class="!font-bold !text-slate-800 dark:!text-slate-100">پیامک (SMS)</p>
+                <p class="!text-xs !text-slate-500 dark:!text-slate-400">دریافت اعلان‌ها از طریق پیامک</p>
+              </div>
+            </div>
+            <v-switch
+              :model-value="smsEnabled"
+              color="primary"
+              hide-details
+              :loading="smsToggleLoading"
+              @update:model-value="(val: boolean) => togglePref('sms', val)"
+            />
+          </div>
+
+          <div class="!flex !items-center !justify-between !gap-4 !p-4 !rounded-xl !border !border-slate-200 dark:!border-slate-700 !transition-all !duration-200 hover:!border-sky-300 dark:hover:!border-sky-700 hover:!shadow-sm"
+            :class="{ '!opacity-60': telegramToggleDisabled }">
+            <div class="!flex !items-center !gap-3">
+              <div class="!w-10 !h-10 !rounded-full !bg-sky-50 dark:!bg-sky-900/30 !flex !items-center !justify-center !shrink-0">
+                <v-icon color="info" size="22">mdi-send-variant-outline</v-icon>
+              </div>
+              <div>
+                <p class="!font-bold !text-slate-800 dark:!text-slate-100">تلگرام</p>
+                <p class="!text-xs !text-slate-500 dark:!text-slate-400">دریافت اعلان‌ها از طریق ربات تلگرام</p>
+              </div>
+            </div>
+            <v-tooltip v-if="telegramToggleDisabled" text="ابتدا حساب تلگرام خود را متصل کنید" location="top">
+              <template v-slot:activator="{ props }">
+                <div v-bind="props">
+                  <v-switch
+                    :model-value="telegramEnabled"
+                    color="info"
+                    hide-details
+                    disabled
+                    :loading="telegramToggleLoading"
+                  />
+                </div>
+              </template>
+            </v-tooltip>
+            <v-switch
+              v-else
+              :model-value="telegramEnabled"
+              color="info"
+              hide-details
+              :loading="telegramToggleLoading"
+              @update:model-value="(val: boolean) => togglePref('telegram', val)"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="!bg-white dark:!bg-slate-800 !rounded-3xl !border !border-slate-200 dark:!border-slate-700 !shadow-sm !overflow-hidden !transition-all !duration-300 hover:!shadow-md !mt-8">
+      <div
+        class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-700/80 !bg-slate-50/50 dark:!bg-slate-800/50">
+        <div class="!flex !items-center !gap-3">
+          <v-icon color="primary" size="x-large">mdi-send-variant-outline</v-icon>
+          <div>
+            <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">اتصال به ربات تلگرام</h2>
+            <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">مدیریت اتصال حساب کاربری به ربات تلگرام کلینیک
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="!p-8">
+
+        <div v-if="telegramLinked">
+          <div class="!flex !items-center !gap-4 !p-4 !rounded-xl !bg-green-50 dark:!bg-green-900/20 !border !border-green-200 dark:!border-green-700/50">
+            <div class="!w-12 !h-12 !rounded-full !bg-green-100 dark:!bg-green-800/50 !flex !items-center !justify-center !shrink-0">
+              <v-icon color="success" size="28">mdi-check-circle</v-icon>
+            </div>
+            <div class="!flex-1 !min-w-0">
+              <p class="!font-bold !text-green-800 dark:!text-green-200">
+                <template v-if="telegramData?.username">
+                  متصل به @{{ telegramData.username }}
+                </template>
+                <template v-else-if="telegramData?.firstName">
+                  متصل به {{ telegramData.firstName }}
+                </template>
+                <template v-else>
+                  به ربات تلگرام متصل شدید
+                </template>
+              </p>
+              <p class="!text-xs !text-green-600 dark:!text-green-400 !mt-0.5">حساب تلگرام شما به سیستم متصل است</p>
+            </div>
+            <v-btn color="error" variant="tonal" size="small" @click="confirmUnlink">
+              <v-icon start size="small">mdi-link-variant-off</v-icon>
+              قطع اتصال
+            </v-btn>
+          </div>
+        </div>
+
+        <div v-else-if="telegramState === 'code' || telegramState === 'polling'">
+          <div class="!text-center !mb-6">
+            <div v-if="telegramState === 'code'" class="!mb-6">
+              <p class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400 !mb-3">کد اتصال خود را در ربات تلگرام وارد کنید</p>
+              <div class="!flex !items-center !justify-center !gap-3">
+                <div class="!relative !inline-block">
+                  <div
+                    class="!bg-slate-100 dark:!bg-slate-900 !border-2 !border-dashed !border-blue-400 dark:!border-blue-500 !rounded-2xl !px-10 !py-6 !tracking-[0.3em] !font-mono !text-4xl !font-black !text-blue-600 dark:!text-blue-400 !select-all">
+                    {{ linkCode }}
+                  </div>
+                  <v-btn icon size="x-small" color="primary" variant="tonal" @click="copyCode"
+                    class="!absolute !-top-2 !-end-2 !shadow-md">
+                    <v-icon size="small">{{ codeCopied ? 'mdi-check' : 'mdi-content-copy' }}</v-icon>
+                  </v-btn>
+                </div>
+              </div>
+              <div class="!mt-4">
+                <span class="!text-sm !text-slate-500 dark:!text-slate-400">
+                  این کد تا
+                  <span class="!font-bold !text-orange-500 dark:!text-orange-400">{{ countdownDisplay }}</span>
+                  دیگر معتبر است
+                </span>
+              </div>
+            </div>
+
+            <div v-if="telegramState === 'polling'" class="!mb-6">
+              <div class="!flex !items-center !justify-center !gap-3 !mb-4">
+                <v-progress-circular indeterminate color="primary" size="32" width="3" />
+                <span class="!font-bold !text-slate-600 dark:!text-slate-300">در انتظار تایید اتصال...</span>
+              </div>
+              <p class="!text-sm !text-slate-500 dark:!text-slate-400">
+                کد
+                <span class="!font-bold !font-mono !tracking-wider !text-blue-600 dark:!text-blue-400">{{ linkCode }}</span>
+                را در ربات تلگرام ارسال کنید
+              </p>
+            </div>
+
+            <div
+              class="!inline-flex !items-center !gap-3 !bg-amber-50 dark:!bg-amber-900/20 !border !border-amber-200 dark:!border-amber-700/50 !rounded-xl !px-5 !py-3 !text-sm !text-amber-700 dark:!text-amber-300">
+              <v-icon size="20" color="warning">mdi-send-variant-outline</v-icon>
+              <span>ربات کلینیک را در تلگرام باز کنید و دستور <span class="!font-bold !font-mono" dir="ltr">/link {{ linkCode }}</span> را ارسال نمایید</span>
+            </div>
+
+            <div class="!mt-6">
+              <v-btn variant="text" color="grey" size="small" :disabled="telegramState === 'polling'" @click="resetTelegram">
+                <v-icon start size="small">mdi-close</v-icon>
+                انصراف
+              </v-btn>
+              <v-btn v-if="telegramState === 'code'" variant="text" color="primary" size="small" class="!mr-2" @click="handleGenerateCode">
+                <v-icon start size="small">mdi-refresh</v-icon>
+                تولید کد جدید
+              </v-btn>
+            </div>
+          </div>
+        </div>
+
+        <div v-else-if="telegramError">
+          <div
+            class="!flex !items-center !gap-4 !p-4 !rounded-xl !bg-red-50 dark:!bg-red-900/20 !border !border-red-200 dark:!border-red-700/50">
+            <v-icon color="error" size="28">mdi-alert-circle-outline</v-icon>
+            <div class="!flex-1">
+              <p class="!font-bold !text-red-700 dark:!text-red-300">خطا در اتصال</p>
+              <p class="!text-xs !text-red-500 dark:!text-red-400 !mt-0.5">{{ telegramError }}</p>
+            </div>
+            <v-btn color="error" variant="tonal" size="small" @click="resetTelegram">
+              تلاش مجدد
+            </v-btn>
+          </div>
+        </div>
+
+        <div v-else>
+          <div class="!text-center !py-4">
+            <div class="!w-16 !h-16 !rounded-full !bg-blue-50 dark:!bg-blue-900/30 !flex !items-center !justify-center !mx-auto !mb-4">
+              <v-icon color="primary" size="32">mdi-send-variant-outline</v-icon>
+            </div>
+            <p class="!text-slate-600 dark:!text-slate-300 !font-medium !mb-1">حساب شما به ربات تلگرام متصل نیست</p>
+            <p class="!text-xs !text-slate-400 dark:!text-slate-500 !mb-6">با اتصال تلگرام، اعلان‌های مهم را مستقیماً در پیام‌رسان دریافت کنید</p>
+            <v-btn color="primary" size="large" elevation="2" :loading="codeLoading" @click="handleGenerateCode"
+              class="!font-bold !rounded-xl !px-8">
+              <v-icon start>mdi-send-variant-outline</v-icon>
+              اتصال به ربات تلگرام
+            </v-btn>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <v-dialog v-model="unlinkDialog" max-width="420" persistent>
+      <v-card class="!rounded-2xl !text-center !pa-6">
+        <div class="!w-14 !h-14 !rounded-full !bg-red-50 dark:!bg-red-900/30 !flex !items-center !justify-center !mx-auto !mb-4">
+          <v-icon color="error" size="28">mdi-link-variant-off</v-icon>
+        </div>
+        <v-card-title class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100 !justify-center !px-0 !pt-0">
+          قطع اتصال تلگرام
+        </v-card-title>
+        <v-card-text class="!text-sm !text-slate-500 dark:!text-slate-400 !px-0 !pb-2">
+          آیا از قطع اتصال حساب تلگرام خود اطمینان دارید؟ با این کار اعلان‌های تلگرامی غیرفعال خواهند شد.
+        </v-card-text>
+        <v-card-actions class="!justify-center !gap-3 !px-0 !pb-0 !pt-2">
+          <v-btn variant="outlined" color="grey" size="large" @click="unlinkDialog = false" class="!rounded-xl !px-6">
+            انصراف
+          </v-btn>
+          <v-btn color="error" size="large" :loading="unlinkLoading" @click="handleUnlink" class="!rounded-xl !px-6">
+            <v-icon start size="small">mdi-link-variant-off</v-icon>
+            قطع اتصال
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </UiPageContainer>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 
-// -- کامپوزبل‌ها (با فرض وجود در پروژه شما) --
 const { apiFetch } = useApi()
 const { user: authUser } = useAuth()
 const toast = useNuxtApp().$toast
 
-// -- متغیرهای ری‌اکتیو --
 const userData = computed(() => authUser.value)
 
 const profileFormRef = ref<any>(null)
@@ -175,7 +400,6 @@ const passwordForm = reactive({
   confirmPassword: '',
 })
 
-// -- لاجیک و Computed ها --
 const roleLabel = computed(() => {
   const roles: Record<string, string> = {
     admin_doctor: 'مدیر کلینیک',
@@ -184,7 +408,7 @@ const roleLabel = computed(() => {
     lab: 'آزمایشگاه',
     patient: 'بیمار',
   }
-  return roles[userData.value?.role] || 'کاربر سیستم'
+  return roles[userData.value?.role ?? ''] || 'کاربر سیستم'
 })
 
 const userInitial = computed(() => {
@@ -196,14 +420,20 @@ const isLabOrPharmacy = computed(() => {
   return role === 'lab' || role === 'pharmacy'
 })
 
+const isDoctor = computed(() => {
+  const role = userData.value?.role
+  return role === 'admin_doctor' || role === 'doctor'
+})
+
 onMounted(() => {
   if (userData.value) {
     profileForm.fullName = userData.value.fullName || ''
     profileForm.organizationName = userData.value.organizationName || ''
   }
+  loadNotificationPrefs()
+  checkTelegramStatus()
 })
 
-// -- توابع هندلر --
 async function handleUpdateProfile() {
   const form = profileFormRef.value
   if (!form) return
@@ -264,7 +494,6 @@ async function handleChangePassword() {
     if (res.success) {
       toast.success(res.message || 'رمز عبور شما با موفقیت تغییر یافت.')
 
-      // پاک کردن فرم پس از موفقیت
       passwordForm.currentPassword = ''
       passwordForm.newPassword = ''
       passwordForm.confirmPassword = ''
@@ -286,7 +515,216 @@ async function handleChangePassword() {
   }
 }
 
-// -- تنظیمات سئو و متا --
+// -- تنظیمات اعلان‌ها --
+const { getPreferences, updatePreferences } = useNotificationPreferences()
+
+const smsEnabled = ref<boolean | null>(null)
+const telegramEnabled = ref<boolean | null>(null)
+const prefsLoaded = ref(false)
+const smsToggleLoading = ref(false)
+const telegramToggleLoading = ref(false)
+
+const telegramToggleDisabled = computed(() => {
+  return !telegramLinked.value
+})
+
+async function loadNotificationPrefs() {
+  if (!isDoctor.value || !userData.value?.id) {
+    prefsLoaded.value = true
+    return
+  }
+  try {
+    const prefs = await getPreferences(userData.value.id)
+    smsEnabled.value = prefs.smsEnabled
+    telegramEnabled.value = prefs.telegramEnabled
+  } catch {
+    smsEnabled.value = userData.value?.smsEnabled ?? false
+    telegramEnabled.value = userData.value?.telegramEnabled ?? false
+  } finally {
+    prefsLoaded.value = true
+  }
+}
+
+async function togglePref(type: 'sms' | 'telegram', newValue: boolean) {
+  if (!userData.value?.id) return
+
+  const loadingRef = type === 'sms' ? smsToggleLoading : telegramToggleLoading
+  loadingRef.value = true
+
+  const prevSms = smsEnabled.value ?? false
+  const prevTelegram = telegramEnabled.value ?? false
+  const nextSms = type === 'sms' ? newValue : prevSms
+  const nextTelegram = type === 'telegram' ? newValue : prevTelegram
+
+  smsEnabled.value = nextSms
+  telegramEnabled.value = nextTelegram
+
+  try {
+    const updated = await updatePreferences(userData.value.id, {
+      smsEnabled: nextSms,
+      telegramEnabled: nextTelegram,
+    })
+    smsEnabled.value = updated.smsEnabled
+    telegramEnabled.value = updated.telegramEnabled
+    if (authUser.value) {
+      authUser.value = {
+        ...authUser.value,
+        smsEnabled: updated.smsEnabled,
+        telegramEnabled: updated.telegramEnabled,
+      }
+    }
+    toast.success('تنظیمات اعلان‌ها با موفقیت به‌روزرسانی شد.')
+  } catch (err: any) {
+    smsEnabled.value = prevSms
+    telegramEnabled.value = prevTelegram
+    toast.error(err?.data?.error || 'خطا در به‌روزرسانی تنظیمات اعلان‌ها.')
+  } finally {
+    loadingRef.value = false
+  }
+}
+
+// -- اتصال به ربات تلگرام --
+const { generateLinkCode, getStatus, unlink: unlinkTelegram } = useTelegram()
+
+const telegramLinked = ref(false)
+const telegramData = ref<{ username: string | null; firstName: string | null } | null>(null)
+const telegramState = ref<'idle' | 'code' | 'polling'>('idle')
+const telegramError = ref<string | null>(null)
+const linkCode = ref('')
+const codeLoading = ref(false)
+const unlinkLoading = ref(false)
+const codeExpiresAt = ref<number>(0)
+const countdownDisplay = ref('')
+const unlinkDialog = ref(false)
+let countdownTimer: ReturnType<typeof setInterval> | null = null
+let pollingTimer: ReturnType<typeof setInterval> | null = null
+const codeCopied = ref(false)
+
+onBeforeUnmount(() => {
+  clearTimers()
+})
+
+function clearTimers() {
+  if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null }
+  if (pollingTimer) { clearInterval(pollingTimer); pollingTimer = null }
+}
+
+async function checkTelegramStatus() {
+  try {
+    const status = await getStatus()
+    telegramLinked.value = status.linked
+    telegramData.value = status
+    if (status.linked) {
+      telegramState.value = 'idle'
+      clearTimers()
+    }
+  } catch {
+    // silently fail on initial check
+  }
+}
+
+async function handleGenerateCode() {
+  codeLoading.value = true
+  telegramError.value = null
+  try {
+    const res = await generateLinkCode()
+    linkCode.value = res.code
+    codeExpiresAt.value = Date.now() + res.expires_in_minutes * 60 * 1000
+    codeCopied.value = false
+    telegramState.value = 'code'
+    startCountdown()
+    startPolling()
+  } catch (err: any) {
+    const status = err?.response?.status
+    if (status === 409) {
+      telegramError.value = 'شما قبلاً یک اتصال فعال تلگرام دارید. ابتدا آن را قطع کنید.'
+    } else {
+      telegramError.value = err?.data?.error || 'خطا در تولید کد اتصال. لطفاً دوباره تلاش کنید.'
+    }
+    telegramState.value = 'idle'
+  } finally {
+    codeLoading.value = false
+  }
+}
+
+function startCountdown() {
+  if (countdownTimer) clearInterval(countdownTimer)
+  const update = () => {
+    const remaining = Math.max(0, Math.floor((codeExpiresAt.value - Date.now()) / 1000))
+    const minutes = Math.floor(remaining / 60)
+    const seconds = remaining % 60
+    countdownDisplay.value = `${minutes}:${seconds.toString().padStart(2, '0')}`
+    if (remaining <= 0) {
+      clearTimers()
+      telegramError.value = 'کد اتصال منقضی شد. لطفاً یک کد جدید تولید کنید.'
+      telegramState.value = 'idle'
+    }
+  }
+  update()
+  countdownTimer = setInterval(update, 1000)
+}
+
+function startPolling() {
+  if (pollingTimer) clearInterval(pollingTimer)
+  pollingTimer = setInterval(async () => {
+    try {
+      const status = await getStatus()
+      if (status.linked) {
+        telegramLinked.value = true
+        telegramData.value = status
+        telegramState.value = 'idle'
+        clearTimers()
+        toast.success('حساب تلگرام شما با موفقیت متصل شد.')
+      } else {
+        telegramState.value = 'polling'
+      }
+    } catch {
+      // continue polling
+    }
+  }, 5000)
+}
+
+function copyCode() {
+  if (linkCode.value) {
+    navigator.clipboard.writeText(linkCode.value)
+    codeCopied.value = true
+    setTimeout(() => { codeCopied.value = false }, 2000)
+  }
+}
+
+function confirmUnlink() {
+  unlinkDialog.value = true
+}
+
+async function handleUnlink() {
+  unlinkLoading.value = true
+  try {
+    await unlinkTelegram()
+    telegramLinked.value = false
+    telegramData.value = null
+    telegramState.value = 'idle'
+    telegramEnabled.value = false
+    unlinkDialog.value = false
+    toast.success('حساب تلگرام با موفقیت جدا شد.')
+  } catch (err: any) {
+    if (err?.response?.status === 404) {
+      toast.error('اتصال تلگرامی یافت نشد.')
+    } else {
+      toast.error(err?.data?.error || 'خطا در قطع اتصال تلگرام.')
+    }
+  } finally {
+    unlinkLoading.value = false
+  }
+}
+
+function resetTelegram() {
+  clearTimers()
+  telegramState.value = 'idle'
+  telegramError.value = null
+  linkCode.value = ''
+  codeCopied.value = false
+}
+
 useSeoMeta({
   title: 'پروفایل من | سیستم مدیریت',
   ogTitle: 'پروفایل من',

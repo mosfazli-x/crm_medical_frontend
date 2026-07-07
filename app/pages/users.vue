@@ -1,12 +1,8 @@
 <template>
-    <div class="mx-auto max-w-7xl px-4 py-8 md:px-8 min-h-screen">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">مدیریت کاربران</h1>
-                <p class="text-sm font-medium text-slate-500 dark:text-slate-300 dark:text-slate-400 mt-2">تأیید، رد یا تغییر وضعیت دسترسی کاربران سیستم</p>
-            </div>
-
-            <v-tabs v-model="statusTab" color="#5465ff" bg-color="transparent" class="w-full md:w-auto border-b border-slate-200 text-slate-800 dark:text-slate-200!">
+    <UiPageContainer>
+        <UiPageHeader title="مدیریت کاربران" subtitle="تأیید، رد یا تغییر وضعیت دسترسی کاربران سیستم">
+            <template #actions>
+                <v-tabs v-model="statusTab" color="#5465ff" bg-color="transparent" class="w-full md:w-auto">
                 <v-tab value="all" class="text-sm font-semibold tracking-wide">
                     همه ({{ users.length }})
                 </v-tab>
@@ -19,18 +15,21 @@
                 <v-tab value="approved" class="text-sm font-semibold tracking-wide">تأییدشده</v-tab>
                 <v-tab value="rejected" class="text-sm font-semibold tracking-wide">غیرفعال/ردشده</v-tab>
             </v-tabs>
-        </div>
+            </template>
+        </UiPageHeader>
 
-        <div class="bg-white dark:bg-slate-800! rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-right border-collapse">
-                    <thead class="bg-slate-50 dark:bg-slate-700! border-b border-slate-200 text-slate-800 dark:text-slate-200!">
+        <UiContentCard>
+            <div class="crm-table-wrap">
+                <table class="crm-table">
+                    <thead>
                         <tr>
                             <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">نام کامل</th>
                             <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">شماره تلفن</th>
                             <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">نقش سیستم</th>
                             <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">سازمان / مرکز</th>
                             <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">وضعیت</th>
+                            <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">پیامک</th>
+                            <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">تلگرام</th>
                             <th class="px-6 py-4 text-sm font-bold whitespace-nowrap">تاریخ عضویت</th>
                             <th class="px-6 py-4 text-sm font-bold text-center whitespace-nowrap">عملیات</th>
                         </tr>
@@ -59,6 +58,16 @@
                                 <span :class="['px-3 py-1 rounded-full text-xs font-semibold ring-1 ring-inset', statusConfig[user.status]?.bg || 'bg-slate-50', statusConfig[user.status]?.text || 'text-slate-600', statusConfig[user.status]?.ring || 'ring-slate-500/20']">
                                     {{ statusConfig[user.status]?.label || user.status }}
                                 </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <v-icon :color="user.smsEnabled ? 'success' : 'error'" size="20">
+                                    {{ user.smsEnabled ? 'mdi-check-circle' : 'mdi-close-circle' }}
+                                </v-icon>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <v-icon :color="user.telegramEnabled ? 'success' : 'error'" size="20">
+                                    {{ user.telegramEnabled ? 'mdi-check-circle' : 'mdi-close-circle' }}
+                                </v-icon>
                             </td>
                             <td class="px-6 py-4 text-sm font-medium text-slate-500 dark:text-slate-300 whitespace-nowrap">
                                 {{ formatJalaliDate(user.createdAt) }}
@@ -119,10 +128,10 @@
                 <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">کاربری یافت نشد</h3>
                 <p class="mtext-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">در این دسته‌بندی هیچ کاربری برای نمایش وجود ندارد.</p>
             </div>
-        </div>
+        </UiContentCard>
 
         <ApprovePatientDialog v-model="approvePatientDialog" :user="selectedUser" @approved="onUserApproved" />
-    </div>
+    </UiPageContainer>
 </template>
 
 <script setup lang="ts">

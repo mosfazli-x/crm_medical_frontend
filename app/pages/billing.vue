@@ -1,26 +1,12 @@
 <template>
-  <div class="!max-w-7xl !mx-auto !px-4 md:!px-8 !pt-8 !pb-12 !space-y-8">
+  <UiPageContainer>
+    <UiPageHeader title="مدیریت صورتحساب‌ها" subtitle="مدیریت جامع هزینه‌ها، کدهای خدمات و وضعیت پرداخت بیماران" />
 
-    <div
-      class="!flex !flex-col sm:!flex-row !justify-between !items-start sm:!items-center !gap-4 !pb-6 !border-b !border-slate-200/60 dark:!border-slate-800/60">
-      <div class="!space-y-1.5">
-        <h1 class="!text-3xl !font-black !text-slate-900 dark:!text-white !tracking-tight">مدیریت صورتحساب‌ها</h1>
-        <p class="!text-sm !text-slate-500 dark:!text-slate-400 !font-medium">مدیریت جامع هزینه‌ها، کدهای خدمات و وضعیت
-          پرداخت بیماران</p>
-      </div>
-    </div>
-
-    <div class="!border-b !border-slate-200/60 dark:!border-slate-800/60">
-      <nav class="!flex !gap-8">
-        <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key" :class="[
-          '!pb-4 !text-sm !font-bold !transition-all !duration-200 !relative',
-          activeTab === tab.key
-            ? '!text-slate-900 dark:!text-white after:!absolute after:!bottom-0 after:!left-0 after:!right-0 after:!h-0.5 after:!bg-slate-900 dark:after:!bg-white after:!rounded-t-full'
-            : '!text-slate-500 dark:!text-slate-400 hover:!text-slate-700 dark:hover:!text-slate-300'
-        ]">
-          {{ tab.label }}
-        </button>
-      </nav>
+    <div class="crm-tabs mb-8">
+      <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key"
+        :class="['crm-tab', activeTab === tab.key ? 'crm-tab-active' : '']">
+        {{ tab.label }}
+      </button>
     </div>
 
     <template v-if="activeTab === 'records'">
@@ -29,7 +15,7 @@
         <div
           class="!bg-white dark:!bg-[#0f1115] !rounded-2xl !border !border-slate-200/60 dark:!border-slate-800/60 !p-6 !shadow-sm !transition-all hover:!shadow-md">
           <div class="!flex !items-center !gap-3 !mb-3">
-            <div class="!p-2 !bg-slate-100 dark:!bg-slate-800/50 !rounded-lg text-slate-600 dark:text-slate-400">
+            <div class="!p-2 !bg-slate-100 dark:!bg-slate-800/50 !rounded-lg text-slate-600 dark:text-slate-400 flex justify-center align-middle items-center">
               <Icon name="lucide:receipt" class="!w-5 !h-5" />
             </div>
             <div class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400">مجموع صورتحساب‌ها</div>
@@ -41,7 +27,7 @@
         <div
           class="!bg-white dark:!bg-[#0f1115] !rounded-2xl !border !border-slate-200/60 dark:!border-slate-800/60 !p-6 !shadow-sm !transition-all hover:!shadow-md">
           <div class="!flex !items-center !gap-3 !mb-3">
-            <div class="!p-2 !bg-emerald-50 dark:!bg-emerald-900/20 !rounded-lg text-emerald-600 dark:text-emerald-400">
+            <div class="!p-2 !bg-emerald-50 dark:!bg-emerald-900/20 !rounded-lg text-emerald-600 dark:text-emerald-400 flex justify-center align-middle items-center">
               <Icon name="lucide:trending-up" class="!w-5 !h-5" />
             </div>
             <div class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400">وصول شده</div>
@@ -53,7 +39,7 @@
         <div
           class="!bg-white dark:!bg-[#0f1115] !rounded-2xl !border !border-slate-200/60 dark:!border-slate-800/60 !p-6 !shadow-sm !transition-all hover:!shadow-md">
           <div class="!flex !items-center !gap-3 !mb-3">
-            <div class="!p-2 !bg-amber-50 dark:!bg-amber-900/20 !rounded-lg text-amber-600 dark:text-amber-400">
+            <div class="!p-2 !bg-amber-50 dark:!bg-amber-900/20 !rounded-lg text-amber-600 dark:text-amber-400 flex justify-center align-middle items-center">
               <Icon name="lucide:clock" class="!w-5 !h-5" />
             </div>
             <div class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400">در انتظار پرداخت</div>
@@ -80,7 +66,7 @@
           </button>
           <button @click="openAddRecordDialog"
             class="!flex-1 sm:!flex-none !flex !items-center !justify-center !gap-2 !px-4 !py-2.5 !bg-slate-900 dark:!bg-white !text-white dark:!text-slate-900 !font-semibold !text-sm !rounded-xl hover:!bg-slate-800 dark:hover:!bg-slate-100 !transition-colors !shadow-sm">
-            <Icon name="lucide:plus" class="!w-4 !h-4" />
+            <Icon name="lucide:plus" class="!w-4 !h-4 fill-amber-300!" />
             <span>ثبت صورتحساب</span>
           </button>
         </div>
@@ -129,17 +115,17 @@
                 <td colspan="8" class="!py-20 !text-center">
                   <div class="!flex !flex-col !items-center !justify-center !space-y-4">
                     <div
-                      class="!bg-slate-50 dark:!bg-slate-800/50 !p-5 !rounded-full !text-slate-300 dark:!text-slate-600">
-                      <Icon name="lucide:file-x" class="!w-10 !h-10" />
+                      class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
+                      <Icon name="lucide:file-x" class="!w-10 !h-10 text-slate-300" />
                     </div>
-                    <p class="!text-slate-500 dark:!text-slate-400 !font-semibold !text-sm">هیچ صورتحسابی یافت نشد.</p>
+                    <p class="text-lg font-bold text-slate-700 dark:text-slate-300">هیچ صورتحسابی یافت نشد.</p>
                   </div>
                 </td>
               </tr>
               <tr v-else v-for="record in filteredRecords" :key="record.id"
                 class="hover:!bg-slate-50/50 dark:hover:!bg-slate-800/30 !transition-colors !group">
                 <td class="!px-6 !py-4 !text-sm !font-bold !text-slate-900 dark:!text-slate-100 !whitespace-nowrap">
-                  {{ record.patient_name || record.patient?.firstName + ' ' + record.patient?.lastName || '---' }}
+                  {{ record.patient_name || [record.patientFirstName, record.patientLastName].filter(Boolean).join(' ') || '---' }}
                 </td>
                 <td class="!px-6 !py-4 !text-sm !font-medium !text-slate-600 dark:!text-slate-300 !whitespace-nowrap">
                   {{ record.procedure_name || record.procedureCode?.name || '---' }}
@@ -279,7 +265,7 @@
                 <td class="!px-6 !py-4 !whitespace-nowrap">
                   <span class="!text-sm !font-black !text-indigo-600 dark:!text-indigo-400">{{
                     code.insurance_coverage_percent
-                    }}%</span>
+                  }}%</span>
                 </td>
                 <td class="!px-6 !py-4 !whitespace-nowrap">
                   <span
@@ -301,13 +287,33 @@
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black !text-slate-900 dark:!text-white">ثبت صورتحساب جدید</h2>
           <button @click="recordDialog = false"
-            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors aspect-square justify-center align-middle flex hover:bg-slate-100 dark:hover:bg-slate-700!">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
         </div>
         <div class="!p-8 !space-y-5">
-          <v-text-field v-model="recordForm.patient_id" variant="outlined" density="comfortable" label="شناسه بیمار"
-            placeholder="شناسه بیمار را وارد کنید" hide-details="auto" />
+          <div class="!relative">
+            <div v-if="selectedRecordPatient" class="!flex !items-center !gap-2 !p-3 !bg-slate-50 dark:!bg-slate-800/50 !rounded-xl !border !border-slate-200 dark:!border-slate-700">
+              <div class="!flex-1 !min-w-0">
+                <div class="!text-sm !font-bold !text-slate-900 dark:!text-white !truncate">{{ selectedRecordPatient.firstName }} {{ selectedRecordPatient.lastName }}</div>
+                <div class="!text-xs !text-slate-500 dark:!text-slate-400">{{ selectedRecordPatient.nationalId || selectedRecordPatient.phone || '' }}</div>
+              </div>
+              <button @click="clearRecordPatient()" class="!p-1 !text-slate-400 hover:!text-red-500 !rounded-lg hover:!bg-red-50 dark:hover:!bg-red-900/20 !transition-colors">
+                <Icon name="lucide:x" class="!w-4 !h-4" />
+              </button>
+            </div>
+            <v-text-field v-else v-model="recordPatientSearchQuery" @input="onRecordPatientSearchInput" @blur="hideRecordPatientResults" @focus="recordPatientSearchQuery?.trim()?.length >= 2 && recordPatientSearchResults.length && (showRecordPatientResults = true)" variant="outlined" density="comfortable" label="بیمار" placeholder="جستجو با نام، کد ملی یا تلفن..." hide-details="auto" :loading="recordPatientSearching">
+              <template #prepend-inner>
+                <Icon name="lucide:search" class="!w-5 !h-5 !text-slate-400 !mr-2" />
+              </template>
+            </v-text-field>
+            <div v-if="showRecordPatientResults && recordPatientSearchResults.length" class="!absolute !z-50 !mt-1 !w-full !bg-white dark:!bg-slate-800 !rounded-xl !shadow-xl !border !border-slate-200 dark:!border-slate-700 !overflow-hidden">
+              <button v-for="p in recordPatientSearchResults" :key="p.id" @mousedown.prevent="selectRecordPatient(p)" class="!w-full !px-4 !py-3 !flex !flex-col !items-start !gap-0.5 hover:!bg-slate-50 dark:hover:!bg-slate-700/50 !transition-colors !text-right !border-b !border-slate-100 dark:!border-slate-700/50 last:!border-b-0">
+                <span class="!text-sm !font-bold !text-slate-900 dark:!text-white">{{ p.firstName }} {{ p.lastName }}</span>
+                <span class="!text-xs !text-slate-500 dark:!text-slate-400">{{ p.nationalId || p.phone || '' }}</span>
+              </button>
+            </div>
+          </div>
           <v-select v-model="recordForm.procedure_code_id" :items="procedureCodes" item-title="name" item-value="id"
             variant="outlined" density="comfortable" label="کد خدمت" placeholder="انتخاب خدمت" hide-details="auto" />
           <div class="!grid !grid-cols-2 !gap-4">
@@ -318,14 +324,18 @@
           </div>
           <div class="!grid !grid-cols-2 !gap-4">
             <v-text-field v-model="recordForm.insurance_portion" variant="outlined" density="comfortable"
-              label="سهم بیمه" placeholder="سهم بیمه" type="number" hide-details="auto" />
+              class="!col-span-1 sm:!col-span-1" label="سهم بیمه" placeholder="سهم بیمه" type="number"
+              hide-details="auto" />
             <v-text-field v-model="recordForm.patient_portion" variant="outlined" density="comfortable"
-              label="سهم بیمار" placeholder="سهم بیمار" type="number" hide-details="auto" />
+              class="!col-span-1 sm:!col-span-1" label="سهم بیمار" placeholder="سهم بیمار" type="number"
+              hide-details="auto" />
           </div>
-          <PersianDatetimePicker v-model="recordForm.billing_date" type="date" placeholder="تاریخ صورتحساب"
-            display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#0f172a" auto-submit clearable custom-input />
-          <v-textarea v-model="recordForm.notes" variant="outlined" density="comfortable" label="یادداشت"
-            placeholder="توضیحات تکمیلی (اختیاری)" rows="2" hide-details="auto" />
+          <div class="!grid !grid-cols-2 !gap-4">
+            <PersianDatetimePicker v-model="recordForm.billing_date" type="date" placeholder="تاریخ صورتحساب"
+              display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#0f172a" auto-submit clearable custom-input />
+            <v-textarea v-model="recordForm.notes" variant="outlined" density="comfortable" label="یادداشت"
+              placeholder="توضیحات تکمیلی (اختیاری)" rows="1" hide-details="auto" />
+          </div>
         </div>
         <div
           class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
@@ -347,7 +357,7 @@
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black !text-slate-900 dark:!text-white">افزودن کد خدمت</h2>
           <button @click="codeDialog = false"
-            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors aspect-square justify-center align-middle flex hover:bg-slate-100 dark:hover:bg-slate-700!">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
         </div>
@@ -382,21 +392,41 @@
       </div>
     </v-dialog>
 
-    <v-dialog v-model="balanceDialog" max-width="450" content-class="!font-sans">
+    <v-dialog v-model="balanceDialog" max-width="450" content-class="">
       <div
         class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden !border !border-slate-200/50 dark:!border-slate-800">
         <div
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black !text-slate-900 dark:!text-white">بررسی حساب بیمار</h2>
           <button @click="balanceDialog = false"
-            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors aspect-square justify-center align-middle flex hover:bg-slate-100 dark:hover:bg-slate-700!">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
         </div>
         <div class="!p-8 !space-y-6">
           <div class="!flex !gap-3">
-            <v-text-field v-model="balancePatientId" variant="outlined" density="comfortable" label="شناسه یکتای بیمار"
-              placeholder="کد عددی" type="number" hide-details="auto" class="!flex-1" />
+            <div class="!flex-1 !relative">
+              <div v-if="selectedBalancePatient" class="!flex !items-center !gap-2 !p-3 !bg-slate-50 dark:!bg-slate-800/50 !rounded-xl !border !border-slate-200 dark:!border-slate-700">
+                <div class="!flex-1 !min-w-0">
+                  <div class="!text-sm !font-bold !text-slate-900 dark:!text-white !truncate">{{ selectedBalancePatient.firstName }} {{ selectedBalancePatient.lastName }}</div>
+                  <div class="!text-xs !text-slate-500 dark:!text-slate-400">{{ selectedBalancePatient.nationalId || selectedBalancePatient.phone || '' }}</div>
+                </div>
+                <button @click="clearBalancePatient()" class="!p-1 !text-slate-400 hover:!text-red-500 !rounded-lg hover:!bg-red-50 dark:hover:!bg-red-900/20 !transition-colors">
+                  <Icon name="lucide:x" class="!w-4 !h-4" />
+                </button>
+              </div>
+              <v-text-field v-else v-model="balancePatientSearchQuery" @input="onBalancePatientSearchInput" @blur="hideBalancePatientResults" @focus="balancePatientSearchQuery?.trim()?.length >= 2 && balancePatientSearchResults.length && (showBalancePatientResults = true)" variant="outlined" density="comfortable" label="بیمار" placeholder="جستجو با نام، کد ملی یا تلفن..." hide-details="auto" :loading="balancePatientSearching">
+                <template #prepend-inner>
+                  <Icon name="lucide:search" class="!w-5 !h-5 !text-slate-400 !mr-2" />
+                </template>
+              </v-text-field>
+              <div v-if="showBalancePatientResults && balancePatientSearchResults.length" class="!absolute !z-50 !mt-1 !w-full !bg-white dark:!bg-slate-800 !rounded-xl !shadow-xl !border !border-slate-200 dark:!border-slate-700 !overflow-hidden">
+                <button v-for="p in balancePatientSearchResults" :key="p.id" @mousedown.prevent="selectBalancePatient(p)" class="!w-full !px-4 !py-3 !flex !flex-col !items-start !gap-0.5 hover:!bg-slate-50 dark:hover:!bg-slate-700/50 !transition-colors !text-right !border-b !border-slate-100 dark:!border-slate-700/50 last:!border-b-0">
+                  <span class="!text-sm !font-bold !text-slate-900 dark:!text-white">{{ p.firstName }} {{ p.lastName }}</span>
+                  <span class="!text-xs !text-slate-500 dark:!text-slate-400">{{ p.nationalId || p.phone || '' }}</span>
+                </button>
+              </div>
+            </div>
             <button @click="fetchPatientBalance" :disabled="loadingBalance"
               class="!px-5 !py-2 !bg-slate-100 dark:!bg-slate-800 !text-slate-800 dark:!text-white !font-bold !rounded-xl hover:!bg-slate-200 dark:hover:!bg-slate-700 !transition-colors !flex !items-center !justify-center disabled:!opacity-50">
               <Icon v-if="loadingBalance" name="lucide:loader-2" class="!w-5 !h-5 !animate-spin" />
@@ -429,11 +459,11 @@
         </div>
       </div>
     </v-dialog>
-  </div>
+  </UiPageContainer>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useApi } from '~/composables/useApi'
 // از آنجایی که Nuxt 3 اتوماتیک Icon را import میکند نیاز به ایمپورت دستی نیست، اما مطمئن شوید @nuxt/icon نصب است.
 
@@ -488,7 +518,7 @@ const filteredRecords = computed(() => {
   if (!searchQuery.value?.trim()) return records.value
   const q = searchQuery.value.trim().toLowerCase()
   return records.value.filter(r => {
-    const name = (r.patient_name || `${r.patient?.firstName || ''} ${r.patient?.lastName || ''}`).toLowerCase()
+    const name = (r.patient_name || [r.patientFirstName, r.patientLastName].filter(Boolean).join(' ') || '').toLowerCase()
     return name.includes(q)
   })
 })
@@ -512,8 +542,58 @@ const recordDialog = ref(false)
 const savingRecord = ref(false)
 const procedureCodes = ref<any[]>([])
 
+// Patient search for record dialog
+const recordPatientSearchQuery = ref('')
+const recordPatientSearchResults = ref<any[]>([])
+const showRecordPatientResults = ref(false)
+const recordPatientSearching = ref(false)
+let recordPatientSearchTimer: ReturnType<typeof setTimeout> | null = null
+const selectedRecordPatient = ref<any>(null)
+
+function onRecordPatientSearchInput() {
+  if (recordPatientSearchTimer) clearTimeout(recordPatientSearchTimer)
+  showRecordPatientResults.value = false
+  if (!recordPatientSearchQuery.value?.trim()) {
+    recordPatientSearchResults.value = []
+    return
+  }
+  recordPatientSearchTimer = setTimeout(() => searchRecordPatients(), 400)
+}
+
+async function searchRecordPatients() {
+  const q = recordPatientSearchQuery.value.trim()
+  if (q.length < 2) return
+  recordPatientSearching.value = true
+  try {
+    const res = await apiFetch<any>(`/api/billing/patients/search?q=${encodeURIComponent(q)}`)
+    if (res.success) {
+      recordPatientSearchResults.value = res.data
+      showRecordPatientResults.value = true
+    }
+  } catch { /* ignore */ } finally {
+    recordPatientSearching.value = false
+  }
+}
+
+function selectRecordPatient(patient: any) {
+  selectedRecordPatient.value = patient
+  recordPatientSearchQuery.value = `${patient.firstName} ${patient.lastName}`
+  showRecordPatientResults.value = false
+  recordPatientSearchResults.value = []
+}
+
+function clearRecordPatient() {
+  selectedRecordPatient.value = null
+  recordPatientSearchQuery.value = ''
+  recordPatientSearchResults.value = []
+  showRecordPatientResults.value = false
+}
+
+function hideRecordPatientResults() {
+  nextTick(() => { showRecordPatientResults.value = false })
+}
+
 const recordForm = ref({
-  patient_id: '',
   procedure_code_id: null,
   amount: '',
   insurance_portion: '',
@@ -524,8 +604,8 @@ const recordForm = ref({
 })
 
 function openAddRecordDialog() {
+  clearRecordPatient()
   recordForm.value = {
-    patient_id: '',
     procedure_code_id: null,
     amount: '',
     insurance_portion: '',
@@ -538,8 +618,8 @@ function openAddRecordDialog() {
 }
 
 async function saveBillingRecord() {
-  if (!recordForm.value.patient_id || !recordForm.value.amount) {
-    $toast.error('لطفاً شناسه بیمار و مبلغ را وارد کنید.')
+  if (!selectedRecordPatient.value || !recordForm.value.amount) {
+    $toast.error('لطفاً بیمار و مبلغ را وارد کنید.')
     return
   }
   savingRecord.value = true
@@ -547,7 +627,7 @@ async function saveBillingRecord() {
     const res = await apiFetch<any>('/api/billing/records', {
       method: 'POST',
       body: {
-        patient_id: Number(recordForm.value.patient_id),
+        patient_id: selectedRecordPatient.value.id,
         procedure_code_id: recordForm.value.procedure_code_id ? Number(recordForm.value.procedure_code_id) : null,
         amount: Number(recordForm.value.amount),
         insurance_portion: Number(recordForm.value.insurance_portion) || 0,
@@ -665,25 +745,75 @@ async function saveProcedureCode() {
 
 // ==================== Patient Balance ====================
 const balanceDialog = ref(false)
-const balancePatientId = ref('')
 const loadingBalance = ref(false)
 const patientBalance = ref<any>(null)
 
+// Patient search for balance dialog
+const balancePatientSearchQuery = ref('')
+const balancePatientSearchResults = ref<any[]>([])
+const showBalancePatientResults = ref(false)
+const balancePatientSearching = ref(false)
+let balancePatientSearchTimer: ReturnType<typeof setTimeout> | null = null
+const selectedBalancePatient = ref<any>(null)
+
+function onBalancePatientSearchInput() {
+  if (balancePatientSearchTimer) clearTimeout(balancePatientSearchTimer)
+  showBalancePatientResults.value = false
+  if (!balancePatientSearchQuery.value?.trim()) {
+    balancePatientSearchResults.value = []
+    return
+  }
+  balancePatientSearchTimer = setTimeout(() => searchBalancePatients(), 400)
+}
+
+async function searchBalancePatients() {
+  const q = balancePatientSearchQuery.value.trim()
+  if (q.length < 2) return
+  balancePatientSearching.value = true
+  try {
+    const res = await apiFetch<any>(`/api/billing/patients/search?q=${encodeURIComponent(q)}`)
+    if (res.success) {
+      balancePatientSearchResults.value = res.data
+      showBalancePatientResults.value = true
+    }
+  } catch { /* ignore */ } finally {
+    balancePatientSearching.value = false
+  }
+}
+
+function selectBalancePatient(patient: any) {
+  selectedBalancePatient.value = patient
+  balancePatientSearchQuery.value = `${patient.firstName} ${patient.lastName}`
+  showBalancePatientResults.value = false
+  balancePatientSearchResults.value = []
+}
+
+function clearBalancePatient() {
+  selectedBalancePatient.value = null
+  balancePatientSearchQuery.value = ''
+  balancePatientSearchResults.value = []
+  showBalancePatientResults.value = false
+}
+
+function hideBalancePatientResults() {
+  nextTick(() => { showBalancePatientResults.value = false })
+}
+
 function openBalanceDialog() {
-  balancePatientId.value = ''
+  clearBalancePatient()
   patientBalance.value = null
   balanceDialog.value = true
 }
 
 async function fetchPatientBalance() {
-  if (!balancePatientId.value) {
-    $toast.error('لطفاً شناسه بیمار را وارد کنید.')
+  if (!selectedBalancePatient.value) {
+    $toast.error('لطفاً بیمار را انتخاب کنید.')
     return
   }
   loadingBalance.value = true
   patientBalance.value = null
   try {
-    const res = await apiFetch<any>(`/api/billing/patient/${Number(balancePatientId.value)}/balance`)
+    const res = await apiFetch<any>(`/api/billing/patient/${selectedBalancePatient.value.id}/balance`)
     if (res.success) {
       patientBalance.value = res.data
     }

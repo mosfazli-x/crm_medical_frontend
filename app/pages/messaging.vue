@@ -1,15 +1,9 @@
 <template>
-  <div class="mx-auto max-w-7xl px-4 py-8 md:px-8 min-h-screen">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
-      <div>
-        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">پیام‌ها</h1>
-        <p class="text-sm font-medium text-slate-500 dark:text-slate-300 dark:text-slate-400 mt-2">ارسال و دریافت پیام‌های داخلی</p>
-      </div>
-    </div>
+  <UiPageContainer>
+    <UiPageHeader title="پیام‌ها" subtitle="ارسال و دریافت پیام‌های داخلی" />
 
     <div class="flex flex-col lg:flex-row gap-5 h-[calc(100vh-16rem)] min-h-[600px]">
-      <!-- Left Sidebar -->
-      <div class="min-w-[360px] shrink-0 bg-white dark:bg-blue-grey! rounded-2xl border border-slate-200/60 dark:border-slate-600! flex flex-col overflow-hidden">
+      <UiContentCard card-class="min-w-[360px] shrink-0 flex flex-col!">
         <div class="px-2 pt-2 border-b border-slate-200/60 space-y-3">
           <div class="flex items-center gap-2">
             <v-btn color="#5465ff" class="flex-1 font-bold" prepend-icon="mdi-pencil" @click="startCompose">
@@ -53,7 +47,7 @@
               <div class="flex items-start gap-2.5">
                 <div class="flex-1 min-w-0 py-2">
                   <div class="flex items-center gap-2 mb-1">
-                    <span v-if="!msg.read && tab === 'inbox'" class="w-2 h-2 rounded-full bg-electric-sapphire shrink-0" />
+                    <span v-if="!msg.isRead && tab === 'inbox'" class="w-2 h-2 rounded-full bg-electric-sapphire shrink-0" />
                     <span v-if="msg.priority === 'urgent'" class="w-2 h-2 rounded-full bg-red-500 shrink-0" title="فوری" />
                     <span class="text-sm font-bold text-slate-800 truncate">
                       {{ tab === 'inbox' ? msg.sender_name : (msg.patient ? `${msg.patient.firstName} ${msg.patient.lastName}` : msg.recipient_name) }}
@@ -79,13 +73,12 @@
             </div>
           </div>
         </div>
-      </div>
+      </UiContentCard>
 
-      <!-- Right Panel -->
-      <div class="flex-1 bg-white dark:bg-blue-grey! rounded-2xl shadow-sm border border-slate-200/60 dark:border-slate-600! overflow-hidden flex flex-col px-3 py-2">
+      <UiContentCard card-class="flex-1 flex flex-col! px-4">
         <!-- Compose Form -->
         <template v-if="composing">
-          <div class="p-6 border-b border-slate-100">
+          <div class="p-6 pt-2">
             <div class="flex items-center justify-between">
               <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-300">ارسال پیام جدید</h2>
               <v-btn icon variant="text" size="small" color="slate" @click="cancelCompose">
@@ -95,7 +88,7 @@
           </div>
           <div class="flex-1 overflow-y-auto p-6">
             <!-- Selected patient display -->
-            <div v-if="selectedPatient" class="flex items-start gap-3.5 mb-4 p-4 rounded-xl bg-light-cyan/80 border border-periwinkle/60">
+            <div v-if="selectedPatient" class="flex items-center justify-center gap-3.5 mb-4 p-2! rounded-xl bg-light-cyan/80 border border-periwinkle/60">
               <div class="w-10 h-10 rounded-full bg-gradient-to-br from-light-cyan to-periwinkle flex items-center justify-center shrink-0 mt-0.5">
                 <v-icon size="20" color="#5465ff">mdi-account</v-icon>
               </div>
@@ -176,8 +169,8 @@
               hide-details
               class="mb-4 dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
             />
-            <div class="flex justify-end gap-3 pt-2">
-              <v-btn variant="tonal" color="slate" class="bg-slate-100/80!" @click="cancelCompose">انصراف</v-btn>
+            <div class="flex justify-end gap-3 py-2">
+              <v-btn variant="tonal" color="slate" class="bg-slate-30/80!" @click="cancelCompose">انصراف</v-btn>
               <v-btn
                 color="#5465ff"
                 :loading="sending"
@@ -235,20 +228,28 @@
                   <span class="font-medium">{{ formatDate(selected.created_at) }}</span>
                 </div>
               </div>
-              <div class="flex items-center gap-1 shrink-0">
-                <v-btn variant="tonal" color="#5465ff" size="small" prepend-icon="mdi-reply" @click="replyTo">
-                  پاسخ
-                </v-btn>
-              </div>
+              <v-btn
+                icon
+                variant="text"
+                size="small"
+                color="slate-400"
+                class="!shrink-0 !opacity-60 hover:!opacity-100 hover:!text-red-500 transition-all duration-200"
+                :loading="deleting"
+                :disabled="deleting"
+                @click="deleteMessage(selected)"
+              >
+                <v-icon size="20">mdi-trash-can-outline</v-icon>
+                <v-tooltip activator="parent" location="bottom">حذف پیام</v-tooltip>
+              </v-btn>
             </div>
           </div>
           <div class="flex-1 overflow-y-auto p-6">
             <p class="text-sm text-slate-700 leading-7 whitespace-pre-wrap">{{ selected.body }}</p>
           </div>
         </template>
-      </div>
+      </UiContentCard>
     </div>
-  </div>
+  </UiPageContainer>
 
   <PatientSearchDialog v-model="patientSearchDialog" @select="onPatientSelected" />
 </template>
@@ -271,6 +272,7 @@ const sending = ref(false)
 const initialized = ref(false)
 const patientSearchDialog = ref(false)
 const selectedPatient = ref<any>(null)
+const deleting = ref(false)
 
 const composeForm = ref({
   recipient: '',
@@ -316,10 +318,10 @@ async function selectMessage(msg: any) {
   selected.value = msg
   composing.value = false
 
-  if (tab.value === 'inbox' && !msg.read) {
+  if (tab.value === 'inbox' && !msg.isRead) {
     try {
       await apiFetch(`/api/messaging/${msg.id}/read`, { method: 'PATCH' })
-      msg.read = true
+      msg.isRead = true
       unreadCount.value = Math.max(0, (unreadCount.value ?? 0) - 1)
     } catch {
       // silent
@@ -348,7 +350,7 @@ async function sendMessage() {
     if (selectedPatient.value) {
       payload.patient_id = selectedPatient.value.id
     } else {
-      payload.recipient_id = recipient.trim()
+      payload.receiver_id = recipient.trim()
     }
 
     const res = await apiFetch<any>('/api/messaging/send', {
@@ -372,6 +374,30 @@ async function sendMessage() {
   }
 }
 
+async function deleteMessage(msg: any) {
+  if (!msg?.id) return
+  const confirmed = confirm('آیا از حذف این پیام اطمینان دارید؟')
+  if (!confirmed) return
+  deleting.value = true
+  try {
+    const res = await apiFetch<any>(`/api/messaging/${msg.id}`, { method: 'DELETE' })
+    if (res.success) {
+      $toast.success('پیام با موفقیت حذف شد')
+      messages.value = messages.value.filter(m => m.id !== msg.id)
+      if (selected.value?.id === msg.id) {
+        selected.value = messages.value.length > 0 ? messages.value[0] : null
+      }
+      if (tab.value === 'inbox' && unreadCount.value != null && unreadCount.value > 0) {
+        await fetchUnreadCount()
+      }
+    }
+  } catch (err: any) {
+    $toast.error(err.data?.error || 'خطا در حذف پیام')
+  } finally {
+    deleting.value = false
+  }
+}
+
 function startCompose() {
   composing.value = true
   selected.value = null
@@ -390,19 +416,6 @@ function cancelCompose() {
   composing.value = false
   composeForm.value = { recipient: '', subject: '', body: '', priority: 'normal', confidential: false }
   selectedPatient.value = null
-}
-
-function replyTo() {
-  if (!selected.value) return
-  composing.value = true
-  selectedPatient.value = null
-  composeForm.value = {
-    recipient: tab.value === 'inbox' ? selected.value.sender_name : selected.value.recipient_name,
-    subject: selected.value.subject.startsWith('پاسخ:') ? selected.value.subject : `پاسخ: ${selected.value.subject}`,
-    body: '',
-    priority: 'normal',
-    confidential: false,
-  }
 }
 
 function formatDate(dateStr: string) {

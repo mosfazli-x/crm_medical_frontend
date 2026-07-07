@@ -1,562 +1,448 @@
 <template>
-  <div class="mx-auto max-w-7xl px-4 py-10 md:px-8 min-h-screen !bg-slate-50/40" dir="rtl">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-5 border-b border-slate-200/60 mb-8">
+  <UiPageContainer class="!max-w-7xl !mx-auto !px-4 sm:!px-6 lg:!px-8 !py-8" dir="rtl">
+
+    <div class="!mb-8 flex flex-col md:flex-row md:!items-center justify-between !gap-6">
       <div>
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-          <Icon name="lucide:flask-conical" class="text-indigo-600 w-6 h-6" />
-          نتایج آزمایشگاه
-        </h1>
-        <p class="text-xs text-slate-500 mt-1 font-medium">مدیریت، بررسی و ردیابی داده‌های آزمایشگاهی و هورمونی بیماران</p>
+        <h1 class="!text-2xl !font-black !text-zinc-900 !tracking-tight">نتایج آزمایشگاه</h1>
+        <p class="!text-xs !text-zinc-500 !mt-1.5 !font-medium">مدیریت، بررسی عمیق و ردیابی نموداری بیومارکرهای
+          آزمایشگاهی و هورمونی بیماران</p>
+      </div>
+
+      <div class="!relative !w-full md:!w-96 group">
+        <div class="!absolute !inset-y-0 !right-0 !flex !items-center !pr-3.5 !pointer-events-none">
+          <Icon name="lucide:search"
+            class="!w-4 !h-4 !text-zinc-400 group-focus-within:!text-zinc-900 !transition-colors" />
+        </div>
+        <input v-model="searchQuery" type="text"
+          class="!w-full !bg-white !border !border-zinc-200/80 !text-zinc-900 !text-xs !rounded-xl focus:!ring-4 focus:!ring-zinc-900/5 focus:!border-zinc-900 !block !pr-10 !pl-12 !py-3 !transition-all !outline-none placeholder:!text-zinc-400 !shadow-sm"
+          placeholder="جستجوی پرونده بیمار (نام، کد ملی)..." @input="onSearchInput" />
+        <div class="!absolute !inset-y-0 !left-3 !flex !items-center">
+          <v-progress-circular v-if="searching" indeterminate size="14" width="2" color="#18181b" />
+          <button v-else-if="searchQuery" @click="clearSearch"
+            class="!p-1 !text-zinc-400 hover:!text-zinc-900 !transition-colors !rounded-lg hover:!bg-zinc-100">
+            <Icon name="lucide:x" class="!w-3.5 !h-3.5" />
+          </button>
+        </div>
       </div>
     </div>
 
-    <v-card class="!mb-8 !rounded-xl !border !border-slate-200/70 !bg-white !shadow-sm" variant="flat">
-      <v-card-text class="!p-5">
-        <div class="flex flex-col md:flex-row gap-3.5">
-          <v-text-field
-            v-model="searchQuery"
-            label="جستجوی بیمار (نام، نام خانوادگی، کد ملی)"
-            variant="outlined"
-            density="compact"
-            hide-details
-            class="flex-1 !rounded-lg"
-            clearable
-            color="#4f46e5"
-            @update:model-value="onSearchInput"
-          >
-            <template #prepend-inner>
-              <Icon name="lucide:search" class="text-slate-400 w-5 h-5 ml-2" />
-            </template>
-          </v-text-field>
-          <v-btn
-            variant="flat"
-            class="!h-[40px] !bg-indigo-600 !text-white !font-bold !rounded-lg !px-6 !shadow-sm hover:!bg-indigo-700 transition-colors"
-            :loading="searching"
-            @click="searchPatients"
-          >
-            <span class="flex items-center gap-2 text-sm">
-              <Icon name="lucide:user-search" class="w-4 h-4" />
-              جستجو
-            </span>
-          </v-btn>
-        </div>
-
-        <div v-if="searchResults.length > 0" class="mt-6 border-t border-slate-100 pt-5">
-          <p class="text-[11px] font-bold text-slate-400 tracking-wider mb-3.5 flex items-center gap-1.5">
-            <Icon name="lucide:users" class="w-3.5 h-3.5" />
-            {{ searchResults.length }} بیمار یافت شد
-          </p>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <div
-              v-for="patient in searchResults"
-              :key="patient.id"
-              :class="[
-                'p-4 rounded-xl border cursor-pointer transition-all duration-200',
-                selectedPatient?.id === patient.id
-                  ? '!bg-indigo-50/40 !border-indigo-500 !ring-1 !ring-indigo-500/30'
-                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/60'
-              ]"
-              @click="selectPatient(patient)"
-            >
-              <div class="flex items-center gap-3.5">
-                <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs font-black border border-indigo-100/70">
-                  {{ patient.firstName?.charAt(0) }}{{ patient.lastName?.charAt(0) }}
-                </div>
-                <div>
-                  <p class="font-bold text-slate-800 text-sm">{{ patient.firstName }} {{ patient.lastName }}</p>
-                  <p class="text-[11px] text-slate-400 font-mono mt-0.5 tracking-wide">{{ patient.nationalId }}</p>
-                </div>
-              </div>
-            </div>
+    <div v-if="searchResults.length > 0 && !selectedPatient"
+      class="!mb-8 !bg-white !border !border-zinc-200/80 !rounded-2xl !p-2 !shadow-[0_8px_30px_rgb(0,0,0,0.04)] !animate-in !fade-in !slide-in-from-top-2 !duration-200">
+      <div class="!px-3 !py-2 !border-b !border-zinc-100 !mb-1.5">
+        <p class="!text-[10px] !font-bold !text-zinc-400 !tracking-wider !flex !items-center !gap-2">
+          <Icon name="lucide:users" class="!w-3.5 !h-3.5" />
+          نتیجه همپوشانی پرونده‌ها ({{ searchResults.length }} مورد)
+        </p>
+      </div>
+      <div class="!grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-3 !gap-1">
+        <div v-for="patient in searchResults" :key="patient.id"
+          class="!flex !items-center !gap-3.5 !p-3 !rounded-xl !cursor-pointer !transition-all !duration-200 !bg-white hover:!bg-zinc-50/80 !border !border-transparent hover:!border-zinc-200/60"
+          @click="selectPatient(patient)">
+          <div
+            class="!w-9 !h-9 !rounded-lg !bg-zinc-100 !text-zinc-700 !flex !items-center !justify-center !text-xs !font-bold !border !border-zinc-200/40">
+            {{ patient.firstName?.charAt(0) }}{{ patient.lastName?.charAt(0) }}
+          </div>
+          <div>
+            <p class="!font-semibold !text-zinc-900 !text-xs !tracking-tight">{{ patient.firstName }} {{
+              patient.lastName }}</p>
+            <p class="!text-[10px] !text-zinc-400 !font-mono !mt-0.5 !tracking-wide">{{ patient.nationalId }}</p>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div v-if="searchQuery && !searching && searchResults.length === 0 && searchTouched" class="mt-4 text-center py-6 text-slate-400 text-xs flex flex-col items-center gap-2">
-          <Icon name="lucide:user-x" class="w-5 h-5 text-slate-300" />
-          هیچ بیماری با این مشخصات یافت نشد.
-        </div>
-      </v-card-text>
-    </v-card>
+    <div v-if="searchQuery && !searching && searchResults.length === 0 && searchTouched && !selectedPatient"
+      class="!mb-8 !bg-white !border !border-zinc-200/80 !rounded-2xl !py-10 !flex !flex-col !items-center !justify-center !text-center !shadow-sm">
+      <div
+        class="!w-10 !h-10 !bg-zinc-50 !rounded-xl !flex !items-center !justify-center !mb-3 !border !border-zinc-100">
+        <Icon name="lucide:user-x" class="!w-4 !h-4 !text-zinc-400" />
+      </div>
+      <p class="!text-xs !font-semibold !text-zinc-900">هیچ رکوردی یافت نشد</p>
+      <p class="!text-[11px] !text-zinc-400 !mt-1">عبارت جستجو شده با هیچ پرونده فعالی مطابقت ندارد.</p>
+    </div>
 
     <template v-if="selectedPatient">
-      <div class="mb-6 rounded-xl bg-slate-950 border border-slate-900 p-5 shadow-md text-white relative overflow-hidden group">
-        <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-600/10 rounded-full blur-2xl transition-all group-hover:bg-indigo-600/20"></div>
-        <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center text-lg font-black text-indigo-300 shrink-0">
-              {{ selectedPatient.firstName?.charAt(0) }}{{ selectedPatient.lastName?.charAt(0) }}
+
+      <div
+        class="!mb-8 !flex !flex-col sm:!flex-row !items-start sm:!items-center justify-between !gap-4 !p-5 !bg-white !border !border-zinc-200/80 !rounded-2xl !shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
+        <div class="!flex !items-center !gap-4">
+          <div
+            class="!w-11 !h-11 !rounded-xl !bg-zinc-900 !text-white !flex !items-center !justify-center !text-sm !font-bold">
+            {{ selectedPatient.firstName?.charAt(0) }}{{ selectedPatient.lastName?.charAt(0) }}
+          </div>
+          <div>
+            <div class="!flex !items-center !gap-2">
+              <h2 class="!text-sm !font-bold !text-zinc-900 !tracking-tight">{{ selectedPatient.firstName }} {{
+                selectedPatient.lastName }}</h2>
+              <span class="!px-2 !py-0.5 !bg-zinc-100 !text-zinc-700 !rounded-md !text-[9px] !font-bold">پرونده
+                فعال</span>
             </div>
-            <div>
-              <h2 class="text-base font-bold text-slate-100 tracking-tight">{{ selectedPatient.firstName }} {{ selectedPatient.lastName }}</h2>
-              <div class="flex items-center gap-2 mt-1">
-                <span class="text-[11px] text-slate-400 font-medium">کد ملی:</span>
-                <span class="text-xs text-indigo-300 font-mono tracking-wider" dir="ltr">{{ selectedPatient.nationalId }}</span>
-              </div>
+            <div class="!flex !items-center !gap-1.5 !mt-1 !text-[11px] !text-zinc-400">
+              <span>شناسه ملی:</span>
+              <span class="!font-mono !tracking-wider !text-zinc-600" dir="ltr">{{ selectedPatient.nationalId }}</span>
             </div>
           </div>
-          <v-btn
-            variant="flat"
-            class="!bg-white !text-slate-950 !font-bold !rounded-lg !px-4 hover:!bg-slate-100 transition-colors !shadow-sm text-xs"
-            @click="openAddDialog"
-          >
-            <span class="flex items-center gap-1.5 text-xs">
-              <Icon name="lucide:plus-circle" class="w-4 h-4 text-indigo-600" />
-              افزودن نتیجه آزمایش
-            </span>
-          </v-btn>
+        </div>
+        <div class="!flex !items-center !gap-2 !w-full sm:!w-auto">
+          <button
+            class="!flex-1 sm:!flex-none !flex !items-center !justify-center !gap-1.5 !px-3.5 !py-2.5 !bg-white !border !border-zinc-200 hover:!border-zinc-300 !text-zinc-700 !text-xs !font-semibold !rounded-xl !transition-all !shadow-sm"
+            @click="clearPatient">
+            <Icon name="lucide:arrow-right-left" class="!w-3.5 !h-3.5 !text-zinc-400" />
+            تغییر پرونده بیمار
+          </button>
+          <button
+            class="!flex-1 sm:!flex-none !flex !items-center !justify-center !gap-1.5 !px-4 !py-2.5 !bg-zinc-900 hover:!bg-zinc-800 !text-white !text-xs !font-semibold !rounded-xl !transition-all !shadow-sm"
+            @click="openAddDialog">
+            <Icon name="lucide:plus" class="!w-3.5 !h-3.5" />
+            ثبت آزمایش جدید
+          </button>
         </div>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 mb-6">
-        <div
-          v-for="(label, key) in categoryLabels"
-          :key="key"
-          :class="[
-            'rounded-xl p-3 border.5 transition-all duration-200 cursor-pointer text-center flex flex-col justify-center items-center',
-              categoryFilter === key
-                ? 'bg-white border-indigo-600 shadow-sm ring-1 ring-indigo-600/20'
-                : 'bg-white border-slate-200/70 text-slate-600 hover:border-slate-300 hover:bg-slate-50/50'
-          ]"
-          @click="categoryFilter = key"
-        >
-          <p :class="['text-xl font-black tracking-tight', categoryFilter === key ? 'text-indigo-600' : 'text-slate-800']">
+      <div class="!flex !items-center !gap-1.5 !mb-5 !overflow-x-auto !pb-2.5 !scrollbar-none">
+        <button v-for="(label, key) in categoryLabels" :key="key" @click="categoryFilter = key" :class="[
+          '!whitespace-nowrap !px-4 !py-2 !rounded-xl !text-xs !font-semibold !transition-all !duration-200 !border',
+          categoryFilter === key
+            ? '!bg-zinc-900 !text-white !border-zinc-900 !shadow-sm'
+            : '!bg-white !text-zinc-500 !border-zinc-200/60 hover:!text-zinc-900 hover:!border-zinc-300 hover:!bg-zinc-50/50'
+        ]">
+          {{ label }}
+          <span :class="[
+            '!mr-1.5 !px-1.5 !py-0.5 !rounded-md !text-[10px] !font-mono !font-bold',
+            categoryFilter === key ? '!bg-zinc-800 !text-zinc-300' : '!bg-zinc-100 !text-zinc-500'
+          ]">
             {{ categoryCounts[key] || 0 }}
-          </p>
-          <p class="text-[11px] font-medium text-slate-400 mt-0.5">{{ label }}</p>
-        </div>
+          </span>
+        </button>
       </div>
 
-      <v-card class="!rounded-xl !border !border-slate-200/70 !bg-white !shadow-sm overflow-hidden" variant="flat">
-        <div class="px-5 py-3.5 bg-slate-50/60 border-b border-slate-100 flex items-center justify-between">
-          <span class="text-[11px] font-bold text-slate-400 tracking-wide flex items-center gap-1.5">
-            <Icon name="lucide:list-filter" class="w-3.5 h-3.5" />
-            {{ filteredResults.length }} نتیجه ثبت شده
-          </span>
-          <div class="flex items-center gap-3">
-            <v-btn
-              v-if="categoryFilter !== 'all'"
-              variant="text"
-              class="!text-slate-400 hover:!text-slate-600 !text-xs !font-medium !p-0 !min-w-0"
-              @click="categoryFilter = 'all'"
-            >
-              پاک کردن فیلتر
-            </v-btn>
-            <div class="w-px h-3 bg-slate-200" v-if="categoryFilter !== 'all'"></div>
-            <v-btn
-              variant="text"
-              class="!text-rose-600 hover:!text-rose-700 !text-xs !font-bold !p-0 !min-w-0"
-              @click="selectedPatient = null; results = []; searchQuery = ''; searchResults = []"
-            >
-              تغییر بیمار
-            </v-btn>
-          </div>
+      <div
+        class="!bg-white !border !border-zinc-200/80 !rounded-2xl !shadow-[0_1px_3px_rgba(0,0,0,0.02)] !overflow-hidden">
+
+        <div v-if="loadingResults" class="!p-16 !text-center !flex !flex-col !items-center !justify-center">
+          <v-progress-circular indeterminate color="#18181b" size="28" width="2" />
+          <p class="!text-xs !text-zinc-400 !mt-4 !font-medium">در حال واکشی ترنزکشن‌های آزمایشگاهی...</p>
         </div>
 
-        <div v-if="loadingResults" class="p-12 text-center">
-          <v-progress-circular indeterminate color="#4f46e5" size="36" width="3" />
-        </div>
-
-        <div v-else-if="filteredResults.length === 0" class="py-16 text-center">
-          <div class="flex flex-col items-center max-w-sm mx-auto">
-            <div class="bg-slate-50 border border-slate-100 p-3.5 rounded-xl mb-3">
-              <Icon name="lucide:flask-round" class="w-8 h-8 text-slate-300" />
+        <div v-else-if="filteredResults.length === 0" class="!py-20 !text-center">
+          <div class="!flex !flex-col !items-center !max-w-sm !mx-auto">
+            <div
+              class="!w-10 !h-10 !rounded-xl !bg-zinc-50 !border !border-zinc-100 !flex !items-center !justify-center !mb-3.5">
+              <Icon name="lucide:microscope" class="!w-4 !h-4 !text-zinc-400" />
             </div>
-            <p class="text-slate-500 font-bold text-sm">نتیجه آزمایشگاهی یافت نشد</p>
-            <p class="text-xs text-slate-400 mt-1">هیچ سابقه یا فیلتری برای این دسته‌بندی بیمار ثبت نشده است.</p>
+            <p class="!text-zinc-900 !font-semibold !text-xs">هیچ رکوردی یافت نشد</p>
+            <p class="!text-[11px] !text-zinc-400 !mt-1">در این دسته‌بندی دیتای ثبت شده‌ای وجود ندارد.</p>
           </div>
         </div>
 
-        <div v-else class="overflow-x-auto">
-          <table class="w-full text-right border-collapse">
+        <div v-else class="!overflow-x-auto">
+          <table class="!w-full !text-right !border-collapse">
             <thead>
-              <tr class="border-b border-slate-100 bg-slate-50/30">
-                <th class="px-5 py-3 text-[11px] font-bold text-slate-400 tracking-wider whitespace-nowrap">تاریخ آزمایش</th>
-                <th class="px-5 py-3 text-[11px] font-bold text-slate-400 tracking-wider whitespace-nowrap">دسته‌بندی</th>
-                <th class="px-5 py-3 text-[11px] font-bold text-slate-400 tracking-wider whitespace-nowrap">نام آزمایش</th>
-                <th class="px-5 py-3 text-[11px] font-bold text-slate-400 tracking-wider whitespace-nowrap">مقدار</th>
-                <th class="px-5 py-3 text-[11px] font-bold text-slate-400 tracking-wider whitespace-nowrap">واحد</th>
-                <th class="px-5 py-3 text-[11px] font-bold text-slate-400 tracking-wider whitespace-nowrap">محدوده مرجع</th>
-                <th class="px-5 py-3 text-[11px] font-bold text-slate-400 tracking-wider whitespace-nowrap">وضعیت</th>
-                <th class="px-5 py-3 text-[11px] font-bold text-slate-400 tracking-wider whitespace-nowrap text-center">عملیات</th>
+              <tr class="!bg-zinc-50/60 !border-b !border-zinc-200/60">
+                <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">
+                  بیومارکر / تست</th>
+                <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">
+                  تاریخ ثبت</th>
+                <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">
+                  مقدار گزارش شده</th>
+                <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">بازه
+                  رفرنس استاندارد</th>
+                <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">
+                  وضعیت کلینیکال</th>
+                <th
+                  class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap !text-left">
+                  اقدامات</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr
-                v-for="result in filteredResults"
-                :key="result.id"
-                class="hover:bg-slate-50/50 transition-colors duration-150 group"
-              >
-                <td class="px-5 py-3.5 text-xs text-slate-600 font-medium whitespace-nowrap">{{ formatJalaliDate(result.test_date) }}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap">
-                  <span :class="['px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide border', categoryBadge(result.category)]">
-                    {{ categoryLabels[result.category] || result.category }}
-                  </span>
+            <tbody class="!divide-y !divide-zinc-100">
+              <tr v-for="result in filteredResults" :key="result.id"
+                class="hover:!bg-zinc-50/50 !transition-colors !duration-150 group">
+                <td class="!px-6 !py-4 !whitespace-nowrap">
+                  <div class="!flex !flex-col">
+                    <span
+                      class="!text-xs !font-semibold !text-zinc-900 hover:!text-blue-600 !cursor-pointer !transition-colors"
+                      @click="showTrend(result)">
+                      {{ result.test_name }}
+                    </span>
+                    <span class="!text-[10px] !text-zinc-400 !font-medium !mt-0.5">{{ categoryLabels[result.category] ||
+                      result.category }}</span>
+                  </div>
                 </td>
-                <td
-                  class="px-5 py-3.5 text-xs font-semibold text-slate-900 cursor-pointer hover:text-indigo-600 transition-colors whitespace-nowrap"
-                  @click="showTrend(result)"
-                >
-                  {{ result.test_name }}
+
+                <td class="!px-6 !py-4 !text-xs !text-zinc-500 !font-medium !whitespace-nowrap">
+                  {{ formatJalaliDate(result.performed_date) }}
                 </td>
-                <td class="px-5 py-3.5 text-xs text-slate-900 font-mono font-bold whitespace-nowrap">{{ result.value }}</td>
-                <td class="px-5 py-3.5 text-xs text-slate-400 font-mono whitespace-nowrap">{{ result.unit || '---' }}</td>
-                <td class="px-5 py-3.5 text-xs text-slate-400 font-mono whitespace-nowrap">{{ result.reference_range || '---' }}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap">
-                  <span
-                    v-if="result.abnormal_flag"
-                    class="px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-100 rounded-md text-[10px] font-bold flex items-center gap-1 w-max"
-                  >
-                    <span class="w-1 h-1 rounded-full bg-rose-500"></span>
-                    غیرطبیعی
-                  </span>
-                  <span
-                    v-else
-                    class="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-md text-[10px] font-bold flex items-center gap-1 w-max"
-                  >
-                    <span class="w-1 h-1 rounded-full bg-emerald-500"></span>
-                    طبیعی
-                  </span>
+
+                <td class="!px-6 !py-4 !whitespace-nowrap">
+                  <div class="!flex !items-baseline !gap-1">
+                    <span class="!text-xs !text-zinc-900 !font-mono !font-bold">{{ result.value }}</span>
+                    <span class="!text-[10px] !text-zinc-400 !font-mono">{{ result.unit || '' }}</span>
+                  </div>
                 </td>
-                <td class="px-5 py-3.5 text-center whitespace-nowrap">
-                  <div class="flex items-center justify-center gap-1">
-                    <v-tooltip text="نمایش روند" location="top">
-                      <template #activator="{ props }">
-                        <v-btn
-                          v-bind="props"
-                          icon
-                          variant="text"
-                          class="!text-indigo-500 hover:!bg-indigo-50 !w-8 !h-8 !rounded-lg"
-                          @click="showTrend(result)"
-                        >
-                          <Icon name="lucide:trending-up" class="w-4 h-4" />
-                        </v-btn>
-                      </template>
-                    </v-tooltip>
-                    <v-tooltip text="حذف" location="top">
-                      <template #activator="{ props }">
-                        <v-btn
-                          v-bind="props"
-                          icon
-                          variant="text"
-                          class="!text-slate-400 hover:!text-rose-600 hover:!bg-rose-50 !w-8 !h-8 !rounded-lg"
-                          @click="confirmDelete(result)"
-                        >
-                          <Icon name="lucide:trash-2" class="w-4 h-4" />
-                        </v-btn>
-                      </template>
-                    </v-tooltip>
+
+                <td class="!px-6 !py-4 !text-xs !text-zinc-400 !font-mono !whitespace-nowrap">
+                  {{ result.reference_range || '---' }}
+                </td>
+
+                <td class="!px-6 !py-4 !whitespace-nowrap">
+                  <div class="!flex !items-center !gap-1.5">
+                    <span
+                      :class="['!w-1.5 !h-1.5 !rounded-full', result.abnormal_flag ? '!bg-red-500' : '!bg-emerald-500']"></span>
+                    <span
+                      :class="['!text-[11px] !font-semibold', result.abnormal_flag ? '!text-red-600' : '!text-zinc-600']">
+                      {{ result.abnormal_flag ? 'خارج از محدوده مرجع' : 'نرمال و طبیعی' }}
+                    </span>
+                  </div>
+                </td>
+
+                <td class="!px-6 !py-4 !whitespace-nowrap !text-left">
+                  <div
+                    class="!flex !items-center !justify-end !gap-0.5 md:!opacity-0 group-hover:!opacity-100 !transition-opacity">
+                    <button
+                      class="!p-1.5 !text-zinc-400 hover:!text-zinc-900 hover:!bg-zinc-100 !rounded-lg !transition-colors"
+                      title="آنالیز روند تغییرات" @click="showTrend(result)">
+                      <Icon name="lucide:line-chart" class="!w-4 !h-4" />
+                    </button>
+                    <button
+                      class="!p-1.5 !text-zinc-400 hover:!text-red-600 hover:!bg-red-50 !rounded-lg !transition-colors"
+                      title="حذف رکورد" @click="confirmDelete(result)">
+                      <Icon name="lucide:trash-2" class="!w-4 !h-4" />
+                    </button>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-      </v-card>
+      </div>
     </template>
 
-    <div v-if="!selectedPatient" class="text-center py-20">
-      <div class="bg-white border border-slate-200/60 p-5 rounded-2xl inline-flex shadow-sm mb-5">
-        <Icon name="lucide:shield-alert" class="w-10 h-10 text-slate-300" />
+    <div v-if="!selectedPatient && searchResults.length === 0 && !searchQuery"
+      class="!mt-16 !text-center !flex !flex-col !items-center">
+      <div
+        class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
+        <Icon name="lucide:folder-heart" class="!w-6 !h-6 !text-zinc-300" />
       </div>
-      <h3 class="text-base font-bold text-slate-700">بیماری انتخاب نشده است</h3>
-      <p class="text-xs text-slate-400 mt-1.5 max-w-xs mx-auto leading-relaxed">برای ثبت و مشاهده نوین نتایج و تاریخچه آزمایشگاه، ابتدا نام یا کد ملی بیمار را جستجو کنید.</p>
+      <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">میز کار پایش اسناد آزمایشگاهی</h3>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">برای بررسی بیومارکرها، مشاهده گراف‌های تحلیلی
+        یا
+        ثبت نتایج آزمایش جدید، پرونده بیمار مورد نظر را از کادر بالا فراخوانی کنید.</p>
     </div>
 
-    <v-dialog v-model="addDialog" max-width="600" persistent class="backdrop-blur-sm">
-      <v-card class="!rounded-xl !border !border-slate-200/80 !shadow-xl !p-0">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-            <Icon name="lucide:file-plus" class="text-indigo-600 w-4 h-4" />
-            افزودن نتیجه آزمایش جدید
-          </h3>
-          <v-btn icon variant="text" class="!text-slate-400 hover:!bg-slate-50 !w-7 !h-7 !rounded-lg" @click="addDialog = false">
-            <Icon name="lucide:x" class="w-4 h-4" />
-          </v-btn>
+    <v-dialog v-model="addDialog" max-width="540" persistent class="backdrop-blur-sm">
+      <div class="!bg-white !rounded-2xl !border !border-zinc-200/80 !shadow-2xl !overflow-hidden">
+        <div class="!flex !items-center justify-between !px-6 !py-4 !border-b !border-zinc-100">
+          <h3 class="!text-xs !font-bold !text-zinc-900">ثبت رسمی نتیجه آزمایش جدید</h3>
+          <button class="!text-zinc-400 hover:!text-zinc-900 !transition-colors" @click="addDialog = false">
+            <Icon name="lucide:x" class="!w-4 !h-4" />
+          </button>
         </div>
-        
-        <v-card-text class="!p-6">
+
+        <div class="!p-6 !bg-zinc-50/20">
           <v-form ref="formRef" @submit.prevent="submitResult">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div class="md:col-span-2">
-                <label class="text-xs font-bold text-slate-700 mb-1.5 block">نام آزمایش *</label>
-                <v-combobox
-                  v-model="form.test_name"
-                  variant="outlined"
-                  density="compact"
-                  :items="commonTestNames"
-                  :rules="[v => !!v || 'نام آزمایش الزامی است']"
-                  hide-details="auto"
-                  class="!rounded-lg"
-                  color="#4f46e5"
-                />
+            <div class="!grid !grid-cols-1 md:!grid-cols-2 !gap-4">
+
+              <div class="md:!col-span-2">
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">عنوان
+                  آزمایش
+                  / بیومارکر</label>
+                <v-combobox v-model="form.test_name" variant="outlined" density="compact" :items="commonTestNames"
+                  :rules="[v => !!v || 'وارد کردن نام آزمایش الزامی است']" hide-details="auto" class="custom-v-input"
+                  color="#18181b" base-color="#e4e4e7" />
               </div>
 
               <div>
-                <label class="text-xs font-bold text-slate-700 mb-1.5 block">دسته‌بندی *</label>
-                <v-select
-                  v-model="form.category"
-                  :items="categoryOptions"
-                  item-title="label"
-                  item-value="value"
-                  variant="outlined"
-                  density="compact"
-                  :rules="[v => !!v || 'دسته‌بندی الزامی است']"
-                  hide-details="auto"
-                  class="!rounded-lg"
-                  color="#4f46e5"
-                />
+                <label
+                  class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">دسته‌بندی
+                  ارجاع</label>
+                <v-select v-model="form.category" :items="categoryOptions" item-title="label" item-value="value"
+                  variant="outlined" density="compact" :rules="[v => !!v || 'انتخاب دسته‌بندی الزامی است']"
+                  hide-details="auto" class="custom-v-input" color="#18181b" base-color="#e4e4e7" />
               </div>
 
               <div>
-                <label class="text-xs font-bold text-slate-700 mb-1.5 block">مقدار آزمایش *</label>
-                <v-text-field
-                  v-model="form.value"
-                  variant="outlined"
-                  density="compact"
-                  type="number"
-                  step="any"
-                  :rules="[v => !!v || 'مقدار الزامی است']"
-                  hide-details="auto"
-                  class="!rounded-lg"
-                  color="#4f46e5"
-                />
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">مقدار
+                  کمی
+                  (Value)</label>
+                <v-text-field v-model="form.value" variant="outlined" density="compact" type="number" step="any"
+                  :rules="[v => !!v || 'درج مقدار الزامی است']" hide-details="auto" class="custom-v-input !font-mono"
+                  color="#18181b" base-color="#e4e4e7" />
               </div>
 
               <div>
-                <label class="text-xs font-bold text-slate-700 mb-1.5 block">واحد اندازه‌گیری</label>
-                <v-text-field
-                  v-model="form.unit"
-                  variant="outlined"
-                  density="compact"
-                  hide-details="auto"
-                  class="!rounded-lg"
-                  color="#4f46e5"
-                />
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">واحد
+                  سنجش
+                  (Unit)</label>
+                <v-text-field v-model="form.unit" variant="outlined" density="compact" hide-details="auto"
+                  placeholder="e.g. mIU/L" class="custom-v-input !font-mono" color="#18181b" base-color="#e4e4e7" />
               </div>
 
               <div>
-                <label class="text-xs font-bold text-slate-700 mb-1.5 block">محدوده مرجع استاندارد</label>
-                <v-text-field
-                  v-model="form.reference_range"
-                  variant="outlined"
-                  density="compact"
-                  hide-details="auto"
-                  placeholder="مثلاً 1.5 - 5.0"
-                  class="!rounded-lg font-mono"
-                  color="#4f46e5"
-                />
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">بازه
+                  رفرنس
+                  (Reference Range)</label>
+                <v-text-field v-model="form.reference_range" variant="outlined" density="compact" hide-details="auto"
+                  placeholder="e.g. 0.5 - 4.5" class="custom-v-input !font-mono" color="#18181b" base-color="#e4e4e7" />
               </div>
 
-              <div class="md:col-span-2 !bg-slate-50/60 p-3 rounded-lg border border-slate-200/60 flex items-center justify-between">
+              <div
+                class="md:!col-span-2 !bg-white !border !border-zinc-200/80 !rounded-xl !p-3.5 !flex !items-center !justify-between !mt-1">
                 <div>
-                  <label class="text-xs font-bold text-slate-800 block">وضعیت بحرانی یا غیرطبیعی</label>
-                  <span class="text-[10px] text-slate-400 block mt-0.5">آیا نتیجه خارج از بازه نرمال آزمایشگاهی است؟</span>
+                  <label class="!text-xs !font-semibold !text-zinc-900 !block">نشان‌گذاری کلینیکال به عنوان
+                    غیرطبیعی</label>
+                  <span class="!text-[10px] !text-zinc-400 !block !mt-0.5">آیا نتیجه خارج از حدود فیزیولوژیک یا نرمال
+                    کیت
+                    آزمایشگاهی است؟</span>
                 </div>
-                <v-switch
-                  v-model="form.abnormal_flag"
-                  color="rose"
-                  inset
-                  hide-details
-                  class="!pt-0"
-                />
+                <v-switch v-model="form.abnormal_flag" color="error" inset hide-details
+                  class="!pt-0 !mt-0 !flex-none" />
               </div>
 
-              <div class="md:col-span-2">
-                <label class="text-xs font-bold text-slate-700 mb-1.5 block">تاریخ انجام آزمایش *</label>
-                <PersianDatetimePicker
-                  v-model="form.test_date"
-                  format="YYYY-MM-DD"
-                  placeholder="تاریخ آزمایش را انتخاب کنید"
-                  class="custom-picker-input"
-                />
-                <p v-if="formDateError" class="text-rose-500 text-[11px] font-medium mt-1">{{ formDateError }}</p>
+              <div class="md:!col-span-2 !mt-1">
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">تاریخ
+                  دقیق
+                  انجام نمونه‌گیری</label>
+                <PersianDatetimePicker v-model="form.performed_date" format="YYYY-MM-DD"
+                  placeholder="انتخاب تاریخ خورشیدی..." class="custom-picker-input" />
+                <p v-if="formDateError" class="!text-red-500 !text-[10px] !font-semibold !mt-1">{{ formDateError }}</p>
               </div>
 
-              <div class="md:col-span-2">
-                <label class="text-xs font-bold text-slate-700 mb-1.5 block">توضیحات و یادداشت پزشک</label>
-                <v-textarea
-                  v-model="form.notes"
-                  variant="outlined"
-                  density="compact"
-                  rows="3"
-                  hide-details
-                  class="!rounded-lg"
-                  color="#4f46e5"
-                />
+              <div class="md:!col-span-2">
+                <label
+                  class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">یادداشت‌های
+                  پیوست یا تشخیصی پزشک</label>
+                <v-textarea v-model="form.notes" variant="outlined" density="compact" rows="2" hide-details
+                  class="custom-v-input" color="#18181b" base-color="#e4e4e7" />
               </div>
             </div>
           </v-form>
-        </v-card-text>
-
-        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-2.5">
-          <v-btn variant="flat" class="!bg-slate-200 !text-slate-700 !font-bold !text-xs !rounded-lg" @click="addDialog = false">انصراف</v-btn>
-          <v-btn variant="flat" class="!bg-indigo-600 !text-white !font-bold !text-xs !rounded-lg !px-5" :loading="submitting" @click="submitResult">ذخیره نتیجه</v-btn>
         </div>
-      </v-card>
+
+        <div class="!px-6 !py-4 !bg-white !border-t !border-zinc-100 !flex !justify-end !gap-2.5">
+          <button
+            class="!px-4 !py-2 !text-xs !font-semibold !text-zinc-500 hover:!bg-zinc-100 !rounded-xl !transition-colors"
+            @click="addDialog = false">انصراف</button>
+          <button
+            class="!px-5 !py-2 !text-xs !font-semibold !text-white !bg-zinc-900 hover:!bg-zinc-800 !rounded-xl !transition-colors !shadow-sm !flex !items-center !justify-center !min-w-[100px]"
+            :disabled="submitting" @click="submitResult">
+            <v-progress-circular v-if="submitting" indeterminate size="12" width="2" color="white" class="!ml-2" />
+            ذخیره و ثبت نهایی
+          </button>
+        </div>
+      </div>
     </v-dialog>
 
-    <v-dialog v-model="trendDialog" max-width="800" class="backdrop-blur-sm">
-      <v-card class="!rounded-xl !border !border-slate-200/80 !shadow-xl" v-if="trendData.length > 0 || trendLoading">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+    <v-dialog v-model="trendDialog" max-width="680" class="backdrop-blur-sm">
+      <div class="!bg-white !rounded-2xl !border !border-zinc-200/80 !shadow-2xl !overflow-hidden"
+        v-if="trendData.length > 0 || trendLoading">
+        <div class="!flex !items-center justify-between !px-6 !py-4 !border-b !border-zinc-100">
           <div>
-            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Icon name="lucide:line-chart" class="text-indigo-600 w-4 h-4" />
-              روند بیومارکر: {{ trendTestName }}
+            <h3 class="!text-xs !font-bold !text-zinc-900 !flex !items-center !gap-2">
+              <Icon name="lucide:activity" class="!text-zinc-900 !w-4 !h-4" />
+              منحنی تغییرات دوره‌ای بیومارکر: <span class="!font-mono !text-xs !text-blue-600 !font-bold">{{
+                trendTestName
+                }}</span>
             </h3>
-            <p class="text-[11px] text-slate-400 mt-0.5" v-if="trendUnit">واحد مقیاس سنجش: {{ trendUnit }}</p>
           </div>
-          <v-btn icon variant="text" class="!text-slate-400 hover:!bg-slate-50 !w-7 !h-7 !rounded-lg" @click="trendDialog = false">
-            <Icon name="lucide:x" class="w-4 h-4" />
-          </v-btn>
+          <button class="!text-zinc-400 hover:!text-zinc-900 !transition-colors" @click="trendDialog = false">
+            <Icon name="lucide:x" class="!w-4 !h-4" />
+          </button>
         </div>
-        
-        <v-card-text class="!p-6">
-          <div v-if="trendLoading" class="flex justify-center py-12">
-            <v-progress-circular indeterminate color="#4f46e5" size="36" width="3" />
+
+        <div class="!p-6">
+          <div v-if="trendLoading" class="!flex !justify-center !py-12">
+            <v-progress-circular indeterminate color="#18181b" size="24" width="2" />
           </div>
           <template v-else>
-            <div class="bg-white rounded-xl border border-slate-200/70 p-4 mb-6 overflow-x-auto shadow-inner bg-gradient-to-b from-slate-50/40 to-white">
-              <svg
-                :viewBox="`0 0 ${svgWidth} ${svgHeight}`"
-                class="w-full max-h-72"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect x="0" y="0" :width="svgWidth" :height="svgHeight" fill="none" />
+            <div
+              class="!bg-white !border !border-zinc-200/60 !rounded-xl !p-4 !mb-5 !shadow-sm !overflow-hidden !relative">
+              <span v-if="trendUnit"
+                class="!absolute !top-4 !left-4 !text-[9px] !font-mono !text-zinc-400 !border !border-zinc-100 !px-2 !py-0.5 !rounded !bg-zinc-50/50">{{
+                trendUnit }}</span>
 
-                <line
-                  v-for="(g, gi) in yGridLines"
-                  :key="'yg'+gi"
-                  :x1="margin.left"
-                  :y1="g.y"
-                  :x2="svgWidth - margin.right"
-                  :y2="g.y"
-                  stroke="#f1f5f9"
-                  stroke-width="1"
-                />
-                
-                <text
-                  v-for="(g, gi) in yGridLines"
-                  :key="'yl'+gi"
-                  :x="margin.left - 10"
-                  :y="g.y + 4"
-                  text-anchor="end"
-                  class="fill-slate-400 font-mono"
-                  font-size="9"
-                >
+              <svg :viewBox="`0 0 ${svgWidth} ${svgHeight}`" class="!w-full !max-h-64"
+                xmlns="http://www.w3.org/2000/svg">
+                <line v-for="(g, gi) in yGridLines" :key="'yg' + gi" :x1="margin.left" :y1="g.y"
+                  :x2="svgWidth - margin.right" :y2="g.y" stroke="#f4f4f5" stroke-width="1" stroke-dasharray="4,4" />
+
+                <text v-for="(g, gi) in yGridLines" :key="'yl' + gi" :x="margin.left - 12" :y="g.y + 3" text-anchor="end"
+                  class="!fill-zinc-400 !font-mono" font-size="9">
                   {{ g.label }}
                 </text>
 
-                <rect
-                  v-if="refLow !== null && refHigh !== null"
-                  :x="margin.left"
-                  :y="scaleY(refHigh)"
-                  :width="plotWidth"
-                  :height="scaleY(refLow) - scaleY(refHigh)"
-                  fill="#e0f2fe"
-                  fill-opacity="0.25"
-                  rx="2"
-                />
-                
-                <line
-                  v-if="refLow !== null"
-                  :x1="margin.left"
-                  :y1="scaleY(refLow)"
-                  :x2="svgWidth - margin.right"
-                  :y2="scaleY(refLow)"
-                  stroke="#bae6fd"
-                  stroke-width="1.2"
-                  stroke-dasharray="3,3"
-                />
-                <line
-                  v-if="refHigh !== null"
-                  :x1="margin.left"
-                  :y1="scaleY(refHigh)"
-                  :x2="svgWidth - margin.right"
-                  :y2="scaleY(refHigh)"
-                  stroke="#bae6fd"
-                  stroke-width="1.2"
-                  stroke-dasharray="3,3"
-                />
+                <rect v-if="refLow !== null && refHigh !== null" :x="margin.left" :y="scaleY(refHigh)"
+                  :width="plotWidth" :height="scaleY(refLow) - scaleY(refHigh)" fill="#f0fdf4" />
+                <line v-if="refLow !== null" :x1="margin.left" :y1="scaleY(refLow)" :x2="svgWidth - margin.right"
+                  :y2="scaleY(refLow)" stroke="#dcfce7" stroke-width="1" />
+                <line v-if="refHigh !== null" :x1="margin.left" :y1="scaleY(refHigh)" :x2="svgWidth - margin.right"
+                  :y2="scaleY(refHigh)" stroke="#dcfce7" stroke-width="1" />
 
-                <polyline
-                  :points="linePoints"
-                  fill="none"
-                  stroke="#4f46e5"
-                  stroke-width="2"
-                  stroke-linejoin="round"
-                  stroke-linecap="round"
-                />
+                <polyline :points="linePoints" fill="none" stroke="#18181b" stroke-width="1.5"
+                  stroke-linejoin="round" />
 
-                <circle
-                  v-for="(pt, pi) in trendDataSorted"
-                  :key="'pt'+pi"
-                  :cx="scaleX(pt.index)"
-                  :cy="scaleY(Number(pt.value))"
-                  r="4"
-                  :fill="pt.abnormal_flag ? '#f43f5e' : '#4f46e5'"
-                  stroke="white"
-                  stroke-width="2"
-                />
+                <circle v-for="(pt, pi) in trendDataSorted" :key="'pt' + pi" :cx="scaleX(pt.index)"
+                  :cy="scaleY(Number(pt.value))" r="3.5" :fill="pt.abnormal_flag ? '#ef4444' : '#18181b'"
+                  stroke="#ffffff" stroke-width="1.5" />
 
-                <text
-                  v-for="(pt, pi) in trendDataSorted"
-                  :key="'xl'+pi"
-                  :x="scaleX(pt.index)"
-                  :y="svgHeight - margin.bottom + 18"
-                  text-anchor="end"
-                  transform="rotate(-30, ${scaleX(pt.index)}, ${svgHeight - margin.bottom + 18})"
-                  class="fill-slate-400 font-medium"
-                  font-size="9"
-                >
-                  {{ formatShortDate(pt.test_date) }}
+                <text v-for="(pt, pi) in trendDataSorted" :key="'xl' + pi" :x="scaleX(pt.index)"
+                  :y="svgHeight - margin.bottom + 22" text-anchor="end"
+                  transform="rotate(-40, ${scaleX(pt.index)}, ${svgHeight - margin.bottom + 22})"
+                  class="!fill-zinc-400 !font-medium" font-size="9">
+                  {{ formatShortDate(pt.performed_date) }}
                 </text>
               </svg>
             </div>
 
-            <div class="overflow-x-auto border border-slate-100 rounded-xl">
-              <table class="w-full text-right text-xs">
+            <div class="!overflow-x-auto !border !border-zinc-200/60 !rounded-xl">
+              <table class="!w-full !text-right !text-xs">
                 <thead>
-                  <tr class="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold">
-                    <th class="px-4 py-2.5">تاریخ ثبت</th>
-                    <th class="px-4 py-2.5">مقدار گزارش شده</th>
-                    <th class="px-4 py-2.5">محدوده مرجع</th>
-                    <th class="px-4 py-2.5">وضعیت پایدار</th>
+                  <tr class="!bg-zinc-50/50 !border-b !border-zinc-200/60 !text-zinc-400">
+                    <th class="!px-4 !py-3 !font-semibold">تاریخ نمونه‌گیری</th>
+                    <th class="!px-4 !py-3 !font-semibold">مقدار یافته</th>
+                    <th class="!px-4 !py-3 !font-semibold">محدوده مرجع کیت</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 text-slate-600">
-                  <tr v-for="pt in trendDataSorted" :key="pt.id" class="hover:bg-slate-50/50">
-                    <td class="px-4 py-2.5 font-medium">{{ formatJalaliDate(pt.test_date) }}</td>
-                    <td class="px-4 py-2.5 font-mono font-bold text-slate-900">{{ pt.value }}</td>
-                    <td class="px-4 py-2.5 font-mono text-slate-400">{{ pt.reference_range || '---' }}</td>
-                    <td class="px-4 py-2.5">
-                      <span v-if="pt.abnormal_flag" class="px-2 py-0.5 bg-rose-50 text-rose-600 rounded text-[10px] font-bold">غیرطبیعی</span>
-                      <span v-else class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded text-[10px] font-bold">طبیعی</span>
+                <tbody class="!divide-y !divide-zinc-100 !text-zinc-600">
+                  <tr v-for="pt in trendDataSorted" :key="pt.id" class="hover:!bg-zinc-50/30">
+                    <td class="!px-4 !py-3 !font-medium">{{ formatJalaliDate(pt.performed_date) }}</td>
+                    <td class="!px-4 !py-3 !font-mono !font-bold">
+                      <span :class="pt.abnormal_flag ? '!text-red-500' : '!text-zinc-900'">{{ pt.value }}</span>
                     </td>
+                    <td class="!px-4 !py-3 !font-mono !text-zinc-400">{{ pt.reference_range || '---' }}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </template>
-        </v-card-text>
-      </v-card>
+        </div>
+      </div>
     </v-dialog>
 
-    <v-dialog v-model="deleteDialog" max-width="400" class="backdrop-blur-sm">
-      <v-card class="!rounded-xl !border !border-slate-200/80 !shadow-xl !p-6">
-        <div class="text-center">
-          <div class="bg-rose-50 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3.5 border border-rose-100">
-            <Icon name="lucide:alert-triangle" class="w-5 h-5 text-rose-600" />
-          </div>
-          <h3 class="text-sm font-bold text-slate-900 mb-1.5">حذف سابقه آزمایشگاهی</h3>
-          <p class="text-slate-400 text-xs leading-relaxed">آیا از حذف این نتیجه آزمایش اطمینان دارید؟ داده‌های پاک شده به هیچ عنوان قابل بازیابی نخواهند بود.</p>
+    <v-dialog v-model="deleteDialog" max-width="360" class="backdrop-blur-sm">
+      <div class="!bg-white !rounded-2xl !border !border-zinc-200/80 !shadow-2xl !p-6 !text-center">
+        <div
+          class="!w-11 !h-11 !rounded-xl !bg-red-50 !flex !items-center !justify-center !mx-auto !mb-3.5 !border !border-red-100">
+          <Icon name="lucide:trash-2" class="!w-4 !h-4 !text-red-600" />
         </div>
-        <div class="flex justify-center gap-2 mt-5">
-          <v-btn variant="flat" class="!bg-slate-100 !text-slate-600 !font-bold !text-xs !rounded-lg" @click="deleteDialog = false">انصراف</v-btn>
-          <v-btn variant="flat" class="!bg-rose-600 !text-white !font-bold !text-xs !rounded-lg !px-4" :loading="deleting" @click="deleteResult">تایید و حذف قطعی</v-btn>
+        <h3 class="!text-xs !font-bold !text-zinc-900 !mb-1.5">حذف سابقه تراکنش آزمایشگاه</h3>
+        <p class="!text-zinc-400 !text-[11px] !leading-relaxed">آیا از پاک کردن کامل این رکورد اطمینان دارید؟ این عمل
+          قابل
+          لغو یا بازیابی نخواهد بود.</p>
+
+        <div class="!flex !justify-center !gap-2 !mt-5">
+          <button
+            class="!flex-1 !px-4 !py-2 !bg-zinc-100 hover:!bg-zinc-200 !text-zinc-600 !text-xs !font-semibold !rounded-xl !transition-colors"
+            @click="deleteDialog = false">انصراف</button>
+          <button
+            class="!flex-1 !px-4 !py-2 !bg-red-600 hover:!bg-red-700 !text-white !text-xs !font-semibold !rounded-xl !transition-colors !shadow-sm !flex !items-center !justify-center"
+            :disabled="deleting" @click="deleteResult">
+            <v-progress-circular v-if="deleting" indeterminate size="12" width="2" color="white" class="!mr-2" />
+            <span v-else>پاک کردن قطعی</span>
+          </button>
         </div>
-      </v-card>
+      </div>
     </v-dialog>
-  </div>
+  </UiPageContainer>
 </template>
 
 <script setup lang="ts">
@@ -591,14 +477,14 @@ const deleting = ref(false)
 const deleteTarget = ref<any>(null)
 
 const categoryLabels: Record<string, string> = {
-  all: 'همه نتایج',
+  all: 'همه نتایج اسناد',
   hormone: 'هورمون‌ها',
   tumor_marker: 'مارکرهای توموری',
   cytology: 'سیتولوژی',
   pathology: 'پاتولوژی',
   microbiology: 'میکروبیولوژی',
   genetic: 'ژنتیک',
-  other: 'سایر',
+  other: 'سایر موارد',
 }
 
 const categoryOptions = Object.entries(categoryLabels)
@@ -619,28 +505,15 @@ const form = ref({
   reference_range: '',
   abnormal_flag: false,
   notes: '',
-  test_date: '',
+  performed_date: '',
 })
 
 watch(addDialog, (val) => {
   if (!val) {
-    form.value = { category: 'hormone', test_name: '', value: '', unit: '', reference_range: '', abnormal_flag: false, notes: '', test_date: '' }
+    form.value = { category: 'hormone', test_name: '', value: '', unit: '', reference_range: '', abnormal_flag: false, notes: '', performed_date: '' }
     formDateError.value = ''
   }
 })
-
-function categoryBadge(cat: string) {
-  const map: Record<string, string> = {
-    hormone: 'bg-pink-50/60 text-pink-700 border-pink-100',
-    tumor_marker: 'bg-purple-50/60 text-purple-700 border-purple-100',
-    cytology: 'bg-cyan-50/60 text-cyan-700 border-cyan-100',
-    pathology: 'bg-amber-50/60 text-amber-700 border-amber-100',
-    microbiology: 'bg-emerald-50/60 text-emerald-700 border-emerald-100',
-    genetic: 'bg-indigo-50/60 text-indigo-700 border-indigo-100',
-    other: 'bg-slate-50/80 text-slate-600 border-slate-200',
-  }
-  return map[cat] || map.other
-}
 
 const categoryCounts = computed(() => {
   const counts: Record<string, number> = { all: results.value.length }
@@ -670,7 +543,19 @@ let searchTimer: ReturnType<typeof setTimeout> | null = null
 function onSearchInput() {
   searchTouched.value = true
   if (searchTimer) clearTimeout(searchTimer)
-  searchTimer = setTimeout(() => searchPatients(), 500)
+  searchTimer = setTimeout(() => searchPatients(), 400)
+}
+
+function clearSearch() {
+  searchQuery.value = ''
+  searchResults.value = []
+}
+
+function clearPatient() {
+  selectedPatient.value = null
+  results.value = []
+  searchQuery.value = ''
+  searchResults.value = []
 }
 
 async function searchPatients() {
@@ -722,14 +607,14 @@ async function fetchResults() {
 }
 
 function openAddDialog() {
-  form.value = { category: 'hormone', test_name: '', value: '', unit: '', reference_range: '', abnormal_flag: false, notes: '', test_date: '' }
+  form.value = { category: 'hormone', test_name: '', value: '', unit: '', reference_range: '', abnormal_flag: false, notes: '', performed_date: '' }
   formDateError.value = ''
   addDialog.value = true
 }
 
 async function submitResult() {
-  if (!form.value.test_date) {
-    formDateError.value = 'تاریخ آزمایش الزامی است'
+  if (!form.value.performed_date) {
+    formDateError.value = 'تاریخ انجام آزمایش الزامی است'
     return
   }
   formDateError.value = ''
@@ -743,12 +628,12 @@ async function submitResult() {
       patient_id: selectedPatient.value.id,
       category: form.value.category,
       test_name: form.value.test_name,
-      value: parseFloat(form.value.value),
+      value: form.value.value,
       unit: form.value.unit,
       reference_range: form.value.reference_range,
       abnormal_flag: form.value.abnormal_flag,
       notes: form.value.notes,
-      test_date: form.value.test_date,
+      performed_date: form.value.performed_date,
     }
     const res = await apiFetch<any>('/api/lab-results', {
       method: 'POST',
@@ -778,7 +663,7 @@ async function showTrend(result: any) {
     const res = await apiFetch<any>(`/api/lab-results/patient/${selectedPatient.value.id}/trend?testName=${encodeURIComponent(result.test_name)}`)
     if (res.success) {
       trendData.value = (res.data || []).sort(
-        (a: any, b: any) => new Date(a.test_date).getTime() - new Date(b.test_date).getTime()
+        (a: any, b: any) => new Date(a.performed_date).getTime() - new Date(b.performed_date).getTime()
       )
     } else {
       trendData.value = []
@@ -796,9 +681,9 @@ const trendDataSorted = computed(() => {
   return trendData.value.map((d: any, i: number) => ({ ...d, index: i }))
 })
 
-const margin = { top: 30, right: 20, bottom: 60, left: 55 }
-const svgWidth = 750
-const svgHeight = 320
+const margin = { top: 30, right: 20, bottom: 60, left: 50 }
+const svgWidth = 620
+const svgHeight = 260
 const plotWidth = svgWidth - margin.left - margin.right
 const plotHeight = svgHeight - margin.top - margin.bottom
 
@@ -848,7 +733,7 @@ const yGridLines = computed(() => {
   const padding = (max - min) * 0.15 || 1
   const yMin = min - padding
   const yMax = max + padding
-  const steps = 5
+  const steps = 4
   const lines = []
   for (let i = 0; i <= steps; i++) {
     const val = yMin + ((yMax - yMin) * i) / steps
@@ -895,19 +780,39 @@ useSeoMeta({ title: 'نتایج آزمایشگاه | سیستم کلینیک' })
 </script>
 
 <style scoped>
-/* استایل کاستوم برای دیت‌پیکر برای همخوانی ۱۰۰٪ با هویت بصری مدرن تایلوند بدون استفاده از apply */
+/* استایل‌های شخصی‌سازی دیت‌پیکر و کامپوننت‌های توکار بدون استفاده از دستور apply@ برای پایداری و نگهداری آسان‌تر */
 :deep(.custom-picker-input) {
-  width: 100%;
-  height: 40px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 0 12px;
-  font-size: 13px;
-  outline: none;
-  transition: all 0.15s ease-in-out;
+  width: 100% !important;
+  height: 40px !important;
+  border: 1px solid rgba(228, 228, 231, 0.8) !important;
+  border-radius: 12px !important;
+  padding: 0 16px !important;
+  font-size: 12px !important;
+  outline: none !important;
+  transition: all 0.2s ease-in-out !important;
+  color: #18181b !important;
 }
+
+:deep(.custom-picker-input::placeholder) {
+  color: #a1a1aa !important;
+}
+
 :deep(.custom-picker-input:focus) {
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+  border-color: #18181b !important;
+  box-shadow: 0 0 0 4px rgba(24, 24, 27, 0.05) !important;
+}
+
+:deep(.custom-v-input .v-field) {
+  border-radius: 12px !important;
+  font-size: 12px !important;
+}
+
+:deep(.scrollbar-none::-webkit-scrollbar) {
+  display: none !important;
+}
+
+:deep(.scrollbar-none) {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }
 </style>
