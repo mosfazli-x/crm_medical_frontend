@@ -791,14 +791,14 @@ useSeoMeta({ title: 'ابزارهای تصمیم‌گیری بالینی | سی�
 .crm-info-box-icon {
   width: 1.25rem !important;
   height: 1.25rem !important;
-  color: #5465ff !important;
+  color: #4F46E5 !important;
   flex-shrink: 0 !important;
   margin-top: 0.125rem !important;
 }
 
 .crm-info-box-text {
   font-size: 0.875rem !important;
-  color: #5465ff !important;
+  color: #4F46E5 !important;
   font-weight: 700 !important;
   line-height: 1.6 !important;
   margin: 0 !important;

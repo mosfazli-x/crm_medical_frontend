@@ -8,7 +8,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-2">
         <div v-for="cat in categories" :key="cat.key" class="bg-slate-50/50 p-4 rounded border border-slate-200 flex flex-col h-full">
-          
+
           <div class="flex items-center justify-between align-middle mb-1 py-2 px-2 border-b border-slate-200">
             <div class="flex items-center gap-2 font-semibold text-slate-700 text-sm">
               <v-icon :icon="cat.icon" :color="cat.color" size="small" />
@@ -20,27 +20,31 @@
           </div>
 
           <div class="flex-1 space-y-2 mb-4 overflow-y-auto max-h-60 px-1">
-            
+
             <div v-for="(file, idx) in existingAttachments[cat.key]" :key="'old-'+idx"
                  class="flex items-center justify-between p-2 my-1 bg-white border border-slate-200 rounded-lg group hover:border-slate-300 transition-all gap-2">
-              
+
               <div class="flex items-center gap-2 overflow-hidden flex-1 px-1">
                 <v-icon icon="mdi-cloud-check-outline" size="small" class="text-emerald-500 shrink-0" />
                 <div class="flex flex-col min-w-0 w-full">
-                  <span class="text-xs text-slate-700 truncate dir-rtl text-right font-medium">{{ file.name || 'فایل ذخیره شده' }}</span>
-                  <span v-if="file.fileName" class="text-[10px] text-slate-400 mt-0.5 font-normal">{{ file.fileName }}</span>
+                  <span class="text-xs text-slate-700 truncate dir-rtl text-right font-medium">{{ file.fileName || file.name || 'فایل ذخیره شده' }}</span>
+                  <span v-if="file.fileSize" class="text-[10px] text-slate-400 mt-0.5 font-normal">{{ formatSize(file.fileSize) }}</span>
                 </div>
               </div>
 
               <div class="flex items-center gap-0.5 shrink-0 px-1">
-                <v-btn v-if="file.filePath" icon="mdi-eye-outline" variant="text" color="slate-500" density="compact" size="small"
-                       :href="config.public.apiBase + file.filePath" target="_blank" title="مشاهده فایل" />
-                       
-                <v-btn v-if="file.filePath" icon="mdi-download-outline" variant="text" color="#5465ff" density="compact" size="small"
-                       :href="config.public.apiBase + file.filePath" :download="file.name" title="دانلود فایل" />
+                <v-btn icon="mdi-eye-outline" variant="text" color="slate-500" density="compact" size="small"
+                       :loading="loadingView.has(file.id)"
+                       @click="viewFile(file, cat.key)"
+                       title="مشاهده فایل" />
+
+                <v-btn icon="mdi-download-outline" variant="text" color="#4F46E5" density="compact" size="small"
+                       :loading="loadingDownload.has(file.id)"
+                       @click="downloadFile(file, cat.key)"
+                       title="دانلود فایل" />
 
                 <v-btn icon="mdi-trash-can-outline" variant="text" color="error" density="compact" size="small"
-                       @click="deleteExistingAttachment(cat.key, file, idx)"
+                       @click="deleteExistingAttachment(cat.key, file, idx as number)"
                        :loading="deleting.has(file.id)"
                        :disabled="deleting.has(file.id)"
                        class="opacity-100 group-hover:opacity-100 transition-opacity" title="حذف" />
@@ -64,7 +68,7 @@
                  class="text-center py-6 text-xs text-slate-400 font-medium bg-white/50 rounded-lg border border-dashed border-slate-200">
               مدرکی ثبت نشده است
             </div>
-            
+
           </div>
 
           <div class="mt-auto pt-2">
@@ -83,7 +87,7 @@
                      }" />
             </label>
           </div>
-          
+
         </div>
       </div>
     </div>
@@ -103,14 +107,62 @@ const attachments = defineModel<any>('attachments', { required: true })
 const existingAttachments = defineModel<any>('existingAttachments', { required: true })
 
 const deleting = reactive(new Set<string>())
+const loadingView = reactive(new Set<string>())
+const loadingDownload = reactive(new Set<string>())
 
 const categories = [
   { key: 'ultrasound', title: 'مدارک سونوگرافی', icon: 'mdi-camera-iris', color: 'purple-darken-1', accept: 'image/*,application/pdf' },
   { key: 'lab', title: 'گزارش‌های آزمایشگاه', icon: 'mdi-flask-outline', color: 'teal-darken-1', accept: '.pdf,.jpg,.jpeg,.png' },
-  { key: 'prescription', title: 'نسخه‌های قبلی', icon: 'mdi-prescription', color: '#5465ff', accept: 'image/*,application/pdf' }
+  { key: 'prescription', title: 'نسخه‌های قبلی', icon: 'mdi-prescription', color: '#4F46E5', accept: 'image/*,application/pdf' }
 ]
 
-const deleteExistingAttachment = async (categoryKey: 'ultrasound' | 'lab' | 'prescription', file: any, index: number) => {
+function formatSize(bytes: number): string {
+  if (!bytes) return ''
+  const sizes = ['B', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(1024))
+  return (bytes / Math.pow(1024, i)).toFixed(i > 0 ? 1 : 0) + ' ' + sizes[i]
+}
+
+async function getDownloadUrl(file: any, forceDownload = false, loadingSet: Set<string>): Promise<string | null> {
+  const fileId = file.id
+  if (!fileId || !props.patientId) return null
+
+  loadingSet.add(fileId)
+  try {
+    const query = forceDownload ? '?download=true' : ''
+    const res = await apiFetch<{ success: boolean; data?: { downloadUrl: string } }>(
+      `/api/patients/${props.patientId}/attachments/${fileId}/download${query}`
+    )
+    return res.data?.downloadUrl || null
+  } catch {
+    $toast.error('خطا در دریافت لینک دانلود')
+    return null
+  } finally {
+    loadingSet.delete(fileId)
+  }
+}
+
+async function viewFile(file: any, categoryKey: string) {
+  const url = await getDownloadUrl(file, false, loadingView)
+  if (url) {
+    window.open(url, '_blank')
+  }
+}
+
+async function downloadFile(file: any, categoryKey: string) {
+  const url = await getDownloadUrl(file, true, loadingDownload)
+  if (url) {
+    const a = document.createElement('a')
+    a.href = url
+    a.download = file.fileName || file.name || 'download'
+    a.style.display = 'none'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
+}
+
+const deleteExistingAttachment = async (categoryKey: string, file: any, index: number) => {
   if (!props.patientId || !file.id) return
   if (!confirm(`آیا از حذف این فایل اطمینان دارید؟ "${file.name || file.fileName}"`)) return
 

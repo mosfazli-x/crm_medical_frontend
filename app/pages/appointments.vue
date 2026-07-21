@@ -46,7 +46,7 @@
 
               <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mt-2 text-sm text-slate-500 dark:text-slate-400 font-medium">
                 <div v-if="appt.visitTypeName" class="flex items-center gap-1.5">
-                  <div class="w-2.5 h-2.5 rounded-full shrink-0" :style="{ backgroundColor: appt.visitTypeColor || '#5465ff' }"></div>
+                  <div class="w-2.5 h-2.5 rounded-full shrink-0" :style="{ backgroundColor: appt.visitTypeColor || '#4F46E5' }"></div>
                   <span class="text-slate-700 dark:text-slate-300 font-medium">{{ appt.visitTypeName }}</span>
                 </div>
                 <span v-if="appt.visitTypeName" class="crm-divider-dot"></span>

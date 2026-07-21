@@ -61,7 +61,7 @@
           </div>
 
           <div v-if="!selectedJalaliDate || fetchingSlots || availableSlots.length" class="my-2 flex justify-center">
-            <v-btn variant="flat" color="#5465ff" size="large"
+            <v-btn variant="flat" color="#4F46E5" size="large"
               class="px-14 font-bold rounded-xl shadow-md shadow-electric-sapphire/30" :disabled="!selectedJalaliDate"
               @click="currentStep = 1">
               ادامه
@@ -72,7 +72,7 @@
         <div v-show="currentStep === 1">
           <div class="flex items-center justify-between mb-6 px-2">
             <h2 class="text-lg font-bold text-slate-800">نوع نوبت</h2>
-            <v-progress-circular v-if="fetchingVisitTypes" indeterminate color="#5465ff" size="20" width="2" />
+            <v-progress-circular v-if="fetchingVisitTypes" indeterminate color="#4F46E5" size="20" width="2" />
           </div>
 
           <div v-if="!fetchingVisitTypes && visitTypes.length" class="space-y-3 px-2 gap-1 flex flex-col">
@@ -116,7 +116,7 @@
               @click="currentStep = 0">
               بازگشت
             </v-btn>
-            <v-btn variant="flat" color="#5465ff" size="large" :disabled="!selectedVisitType"
+            <v-btn variant="flat" color="#4F46E5" size="large" :disabled="!selectedVisitType"
               class="px-10 font-bold rounded-lg shadow-md shadow-electric-sapphire/30" @click="currentStep = 2">
               ادامه
             </v-btn>
@@ -126,7 +126,7 @@
         <div class="px-2" v-show="currentStep === 2">
           <div class="flex items-center justify-between mb-4 px-2">
             <h2 class="text-lg font-bold text-slate-800">انتخاب ساعت</h2>
-            <v-progress-circular v-if="fetchingSlots" indeterminate color="#5465ff" size="20" width="2" />
+            <v-progress-circular v-if="fetchingSlots" indeterminate color="#4F46E5" size="20" width="2" />
           </div>
 
           <div class="bg-light-cyan/40 border border-periwinkle/40 rounded-xl px-4 py-3 mb-6 flex items-center gap-3">
@@ -225,7 +225,7 @@
                     بازگشت
                   </v-btn>
                 </div>
-                <v-btn variant="flat" color="#5465ff" size="large" :loading="submitting"
+                <v-btn variant="flat" color="#4F46E5" size="large" :loading="submitting"
                   class="px-10 font-bold rounded-lg shadow-md shadow-electric-sapphire/30" @click="bookAppointment">
                   تایید و ثبت نوبت
                 </v-btn>

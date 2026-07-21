@@ -6,14 +6,14 @@
       <UiContentCard card-class="min-w-[360px] shrink-0 flex flex-col!">
         <div class="px-2 pt-2 border-b border-slate-200/60 space-y-3">
           <div class="flex items-center gap-2">
-            <v-btn color="#5465ff" class="flex-1 font-bold" prepend-icon="mdi-pencil" @click="startCompose">
+            <v-btn color="#4F46E5" class="flex-1 font-bold" prepend-icon="mdi-pencil" @click="startCompose">
               نوشتن پیام جدید
             </v-btn>
             <v-btn icon variant="text" color="slate" class="dark:text-slate-400!" @click="refreshMessages">
               <v-icon>mdi-refresh</v-icon>
             </v-btn>
           </div>
-          <v-tabs v-model="tab" color="#5465ff" bg-color="transparent" density="compact" class="border-b border-slate-200 text-slate-800 dark:text-slate-300!">
+          <v-tabs v-model="tab" color="#4F46E5" bg-color="transparent" density="compact" class="border-b border-slate-200 text-slate-800 dark:text-slate-300!">
             <v-tab value="inbox" class="text-xs font-bold tracking-wide">
               صندوق دریافتی
               <v-badge v-if="unreadCount > 0" :content="unreadCount" color="red" inline class="mr-1" />
@@ -24,7 +24,7 @@
 
         <div class="flex-1 overflow-y-auto">
           <div v-if="loading" class="flex flex-col items-center justify-center py-16">
-            <v-progress-circular indeterminate size="32" color="#5465ff" />
+            <v-progress-circular indeterminate size="32" color="#4F46E5" />
             <p class="mt-3 text-xs font-medium text-slate-500">در حال دریافت پیام‌ها...</p>
           </div>
 
@@ -90,7 +90,7 @@
             <!-- Selected patient display -->
             <div v-if="selectedPatient" class="flex items-center justify-center gap-3.5 mb-4 p-2! rounded-xl bg-light-cyan/80 border border-periwinkle/60">
               <div class="w-10 h-10 rounded-full bg-gradient-to-br from-light-cyan to-periwinkle flex items-center justify-center shrink-0 mt-0.5">
-                <v-icon size="20" color="#5465ff">mdi-account</v-icon>
+                <v-icon size="20" color="#4F46E5">mdi-account</v-icon>
               </div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-1">
@@ -121,7 +121,7 @@
 
             <!-- Patient search button and manual entry -->
             <div v-if="!selectedPatient" class="mb-4">
-              <v-btn variant="outlined" color="#5465ff" block class="mb-3" prepend-icon="mdi-account-search" @click="patientSearchDialog = true">
+              <v-btn variant="outlined" color="#4F46E5" block class="mb-3" prepend-icon="mdi-account-search" @click="patientSearchDialog = true">
                 جستجو و انتخاب بیمار
               </v-btn>
               <v-text-field
@@ -172,7 +172,7 @@
             <div class="flex justify-end gap-3 py-2">
               <v-btn variant="tonal" color="slate" class="bg-slate-30/80!" @click="cancelCompose">انصراف</v-btn>
               <v-btn
-                color="#5465ff"
+                color="#4F46E5"
                 :loading="sending"
                 :disabled="sending"
                 @click="sendMessage"

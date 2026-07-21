@@ -135,7 +135,7 @@
               </v-col>
 
               <v-col cols="12" md="6" class="py-2 d-flex align-center">
-                <v-switch v-model="form.isActive" color="#5465ff" label="فعال" hide-details />
+                <v-switch v-model="form.isActive" color="#4F46E5" label="فعال" hide-details />
               </v-col>
             </v-row>
           </v-form>
@@ -147,7 +147,7 @@
             انصراف
           </v-btn>
           <v-spacer />
-          <v-btn variant="flat" color="#5465ff" size="large" :loading="saving"
+          <v-btn variant="flat" color="#4F46E5" size="large" :loading="saving"
             class="px-8 font-bold rounded-lg shadow-md shadow-electric-sapphire/30 hover:bg-electric-sapphire/80!" @click="saveVisitType">
             {{ editingId ? 'ذخیره تغییرات' : 'ایجاد نوع نوبت' }}
           </v-btn>

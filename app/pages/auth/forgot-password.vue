@@ -10,7 +10,7 @@
         density="comfortable" placeholder="09123456789" class="ltr-field"
         prepend-inner-icon="mdi-phone-outline" :rules="phoneRules" required />
 
-      <v-btn type="submit" color="#5465ff" size="x-large" block :loading="loading"
+      <v-btn type="submit" color="#4F46E5" size="x-large" block :loading="loading"
         class="crm-btn-accent rounded-xl! h-12!">
         ارسال کد تایید
       </v-btn>

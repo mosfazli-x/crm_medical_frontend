@@ -45,7 +45,7 @@
                             <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">زمان شروع
                                 <span class="text-red-500">*</span></label>
                             <PersianDatetimePicker v-model="newVisit.start" type="datetime"
-                                display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#5465ff"
+                                display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4F46E5"
                                 auto-submit custom-input class="w-full" />
                         </v-col>
 
@@ -53,7 +53,7 @@
                             <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">زمان
                                 پایان</label>
                             <PersianDatetimePicker v-model="newVisit.end" type="datetime"
-                                display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#5465ff"
+                                display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4F46E5"
                                 auto-submit custom-input class="w-full" />
                         </v-col>
 
@@ -98,7 +98,7 @@
                         انصراف
                     </v-btn>
 
-                    <v-btn color="#5465ff" variant="flat" size="large"
+                    <v-btn color="#4F46E5" variant="flat" size="large"
                         class="px-8 w-full md:w-auto font-medium tracking-wide rounded-lg shadow-md shadow-periwinkle hover:opacity-85"
                         :loading="saving" @click="saveVisit">
                         {{ isEditMode ? 'ذخیره تغییرات' : 'ثبت نوبت' }}
@@ -442,21 +442,21 @@ useSeoMeta({
 
 /* حالت اکتیو برای روز */
 :deep(.fc-button-active) {
-    background-color: #5465ff !important;
-    border-color: #5465ff !important;
+    background-color: #4F46E5 !important;
+    border-color: #4F46E5 !important;
     color: white !important;
 }
 
 /* رفع مشکل: حالت اکتیو برای شب (اولویت بالاتر برای جلوگیری از خنثی شدن) */
 .dark :deep(.fc-button-active) {
-    background-color: #5465ff !important;
-    border-color: #5465ff !important;
+    background-color: #4F46E5 !important;
+    border-color: #4F46E5 !important;
     color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(84, 101, 255, 0.25) !important;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25) !important;
 }
 
 :deep(.fc-button:focus) {
-    box-shadow: 0 0 0 2px #bfd7ff !important;
+    box-shadow: 0 0 0 2px #C7D2FE !important;
 }
 
 :deep(.fc-theme-standard th) {
@@ -509,12 +509,12 @@ useSeoMeta({
 
 .dark :deep(.fc-day-today) {
     /* یک هاله ملایم آبی رنگ برای متمایز شدن پس‌زمینه در حالت شب */
-    background: rgba(84, 101, 255, 0.08) !important;
+    background: rgba(79, 70, 229, 0.08) !important;
 }
 
 /* تغییر رنگ متن هدر روز جاری در حالت شب */
 .dark :deep(.fc-day-today .fc-col-header-cell-cushion) {
-    color: #788bff !important;
+    color: #6366F1 !important;
     font-weight: 800;
 }
 
@@ -530,7 +530,7 @@ useSeoMeta({
    اصلاح بخش انتخاب شده (Highlight / Drag & Select)
 ======================================================== */
 :deep(.fc-highlight) {
-    background: #bfd7ff !important;
+    background: #C7D2FE !important;
     opacity: 0.3;
 }
 
@@ -691,10 +691,10 @@ useSeoMeta({
 /* استایل زیبای کارت رویدادها */
 :deep(.fc-event) {
     border: none;
-    border-right: 3px solid #5465ff;
+    border-right: 3px solid #4F46E5;
     /* خط کنار رویداد (RTL) */
-    background-color: #e2fdff;
-    color: #5465ff;
+    background-color: #E0E7FF;
+    color: #4F46E5;
     border-radius: 6px;
     padding: 3px 6px;
     font-size: 0.8rem;
@@ -705,13 +705,13 @@ useSeoMeta({
 }
 
 :deep(.fc-event:hover) {
-    background-color: #bfd7ff;
+    background-color: #C7D2FE;
     transform: translateY(-1px);
-    box-shadow: 0 4px 6px -1px rgba(84, 101, 255, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1);
 }
 
 .dark :deep(.fc-event) {
-    border-right-color: #788bff;
+    border-right-color: #6366F1;
     background-color: #1e3a5f;
     color: #93c5fd;
 }
@@ -745,7 +745,7 @@ useSeoMeta({
 }
 
 :deep(.fc-daygrid-more-link) {
-    color: #5465ff;
+    color: #4F46E5;
     font-weight: 600;
 }
 
@@ -778,13 +778,13 @@ useSeoMeta({
 }
 
 :deep(.vpd-input-group input:focus) {
-    border-color: #5465ff;
-    box-shadow: 0 0 0 3px #bfd7ff;
+    border-color: #4F46E5;
+    box-shadow: 0 0 0 3px #C7D2FE;
     outline: none;
 }
 
 .dark :deep(.vpd-input-group input:focus) {
-    border-color: #788bff;
+    border-color: #6366F1;
     box-shadow: 0 0 0 3px #3b5a9a;
 }
 

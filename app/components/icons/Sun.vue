@@ -1,5 +1,5 @@
 <template>
-    <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="800px" height="800px" viewBox="0 0 24 24" fill="inherit" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="5" stroke="inherit" stroke-width="1.75" />
         <path d="M12 2V4" stroke="inherit" stroke-width="1.75" stroke-linecap="round" />
         <path d="M12 20V22" stroke="inherit" stroke-width="1.75" stroke-linecap="round" />

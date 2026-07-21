@@ -51,10 +51,10 @@
         </template>
       </div>
 
-      <v-btn v-if="timer === 0" variant="text" color="#5465ff"
+      <v-btn v-if="timer === 0" variant="text" color="#4F46E5"
         :loading="resending" block @click="resendCode">ارسال مجدد کد</v-btn>
 
-      <v-btn type="submit" color="#5465ff" size="x-large" block
+      <v-btn type="submit" color="#4F46E5" size="x-large" block
         :loading="loading" :disabled="timer <= 0"
         class="crm-btn-accent rounded-xl! h-12!">
         تغییر رمز عبور
@@ -225,7 +225,7 @@ definePageMeta({ layout: false })
 }
 
 .otp-box:focus {
-  border-color: #5465ff !important;
-  box-shadow: 0 0 0 3px rgba(84, 101, 255, 0.15) !important;
+  border-color: #4F46E5 !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important;
 }
 </style>

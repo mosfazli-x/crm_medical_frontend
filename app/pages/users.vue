@@ -2,7 +2,7 @@
     <UiPageContainer>
         <UiPageHeader title="مدیریت کاربران" subtitle="تأیید، رد یا تغییر وضعیت دسترسی کاربران سیستم">
             <template #actions>
-                <v-tabs v-model="statusTab" color="#5465ff" bg-color="transparent" class="w-full md:w-auto">
+                <v-tabs v-model="statusTab" color="#4F46E5" bg-color="transparent" class="w-full md:w-auto">
                 <v-tab value="all" class="text-sm font-semibold tracking-wide">
                     همه ({{ users.length }})
                 </v-tab>
@@ -117,7 +117,7 @@
             </div>
 
             <div v-if="loading" class="flex flex-col items-center justify-center p-16!">
-                <v-progress-circular indeterminate size="48" color="#5465ff" />
+                <v-progress-circular indeterminate size="48" color="#4F46E5" />
                 <p class="mt-4 text-sm font-medium text-slate-500 dark:text-slate-300">در حال دریافت اطلاعات...</p>
             </div>
 

@@ -7,7 +7,7 @@
       <UiContentCard card-class="w-full! lg:w-[380px]! shrink-0! flex! flex-col! bg-white! border! border-slate-200/60! shadow-sm! rounded-2xl!">
         <div class="px-4! pt-4! border-b! border-slate-100! space-y-4!">
           <v-btn 
-            color="#5465ff" 
+            color="#4F46E5" 
             block 
             class="font-bold! tracking-wide! rounded-xl! shadow-md! shadow-blue-500/20!" 
             prepend-icon="mdi-plus" 
@@ -17,7 +17,7 @@
             پیام جدید به پزشک
           </v-btn>
           
-          <v-tabs v-model="tab" color="#5465ff" bg-color="transparent" density="compact" class="border-b! border-slate-100! text-slate-600!">
+          <v-tabs v-model="tab" color="#4F46E5" bg-color="transparent" density="compact" class="border-b! border-slate-100! text-slate-600!">
             <v-tab value="inbox" class="text-xs! font-bold! tracking-wide!">
               دریافتی‌ها
               <v-badge v-if="unreadCount > 0" :content="unreadCount" color="error" inline class="mr-1.5!" />
@@ -28,7 +28,7 @@
 
         <div class="flex-1! overflow-y-auto! bg-slate-50/30!">
           <div v-if="loading" class="flex! flex-col! items-center! justify-center! py-20!">
-            <v-progress-circular indeterminate size="28" color="#5465ff" width="3" />
+            <v-progress-circular indeterminate size="28" color="#4F46E5" width="3" />
             <p class="mt-4! text-xs! font-semibold! text-slate-400!">در حال همگام‌سازی...</p>
           </div>
 
@@ -147,7 +147,7 @@
               انصراف
             </v-btn>
             <v-btn
-              color="#5465ff"
+              color="#4F46E5"
               class="font-bold! tracking-wide! rounded-xl! px-8!"
               :loading="sending"
               :disabled="sending"

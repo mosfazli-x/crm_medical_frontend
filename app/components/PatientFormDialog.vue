@@ -18,7 +18,7 @@
             </div>
 
             <div class="px-8 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800!">
-                <v-tabs v-model="activeTab" color="#5465ff" bg-color="transparent" height="56">
+                <v-tabs v-model="activeTab" color="#4F46E5" bg-color="transparent" height="56">
                     <v-tab value="basic" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">اطلاعات پایه</v-tab>
                     <v-tab value="medical" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">سابقه پزشکی</v-tab>
                     <v-tab value="pregnancy" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">زایمان و بارداری</v-tab>
@@ -171,6 +171,23 @@ const submitForm = async () => {
                 substance: a.substance,
                 severity: a.severity || 'متوسط',
             }))
+            payload.pregnancies = pregnancyRecords.value.map((p) => ({
+                ...(p.id ? { id: p.id } : {}),
+                gravida_index: p.gravida_index ?? null,
+                status: p.status || 'completed',
+                lmp: p.lmp || null,
+                edd: p.edd || null,
+                end_date: p.end_date || null,
+                gestational_age_weeks: p.gestational_age_weeks ?? null,
+                gestational_age_days: p.gestational_age_days ?? null,
+                outcome: p.outcome || null,
+                delivery_method: p.delivery_method || null,
+                anesthesia_type: p.anesthesia_type || null,
+                maternal_complications: p.maternal_complications || [],
+                prenatal_screenings: p.prenatal_screenings || {},
+                newborns_details: p.newborns_details || [],
+                notes: p.notes || null,
+            }))
         } else {
             payload.diseases = form.diseases.map((d) => ({
                 name: d.name,
@@ -183,6 +200,22 @@ const submitForm = async () => {
             payload.allergies = form.allergies.map((a) => ({
                 substance: a.substance,
                 severity: a.severity || 'متوسط',
+            }))
+            payload.pregnancies = pregnancyRecords.value.map((p) => ({
+                gravida_index: p.gravida_index ?? null,
+                status: p.status || 'completed',
+                lmp: p.lmp || null,
+                edd: p.edd || null,
+                end_date: p.end_date || null,
+                gestational_age_weeks: p.gestational_age_weeks ?? null,
+                gestational_age_days: p.gestational_age_days ?? null,
+                outcome: p.outcome || null,
+                delivery_method: p.delivery_method || null,
+                anesthesia_type: p.anesthesia_type || null,
+                maternal_complications: p.maternal_complications || [],
+                prenatal_screenings: p.prenatal_screenings || {},
+                newborns_details: p.newborns_details || [],
+                notes: p.notes || null,
             }))
         }
 
@@ -298,7 +331,27 @@ function fillForm(data: any) {
         severity: a.severity ?? 'متوسط',
     }))
 
-    pregnancyRecords.value = Array.isArray(data.obstetricHistory) ? [...data.obstetricHistory] : [...(data.obstetricHistory?.pregnancies ?? [])]
+    const rawPregnancies = Array.isArray(data.obstetricHistory)
+      ? data.obstetricHistory
+      : (data.obstetricHistory?.pregnancies ?? data.obstetricHistory?.records ?? [])
+
+    pregnancyRecords.value = rawPregnancies.map((p: any) => ({
+      id: p.id,
+      gravida_index: p.gravidaIndex ?? p.gravida_index ?? null,
+      status: p.status || 'completed',
+      lmp: p.lmp || null,
+      edd: p.edd || null,
+      gestational_age_weeks: p.gestationalAgeWeeks ?? p.gestational_age_weeks ?? null,
+      gestational_age_days: p.gestationalAgeDays ?? p.gestational_age_days ?? null,
+      end_date: p.endDate ?? p.end_date ?? null,
+      outcome: p.outcome ?? null,
+      delivery_method: p.deliveryMethod ?? p.delivery_method ?? null,
+      anesthesia_type: p.anesthesiaType ?? p.anesthesia_type ?? null,
+      maternal_complications: p.maternalComplications ?? p.maternal_complications ?? [],
+      prenatal_screenings: p.prenatalScreenings ?? p.prenatal_screenings ?? {},
+      newborns_details: p.newbornsDetails ?? p.newborns_details ?? [],
+      notes: p.notes || ''
+    }))
 
     existingAttachments.ultrasound = [...(data.attachments?.ultrasound ?? [])]
     existingAttachments.lab = [...(data.attachments?.lab ?? [])]

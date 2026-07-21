@@ -34,7 +34,7 @@
               </div>
             </div>
           </div>
-          <v-btn variant="tonal" color="#5465ff" size="small" class="rounded-lg" @click="refreshProfile">بروزرسانی</v-btn>
+          <v-btn variant="tonal" color="#4F46E5" size="small" class="rounded-lg" @click="refreshProfile">بروزرسانی</v-btn>
         </div>
       </div>
 
@@ -42,10 +42,12 @@
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
         <v-tabs v-model="activeTab" color="black" bg-color="transparent" slider-color="black">
           <v-tab value="reproductive" class="text-sm font-medium tracking-wide">سابقه باروری</v-tab>
+          <v-tab value="pregnancy" class="text-sm font-medium tracking-wide">بارداری و زایمان</v-tab>
           <v-tab value="lifestyle" class="text-sm font-medium tracking-wide">سبک زندگی</v-tab>
           <v-tab value="screening" class="text-sm font-medium tracking-wide">غربالگری</v-tab>
           <v-tab value="lab" class="text-sm font-medium tracking-wide">آزمایشات</v-tab>
           <v-tab value="consent" class="text-sm font-medium tracking-wide">رضایت‌نامه</v-tab>
+          <v-tab value="attachments" class="text-sm font-medium tracking-wide">مستندات</v-tab>
         </v-tabs>
 
         <v-divider />
@@ -62,6 +64,20 @@
                 :yes-no-unknown-options="yesNoUnknownOptions"
                 @save="saveReproSection"
               />
+            </v-window-item>
+
+            <!-- Pregnancy History Tab -->
+            <v-window-item value="pregnancy">
+              <PregnancyHistoryTab
+                v-model:records="pregnancyRecords"
+                v-model:general-notes="pregnancyGeneralNotes"
+              />
+              <div class="flex justify-end mt-4">
+                <v-btn variant="flat" color="#4F46E5" size="small" class="rounded-lg px-8"
+                       :loading="pregnancySaving" @click="savePregnancyHistory">
+                  ذخیره تاریخچه بارداری
+                </v-btn>
+              </div>
             </v-window-item>
 
             <!-- Lifestyle Tab -->
@@ -151,6 +167,15 @@
                 @revoke="revokeConsent"
               />
             </v-window-item>
+
+            <!-- Attachments Tab -->
+            <v-window-item value="attachments">
+              <AttachmentsTab
+                :patient-id="patientId"
+                v-model:attachments="newAttachments"
+                v-model:existing-attachments="existingAttachmentsModel"
+              />
+            </v-window-item>
           </v-window>
         </div>
       </div>
@@ -193,6 +218,8 @@
 import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { usePatientProfile } from '~/composables/usePatientProfile'
 import { useRoute } from 'vue-router'
+import AttachmentsTab from '~/components/patient/tabs/Attachments.vue'
+import PregnancyHistoryTab from '~/components/patient/tabs/PregnancyHistory.vue'
 
 // Initialize composable - unified entry point
 const route = useRoute()
@@ -239,6 +266,24 @@ const activeTab = ref('reproductive')
 // Loading states
 const reproSaving = ref(false)
 const lifestyleSaving = ref(false)
+
+// Attachments tab
+const newAttachments = ref({ ultrasound: [], lab: [], prescription: [] })
+const existingAttachmentsModel = computed({
+  get: () => profile.value?.attachments || { ultrasound: [], lab: [], prescription: [] },
+  set: (val) => { if (profile.value) (profile.value as any).attachments = val },
+})
+
+// Pregnancy tab
+const pregnancyRecords = computed({
+  get: () => obstetricHistory.value?.records ?? [],
+  set: (val) => { if (obstetricHistory.value) obstetricHistory.value.records = val },
+})
+const pregnancyGeneralNotes = computed({
+  get: () => obstetricHistory.value?.general_notes ?? '',
+  set: (val) => { if (obstetricHistory.value) obstetricHistory.value.general_notes = val },
+})
+const pregnancySaving = ref(false)
 
 // Screening tab
 const screeningsLoading = ref(false)
@@ -303,6 +348,56 @@ const saveReproSection = async (section: string) => {
       section === 'sexual' ? reproForm.sexual : null)
   } finally {
     reproSaving.value = false
+  }
+}
+
+const savePregnancyHistory = async () => {
+  if (!patientId.value) return
+  pregnancySaving.value = true
+  try {
+    const { apiFetch } = useApi()
+    const { $toast } = useNuxtApp()
+    const config = useRuntimeConfig()
+
+    const payload = {
+      pregnancies: pregnancyRecords.value.map((p: any) => ({
+        ...(p.id ? { id: p.id } : {}),
+        gravida_index: p.gravida_index ?? null,
+        status: p.status || 'completed',
+        lmp: p.lmp || null,
+        edd: p.edd || null,
+        end_date: p.end_date || null,
+        gestational_age_weeks: p.gestational_age_weeks ?? null,
+        gestational_age_days: p.gestational_age_days ?? null,
+        outcome: p.outcome || null,
+        delivery_method: p.delivery_method || null,
+        anesthesia_type: p.anesthesia_type || null,
+        maternal_complications: p.maternal_complications || [],
+        prenatal_screenings: p.prenatal_screenings || {},
+        newborns_details: p.newborns_details || [],
+        notes: p.notes || null,
+      }))
+    }
+
+    const formData = new FormData()
+    formData.append('patient', JSON.stringify(payload))
+
+    const res = await apiFetch<any>(`/api/patients/${patientId.value}`, {
+      method: 'PUT',
+      body: formData,
+      baseURL: config.public.apiBase
+    })
+
+    if (res.success) {
+      $toast.success('تاریخچه بارداری با موفقیت ذخیره شد')
+      await refreshProfile()
+    } else {
+      $toast.error(res.error || 'خطا در ذخیره تاریخچه بارداری')
+    }
+  } catch (err: any) {
+    useNuxtApp().$toast.error(err.data?.error || 'خطا در ارتباط با سرور')
+  } finally {
+    pregnancySaving.value = false
   }
 }
 

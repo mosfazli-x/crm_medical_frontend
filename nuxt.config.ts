@@ -18,7 +18,7 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  devtools: { enabled: false },
 
   vite: {
     optimizeDeps: {
@@ -39,15 +39,16 @@ export default defineNuxtConfig({
     './app/assets/css/fonts.css',
     './app/assets/css/main.css',
     './app/assets/css/design-system.css',
+    './app/assets/css/landing-page.css'
   ],
 
   modules: [
     '@nuxt/eslint',
-    '@nuxt/hints',
     '@nuxt/image',
     '@nuxt/scripts',
     'vue-sonner/nuxt',
     '@nuxt/icon',
+    '@vueuse/motion/nuxt',
   ],
 
 })

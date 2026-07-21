@@ -3,8 +3,8 @@
 
     <div class="!mb-8 flex flex-col md:flex-row md:!items-center justify-between !gap-6">
       <div>
-        <h1 class="!text-2xl !font-black !text-zinc-900 !tracking-tight">نتایج آزمایشگاه</h1>
-        <p class="!text-xs !text-zinc-500 !mt-1.5 !font-medium">مدیریت، بررسی عمیق و ردیابی نموداری بیومارکرهای
+        <h1 class="crm-page-title">نتایج آزمایشگاه</h1>
+        <p class="crm-page-subtitle">مدیریت، بررسی عمیق و ردیابی نموداری بیومارکرهای
           آزمایشگاهی و هورمونی بیماران</p>
       </div>
 

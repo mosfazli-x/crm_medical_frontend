@@ -233,14 +233,16 @@ export const usePatientProfile = (options: UsePatientProfileOptions = {}): UsePa
       return {
         basicInfo: patientRes.success ? patientRes.data : null,
         medicalHistory: {
-          diseases: [],
-          allergies: [],
-          medications: []
+          diseases: patientRes.success ? patientRes.data.diseases ?? [] : [],
+          allergies: patientRes.success ? patientRes.data.allergies ?? [] : [],
+          medications: patientRes.success ? patientRes.data.medications ?? [] : []
         },
         reproductiveHealth: reproRes.success ? reproRes.data : null,
         obstetricHistory: {
-          records: [],
-          general_notes: ''
+          pregnancies: patientRes.success ? patientRes.data.obstetricHistory ?? [] : [],
+          prenatalVisits: [],
+          fetalMeasurements: [],
+          postpartumCare: null
         },
         screenings: {
           schedules: schedulesRes.success ? schedulesRes.data : [],
@@ -293,7 +295,7 @@ export const usePatientProfile = (options: UsePatientProfileOptions = {}): UsePa
     }
 
     // Obstetric history
-    obstetricHistory.value = data.obstetricHistory || null
+    obstetricHistory.value = normalizeObstetricHistory(data.obstetricHistory)
 
     // Screenings
     screenings.value = data.screenings || null
@@ -336,12 +338,61 @@ export const usePatientProfile = (options: UsePatientProfileOptions = {}): UsePa
       })
     }
 
-    reproForm.surgeries = data.gynecologic_surgeries ?? []
-    reproForm.contraceptives = data.contraceptive_history ?? []
+    reproForm.surgeries = data.surgeries ?? data.gynecologic_surgeries ?? []
+    reproForm.contraceptives = data.contraceptives ?? data.contraceptive_history ?? []
     reproForm.family_history = data.family_history ?? []
 
-    if (data.reproductive_summary) {
-      Object.assign(reproForm.summary, data.reproductive_summary)
+    if (data.summary || data.reproductive_summary) {
+      const s = data.summary || data.reproductive_summary
+      Object.assign(reproForm.summary, {
+        gravida: s.gravida ?? null,
+        para: s.para ?? null,
+        abortus: s.abortus ?? s.abortion_count ?? null,
+        ectopics: s.ectopics ?? null,
+        live_births: s.live_births ?? null,
+        preterm_births: s.preterm_births ?? null,
+        stillbirths: s.stillbirths ?? null,
+        c_sections: s.c_sections ?? s.cesarean_sections ?? null,
+        vaginal_deliveries: s.vaginal_deliveries ?? null
+      })
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Normalize backend obstetricHistory → frontend format
+  // Backend returns: { pregnancies: [...], prenatalVisits: [...], ... }
+  // Frontend expects: { records: [...], general_notes: '' }
+  // Backend field names are camelCase, frontend uses snake_case
+  // ─────────────────────────────────────────────────────────────
+
+  function mapPregnancyFromBackend(p: any): any {
+    return {
+      id: p.id,
+      gravida_index: p.gravidaIndex ?? p.gravida_index ?? null,
+      status: p.status || 'completed',
+      lmp: p.lmp || null,
+      edd: p.edd || null,
+      gestational_age_weeks: p.gestationalAgeWeeks ?? p.gestational_age_weeks ?? null,
+      gestational_age_days: p.gestationalAgeDays ?? p.gestational_age_days ?? null,
+      end_date: (p.endDate ?? p.end_date) || null,
+      outcome: p.outcome || null,
+      delivery_method: (p.deliveryMethod ?? p.delivery_method) || null,
+      anesthesia_type: (p.anesthesiaType ?? p.anesthesia_type) || null,
+      maternal_complications: p.maternalComplications ?? p.maternal_complications ?? [],
+      prenatal_screenings: p.prenatalScreenings ?? p.prenatal_screenings ?? {},
+      newborns_details: p.newbornsDetails ?? p.newborns_details ?? [],
+      notes: p.notes || ''
+    }
+  }
+
+  function normalizeObstetricHistory(raw: any): any {
+    if (!raw) return { records: [], general_notes: '' }
+
+    const pregnanciesArray = raw.pregnancies ?? raw.records ?? (Array.isArray(raw) ? raw : [])
+
+    return {
+      records: pregnanciesArray.map(mapPregnancyFromBackend),
+      general_notes: raw.general_notes ?? raw.generalNotes ?? ''
     }
   }
 

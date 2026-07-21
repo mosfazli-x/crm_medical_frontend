@@ -1,136 +1,127 @@
 <template>
   <v-locale-provider rtl>
-    <transition name="fade">
-      <div v-if="isLoading"
-        class="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-        <div class="absolute inset-0 bg-periwinkle/30 dark:bg-electric-sapphire/20 backdrop-blur-sm"></div>
-        <div
-          class="absolute top-0 right-0 w-[600px] h-[600px] bg-baby-blue-ice/40 dark:bg-electric-sapphire/30 rounded-full blur-[120px] translate-x-1/3 -translate-y-1/3">
-        </div>
-        <div
-          class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-periwinkle/40 dark:bg-electric-sapphire/30 rounded-full blur-[120px] -translate-x-1/3 translate-y-1/3">
-        </div>
+    <ClinicLoadingScreen :show="isLoading" />
 
-        <div class="relative z-10 flex flex-col items-center gap-8">
-          <div class="p-8 rounded-3xl shadow-2xl shadow-electric-sapphire/50 backdrop-blur-md">
-            <MedicalKit class="w-20 h-20 fill-electric-sapphire dark:fill-cornflower-blue" />
-          </div>
-          <v-progress-circular indeterminate color="#5465ff" size="80" width="8" class="drop-shadow-lg" />
-          <div class="text-center">
-            <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">در حال بارگذاری پنل کلینیک</h3>
-            <p class="text-slate-400 dark:text-slate-400 text-lg">لطفاً صبر کنید...</p>
-          </div>
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div class="w-96 h-96 bg-baby-blue-ice/20 dark:bg-electric-sapphire/10 rounded-full animate-ping-slow">
-            </div>
-          </div>
-        </div>
-      </div>
-    </transition>
-
-    <v-app v-if="!isLoading" class="bg-slate-50! dark:bg-slate-900! transition-colors duration-300 relative">
+    <v-app v-if="!isLoading" class="!bg-[#f0f2f5] dark:!bg-[#0f1117] transition-colors duration-300 relative">
       <transition name="fade">
-        <v-progress-linear v-if="apiLoading" indeterminate color="#5465ff" height="3"
+        <v-progress-linear v-if="apiLoading" indeterminate color="#4F46E5" height="2"
           class="!fixed !top-0 !left-0 !right-0 !z-[9999] !m-0" />
       </transition>
-      <div
-        class="fixed top-0 right-0 w-[500px] h-[500px] bg-periwinkle/50 dark:bg-electric-sapphire/20 rounded-full blur-[100px] -z-10 translate-x-1/2 -translate-y-1/2">
-      </div>
 
-      <v-navigation-drawer v-model="drawer" :rail="rail && !isMobile" permanent width="290" rail-width="75"
-        class="border-e border-slate-200/60! dark:border-slate-800! !bg-electric-sapphire dark:!bg-electric-sapphire/20 transition-all duration-300"
+      <!-- Sidebar -->
+      <v-navigation-drawer v-model="drawer" :rail="rail && !isMobile" permanent width="260" rail-width="72"
+        class="!border-l !border-[#e5e7eb] dark:!border-[#1e2028] !bg-white dark:!bg-[#13141a] transition-all duration-300"
         elevation="0" :temporary="isMobile">
+        <!-- Collapse Toggle -->
         <button v-if="!isMobile" @click="rail = !rail"
-          class="absolute -left-3 top-8 z-50 w-6 h-6 !bg-baby-blue-ice border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300">
-          <AltArrowLeft class="w-4 h-4 fill-white dark:fill-black! transition-transform duration-300"
+          class="absolute -left-3 top-7 z-50 w-6 h-6 bg-white dark:bg-[#1e2028] border border-[#e5e7eb] dark:border-[#2a2c36] rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-300">
+          <AltArrowLeft class="w-3.5 h-3.5 fill-[#6b7280] dark:fill-[#9ca3af] transition-transform duration-300"
             :class="rail ? '' : 'rotate-180'" />
         </button>
 
-        <div class="h-24 flex items-center gap-3 transition-all"
-          :class="rail && !isMobile ? 'justify-center px-0' : 'px-6'">
-          <MedicalKit class="w-10 h-10 shrink-0 fill-periwinkle" />
+        <!-- Logo -->
+        <div class="h-[72px] flex items-center gap-3 transition-all border-b border-[#f3f4f6] dark:border-[#1e2028]"
+          :class="rail && !isMobile ? 'justify-center px-0' : 'px-5'">
+          <img src="../assets/images/logo.jpg" class="!flex !h-9 !w-9 sm:!h-10 sm:!w-10 !items-center !justify-center !rounded-xl sm:!rounded-2xl !bg-ink !transition-all !duration-300 group-hover:!shadow-[0_0_20px_rgba(62,232,168,0.3)] group-hover:!scale-105">
+          
           <div v-if="!rail || isMobile" class="flex flex-col overflow-hidden whitespace-nowrap">
-            <span class="font-bold text-lg text-slate-50 tracking-tight">کلینیک دکتر حسینی</span>
-            <span class="text-[11px] text-slate-200 font-medium">پنل پزشک و مدیریت</span>
+            <span class="font-bold text-sm text-[#111827] dark:text-[#f3f4f6] tracking-tight">کلینیک دکتر حسینی</span>
+            <span class="text-[10px] text-[#9ca3af] font-medium">پنل مدیریت</span>
           </div>
         </div>
 
-        <div class="space-y-6 mt-4">
+        <!-- Navigation -->
+        <div class="mt-3 px-3 space-y-6">
           <div v-for="section in menuSections" :key="section.label">
             <div v-if="(!rail || isMobile) && section.items.length"
-              class="px-6 mb-2 text-[10px] font-bold text-slate-200 tracking-widest uppercase">
+              class="px-3 my-2! text-[10px] font-semibold text-[#9ca3af] tracking-wider uppercase">
               {{ section.label }}
             </div>
-            <v-list v-if="section.items.length" nav class="px-3">
+            <v-list v-if="section.items.length" nav class="!p-0">
               <v-tooltip v-for="item in section.items" :key="item.to" location="left" :disabled="!rail || isMobile">
                 <template #activator="{ props }">
-                  <v-list-item v-bind="props" :to="item.to" nuxt class="rounded-xl! transition-all mb-1"
-                    :class="rail && !isMobile ? 'px-0! justify-center' : 'px-4!'"
-                    active-class="!bg-light-cyan/30 dark:!bg-electric-sapphire/30 !text-electric-sapphire dark:!text-cornflower-blue">
-                    <template #title>
-                      <div class="flex items-center" :class="rail && !isMobile ? 'justify-center w-full' : 'gap-3'">
-                        <component :is="item.icon" class="w-5.5 h-5.5 shrink-0 fill-slate-300" />
-                        <span v-if="!rail || isMobile" class="text-[14px] font-medium text-slate-50">{{ item.title
-                          }}</span>
+                  <v-list-item v-bind="props" :to="item.to" nuxt
+                    class="rounded-lg! mb-0.5 transition-all duration-200 gap-1"
+                    :class="[
+                      rail && !isMobile ? 'px-0! justify-center' : 'px-3!',
+                      isActive(item.to)
+                        ? '!bg-[#EEF2FF] dark:!bg-[#1e1b4b]/50 !text-[#4F46E5] dark:!text-[#818cf8]'
+                        : '!text-[#6b7280] dark:!text-[#9ca3af] hover:!bg-[#f9fafb] dark:hover:!bg-[#1e2028]'
+                    ]"
+                    active-class="">
+                    <template #prepend>
+                      <div class="flex items-center justify-center"
+                        :class="rail && !isMobile ? '' : 'w-5'">
+                        <component :is="item.icon" class="w-[18px] h-[18px] shrink-0"
+                          :class="isActive(item.to) ? 'fill-[#4F46E5] dark:fill-[#818cf8]' : 'fill-[#9ca3af]'" />
                       </div>
+                    </template>
+                    <template #title>
+                      <span v-if="!rail || isMobile" class="text-[13px] font-medium">{{ item.title }}</span>
                     </template>
                   </v-list-item>
                 </template>
-                <span>{{ item.title }}</span>
+                <span class="text-xs">{{ item.title }}</span>
               </v-tooltip>
             </v-list>
           </div>
         </div>
 
+        <!-- User Section -->
         <template #append>
-          <div class="py-4 border-t border-white/10 flex items-center"
-            :class="rail && !isMobile ? 'justify-center' : 'px-6 gap-3'">
-            <div class="w-9 h-9 rounded-full bg-periwinkle flex items-center justify-center shrink-0">
-              <span class="text-electric-sapphire font-bold text-sm">{{ userInitial }}</span>
-            </div>
-            <div v-if="!rail || isMobile" class="flex flex-col overflow-hidden whitespace-nowrap">
-              <span class="text-sm font-bold text-slate-50 truncate">{{ user?.fullName || 'کاربر مهمان' }}</span>
-              <span class="text-[10px] text-slate-200">{{ roleLabel }}</span>
+          <div class="p-3 border-t border-[#f3f4f6] dark:border-[#1e2028]">
+            <div class="flex items-center gap-3 p-2! rounded-lg hover:bg-[#f9fafb] dark:hover:bg-[#1e2028] transition-colors cursor-pointer"
+              :class="rail && !isMobile ? 'justify-center' : ''">
+              <div class="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1e1b4b]/50 flex items-center justify-center shrink-0">
+                <span class="text-[#4F46E5] dark:text-[#818cf8] font-bold text-xs">{{ userInitial }}</span>
+              </div>
+              <div v-if="!rail || isMobile" class="flex-1 min-w-0 overflow-hidden">
+                <p class="text-xs font-semibold text-[#111827] dark:text-[#f3f4f6] truncate">{{ user?.fullName || 'کاربر مهمان' }}</p>
+                <p class="text-[10px] text-[#9ca3af]">{{ roleLabel }}</p>
+              </div>
+              <button v-if="!rail || isMobile" @click.stop="logout"
+                class="p-1.5 rounded-md hover:bg-[#fef2f2] dark:hover:bg-[#7f1d1d]/20 transition-colors group"
+                title="خروج">
+                <TurnOffIcon class="w-4 h-4 fill-[#9ca3af] group-hover:fill-[#ef4444] transition-colors" />
+              </button>
             </div>
           </div>
         </template>
       </v-navigation-drawer>
 
-      <v-app-bar height="80"
-        class="!bg-electric-sapphire/60 dark:!bg-electric-sapphire/30 backdrop-blur-md px-4 md:px-6 border-b border-white/10!"
+      <!-- Top Bar -->
+      <v-app-bar height="64" flat
+        class="!bg-white/80 dark:!bg-[#13141a]/80 backdrop-blur-xl !border-b !border-[#e5e7eb] dark:!border-[#1e2028] px-3"
         elevation="0">
         <template #prepend>
-          <v-app-bar-nav-icon variant="text" @click="drawer = !drawer" class="!text-light-cyan lg:!hidden" />
-          <div class="hidden lg:flex flex-col">
-            <h2 class="text-xl font-bold text-slate-50 select-none">خوش آمدید</h2>
-            <p class="text-slate-100/80 text-xs mt-1 select-none">امروز یک روز عالی برای مدیریت کلینیک است.</p>
-          </div>
+          <v-app-bar-nav-icon variant="text" @click="drawer = !drawer" class="!text-[#6b7280] lg:!hidden" />
         </template>
+
+        <div class="hidden lg:flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-[#f0fdf4] dark:bg-[#064e3b]/30 flex items-center justify-center">
+            <span class="text-[#059669] text-sm">&#10003;</span>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-[#111827] dark:text-[#f3f4f6] leading-tight">خوش آمدید</p>
+            <p class="text-[11px] text-[#9ca3af]">آماده مدیریت کلینیک</p>
+          </div>
+        </div>
 
         <v-spacer />
 
-        <div class="flex items-center gap-2 md:gap-4">
-          <v-btn icon variant="text" @click="toggleTheme" class="hidden sm:flex">
-            <Sun v-if="!isDark" class="w-5.5 h-5.5 stroke-slate-100!" />
-            <Moon v-else class="w-5.5 h-5.5 fill-slate-200" />
+        <div class="flex items-center gap-1">
+          <v-btn icon variant="text" size="small" @click="toggleTheme" class="!text-[#6b7280]">
+            <Sun v-if="!isDark" class="w-[18px] h-[18px] stroke-[#6b7280] fill-none" />
+            <Moon v-else class="w-[18px] h-[18px] fill-[#9ca3af]" />
           </v-btn>
-
-          <!--
-          <NuxtLink to="/my-profile">
-            <v-btn icon variant="text" class="fill-slate-100 hover:fill-slate-300 hidden sm:flex">
-              <Settings class="w-5.5 h-5.5" />
-            </v-btn>
-          </NuxtLink>
-          -->
-
-          <v-btn icon variant="text" class="fill-slate-100 hover:fill-red-400!" @click="logout">
-            <TurnOffIcon class="w-5.5 h-5.5" />
+          <v-btn icon variant="text" size="small" class="!text-[#6b7280] hover:!text-[#ef4444]!" @click="logout">
+            <TurnOffIcon class="w-[18px] h-[18px] fill-[#9ca3af]" />
           </v-btn>
         </div>
       </v-app-bar>
 
-      <v-main class="bg-transparent! min-h-screen pt-20">
-        <div class="max-w-[1600px] mx-auto">
+      <v-main class="bg-transparent! min-h-screen pt-16">
+        <div class="max-w-[1520px] mx-auto">
           <slot />
         </div>
       </v-main>
@@ -141,15 +132,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useDisplay } from 'vuetify'
+import ClinicLoadingScreen from '~/components/ClinicLoadingScreen.vue'
 import AltArrowLeft from '~/components/icons/AltArrowLeft.vue'
 import Calendar from '~/components/icons/Calendar.vue'
 import Clock from '~/components/icons/Clock.vue'
 import Grid from '~/components/icons/Grid.vue'
 import HomeAngle from '~/components/icons/HomeAngle.vue'
 import MedicalKit from '~/components/icons/MedicalKit.vue'
-import Settings from '~/components/icons/Settings.vue'
 import TurnOffIcon from '~/components/icons/TurnOffIcon.vue'
-import Users from '~/components/icons/Users.vue'
 import UsersGroup from '~/components/icons/UsersGroup.vue'
 import DocumentText from '~/components/icons/DocumentText.vue'
 import ShieldCheck from '~/components/icons/ShieldCheck.vue'
@@ -159,7 +149,9 @@ import Wallet from '~/components/icons/Wallet.vue'
 import Profile from '~/components/icons/Profile.vue'
 import Sun from '~/components/icons/Sun.vue'
 import Moon from '~/components/icons/Moon.vue'
+import Users from '~/components/icons/Users.vue'
 
+const route = useRoute()
 const { user, logout } = useAuth()
 const { apiLoading } = useApi()
 const { smAndDown } = useDisplay()
@@ -170,12 +162,17 @@ const rail = ref(false)
 const isLoading = ref(true)
 const isMobile = computed(() => smAndDown.value)
 
+const isActive = (path: string) => {
+  if (path === '/dashboard') return route.path === '/dashboard'
+  return route.path.startsWith(path)
+}
+
 const updateDrawerState = () => {
   drawer.value = !isMobile.value
 }
 
 onMounted(() => {
-  setTimeout(() => { isLoading.value = false }, 1200)
+  setTimeout(() => { isLoading.value = false }, 1400)
   updateDrawerState()
   window.addEventListener('resize', updateDrawerState)
   initTheme()
@@ -205,7 +202,7 @@ const userInitial = computed(() => {
 const ALL_MENUS = [
   { title: 'داشبورد', to: '/dashboard', icon: HomeAngle, roles: ['all'], category: 'primary' },
   { title: 'تقویم کاری', to: '/calendar', icon: Calendar, roles: ['admin_doctor', 'doctor'], category: 'primary' },
-  { title: 'تنظیم زمانبندی رزروها', to: '/scheduling', icon: Clock, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: 'زمانبندی رزروها', to: '/scheduling', icon: Clock, roles: ['admin_doctor', 'doctor'], category: 'primary' },
   { title: 'نوبت‌های بیماران', to: '/appointments', icon: Grid, roles: ['admin_doctor', 'doctor'], category: 'primary' },
   { title: 'انواع نوبت', to: '/visit-types', icon: DocumentText, roles: ['admin_doctor', 'doctor'], category: 'primary' },
   { title: 'لیست کاربران', to: '/users', icon: Users, roles: ['admin_doctor'], category: 'primary' },
@@ -236,7 +233,7 @@ const patientMenu = computed(() =>
 )
 
 const menuSections = computed(() => [
-  { label: 'اصلی', items: primaryMenu.value },
+  { label: 'منوی اصلی', items: primaryMenu.value },
   { label: 'بیماران', items: patientMenu.value },
 ])
 </script>

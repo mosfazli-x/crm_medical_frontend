@@ -196,6 +196,12 @@ export interface Attachment {
   name: string
   fileName?: string
   filePath: string
+  fileType: string
+  fileSize: number
+  mimeType: string
+  storagePath: string
+  createdAt: string
+  downloadUrl: string | null
   uploaded_at?: string
   size?: number
 }

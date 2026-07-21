@@ -48,13 +48,13 @@
       </div>
 
       <!-- Welcome Card -->
-      <div class="!rounded-2xl !bg-gradient-to-br !from-blue-600 !to-blue-800 dark:!from-blue-700 dark:!to-blue-950 !p-8 !text-white">
+      <div class="!rounded-2xl !bg-gradient-to-br !from-indigo-600 !to-indigo-800 dark:!from-indigo-700 dark:!to-indigo-950 !p-8 !text-white">
         <div class="!flex !items-start !justify-between !gap-6">
           <div class="!space-y-3 !flex-1">
             <h1 class="!text-2xl !font-bold !tracking-tight">
               {{ patientData.patient.first_name ? `خوش آمدید، ${patientData.patient.first_name} عزیز` : 'خوش آمدید' }}
             </h1>
-            <p class="!text-blue-100 !text-sm !leading-relaxed !max-w-lg">
+            <p class="!text-indigo-100 !text-sm !leading-relaxed !max-w-lg">
               به پنل کاربری خود خوش آمدید. از اینجا می‌توانید پیام‌های خود را مشاهده کنید، نوبت‌های آتی را ببینید و اطلاعات پرونده خود را به‌روزرسانی کنید.
             </p>
           </div>
@@ -176,7 +176,7 @@
       <!-- ── Patient Profile Info ── -->
       <section>
         <div class="!flex !items-center !gap-2 !mb-6">
-          <div class="!w-1 !h-4 !rounded-full !bg-blue-600 dark:!bg-blue-500" />
+          <div class="!w-1 !h-4 !rounded-full !bg-indigo-600 dark:!bg-indigo-500" />
           <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">اطلاعات پرونده</h2>
         </div>
 
@@ -217,7 +217,7 @@
               {{ profileComplete ? 'پرونده شما کامل است' : 'برخی اطلاعات مانند تلفن، آدرس یا بیمه ثبت نشده است' }}
             </p>
             <button
-              class="!shrink-0 !px-5 !py-2 !bg-blue-600 hover:!bg-blue-700 active:!bg-blue-800 !text-white !text-xs !font-medium !rounded-xl !transition-all !duration-200 !flex !items-center !gap-2"
+              class="!shrink-0 !px-5 !py-2 !bg-indigo-600 hover:!bg-indigo-700 active:!bg-indigo-800 !text-white !text-xs !font-medium !rounded-xl !transition-all !duration-200 !flex !items-center !gap-2"
               @click="openEditDialog"
             >
               <v-icon size="16" color="white">mdi-pencil-outline</v-icon>
@@ -339,7 +339,7 @@
       <!-- ── Key Metrics ── -->
       <section>
         <div class="!flex !items-center !gap-2 !mb-6">
-          <div class="!w-1 !h-4 !rounded-full !bg-blue-600 dark:!bg-blue-500" />
+          <div class="!w-1 !h-4 !rounded-full !bg-indigo-600 dark:!bg-indigo-500" />
           <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">آمار کلی</h2>
         </div>
         
@@ -353,7 +353,7 @@
                   {{ formatNumber(data.patients.total) }}
                 </p>
               </div>
-              <div class="!p-3 !rounded-xl !bg-blue-50 dark:!bg-blue-950/30 !text-blue-600 dark:!text-blue-400">
+              <div class="!p-3 !rounded-xl !bg-indigo-50 dark:!bg-indigo-950/30 !text-indigo-600 dark:!text-indigo-400">
                 <UsersGroup class="!w-5 !h-5 !fill-current" />
               </div>
             </div>
@@ -439,7 +439,7 @@
           <!-- SMS Credit -->
           <div class="!rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6">
             <div class="!flex !items-center !gap-3 !mb-6">
-              <div class="!p-2.5 !rounded-xl !bg-blue-50 dark:!bg-blue-950/30 !text-blue-600 dark:!text-blue-400">
+              <div class="!p-2.5 !rounded-xl !bg-indigo-50 dark:!bg-indigo-950/30 !text-indigo-600 dark:!text-indigo-400">
                 <ChatDots class="!w-5 !h-5 !fill-current" />
               </div>
               <div>
@@ -461,7 +461,7 @@
               <div class="!relative !h-1.5 !bg-slate-100 dark:!bg-zinc-800 !rounded-full !overflow-hidden">
                 <div
                   class="!h-full !rounded-full !transition-all !duration-1000 !ease-out"
-                  :class="smsPercent > 20 ? '!bg-blue-600 dark:!bg-blue-500' : smsPercent > 5 ? '!bg-amber-500' : '!bg-rose-500'"
+                  :class="smsPercent > 20 ? '!bg-indigo-600 dark:!bg-indigo-500' : smsPercent > 5 ? '!bg-amber-500' : '!bg-rose-500'"
                   :style="{ width: smsPercent + '%' }"
                 />
               </div>
@@ -487,7 +487,7 @@
           <!-- Storage -->
           <div class="!rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6">
             <div class="!flex !items-center !gap-3 !mb-6">
-              <div class="!p-2.5 !rounded-xl !bg-violet-50 dark:!bg-violet-950/30 !text-violet-600 dark:!text-violet-400">
+              <div class="!p-2.5 !rounded-xl !bg-indigo-50 dark:!bg-indigo-950/30 !text-indigo-600 dark:!text-indigo-400">
                 <DocumentText class="!w-5 !h-5 !fill-current" />
               </div>
               <div>
@@ -506,13 +506,13 @@
 
               <div class="!relative !h-1.5 !bg-slate-100 dark:!bg-zinc-800 !rounded-full !overflow-hidden">
                 <div
-                  class="!h-full !rounded-full !bg-violet-600 dark:!bg-violet-500 !transition-all !duration-1000 !ease-out"
+                  class="!h-full !rounded-full !bg-indigo-600 dark:!bg-indigo-500 !transition-all !duration-1000 !ease-out"
                   :style="{ width: storagePercent + '%' }"
                 />
               </div>
 
               <div class="!flex !items-center !justify-between !text-xs">
-                <span class="!font-medium !px-2.5 !py-0.5 !rounded-full !bg-violet-500/5 !text-violet-600 dark:!text-violet-400">
+                <span class="!font-medium !px-2.5 !py-0.5 !rounded-full !bg-indigo-500/5 !text-indigo-600 dark:!text-indigo-400">
                   {{ storagePercent }}% استفاده شده
                 </span>
               </div>
@@ -532,7 +532,7 @@
           <!-- Patients Breakdown -->
           <UiContentCard title="بیماران" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
             <template #headerAction>
-              <NuxtLink to="/patients" class="!text-xs !font-medium !text-blue-600 dark:!text-blue-400 hover:!underline">
+              <NuxtLink to="/patients" class="!text-xs !font-medium !text-indigo-600 dark:!text-indigo-400 hover:!underline">
                 مشاهده همه &larr;
               </NuxtLink>
             </template>
@@ -546,7 +546,7 @@
           <!-- Appointments Breakdown -->
           <UiContentCard title="نوبت‌ها" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
             <template #headerAction>
-              <NuxtLink to="/appointments" class="!text-xs !font-medium !text-blue-600 dark:!text-blue-400 hover:!underline">
+              <NuxtLink to="/appointments" class="!text-xs !font-medium !text-indigo-600 dark:!text-indigo-400 hover:!underline">
                 مشاهده همه &larr;
               </NuxtLink>
             </template>
@@ -560,7 +560,7 @@
           <!-- Messages Breakdown -->
           <UiContentCard title="پیام‌ها" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
             <template #headerAction>
-              <NuxtLink to="/messaging" class="!text-xs !font-medium !text-blue-600 dark:!text-blue-400 hover:!underline">
+              <NuxtLink to="/messaging" class="!text-xs !font-medium !text-indigo-600 dark:!text-indigo-400 hover:!underline">
                 مشاهده همه &larr;
               </NuxtLink>
             </template>
@@ -601,9 +601,9 @@
                   <div class="!text-xl !font-bold !text-slate-700 dark:!text-zinc-300 !mb-1">{{ formatNumber(data.visits.yesterday) }}</div>
                   <div class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500">دیروز</div>
                 </div>
-                <div class="!text-center !p-4 !rounded-xl !border !border-blue-500/10 !bg-blue-500/5">
-                  <div class="!text-xl !font-bold !text-blue-600 dark:!text-blue-400 !mb-1">{{ formatNumber(data.visits.today) }}</div>
-                  <div class="!text-[11px] !font-medium !text-blue-600/80 dark:!text-blue-400">امروز</div>
+                <div class="!text-center !p-4 !rounded-xl !border !border-indigo-500/10 !bg-indigo-500/5">
+                  <div class="!text-xl !font-bold !text-indigo-600 dark:!text-indigo-400 !mb-1">{{ formatNumber(data.visits.today) }}</div>
+                  <div class="!text-[11px] !font-medium !text-indigo-600/80 dark:!text-indigo-400">امروز</div>
                 </div>
               </div>
             </div>
@@ -612,7 +612,7 @@
           <!-- Billing Summary -->
           <UiContentCard title="خلاصه مالی" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
             <template #headerAction>
-              <NuxtLink to="/billing" class="!text-xs !font-medium !text-blue-600 dark:!text-blue-400 hover:!underline">
+              <NuxtLink to="/billing" class="!text-xs !font-medium !text-indigo-600 dark:!text-indigo-400 hover:!underline">
                 مشاهده همه &larr;
               </NuxtLink>
             </template>
@@ -650,7 +650,7 @@
     <template v-if="hasSchedule && data">
       <section>
         <div class="!flex !items-center !gap-2 !mb-6">
-          <div class="!w-1 !h-4 !rounded-full !bg-blue-600 dark:!bg-blue-500" />
+          <div class="!w-1 !h-4 !rounded-full !bg-indigo-600 dark:!bg-indigo-500" />
           <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">برنامه امروز شما</h2>
         </div>
 

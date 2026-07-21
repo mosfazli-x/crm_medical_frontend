@@ -8,10 +8,10 @@ export default defineNuxtPlugin((app) => {
       themes: {
         light: {
           colors: {
-            background: '#f8fafc',
+            background: '#f0f2f5',
             surface: '#ffffff',
-            primary: '#5465ff',
-            secondary: '#788bff',
+            primary: '#4F46E5',
+            secondary: '#6366F1',
             error: '#ef4444',
             info: '#3b82f6',
             success: '#22c55e',
@@ -20,10 +20,10 @@ export default defineNuxtPlugin((app) => {
         },
         dark: {
           colors: {
-            background: '#0f172a',
-            surface: '#1e293b',
-            primary: '#788bff',
-            secondary: '#9bb1ff',
+            background: '#0f1117',
+            surface: '#1a1c23',
+            primary: '#818CF8',
+            secondary: '#C7D2FE',
             error: '#f87171',
             info: '#60a5fa',
             success: '#4ade80',

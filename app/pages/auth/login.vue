@@ -37,7 +37,7 @@
         </NuxtLink>
       </div>
 
-      <v-btn type="submit" color="#5465ff" size="x-large" block :loading="loading" class="crm-btn-accent rounded-xl! h-12!">
+      <v-btn type="submit" color="#4F46E5" size="x-large" block :loading="loading" class="crm-btn-accent rounded-xl! h-12!">
         ورود
       </v-btn>
     </v-form>
