@@ -1,5 +1,5 @@
 <template>
-  <span :class="badgeClass(status)">{{ badgeLabel(status) }}</span>
+  <span :class="badgeClass(status)" role="status" :aria-label="badgeLabel(status)">{{ badgeLabel(status) }}</span>
 </template>
 
 <script setup lang="ts">

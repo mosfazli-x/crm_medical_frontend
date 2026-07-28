@@ -1,11 +1,11 @@
 <template>
   <UiPageContainer class="!space-y-8">
     <!-- ─── Dashboard Header ─── -->
-    <UiPageHeader :title="'داشبورد'" :subtitle="todayPersian">
+    <UiPageHeader :title="$t('dashboard.title')" :subtitle="todayPersian">
       <template v-if="!isPatient && canViewDashboard && !loading" #badge>
         <div class="!flex !items-center !gap-2 !px-3 !py-1 !rounded-full !border !border-emerald-500/10 !bg-emerald-500/5 !text-xs !font-medium !text-emerald-600 dark:!text-emerald-400">
           <span class="!w-1.5 !h-1.5 !rounded-full !bg-emerald-500 !animate-pulse !shrink-0" />
-          به پنل مدیریت کلینیک خوش آمدید
+          {{ $t('dashboard.adminWelcome') }}
         </div>
       </template>
     </UiPageHeader>
@@ -32,10 +32,10 @@
           </div>
           <div class="!flex-1 !min-w-0">
             <p class="!text-sm !font-semibold !text-amber-900 dark:!text-amber-300">
-              {{ patientData.messages.unread }} پیام خوانده نشده دارید
+              {{ $t('dashboard.messagesUnreadCount', { count: patientData.messages.unread }) }}
             </p>
             <p class="!text-xs !text-amber-700/80 dark:!text-amber-400/60 !mt-0.5">
-              برای مشاهده و پاسخ به پیام‌های جدید به بخش پیام‌ها مراجعه کنید.
+              {{ $t('dashboard.messagesUnreadDesc') }}
             </p>
           </div>
         </div>
@@ -43,7 +43,7 @@
           to="/patient/messaging"
           class="!shrink-0 !px-4 !py-2 !bg-amber-600 hover:!bg-amber-700 active:!bg-amber-800 !text-white !text-xs !font-medium !rounded-xl !transition-all !duration-200"
         >
-          مشاهده پیام‌ها
+          {{ $t('common.viewMessages') }}
         </NuxtLink>
       </div>
 
@@ -52,10 +52,10 @@
         <div class="!flex !items-start !justify-between !gap-6">
           <div class="!space-y-3 !flex-1">
             <h1 class="!text-2xl !font-bold !tracking-tight">
-              {{ patientData.patient.first_name ? `خوش آمدید، ${patientData.patient.first_name} عزیز` : 'خوش آمدید' }}
+              {{ patientData.patient.first_name ? $t('dashboard.patientWelcomeName', { name: patientData.patient.first_name }) : $t('dashboard.patientWelcome') }}
             </h1>
             <p class="!text-indigo-100 !text-sm !leading-relaxed !max-w-lg">
-              به پنل کاربری خود خوش آمدید. از اینجا می‌توانید پیام‌های خود را مشاهده کنید، نوبت‌های آتی را ببینید و اطلاعات پرونده خود را به‌روزرسانی کنید.
+              {{ $t('dashboard.patientWelcomeDesc') }}
             </p>
           </div>
           <div class="!shrink-0 !hidden sm:!block">
@@ -72,7 +72,7 @@
         <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
           <div class="!flex !items-start !justify-between">
             <div class="!space-y-2">
-              <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">پیام‌ها</p>
+              <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">{{ $t('dashboard.messages') }}</p>
               <p class="!text-3xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
                 {{ formatNumber(patientData.messages.total) }}
               </p>
@@ -83,9 +83,9 @@
           </div>
           <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !gap-1.5 !text-xs">
             <span v-if="patientData.messages.unread > 0" class="!text-rose-500 dark:!text-rose-400 !font-semibold">
-              {{ formatNumber(patientData.messages.unread) }} پیام خوانده نشده
+              {{ $t('dashboard.messagesUnreadCountShort', { count: formatNumber(patientData.messages.unread) }) }}
             </span>
-            <span v-else class="!text-emerald-500 !font-semibold">هیچ پیام خوانده نشده‌ای ندارید</span>
+            <span v-else class="!text-emerald-500 !font-semibold">{{ $t('common.noUnreadMessages') }}</span>
           </div>
         </div>
 
@@ -93,7 +93,7 @@
         <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
           <div class="!flex !items-start !justify-between">
             <div class="!space-y-2">
-              <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">نوبت‌های پیش رو</p>
+              <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">{{ $t('dashboard.appointmentsUpcoming') }}</p>
               <p class="!text-3xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
                 {{ formatNumber(patientData.appointments.length) }}
               </p>
@@ -103,7 +103,7 @@
             </div>
           </div>
           <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !text-xs !text-slate-400 dark:!text-zinc-500">
-            نوبت‌های فعال و آتی شما
+            {{ $t('dashboard.appointmentsUpcomingDesc') }}
           </div>
         </div>
 
@@ -111,9 +111,9 @@
         <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
           <div class="!flex !items-start !justify-between">
             <div class="!space-y-2">
-              <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">وضعیت پرونده</p>
+              <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">{{ $t('dashboard.profileStatus') }}</p>
               <p class="!text-sm !font-semibold !text-slate-900 dark:!text-white !tracking-tight">
-                {{ profileComplete ? 'تکمیل شده' : 'ناقص' }}
+                {{ profileComplete ? $t('dashboard.profileComplete') : $t('dashboard.profileIncomplete') }}
               </p>
             </div>
             <div class="!p-3 !rounded-xl !bg-violet-50 dark:!bg-violet-950/30 !text-violet-600 dark:!text-violet-400">
@@ -121,8 +121,8 @@
             </div>
           </div>
           <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !gap-1.5 !text-xs">
-            <span v-if="profileComplete" class="!text-emerald-500 !font-semibold">مشخصات شما کامل است</span>
-            <span v-else class="!text-amber-500 !font-semibold">برای تکمیل پرونده کلیک کنید</span>
+            <span v-if="profileComplete" class="!text-emerald-500 !font-semibold">{{ $t('dashboard.profileCompleteMsg') }}</span>
+            <span v-else class="!text-amber-500 !font-semibold">{{ $t('dashboard.profileIncompleteMsg') }}</span>
           </div>
         </div>
       </div>
@@ -131,14 +131,14 @@
       <section>
         <div class="!flex !items-center !gap-2 !mb-6">
           <div class="!w-1 !h-4 !rounded-full !bg-emerald-600 dark:!bg-emerald-500" />
-          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">نوبت‌های پیش رو</h2>
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">{{ $t('dashboard.appointmentsUpcoming') }}</h2>
         </div>
 
         <div class="!rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !overflow-hidden">
           <div v-if="!patientData.appointments.length" class="!py-16 !text-center">
             <Calendar class="!w-10 !h-10 !text-slate-300 dark:!text-zinc-600 !fill-current !mx-auto !mb-4" />
-            <p class="!text-sm !font-semibold !text-slate-500 dark:!text-zinc-400">نوبتی ثبت نشده است</p>
-            <p class="!text-xs !text-slate-400 dark:!text-zinc-500 !mt-2">نوبت‌های آتی شما در این قسمت نمایش داده می‌شوند.</p>
+            <p class="!text-sm !font-semibold !text-slate-500 dark:!text-zinc-400">{{ $t('dashboard.noAppointments') }}</p>
+            <p class="!text-xs !text-slate-400 dark:!text-zinc-500 !mt-2">{{ $t('dashboard.noAppointmentsDesc') }}</p>
           </div>
 
           <div v-else class="!divide-y !divide-slate-100/60 dark:!divide-zinc-800/60">
@@ -159,10 +159,10 @@
 
                 <div class="!space-y-1">
                   <h4 class="!text-sm !font-semibold !text-slate-900 dark:!text-white">
-                    {{ appt.doctor_name || 'پزشک' }}
+                    {{ appt.doctor_name || $t('dashboard.doctor') }}
                   </h4>
                   <p class="!text-xs !text-slate-400 dark:!text-zinc-500">
-                    {{ appt.status ? statusLabel(appt.status) : 'در انتظار تایید' }}
+                    {{ appt.status ? statusLabel(appt.status) : $t('dashboard.awaitingConfirmation') }}
                   </p>
                 </div>
               </div>
@@ -177,36 +177,36 @@
       <section>
         <div class="!flex !items-center !gap-2 !mb-6">
           <div class="!w-1 !h-4 !rounded-full !bg-indigo-600 dark:!bg-indigo-500" />
-          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">اطلاعات پرونده</h2>
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">{{ $t('dashboard.profileInfo') }}</h2>
         </div>
 
         <div class="!rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !overflow-hidden">
           <div class="!p-6 !space-y-5">
             <div class="!grid !grid-cols-1 md:!grid-cols-2 lg:!grid-cols-3 !gap-5">
               <div>
-                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">نام</p>
+                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">{{ $t('dashboard.firstName') }}</p>
                 <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">
                   {{ patientData.patient.first_name || '---' }} {{ patientData.patient.last_name || '' }}
                 </p>
               </div>
               <div>
-                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">کد ملی</p>
+                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">{{ $t('dashboard.nationalId') }}</p>
                 <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200" dir="ltr">{{ patientData.patient.national_id || '---' }}</p>
               </div>
               <div>
-                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">تلفن همراه</p>
+                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">{{ $t('dashboard.phone') }}</p>
                 <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200" dir="ltr">{{ patientData.patient.phone || '---' }}</p>
               </div>
               <div>
-                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">تاریخ تولد</p>
+                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">{{ $t('dashboard.birthDate') }}</p>
                 <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">{{ formatJalaliDate(patientData.patient.birth_date) }}</p>
               </div>
               <div>
-                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">بیمه</p>
+                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">{{ $t('dashboard.insurance') }}</p>
                 <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">{{ insuranceLabel(patientData.patient.insurance_type) }}</p>
               </div>
               <div>
-                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">آدرس</p>
+                <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">{{ $t('dashboard.address') }}</p>
                 <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">{{ patientData.patient.address || '---' }}</p>
               </div>
             </div>
@@ -214,14 +214,14 @@
 
           <div class="!px-6 !py-4 !bg-slate-50/50 dark:!bg-zinc-800/30 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !justify-between">
             <p class="!text-xs !text-slate-400 dark:!text-zinc-500">
-              {{ profileComplete ? 'پرونده شما کامل است' : 'برخی اطلاعات مانند تلفن، آدرس یا بیمه ثبت نشده است' }}
+              {{ profileComplete ? $t('dashboard.profileCompleteFull') : $t('dashboard.profileIncompleteFull') }}
             </p>
             <button
               class="!shrink-0 !px-5 !py-2 !bg-indigo-600 hover:!bg-indigo-700 active:!bg-indigo-800 !text-white !text-xs !font-medium !rounded-xl !transition-all !duration-200 !flex !items-center !gap-2"
               @click="openEditDialog"
             >
               <v-icon size="16" color="white">mdi-pencil-outline</v-icon>
-              ویرایش اطلاعات
+              {{ $t('dashboard.editProfile') }}
             </button>
           </div>
         </div>
@@ -232,8 +232,8 @@
         <v-card class="crm-dialog overflow-hidden!" elevation="0">
           <div class="crm-dialog-header">
             <div>
-              <h2 class="crm-dialog-title text-xl!">ویرایش اطلاعات پرونده</h2>
-              <span class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !block !font-normal">تکمیل اطلاعات تماس و بیمه</span>
+              <h2 class="crm-dialog-title text-xl!">{{ $t('dashboard.editProfileTitle') }}</h2>
+              <span class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !block !font-normal">{{ $t('dashboard.editProfileSubtitle') }}</span>
             </div>
             <v-btn icon variant="text" size="small" class="!text-slate-400 hover:!text-slate-800" @click="editDialogOpen = false">
               <CloseCircle class="!w-6 !h-6 !fill-slate-600! dark:!fill-slate-200!" />
@@ -243,7 +243,7 @@
           <v-card-text class="!p-8 !bg-slate-50/30 dark:!bg-slate-900/30">
             <div class="!space-y-5">
               <div>
-                <label class="!text-xs !font-medium !text-slate-600 dark:!text-zinc-400 !mb-1.5 !block">تلفن همراه</label>
+                <label class="!text-xs !font-medium !text-slate-600 dark:!text-zinc-400 !mb-1.5 !block">{{ $t('dashboard.phone') }}</label>
                 <v-text-field
                   v-model="editForm.phone"
                   variant="outlined"
@@ -255,19 +255,19 @@
                 />
               </div>
               <div>
-                <label class="!text-xs !font-medium !text-slate-600 dark:!text-zinc-400 !mb-1.5 !block">آدرس</label>
+                <label class="!text-xs !font-medium !text-slate-600 dark:!text-zinc-400 !mb-1.5 !block">{{ $t('dashboard.address') }}</label>
                 <v-textarea
                   v-model="editForm.address"
                   variant="outlined"
                   density="comfortable"
-                  placeholder="تهران، خیابان ..."
+                  :placeholder="$t('dashboard.addressPlaceholder')"
                   rows="2"
                   hide-details
                   class="!rounded-xl"
                 />
               </div>
               <div>
-                <label class="!text-xs !font-medium !text-slate-600 dark:!text-zinc-400 !mb-1.5 !block">نوع بیمه</label>
+                <label class="!text-xs !font-medium !text-slate-600 dark:!text-zinc-400 !mb-1.5 !block">{{ $t('dashboard.insuranceType') }}</label>
                 <v-select
                   v-model="editForm.insurance_type"
                   :items="insuranceOptions"
@@ -275,7 +275,7 @@
                   item-value="key"
                   variant="outlined"
                   density="comfortable"
-                  placeholder="نوع بیمه خود را انتخاب کنید"
+                  :placeholder="$t('dashboard.selectInsurance')"
                   hide-details
                   class="!rounded-xl"
                 />
@@ -285,9 +285,9 @@
 
           <v-card-actions class="!px-8 !py-4 !border-t !border-slate-100 dark:!border-zinc-800">
             <v-spacer />
-            <button class="crm-btn crm-btn-ghost" @click="editDialogOpen = false">انصراف</button>
+            <button class="crm-btn crm-btn-ghost" @click="editDialogOpen = false">{{ $t('common.cancel') }}</button>
             <button class="crm-btn crm-btn-accent" :disabled="saving" @click="saveProfile">
-              {{ saving ? 'در حال ذخیره...' : 'ذخیره تغییرات' }}
+              {{ saving ? $t('common.saving') : $t('dashboard.saveChanges') }}
             </button>
           </v-card-actions>
         </v-card>
@@ -296,7 +296,7 @@
 
     <!-- ─── Restricted Access (non-patient, non-admin) ─── -->
     <template v-else-if="!isPatient && !canViewDashboard">
-      <UiEmptyState title="دسترسی محدود" description="شما دسترسی لازم برای مشاهده داشبورد را ندارید.">
+      <UiEmptyState :title="$t('dashboard.restrictedAccess')" :description="$t('dashboard.restrictedAccessDesc')">
         <template #icon>
           <ShieldCheck class="!w-8 !h-8 !text-slate-300 dark:!text-zinc-600 !fill-current" />
         </template>
@@ -321,10 +321,10 @@
           </div>
           <div class="!flex-1 !min-w-0">
             <p class="!text-sm !font-semibold !text-amber-900 dark:!text-amber-300">
-              {{ data.messages.unread }} پیام خوانده نشده دارید
+              {{ $t('dashboard.messagesUnreadCount', { count: data.messages.unread }) }}
             </p>
             <p class="!text-xs !text-amber-700/80 dark:!text-amber-400/60 !mt-0.5">
-              برای مشاهده و پاسخ به پیام‌های جدید به بخش پیام‌ها مراجعه کنید.
+              {{ $t('dashboard.messagesUnreadDesc') }}
             </p>
           </div>
         </div>
@@ -332,7 +332,7 @@
           to="/messaging"
           class="!shrink-0 !px-4 !py-2 !bg-amber-600 hover:!bg-amber-700 active:!bg-amber-800 !text-white !text-xs !font-medium !rounded-xl !transition-all !duration-200"
         >
-          مشاهده پیام‌ها
+          {{ $t('common.viewMessages') }}
         </NuxtLink>
       </div>
 
@@ -340,7 +340,7 @@
       <section>
         <div class="!flex !items-center !gap-2 !mb-6">
           <div class="!w-1 !h-4 !rounded-full !bg-indigo-600 dark:!bg-indigo-500" />
-          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">آمار کلی</h2>
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">{{ $t('dashboard.stats') }}</h2>
         </div>
         
         <div class="!grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4 !gap-6">
@@ -348,7 +348,7 @@
           <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
             <div class="!flex !items-start !justify-between">
               <div class="!space-y-2">
-                <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">کل بیماران</p>
+                <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">{{ $t('dashboard.totalPatients') }}</p>
                 <p class="!text-3xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
                   {{ formatNumber(data.patients.total) }}
                 </p>
@@ -359,7 +359,7 @@
             </div>
             <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !gap-1.5 !text-xs !text-slate-400 dark:!text-zinc-500">
               <span class="!inline-block !w-1.5 !h-1.5 !rounded-full !bg-emerald-500" />
-              <span>+{{ formatNumber(data.patients.yesterday) }} دیروز</span>
+              <span>+{{ formatNumber(data.patients.yesterday) }} {{ $t('common.yesterday') }}</span>
             </div>
           </div>
 
@@ -367,7 +367,7 @@
           <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
             <div class="!flex !items-start !justify-between">
               <div class="!space-y-2">
-                <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">نوبت‌های امروز</p>
+                <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">{{ $t('dashboard.todayAppointments') }}</p>
                 <p class="!text-3xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
                   {{ formatNumber(data.appointments.today) }}
                 </p>
@@ -377,9 +377,9 @@
               </div>
             </div>
             <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !gap-3 !text-xs !text-slate-400 dark:!text-zinc-500">
-              <span>دیروز: {{ formatNumber(data.appointments.yesterday) }}</span>
+              <span>{{ $t('common.yesterday') }}: {{ formatNumber(data.appointments.yesterday) }}</span>
               <span class="!w-1 !h-1 !rounded-full !bg-slate-200 dark:!bg-zinc-700" />
-              <span>فردا: {{ formatNumber(data.appointments.tomorrow) }}</span>
+              <span>{{ $t('common.tomorrow') }}: {{ formatNumber(data.appointments.tomorrow) }}</span>
             </div>
           </div>
 
@@ -387,7 +387,7 @@
           <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
             <div class="!flex !items-start !justify-between">
               <div class="!space-y-2">
-                <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">پیام‌های امروز</p>
+                <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">{{ $t('dashboard.todayMessages') }}</p>
                 <p class="!text-3xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
                   {{ formatNumber(data.messages.today) }}
                 </p>
@@ -397,12 +397,12 @@
               </div>
             </div>
             <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !gap-3 !text-xs !text-slate-400 dark:!text-zinc-500">
-              <span>دیروز: {{ formatNumber(data.messages.yesterday) }}</span>
+              <span>{{ $t('common.yesterday') }}: {{ formatNumber(data.messages.yesterday) }}</span>
               <span class="!w-1 !h-1 !rounded-full !bg-slate-200 dark:!bg-zinc-700" />
               <span v-if="data.messages.unread > 0" class="!text-rose-500 dark:!text-rose-400 !font-semibold">
-                {{ formatNumber(data.messages.unread) }} نخوانده
+                {{ $t('dashboard.unreadCount', { count: formatNumber(data.messages.unread) }) }}
               </span>
-              <span v-else>0 نخوانده</span>
+              <span v-else>{{ $t('dashboard.unreadCount', { count: '0' }) }}</span>
             </div>
           </div>
 
@@ -410,7 +410,7 @@
           <div class="!relative !rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !p-6 !transition-all !duration-300 hover:!shadow-xl hover:!shadow-slate-100/50 dark:hover:!shadow-none hover:!-translate-y-0.5">
             <div class="!flex !items-start !justify-between">
               <div class="!space-y-2">
-                <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">ویزیت‌های امروز</p>
+                <p class="!text-xs !font-medium !text-slate-400 dark:!text-zinc-500">{{ $t('dashboard.todayVisits') }}</p>
                 <p class="!text-3xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
                   {{ formatNumber(data.visits.today) }}
                 </p>
@@ -420,9 +420,9 @@
               </div>
             </div>
             <div class="!mt-4 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80 !flex !items-center !gap-3 !text-xs !text-slate-400 dark:!text-zinc-500">
-              <span>دیروز: {{ formatNumber(data.visits.yesterday) }}</span>
+              <span>{{ $t('common.yesterday') }}: {{ formatNumber(data.visits.yesterday) }}</span>
               <span class="!w-1 !h-1 !rounded-full !bg-slate-200 dark:!bg-zinc-700" />
-              <span>کل: {{ formatNumber(data.visits.total) }}</span>
+              <span>{{ $t('common.total') }}: {{ formatNumber(data.visits.total) }}</span>
             </div>
           </div>
         </div>
@@ -432,7 +432,7 @@
       <section>
         <div class="!flex !items-center !gap-2 !mb-6">
           <div class="!w-1 !h-4 !rounded-full !bg-violet-600 dark:!bg-violet-500" />
-          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">وضعیت منابع</h2>
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">{{ $t('dashboard.resourceStatus') }}</h2>
         </div>
 
         <div class="!grid !grid-cols-1 lg:!grid-cols-2 !gap-6">
@@ -443,8 +443,8 @@
                 <ChatDots class="!w-5 !h-5 !fill-current" />
               </div>
               <div>
-                <h3 class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">اعتبار پیامک</h3>
-                <p class="!text-xs !text-slate-400 dark:!text-zinc-500">وضعیت کلی لوکال پنل سامانه</p>
+                <h3 class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">{{ $t('dashboard.smsCredit') }}</h3>
+                <p class="!text-xs !text-slate-400 dark:!text-zinc-500">{{ $t('dashboard.smsCreditDesc') }}</p>
               </div>
             </div>
 
@@ -454,7 +454,7 @@
                   {{ formatNumber(data.sms_credit!.remaining) }}
                 </span>
                 <span class="!text-xs !text-slate-400 dark:!text-zinc-500">
-                  از {{ formatNumber(data.sms_credit!.sent + data.sms_credit!.remaining) }} پیامک
+                  {{ $t('dashboard.smsOf', { total: formatNumber(data.sms_credit!.sent + data.sms_credit!.remaining) }) }}
                 </span>
               </div>
 
@@ -471,16 +471,16 @@
                   class="!font-medium !px-2.5 !py-0.5 !rounded-full"
                   :class="smsPercent > 20 ? '!bg-emerald-500/5 !text-emerald-600 dark:!text-emerald-400' : smsPercent > 5 ? '!bg-amber-500/5 !text-amber-600 dark:!text-amber-400' : '!bg-rose-500/5 !text-rose-600 dark:!text-rose-400'"
                 >
-                  {{ smsPercent }}% باقی‌مانده
+                  {{ $t('dashboard.smsRemaining', { percent: smsPercent }) }}
                 </span>
                 <span class="!text-slate-400 dark:!text-zinc-500">
-                  {{ formatNumber(data.sms_credit!.sent) }} ارسال شده
+                  {{ $t('dashboard.smsSent', { count: formatNumber(data.sms_credit!.sent) }) }}
                 </span>
               </div>
             </div>
 
             <div v-else class="!text-center !py-6">
-              <p class="!text-xs !text-slate-400 dark:!text-zinc-500">اطلاعات اعتبار پیامک در دسترس نیست</p>
+              <p class="!text-xs !text-slate-400 dark:!text-zinc-500">{{ $t('dashboard.smsUnavailable') }}</p>
             </div>
           </div>
 
@@ -491,8 +491,8 @@
                 <DocumentText class="!w-5 !h-5 !fill-current" />
               </div>
               <div>
-                <h3 class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">فضای ذخیره‌سازی</h3>
-                <p class="!text-xs !text-slate-400 dark:!text-zinc-500">حجم استفاده شده از فایل‌های کلینیک</p>
+                <h3 class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">{{ $t('dashboard.storage') }}</h3>
+                <p class="!text-xs !text-slate-400 dark:!text-zinc-500">{{ $t('dashboard.storageDesc') }}</p>
               </div>
             </div>
 
@@ -501,7 +501,7 @@
                 <span class="!text-2xl !font-bold !text-slate-900 dark:!text-white !tracking-tight">
                   {{ data.storage.usedFormatted }}
                 </span>
-                <span class="!text-xs !text-slate-400 dark:!text-zinc-500">کل ظرفیت تخصیص یافته</span>
+                <span class="!text-xs !text-slate-400 dark:!text-zinc-500">{{ $t('dashboard.storageCapacity') }}</span>
               </div>
 
               <div class="!relative !h-1.5 !bg-slate-100 dark:!bg-zinc-800 !rounded-full !overflow-hidden">
@@ -513,7 +513,7 @@
 
               <div class="!flex !items-center !justify-between !text-xs">
                 <span class="!font-medium !px-2.5 !py-0.5 !rounded-full !bg-indigo-500/5 !text-indigo-600 dark:!text-indigo-400">
-                  {{ storagePercent }}% استفاده شده
+                  {{ $t('dashboard.storageUsed', { percent: storagePercent }) }}
                 </span>
               </div>
             </div>
@@ -525,54 +525,54 @@
       <section>
         <div class="!flex !items-center !gap-2 !mb-6">
           <div class="!w-1 !h-4 !rounded-full !bg-emerald-600 dark:!bg-emerald-500" />
-          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">گزارش‌های روزانه</h2>
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">{{ $t('dashboard.dailyReports') }}</h2>
         </div>
 
         <div class="!grid !grid-cols-1 lg:!grid-cols-3 !gap-6">
           <!-- Patients Breakdown -->
-          <UiContentCard title="بیماران" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
+          <UiContentCard :title="$t('dashboard.patients')" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
             <template #headerAction>
               <NuxtLink to="/patients" class="!text-xs !font-medium !text-indigo-600 dark:!text-indigo-400 hover:!underline">
-                مشاهده همه &larr;
+                {{ $t('common.viewAll') }}
               </NuxtLink>
             </template>
             <div class="!divide-y !divide-slate-100/60 dark:!divide-zinc-800/60">
-              <BreakdownRow label="دیروز" :value="data.patients.yesterday" class="!p-4" />
-              <BreakdownRow label="امروز" :value="data.patients.today" highlight class="!p-4 !bg-slate-50/40 dark:!bg-zinc-800/20" />
-              <BreakdownRow label="فردا" :value="data.patients.tomorrow" muted class="!p-4" />
+              <BreakdownRow :label="$t('common.yesterday')" :value="data.patients.yesterday" class="!p-4" />
+              <BreakdownRow :label="$t('common.today')" :value="data.patients.today" highlight class="!p-4 !bg-slate-50/40 dark:!bg-zinc-800/20" />
+              <BreakdownRow :label="$t('common.tomorrow')" :value="data.patients.tomorrow" muted class="!p-4" />
             </div>
           </UiContentCard>
 
           <!-- Appointments Breakdown -->
-          <UiContentCard title="نوبت‌ها" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
+          <UiContentCard :title="$t('dashboard.appointments')" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
             <template #headerAction>
               <NuxtLink to="/appointments" class="!text-xs !font-medium !text-indigo-600 dark:!text-indigo-400 hover:!underline">
-                مشاهده همه &larr;
+                {{ $t('common.viewAll') }}
               </NuxtLink>
             </template>
             <div class="!divide-y !divide-slate-100/60 dark:!divide-zinc-800/60">
-              <BreakdownRow label="دیروز" :value="data.appointments.yesterday" class="!p-4" />
-              <BreakdownRow label="امروز" :value="data.appointments.today" highlight class="!p-4 !bg-slate-50/40 dark:!bg-zinc-800/20" />
-              <BreakdownRow label="فردا" :value="data.appointments.tomorrow" class="!p-4" />
+              <BreakdownRow :label="$t('common.yesterday')" :value="data.appointments.yesterday" class="!p-4" />
+              <BreakdownRow :label="$t('common.today')" :value="data.appointments.today" highlight class="!p-4 !bg-slate-50/40 dark:!bg-zinc-800/20" />
+              <BreakdownRow :label="$t('common.tomorrow')" :value="data.appointments.tomorrow" class="!p-4" />
             </div>
           </UiContentCard>
 
           <!-- Messages Breakdown -->
-          <UiContentCard title="پیام‌ها" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
+          <UiContentCard :title="$t('dashboard.messagesTab')" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
             <template #headerAction>
               <NuxtLink to="/messaging" class="!text-xs !font-medium !text-indigo-600 dark:!text-indigo-400 hover:!underline">
-                مشاهده همه &larr;
+                {{ $t('common.viewAll') }}
               </NuxtLink>
             </template>
             <div class="!divide-y !divide-slate-100/60 dark:!divide-zinc-800/60">
-              <BreakdownRow label="دیروز" :value="data.messages.yesterday" class="!p-4" />
-              <BreakdownRow label="امروز" :value="data.messages.today" highlight class="!p-4 !bg-slate-50/40 dark:!bg-zinc-800/20" />
-              <BreakdownRow label="فردا" :value="data.messages.tomorrow" muted class="!p-4" />
+              <BreakdownRow :label="$t('common.yesterday')" :value="data.messages.yesterday" class="!p-4" />
+              <BreakdownRow :label="$t('common.today')" :value="data.messages.today" highlight class="!p-4 !bg-slate-50/40 dark:!bg-zinc-800/20" />
+              <BreakdownRow :label="$t('common.tomorrow')" :value="data.messages.tomorrow" muted class="!p-4" />
               <div class="!flex !items-center !justify-between !px-4 !py-3.5">
-                <span class="!text-xs !font-medium !text-slate-500 dark:!text-zinc-400">خوانده نشده</span>
+                <span class="!text-xs !font-medium !text-slate-500 dark:!text-zinc-400">{{ $t('common.unreadOnly') }}</span>
                 <span v-if="data.messages.unread > 0" class="!inline-flex !items-center !gap-1.5 !px-2.5 !py-0.5 !bg-rose-500/5 !text-rose-600 dark:!text-rose-400 !text-xs !font-semibold !rounded-full">
                   <span class="!w-1 !h-1 !rounded-full !bg-rose-500 !animate-pulse" />
-                  {{ data.messages.unread }} پیام
+                  {{ $t('dashboard.unreadCount', { count: data.messages.unread }) }}
                 </span>
                 <span v-else class="!text-xs !font-medium !text-emerald-600 dark:!text-emerald-400">0</span>
               </div>
@@ -585,35 +585,35 @@
       <section>
         <div class="!flex !items-center !gap-2 !mb-6">
           <div class="!w-1 !h-4 !rounded-full !bg-amber-600 dark:!bg-amber-500" />
-          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">گزارش‌های تکمیلی</h2>
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">{{ $t('dashboard.supplementaryReports') }}</h2>
         </div>
 
         <div class="!grid !grid-cols-1 lg:!grid-cols-2 !gap-6">
           <!-- Site Visits -->
-          <UiContentCard title="بازدیدهای سایت" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
+          <UiContentCard :title="$t('dashboard.siteVisits')" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
             <div class="!p-6">
               <div class="!grid !grid-cols-3 !gap-4">
                 <div class="!text-center !p-4 !rounded-xl !border !border-slate-100 dark:!border-zinc-800/80">
                   <div class="!text-xl !font-bold !text-slate-900 dark:!text-white !mb-1">{{ formatNumber(data.visits.total) }}</div>
-                  <div class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500">کل بازدیدها</div>
+                  <div class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500">{{ $t('dashboard.totalVisits') }}</div>
                 </div>
                 <div class="!text-center !p-4 !rounded-xl !border !border-slate-100 dark:!border-zinc-800/80">
                   <div class="!text-xl !font-bold !text-slate-700 dark:!text-zinc-300 !mb-1">{{ formatNumber(data.visits.yesterday) }}</div>
-                  <div class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500">دیروز</div>
+                  <div class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500">{{ $t('common.yesterday') }}</div>
                 </div>
                 <div class="!text-center !p-4 !rounded-xl !border !border-indigo-500/10 !bg-indigo-500/5">
                   <div class="!text-xl !font-bold !text-indigo-600 dark:!text-indigo-400 !mb-1">{{ formatNumber(data.visits.today) }}</div>
-                  <div class="!text-[11px] !font-medium !text-indigo-600/80 dark:!text-indigo-400">امروز</div>
+                  <div class="!text-[11px] !font-medium !text-indigo-600/80 dark:!text-indigo-400">{{ $t('common.today') }}</div>
                 </div>
               </div>
             </div>
           </UiContentCard>
 
           <!-- Billing Summary -->
-          <UiContentCard title="خلاصه مالی" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
+          <UiContentCard :title="$t('dashboard.financialSummary')" class="!bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !rounded-2xl">
             <template #headerAction>
               <NuxtLink to="/billing" class="!text-xs !font-medium !text-indigo-600 dark:!text-indigo-400 hover:!underline">
-                مشاهده همه &larr;
+                {{ $t('common.viewAll') }}
               </NuxtLink>
             </template>
             <div class="!p-6 !space-y-5">
@@ -621,7 +621,7 @@
                 <div class="!p-4 !rounded-xl !border !border-emerald-500/10 !bg-emerald-500/5">
                   <div class="!flex !items-center !gap-1.5 !mb-1">
                     <span class="!w-1 !h-1 !rounded-full !bg-emerald-500" />
-                    <span class="!text-[11px] !font-medium !text-emerald-600 dark:!text-emerald-400">درآمد کل</span>
+                    <span class="!text-[11px] !font-medium !text-emerald-600 dark:!text-emerald-400">{{ $t('dashboard.totalRevenue') }}</span>
                   </div>
                   <div class="!text-lg !font-bold !text-emerald-700 dark:!text-emerald-400" dir="ltr">{{ formatToman(data.billing.total_revenue) }}</div>
                 </div>
@@ -629,16 +629,16 @@
                 <div class="!p-4 !rounded-xl !border !border-amber-500/10 !bg-amber-500/5">
                   <div class="!flex !items-center !gap-1.5 !mb-1">
                     <span class="!w-1 !h-1 !rounded-full !bg-amber-500" />
-                    <span class="!text-[11px] !font-medium !text-amber-600 dark:!text-amber-400">در انتظار پرداخت</span>
+                    <span class="!text-[11px] !font-medium !text-amber-600 dark:!text-amber-400">{{ $t('dashboard.pendingPayment') }}</span>
                   </div>
                   <div class="!text-lg !font-bold !text-amber-700 dark:!text-amber-400" dir="ltr">{{ formatToman(data.billing.pending_revenue) }}</div>
                 </div>
               </div>
 
               <div class="!flex !items-center !justify-between !text-xs !text-slate-400 dark:!text-zinc-500 !pt-4 !border-t !border-slate-100 dark:!border-zinc-800/80">
-                <span>صورتحساب‌ها: <strong class="!text-slate-700 dark:!text-zinc-300">{{ data.billing.total }}</strong></span>
-                <span>پرداخت شده: <strong class="!text-emerald-600 dark:!text-emerald-400">{{ data.billing.paid }}</strong></span>
-                <span>در انتظار: <strong class="!text-amber-600 dark:!text-amber-400">{{ data.billing.pending }}</strong></span>
+                <span>{{ $t('dashboard.invoices') }}: <strong class="!text-slate-700 dark:!text-zinc-300">{{ data.billing.total }}</strong></span>
+                <span>{{ $t('dashboard.paidCount') }}: <strong class="!text-emerald-600 dark:!text-emerald-400">{{ data.billing.paid }}</strong></span>
+                <span>{{ $t('dashboard.pendingCount') }}: <strong class="!text-amber-600 dark:!text-amber-400">{{ data.billing.pending }}</strong></span>
               </div>
             </div>
           </UiContentCard>
@@ -651,7 +651,7 @@
       <section>
         <div class="!flex !items-center !gap-2 !mb-6">
           <div class="!w-1 !h-4 !rounded-full !bg-indigo-600 dark:!bg-indigo-500" />
-          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">برنامه امروز شما</h2>
+          <h2 class="!text-xs !font-semibold !text-slate-400 dark:!text-zinc-500 !uppercase !tracking-wider">{{ $t('dashboard.todaySchedule') }}</h2>
         </div>
 
         <div class="!rounded-2xl !bg-white dark:!bg-zinc-900 !border !border-slate-100 dark:!border-zinc-800/80 !overflow-hidden">
@@ -659,8 +659,8 @@
 
           <UiEmptyState
             v-else-if="!todayAppointments.length"
-            title="هیچ نوبتی برای امروز ثبت نشده است"
-            description="برنامه امروز شما خالی است."
+            :title="$t('dashboard.noTodayAppointments')"
+            :description="$t('dashboard.todayScheduleEmpty')"
             class="!py-12"
           >
             <template #icon>
@@ -678,7 +678,7 @@
                 <!-- Clean Modernized Timeline Block -->
                 <div class="!flex !flex-col !items-center !justify-center !px-3 !py-1.5 !rounded-xl !bg-slate-50 dark:!bg-zinc-800/50 !border !border-slate-100 dark:!border-zinc-800 !min-w-[70px]" dir="ltr">
                   <span class="!text-xs !font-bold !text-slate-800 dark:!text-zinc-200">{{ appt.startTime?.slice(0, 5) }}</span>
-                  <span class="!text-[10px] !text-slate-400 dark:!text-zinc-500 !mt-0.5">تا {{ appt.endTime?.slice(0, 5) }}</span>
+                  <span class="!text-[10px] !text-slate-400 dark:!text-zinc-500 !mt-0.5">{{ $t('dashboard.until') }} {{ appt.endTime?.slice(0, 5) }}</span>
                 </div>
 
                 <div class="!space-y-1">
@@ -688,7 +688,7 @@
                   <div class="!flex !items-center !gap-2 !text-xs !text-slate-400 dark:!text-zinc-500">
                     <span>{{ appt.patientPhone }}</span>
                     <span class="!w-1 !h-1 !rounded-full !bg-slate-200 dark:!bg-zinc-700" />
-                    <span>کد ملی: {{ appt.patientNationalId }}</span>
+                    <span>{{ $t('dashboard.nationalIdLabel') }} {{ appt.patientNationalId }}</span>
                   </div>
                 </div>
               </div>
@@ -706,6 +706,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
+const { t } = useI18n()
 import Calendar from '~/components/icons/Calendar.vue'
 import UsersGroup from '~/components/icons/UsersGroup.vue'
 import ChatDots from '~/components/icons/ChatDots.vue'
@@ -861,11 +862,11 @@ function insuranceLabel(key: string | undefined | null): string {
 
 function statusLabel(status: string): string {
   const map: Record<string, string> = {
-    pending: 'در انتظار تایید',
-    confirmed: 'تایید شده',
-    rejected: 'رد شده',
-    cancelled: 'لغو شده',
-    completed: 'انجام شده',
+    pending: t('dashboard.statusPending'),
+    confirmed: t('dashboard.statusConfirmed'),
+    rejected: t('dashboard.statusRejected'),
+    cancelled: t('dashboard.statusCancelled'),
+    completed: t('dashboard.statusCompleted'),
   }
   return map[status] || status
 }
@@ -902,11 +903,11 @@ async function saveProfile() {
     })
     if (res.success && patientData.value) {
       patientData.value.patient = res.patient
-      useNuxtApp().$toast.success(res.message || 'پروفایل با موفقیت به‌روزرسانی شد.')
+      useNuxtApp().$toast.success(res.message || t('dashboard.savedSuccess'))
       editDialogOpen.value = false
     }
   } catch (err: any) {
-    useNuxtApp().$toast.error(err?.data?.error || 'خطا در به‌روزرسانی پروفایل')
+    useNuxtApp().$toast.error(err?.data?.error || t('dashboard.saveError'))
   } finally {
     saving.value = false
   }
@@ -919,7 +920,7 @@ function formatNumber(n: number): string {
 
 function formatToman(rials: number): string {
   const toman = Math.round(rials / 10)
-  return new Intl.NumberFormat('fa-IR').format(toman) + ' تومان'
+  return new Intl.NumberFormat('fa-IR').format(toman) + ' ' + t('common.toman')
 }
 
 async function fetchDashboard() {
@@ -976,5 +977,5 @@ onMounted(() => {
   }
 })
 
-useSeoMeta({ title: 'داشبورد | سیستم مدیریت', ogTitle: 'صفحه اصلی' })
+useSeoMeta({ title: () => `${t('dashboard.title')} | ${t('seo.systemManagement')}`, ogTitle: () => t('seo.homepage') })
 </script>

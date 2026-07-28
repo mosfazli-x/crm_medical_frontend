@@ -3,7 +3,7 @@
     <div class="bg-white p-6 shadow-sm rounded-2xl border border-slate-100">
       <h4 class="text-base font-bold text-slate-800 mb-6 flex items-center gap-2 py-3 px-2 border-b border-slate-100">
         <v-icon icon="mdi-folder-account-outline" class="text-electric-sapphire" />
-        مدیریت مستندات و سوابق بیمار
+        {{ t('attachments.title') }}
       </h4>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-2">
@@ -12,10 +12,10 @@
           <div class="flex items-center justify-between align-middle mb-1 py-2 px-2 border-b border-slate-200">
             <div class="flex items-center gap-2 font-semibold text-slate-700 text-sm">
               <v-icon :icon="cat.icon" :color="cat.color" size="small" />
-              {{ cat.title }}
+              {{ t(cat.titleKey) }}
             </div>
             <v-chip size="x-small" color="slate-500" variant="flat">
-              {{ (existingAttachments[cat.key]?.length || 0) + (attachments[cat.key]?.length || 0) }} فایل
+              {{ t('attachments.fileCount', { count: (existingAttachments[cat.key]?.length || 0) + (attachments[cat.key]?.length || 0) }) }}
             </v-chip>
           </div>
 
@@ -27,7 +27,7 @@
               <div class="flex items-center gap-2 overflow-hidden flex-1 px-1">
                 <v-icon icon="mdi-cloud-check-outline" size="small" class="text-emerald-500 shrink-0" />
                 <div class="flex flex-col min-w-0 w-full">
-                  <span class="text-xs text-slate-700 truncate dir-rtl text-right font-medium">{{ file.fileName || file.name || 'فایل ذخیره شده' }}</span>
+                  <span class="text-xs text-slate-700 truncate dir-rtl text-right font-medium">{{ file.fileName || file.name || t('attachments.savedFile') }}</span>
                   <span v-if="file.fileSize" class="text-[10px] text-slate-400 mt-0.5 font-normal">{{ formatSize(file.fileSize) }}</span>
                 </div>
               </div>
@@ -36,18 +36,18 @@
                 <v-btn icon="mdi-eye-outline" variant="text" color="slate-500" density="compact" size="small"
                        :loading="loadingView.has(file.id)"
                        @click="viewFile(file, cat.key)"
-                       title="مشاهده فایل" />
+                       :title="t('attachments.viewFile')" />
 
                 <v-btn icon="mdi-download-outline" variant="text" color="#4F46E5" density="compact" size="small"
                        :loading="loadingDownload.has(file.id)"
                        @click="downloadFile(file, cat.key)"
-                       title="دانلود فایل" />
+                       :title="t('attachments.downloadFile')" />
 
                 <v-btn icon="mdi-trash-can-outline" variant="text" color="error" density="compact" size="small"
                        @click="deleteExistingAttachment(cat.key, file, idx as number)"
                        :loading="deleting.has(file.id)"
                        :disabled="deleting.has(file.id)"
-                       class="opacity-100 group-hover:opacity-100 transition-opacity" title="حذف" />
+                       class="opacity-100 group-hover:opacity-100 transition-opacity" :title="t('attachments.delete')" />
               </div>
             </div>
 
@@ -57,7 +57,7 @@
                 <v-icon icon="mdi-file-clock-outline" size="small" class="text-electric-sapphire shrink-0" />
                 <div class="flex flex-col min-w-0 w-full">
                   <span class="text-xs text-electric-sapphire truncate dir-ltr text-left font-medium">{{ file.name }}</span>
-                  <span class="text-[10px] text-cornflower-blue mt-0.5 font-normal">آماده آپلود</span>
+                  <span class="text-[10px] text-cornflower-blue mt-0.5 font-normal">{{ t('attachments.readyToUpload') }}</span>
                 </div>
               </div>
               <v-btn icon="mdi-close" variant="text" color="error" density="compact" size="small"
@@ -66,7 +66,7 @@
 
             <div v-if="!existingAttachments[cat.key]?.length && !attachments[cat.key]?.length"
                  class="text-center py-6 text-xs text-slate-400 font-medium bg-white/50 rounded-lg border border-dashed border-slate-200">
-              مدرکی ثبت نشده است
+              {{ t('attachments.noDocuments') }}
             </div>
 
           </div>
@@ -75,7 +75,7 @@
             <label class="cursor-pointer flex flex-col items-center justify-center w-full py-3 bg-white border-2 border-dashed border-slate-300 hover:border-baby-blue-ice hover:bg-light-cyan rounded-lg transition-all group">
               <div class="flex items-center gap-2 text-slate-500 group-hover:text-electric-sapphire transition-colors">
                 <v-icon icon="mdi-plus" size="small" />
-                <span class="text-xs font-bold">افزودن فایل جدید</span>
+                <span class="text-xs font-bold">{{ t('attachments.addNewFile') }}</span>
               </div>
               <input type="file" class="hidden" :accept="cat.accept" multiple
                      @change="(e) => {
@@ -97,6 +97,7 @@
 <script setup lang="ts">
 import { useApi } from '~/composables/useApi'
 
+const { t } = useI18n()
 const config = useRuntimeConfig()
 const { apiFetch } = useApi()
 const { $toast } = useNuxtApp()
@@ -111,9 +112,9 @@ const loadingView = reactive(new Set<string>())
 const loadingDownload = reactive(new Set<string>())
 
 const categories = [
-  { key: 'ultrasound', title: 'مدارک سونوگرافی', icon: 'mdi-camera-iris', color: 'purple-darken-1', accept: 'image/*,application/pdf' },
-  { key: 'lab', title: 'گزارش‌های آزمایشگاه', icon: 'mdi-flask-outline', color: 'teal-darken-1', accept: '.pdf,.jpg,.jpeg,.png' },
-  { key: 'prescription', title: 'نسخه‌های قبلی', icon: 'mdi-prescription', color: '#4F46E5', accept: 'image/*,application/pdf' }
+  { key: 'ultrasound', titleKey: 'attachments.categories.ultrasound', icon: 'mdi-camera-iris', color: 'purple-darken-1', accept: 'image/*,application/pdf' },
+  { key: 'lab', titleKey: 'attachments.categories.lab', icon: 'mdi-flask-outline', color: 'teal-darken-1', accept: '.pdf,.jpg,.jpeg,.png' },
+  { key: 'prescription', titleKey: 'attachments.categories.prescription', icon: 'mdi-prescription', color: '#4F46E5', accept: 'image/*,application/pdf' }
 ]
 
 function formatSize(bytes: number): string {
@@ -135,7 +136,7 @@ async function getDownloadUrl(file: any, forceDownload = false, loadingSet: Set<
     )
     return res.data?.downloadUrl || null
   } catch {
-    $toast.error('خطا در دریافت لینک دانلود')
+    $toast.error(t('attachments.downloadLinkError'))
     return null
   } finally {
     loadingSet.delete(fileId)
@@ -164,19 +165,19 @@ async function downloadFile(file: any, categoryKey: string) {
 
 const deleteExistingAttachment = async (categoryKey: string, file: any, index: number) => {
   if (!props.patientId || !file.id) return
-  if (!confirm(`آیا از حذف این فایل اطمینان دارید؟ "${file.name || file.fileName}"`)) return
+  if (!confirm(t('attachments.deleteConfirm', { name: file.name || file.fileName }))) return
 
   deleting.add(file.id)
   try {
     const response = await apiFetch<{ success: boolean; error?: string }>(`/api/patients/${props.patientId}/attachments/${file.id}`, { method: 'DELETE' })
     if (response.success) {
       existingAttachments.value[categoryKey].splice(index, 1)
-      $toast.success('فایل با موفقیت حذف شد.')
+      $toast.success(t('attachments.deleteSuccess'))
     } else {
-      $toast.error(response.error || 'خطا در حذف فایل.')
+      $toast.error(response.error || t('attachments.deleteError'))
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در ارتباط با سرور.')
+    $toast.error(err.data?.error || t('attachments.serverError'))
   } finally {
     deleting.delete(file.id)
   }

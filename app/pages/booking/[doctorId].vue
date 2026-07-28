@@ -7,8 +7,8 @@
         <div class="absolute inset-0 rounded-full bg-light-cyan animate-pulse opacity-50"></div>
         <MedicalKit class="w-10 h-10 fill-electric-sapphire relative z-10" />
       </div>
-      <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">رزرو نوبت آنلاین</h1>
-      <p v-if="doctorName" class="text-slate-500 mt-2 text-lg">دکتر {{ doctorName }}</p>
+      <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">{{ $t('booking.title') }}</h1>
+      <p v-if="doctorName" class="text-slate-500 mt-2 text-lg">{{ $t('booking.doctorPrefix') }} {{ doctorName }}</p>
     </div>
 
     <div
@@ -43,7 +43,7 @@
         <div class="pb-2" v-show="currentStep === 0">
           <div class="flex items-center justify-between bg-slate-50 rounded-2xl border border-slate-100 mx-8">
             <div class="flex flex-col items-center w-full py-2">
-              <span class="text-xs font-medium text-slate-400 mb-0.5">تاریخ نوبت</span>
+              <span class="text-xs font-medium text-slate-400 mb-0.5">{{ $t('booking.appointmentDate') }}</span>
               <span class="text-sm sm:text-base font-bold text-slate-800">{{ persianDate }}</span>
             </div>
           </div>
@@ -57,21 +57,21 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            <span class="text-sm font-medium text-amber-700">برای این روز نوبتی ثبت نشده است</span>
+            <span class="text-sm font-medium text-amber-700">{{ $t('booking.noSlotsForDay') }}</span>
           </div>
 
           <div v-if="!selectedJalaliDate || fetchingSlots || availableSlots.length" class="my-2 flex justify-center">
             <v-btn variant="flat" color="#4F46E5" size="large"
               class="px-14 font-bold rounded-xl shadow-md shadow-electric-sapphire/30" :disabled="!selectedJalaliDate"
               @click="currentStep = 1">
-              ادامه
+              {{ $t('booking.continue') }}
             </v-btn>
           </div>
         </div>
 
         <div v-show="currentStep === 1">
           <div class="flex items-center justify-between mb-6 px-2">
-            <h2 class="text-lg font-bold text-slate-800">نوع نوبت</h2>
+            <h2 class="text-lg font-bold text-slate-800">{{ $t('booking.visitType') }}</h2>
             <v-progress-circular v-if="fetchingVisitTypes" indeterminate color="#4F46E5" size="20" width="2" />
           </div>
 
@@ -88,13 +88,13 @@
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2">
                     <span class="font-bold text-slate-800 text-sm">{{ vt.name }}</span>
-                    <span class="text-xs text-slate-400">({{ vt.durationMinutes }} دقیقه)</span>
+                    <span class="text-xs text-slate-400">({{ vt.durationMinutes }} {{ $t('booking.minutes') }})</span>
                   </div>
                   <p v-if="vt.description" class="text-xs text-slate-500 mt-1 line-clamp-1">{{ vt.description }}</p>
                 </div>
                 <div class="text-left shrink-0">
                   <span class="text-sm font-bold text-electric-sapphire">{{ formatPrice(vt.price) }}</span>
-                  <div class="text-[10px] text-slate-400 mt-0.5 whitespace-nowrap">{{ numberToWords(vt.price) }} تومان
+                  <div class="text-[10px] text-slate-400 mt-0.5 whitespace-nowrap">{{ numberToWords(vt.price) }} {{ $t('common.toman') }}
                   </div>
                 </div>
               </div>
@@ -107,25 +107,25 @@
               class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-slate-100">
               <span class="text-2xl">📋</span>
             </div>
-            <h3 class="text-slate-700 font-bold mb-1">نوع نوبتی تعریف نشده</h3>
-            <p class="text-sm text-slate-500">این پزشک هنوز نوع نوبتی تعریف نکرده است.</p>
+            <h3 class="text-slate-700 font-bold mb-1">{{ $t('booking.noVisitTypes') }}</h3>
+            <p class="text-sm text-slate-500">{{ $t('booking.noVisitTypesDesc') }}</p>
           </div>
 
           <div class="mt-8 flex items-center gap-3 justify-between px-2 py-2">
             <v-btn variant="text" color="slate-500" size="large" class="rounded-lg font-medium"
               @click="currentStep = 0">
-              بازگشت
+              {{ $t('booking.back') }}
             </v-btn>
             <v-btn variant="flat" color="#4F46E5" size="large" :disabled="!selectedVisitType"
               class="px-10 font-bold rounded-lg shadow-md shadow-electric-sapphire/30" @click="currentStep = 2">
-              ادامه
+              {{ $t('booking.continue') }}
             </v-btn>
           </div>
         </div>
 
         <div class="px-2" v-show="currentStep === 2">
           <div class="flex items-center justify-between mb-4 px-2">
-            <h2 class="text-lg font-bold text-slate-800">انتخاب ساعت</h2>
+            <h2 class="text-lg font-bold text-slate-800">{{ $t('booking.selectTime') }}</h2>
             <v-progress-circular v-if="fetchingSlots" indeterminate color="#4F46E5" size="20" width="2" />
           </div>
 
@@ -136,7 +136,7 @@
               </div>
             </div>
             <div class="text-sm">
-              <span class="text-slate-600">نوع نوبت: </span>
+              <span class="text-slate-600">{{ $t('booking.selectedType') }}</span>
               <span class="font-bold text-slate-800">{{ selectedVisitType?.name }}</span>
             </div>
           </div>
@@ -158,14 +158,14 @@
               class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-slate-100">
               <span class="text-2xl">📅</span>
             </div>
-            <h3 class="text-slate-700 font-bold mb-1">نوبتی یافت نشد</h3>
-            <p class="text-sm text-slate-500">لطفاً روز دیگری را بررسی کنید.</p>
+            <h3 class="text-slate-700 font-bold mb-1">{{ $t('booking.noSlotsFound') }}</h3>
+            <p class="text-sm text-slate-500">{{ $t('booking.noSlotsFoundDesc') }}</p>
           </div>
 
           <div class="mt-8 flex items-center gap-3 justify-between px-2 pb-2">
             <v-btn variant="text" color="slate-500" size="large" class="rounded-lg font-medium"
               @click="currentStep = 1">
-              بازگشت
+              {{ $t('booking.back') }}
             </v-btn>
           </div>
         </div>
@@ -174,46 +174,46 @@
           <div v-if="selectedSlot">
             <div class="h-px w-full bg-slate-100 my-8"></div>
             <div class="flex items-center justify-between mb-6 px-2">
-              <h3 class="text-lg font-bold text-slate-800">اطلاعات مراجعه‌کننده</h3>
+              <h3 class="text-lg font-bold text-slate-800">{{ $t('booking.visitorInfo') }}</h3>
               <span class="bg-light-cyan text-electric-sapphire px-3 py-1 rounded-lg text-xs font-bold">
-                ساعت انتخابی: {{ selectedSlot.startTime }}
+                {{ $t('booking.selectedTime') }} {{ selectedSlot.startTime }}
               </span>
             </div>
 
             <v-form ref="formRef" @submit.prevent="bookAppointment">
               <v-row class="mt-2 px-2">
                 <v-col cols="12" md="6" class="py-2">
-                  <label class="text-sm font-semibold text-slate-700 mb-2 block">نام <span
+                  <label class="text-sm font-semibold text-slate-700 mb-2 block">{{ $t('booking.firstName') }} <span
                       class="text-red-500">*</span></label>
                   <v-text-field v-model="form.firstName" variant="outlined" density="comfortable"
-                    placeholder="مثال: علی" hide-details="auto" bg-color="white" rounded="lg" dir="rtl"
-                    :rules="[v => !!v || 'نام الزامی است']" />
+                    :placeholder="$t('booking.firstNamePlaceholder')" hide-details="auto" bg-color="white" rounded="lg" dir="rtl"
+                    :rules="[v => !!v || $t('booking.firstNameRequired')]" />
                 </v-col>
 
                 <v-col cols="12" md="6" class="py-2">
-                  <label class="text-sm font-semibold text-slate-700 mb-2 block">نام خانوادگی <span
+                  <label class="text-sm font-semibold text-slate-700 mb-2 block">{{ $t('booking.lastName') }} <span
                       class="text-red-500">*</span></label>
                   <v-text-field v-model="form.lastName" variant="outlined" density="comfortable"
-                    placeholder="مثال: محمدی" hide-details="auto" bg-color="white" rounded="lg" dir="rtl"
-                    :rules="[v => !!v || 'نام خانوادگی الزامی است']" />
+                    :placeholder="$t('booking.lastNamePlaceholder')" hide-details="auto" bg-color="white" rounded="lg" dir="rtl"
+                    :rules="[v => !!v || $t('booking.lastNameRequired')]" />
                 </v-col>
 
                 <v-col cols="12" md="6" class="py-2">
-                  <label class="text-sm font-semibold text-slate-700 mb-2 block">کد ملی <span
+                  <label class="text-sm font-semibold text-slate-700 mb-2 block">{{ $t('booking.nationalId') }} <span
                       class="text-red-500">*</span></label>
                   <v-text-field v-model="form.nationalId" variant="outlined" density="comfortable"
-                    placeholder="۱۰ رقم بدون خط تیره" maxlength="10" hide-details="auto" bg-color="white" rounded="lg"
+                    :placeholder="$t('booking.nationalIdPlaceholder')" maxlength="10" hide-details="auto" bg-color="white" rounded="lg"
                     dir="ltr" :rules="[
-                      v => !!v || 'کد ملی الزامی است',
-                      v => /^\d{10}$/.test(v) || 'کد ملی باید دقیقاً ۱۰ عدد باشد'
+                      v => !!v || $t('booking.nationalIdRequired'),
+                      v => /^\d{10}$/.test(v) || $t('booking.nationalIdLength')
                     ]" class="text-right" />
                 </v-col>
 
                 <v-col cols="12" md="6" class="py-2">
-                  <label class="text-sm font-semibold text-slate-700 mb-2 block">شماره موبایل <span
+                  <label class="text-sm font-semibold text-slate-700 mb-2 block">{{ $t('booking.phone') }} <span
                       class="text-red-500">*</span></label>
-                  <v-text-field v-model="form.phone" variant="outlined" density="comfortable" placeholder="۰۹۱۲۳۴۵۶۷۸۹"
-                    hide-details="auto" bg-color="white" rounded="lg" :rules="[v => !!v || 'شماره موبایل الزامی است']"
+                  <v-text-field v-model="form.phone" variant="outlined" density="comfortable" :placeholder="$t('booking.phonePlaceholder')"
+                    hide-details="auto" bg-color="white" rounded="lg" :rules="[v => !!v || $t('booking.phoneRequired')]"
                     dir="ltr" class="text-right" />
                 </v-col>
               </v-row>
@@ -222,12 +222,12 @@
                 <div>
                   <v-btn variant="text" color="slate-500" size="large" class="rounded-lg font-medium"
                     @click="goBackToSlots">
-                    بازگشت
+                    {{ $t('booking.back') }}
                   </v-btn>
                 </div>
                 <v-btn variant="flat" color="#4F46E5" size="large" :loading="submitting"
                   class="px-10 font-bold rounded-lg shadow-md shadow-electric-sapphire/30" @click="bookAppointment">
-                  تایید و ثبت نوبت
+                  {{ $t('booking.confirmBooking') }}
                 </v-btn>
               </div>
             </v-form>
@@ -239,30 +239,30 @@
         <div class="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto my-6">
           <span class="text-5xl">✅</span>
         </div>
-        <h2 class="text-2xl font-extrabold text-slate-800 mb-3">نوبت با موفقیت ثبت شد</h2>
+        <h2 class="text-2xl font-extrabold text-slate-800 mb-3">{{ $t('booking.bookingSuccess') }}</h2>
         <p class="text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed">
-          درخواست نوبت شما ثبت شد و پس از تایید پزشک قطعی می‌گردد.
+          {{ $t('booking.bookingSuccessDesc') }}
         </p>
 
         <div class="bg-slate-50 border border-slate-100 rounded-2xl p-6 mb-8 max-w-sm mx-auto text-right space-y-3">
           <div class="flex justify-between items-center border-b border-slate-200 pb-3 px-2 py-3">
-            <span class="text-sm font-medium text-slate-500">تاریخ مراجعه:</span>
+            <span class="text-sm font-medium text-slate-500">{{ $t('booking.visitDate') }}</span>
             <span class="text-sm font-bold text-slate-800">{{ persianDate }}</span>
           </div>
           <div class="flex justify-between items-center border-b border-slate-200 px-2 py-3">
-            <span class="text-sm font-medium text-slate-500">نوع نوبت:</span>
+            <span class="text-sm font-medium text-slate-500">{{ $t('booking.visitTypeLabel') }}</span>
             <span class="text-sm font-bold text-electric-sapphire">{{ selectedVisitType?.name }}</span>
           </div>
           <div class="flex justify-between items-center px-2 py-3">
-            <span class="text-sm font-medium text-slate-500">ساعت مراجعه:</span>
-            <span class="text-sm font-bold text-electric-sapphire">{{ selectedSlot?.startTime }} الی {{
+            <span class="text-sm font-medium text-slate-500">{{ $t('booking.visitTime') }}</span>
+            <span class="text-sm font-bold text-electric-sapphire">{{ selectedSlot?.startTime }} {{ $t('booking.timeTo') }} {{
               selectedSlot?.endTime }}</span>
           </div>
         </div>
 
         <v-btn variant="outlined" color="slate-700" size="large" class="px-8 font-bold rounded-xl my-4"
           @click="resetBooking">
-          ثبت نوبت جدید
+          {{ $t('booking.bookNew') }}
         </v-btn>
       </div>
 
@@ -277,12 +277,13 @@ import HijriCalendar from '~/components/HijriCalendar.vue'
 import AltArrowLeft from '~/components/icons/AltArrowLeft.vue'
 import MedicalKit from '~/components/icons/MedicalKit.vue'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const { $toast } = useNuxtApp()
 const { apiFetch } = useApi()
 
-const steps = ['تاریخ', 'نوع نوبت', 'زمان', 'اطلاعات']
+const steps = computed(() => t('booking.steps') as string[])
 
 const doctorId = computed(() => route.params.doctorId as string)
 const doctorName = ref('')
@@ -394,7 +395,7 @@ function numberToWords(num: number): string {
 
 // === تابع جدید فرمت قیمت با جداسازی ۳ رقمی دقیق ===
 function formatPrice(price: number) {
-  if (price == null) return '۰ تومان'
+  if (price == null) return `۰ ${t('common.toman')}`
 
   // جداسازی سه رقم سه رقم با RegEx برای جلوگیری از مشکلات hydration
   const separated = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -402,7 +403,7 @@ function formatPrice(price: number) {
   // تبدیل اعداد انگلیسی به فارسی 
   const persianDigits = separated.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d)])
 
-  return persianDigits + ' تومان'
+  return persianDigits + ' ' + t('common.toman')
 }
 
 function selectVisitType(vt: any) {
@@ -488,7 +489,7 @@ async function fetchSlots() {
       availableSlots.value = res.data
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در دریافت زمان‌های خالی')
+    $toast.error(err.data?.error || t('booking.fetchSlotsError'))
   } finally {
     fetchingSlots.value = false
   }
@@ -513,7 +514,7 @@ async function fetchVisitTypes() {
       }))
     }
   } catch {
-    $toast.error('خطا در دریافت انواع نوبت')
+    $toast.error(t('booking.fetchVisitTypesError'))
   } finally {
     fetchingVisitTypes.value = false
   }
@@ -560,9 +561,9 @@ async function bookAppointment() {
     })
     success.value = true
     Object.keys(markedDatesCache).forEach(k => delete markedDatesCache[k])
-    $toast.success('درخواست نوبت با موفقیت ثبت و برای تایید پزشک ارسال شد')
+    $toast.success(t('booking.bookingSuccessDetail'))
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در ثبت نوبت')
+    $toast.error(err.data?.error || t('booking.bookingError'))
   } finally {
     submitting.value = false
   }
@@ -579,6 +580,6 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: 'رزرو نوبت | سیستم مدیریت',
+  title: t('booking.titleSeo'),
 })
 </script>

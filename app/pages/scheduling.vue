@@ -1,15 +1,15 @@
 <template>
   <UiPageContainer>
-    <UiPageHeader title="تنظیم زمانبندی رزروها">
+    <UiPageHeader :title="$t('scheduling.title')">
       <template #actions>
         <div class="flex items-center gap-3 flex-wrap justify-end">
           <a :href="`/booking/${user?.id}`" target="_blank" class="crm-btn crm-btn-primary">
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
-            مشاهده صفحه رزرو
+            {{ $t('scheduling.viewBookingPage') }}
           </a>
-          <span class="text-sm text-slate-500 dark:text-slate-400 hidden sm:inline">ساعات کاری: ۰۷:۰۰ تا ۲۲:۰۰</span>
+          <span class="text-sm text-slate-500 dark:text-slate-400 hidden sm:inline">{{ $t('scheduling.workingHours') }}</span>
         </div>
       </template>
     </UiPageHeader>
@@ -20,7 +20,7 @@
           <thead>
             <tr>
               <th class="p-2 text-sm font-bold text-slate-500 dark:text-slate-300 border-b-2 border-slate-200 dark:border-slate-700 sticky right-0 min-w-[70px]">
-                ساعت
+                {{ $t('scheduling.hour') }}
               </th>
               <th v-for="day in dayHeaders" :key="day.dayOfWeek"
                 class="p-2 text-sm font-bold text-slate-600 dark:text-slate-300 border-b-2 border-slate-200 dark:border-slate-700 text-center min-w-[110px] py-1">
@@ -57,14 +57,14 @@
       <div class="mt-4 flex items-center gap-4 text-xs text-slate-400 dark:text-slate-500 py-2 px-2">
         <div class="flex items-center gap-1">
           <div class="w-4 h-4 rounded bg-periwinkle dark:bg-indigo-600/30 border border-periwinkle/50 dark:border-indigo-500/40"></div>
-          <span>بازه فعال</span>
+          <span>{{ $t('scheduling.activeRange') }}</span>
         </div>
         <div class="flex items-center gap-1">
           <div class="w-4 h-4 rounded bg-yellow-200 dark:bg-yellow-950/40 border border-yellow-300 dark:border-yellow-700/40"></div>
-          <span>در حال انتخاب</span>
+          <span>{{ $t('scheduling.selecting') }}</span>
         </div>
         <div class="flex items-center gap-1">
-          <span>روی دو نقطه در یک روز کلیک کنید تا بازه زمانی ایجاد شود</span>
+          <span>{{ $t('scheduling.clickInstruction') }}</span>
         </div>
       </div>
     </UiContentCard>
@@ -72,25 +72,25 @@
     <v-dialog v-model="addDialog" persistent max-width="450px">
       <v-card class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
         <v-card-title class="text-lg font-bold text-slate-800 dark:text-slate-100 px-6 pt-6">
-          افزودن بازه زمانی جدید
+          {{ $t('scheduling.addNewRange') }}
         </v-card-title>
         <v-card-text class="px-6 pb-2">
-          <div class="text-sm text-slate-500 dark:text-slate-400 mb-4">روز: <span class="font-bold text-slate-700 dark:text-slate-200">{{ selectedDayName }}</span></div>
+          <div class="text-sm text-slate-500 dark:text-slate-400 mb-4">{{ $t('scheduling.day') }} <span class="font-bold text-slate-700 dark:text-slate-200">{{ selectedDayName }}</span></div>
           <v-row>
             <v-col cols="6">
-              <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">زمان شروع</label>
+              <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('scheduling.startTime') }}</label>
               <v-select v-model="newRangeStart" :items="timeSlots" variant="outlined" density="comfortable" hide-details="auto" />
             </v-col>
             <v-col cols="6">
-              <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">زمان پایان</label>
+              <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('scheduling.endTime') }}</label>
               <v-select v-model="newRangeEnd" :items="timeSlotsEnd" variant="outlined" density="comfortable" hide-details="auto" />
             </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions class="px-6 pb-6 pt-2 flex gap-3 bg-white dark:bg-slate-800">
-          <v-btn variant="text" color="slate-600" class="dark:text-slate-400" @click="closeAddDialog">انصراف</v-btn>
+          <v-btn variant="text" color="slate-600" class="dark:text-slate-400" @click="closeAddDialog">{{ $t('common.cancel') }}</v-btn>
           <v-spacer />
-          <v-btn variant="flat" color="#4F46E5" :loading="saving" @click="submitNewRange">ذخیره</v-btn>
+          <v-btn variant="flat" color="#4F46E5" :loading="saving" @click="submitNewRange">{{ $t('common.save') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -100,19 +100,20 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 
+const { t } = useI18n()
 const { apiFetch } = useApi()
 const { user } = useAuth()
 const { $toast } = useNuxtApp()
 
-const dayHeaders = [
-  { name: 'شنبه', dayOfWeek: 6 },
-  { name: 'یکشنبه', dayOfWeek: 0 },
-  { name: 'دوشنبه', dayOfWeek: 1 },
-  { name: 'سه‌شنبه', dayOfWeek: 2 },
-  { name: 'چهارشنبه', dayOfWeek: 3 },
-  { name: 'پنج‌شنبه', dayOfWeek: 4 },
-  { name: 'جمعه', dayOfWeek: 5 },
-]
+const dayHeaders = computed(() => [
+  { name: t('scheduling.days.saturday'), dayOfWeek: 6 },
+  { name: t('scheduling.days.sunday'), dayOfWeek: 0 },
+  { name: t('scheduling.days.monday'), dayOfWeek: 1 },
+  { name: t('scheduling.days.tuesday'), dayOfWeek: 2 },
+  { name: t('scheduling.days.wednesday'), dayOfWeek: 3 },
+  { name: t('scheduling.days.thursday'), dayOfWeek: 4 },
+  { name: t('scheduling.days.friday'), dayOfWeek: 5 },
+])
 
 const jalaliDates = computed(() => {
   const today = new Date()
@@ -121,7 +122,7 @@ const jalaliDates = computed(() => {
   const saturday = new Date(today)
   saturday.setDate(today.getDate() - daysSinceSaturday)
   const result: Record<number, string> = {}
-  dayHeaders.forEach((day, index) => {
+  dayHeaders.value.forEach((day, index) => {
     const d = new Date(saturday)
     d.setDate(saturday.getDate() + index)
     result[day.dayOfWeek] = d.toLocaleDateString('fa-IR', { day: 'numeric', month: 'long' })
@@ -165,7 +166,7 @@ const newRangeStart = ref<string | null>(null)
 const newRangeEnd = ref<string | null>(null)
 
 const selectedDayName = computed(() => {
-  const day = dayHeaders.find(d => d.dayOfWeek === selectedDayForAdd.value)
+  const day = dayHeaders.value.find(d => d.dayOfWeek === selectedDayForAdd.value)
   return day?.name || ''
 })
 
@@ -186,11 +187,11 @@ function closeAddDialog() {
 
 async function submitNewRange() {
   if (!newRangeStart.value || !newRangeEnd.value) {
-    $toast.error('لطفاً زمان شروع و پایان را انتخاب کنید')
+    $toast.error(t('scheduling.selectTimeError'))
     return
   }
   if (newRangeStart.value >= newRangeEnd.value) {
-    $toast.error('زمان شروع باید قبل از زمان پایان باشد')
+    $toast.error(t('scheduling.timeOrderError'))
     return
   }
   saving.value = true
@@ -203,11 +204,11 @@ async function submitNewRange() {
         endTime: newRangeEnd.value,
       },
     })
-    $toast.success('بازه زمانی با موفقیت اضافه شد')
+    $toast.success(t('scheduling.rangeAdded'))
     closeAddDialog()
     await fetchAvailability()
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در ذخیره بازه زمانی')
+    $toast.error(err.data?.error || t('scheduling.rangeSaveError'))
   } finally {
     saving.value = false
   }
@@ -258,10 +259,10 @@ async function onCellClick(dayOfWeek: number, time: string) {
   if (existingBlock) {
     try {
       await apiFetch(`/api/scheduling/availability/${existingBlock.id}`, { method: 'DELETE' })
-      $toast.success('بازه زمانی حذف شد')
+      $toast.success(t('scheduling.rangeDeleted'))
       await fetchAvailability()
     } catch (err: any) {
-      $toast.error(err.data?.error || 'خطا در حذف بازه زمانی')
+      $toast.error(err.data?.error || t('scheduling.rangeDeleteError'))
     }
     return
   }
@@ -292,10 +293,10 @@ async function onCellClick(dayOfWeek: number, time: string) {
       method: 'POST',
       body: { dayOfWeek, startTime, endTime },
     })
-    $toast.success('بازه زمانی با موفقیت اضافه شد')
+    $toast.success(t('scheduling.rangeAdded'))
     await fetchAvailability()
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در ذخیره بازه زمانی')
+    $toast.error(err.data?.error || t('scheduling.rangeSaveError'))
   } finally {
     saving.value = false
   }
@@ -322,6 +323,6 @@ onMounted(() => {
 })
 
 useSeoMeta({
-  title: 'تنظیم زمانبندی رزروها | سیستم مدیریت',
+  title: t('scheduling.titleSeo'),
 })
 </script>

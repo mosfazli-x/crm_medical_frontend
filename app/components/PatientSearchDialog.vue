@@ -7,7 +7,7 @@
           <div class="w-8 h-8 rounded-lg bg-light-cyan dark:bg-electric-sapphire/20 flex items-center justify-center">
             <v-icon size="18" color="#4F46E5">mdi-account-search</v-icon>
           </div>
-          <h2 class="text-base font-bold text-slate-800 dark:text-slate-100">جستجوی بیمار</h2>
+          <h2 class="text-base font-bold text-slate-800 dark:text-slate-100">{{ t('patientSearch.title') }}</h2>
         </div>
         <v-btn icon variant="text" size="x-small" color="slate" @click="$emit('update:modelValue', false)">
           <v-icon size="18">mdi-close</v-icon>
@@ -18,7 +18,7 @@
       <div class="px-6 pt-5 pb-3">
         <v-text-field
           v-model="query"
-          placeholder="جستجو با نام، نام خانوادگی، شماره تلفن یا کد ملی..."
+          :placeholder="t('patientSearch.placeholder')"
           variant="outlined"
           density="compact"
           hide-details
@@ -35,13 +35,13 @@
         <!-- Loading State -->
         <div v-if="searching" class="flex flex-col items-center justify-center py-14">
           <v-progress-circular indeterminate size="28" width="3" color="#4F46E5" />
-          <p class="mt-4 text-xs font-medium text-slate-400 dark:text-slate-500">در حال جستجو...</p>
+          <p class="mt-4 text-xs font-medium text-slate-400 dark:text-slate-500">{{ t('patientSearch.searching') }}</p>
         </div>
 
         <!-- Results -->
         <div v-else-if="searchResults.length > 0" class="mt-1">
           <div class="flex items-center justify-between mb-3">
-            <p class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ searchResults.length }} نتیجه</p>
+            <p class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ t('patientSearch.resultsCount', { count: searchResults.length }) }}</p>
           </div>
           <div class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar">
             <div
@@ -80,7 +80,7 @@
                 </div>
                 <div v-if="patient.birthDate || patient.gender" class="flex items-center gap-3 mt-1.5">
                   <span v-if="patient.gender" class="text-[11px] text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-700 px-2 py-0.5 rounded-md">
-                    {{ patient.gender === 'male' ? 'مرد' : patient.gender === 'female' ? 'زن' : patient.gender }}
+                    {{ patient.gender === 'male' ? t('patientSearch.male') : patient.gender === 'female' ? t('patientSearch.female') : patient.gender }}
                   </span>
                   <span v-if="patient.birthDate" class="text-[11px] text-slate-400 dark:text-slate-500">
                     {{ formatDate(patient.birthDate) }}
@@ -91,7 +91,7 @@
               <!-- Select Button (appears on hover) -->
               <div class="shrink-0 self-center opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-2 group-hover:translate-x-0">
                 <v-btn variant="flat" color="#4F46E5" size="x-small" class="font-bold text-xs px-3" elevation="0">
-                  انتخاب
+                  {{ t('patientSearch.select') }}
                 </v-btn>
               </div>
             </div>
@@ -103,8 +103,8 @@
           <div class="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-700 border border-slate-100 dark:border-slate-700 flex items-center justify-center mb-4">
             <v-icon size="28" color="slate-300">mdi-account-search-outline</v-icon>
           </div>
-          <p class="text-sm font-bold text-slate-600 dark:text-slate-300">بیماری با این مشخصات یافت نشد</p>
-          <p class="text-xs text-slate-400 dark:text-slate-500 mt-1.5">لطفاً عبارت دیگری را جستجو کنید</p>
+          <p class="text-sm font-bold text-slate-600 dark:text-slate-300">{{ t('patientSearch.noResults') }}</p>
+          <p class="text-xs text-slate-400 dark:text-slate-500 mt-1.5">{{ t('patientSearch.noResultsHint') }}</p>
         </div>
 
         <!-- Initial Hint -->
@@ -112,9 +112,9 @@
           <div class="w-14 h-14 rounded-2xl bg-light-cyan dark:bg-electric-sapphire/20 border border-periwinkle dark:border-electric-sapphire/50 flex items-center justify-center mb-4">
             <v-icon size="28" color="#6366F1">mdi-account-search-outline</v-icon>
           </div>
-          <p class="text-sm font-bold text-slate-600 dark:text-slate-300">بیمار مورد نظر را پیدا کنید</p>
+          <p class="text-sm font-bold text-slate-600 dark:text-slate-300">{{ t('patientSearch.initialTitle') }}</p>
           <p class="text-xs text-slate-400 dark:text-slate-500 mt-1.5 text-center max-w-xs leading-relaxed">
-            برای جستجو، نام، نام خانوادگی، شماره تلفن یا کد ملی بیمار را وارد کنید
+            {{ t('patientSearch.initialHint') }}
           </p>
         </div>
       </div>
@@ -125,6 +125,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 
+const { t } = useI18n()
 const { apiFetch } = useApi()
 const { $toast } = useNuxtApp()
 
@@ -173,7 +174,7 @@ async function searchPatients() {
     const res = await apiFetch<any>(`/api/patients/search?q=${encodeURIComponent(q)}`)
     searchResults.value = res.success ? res.data : []
   } catch {
-    $toast.error('خطا در جستجوی بیماران')
+    $toast.error(t('patientSearch.searchError'))
     searchResults.value = []
   } finally {
     searching.value = false

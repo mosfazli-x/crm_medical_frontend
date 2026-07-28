@@ -34,7 +34,7 @@ export const useAuth = () => {
     }
   })
 
-  const login = async (credentials: { email: string; password: string }) => {
+  const login = async (credentials: { phone: string; password: string }) => {
     try {
       const response: any = await $fetch('/api/auth/login', {
         method: 'POST',
@@ -75,7 +75,7 @@ export const useAuth = () => {
     }
   }
 
-  const register = async (data: { name: string; email: string; password: string }) => {
+  const register = async (data: { phone: string; fullName: string; password: string; role: string }) => {
     try {
       const response: any = await $fetch('/api/auth/register', {
         method: 'POST',
@@ -94,8 +94,12 @@ export const useAuth = () => {
   }
 
   const logout = () => {
-    token.value = ''
+    token.value = null
     user.value = null
+    if (process.client) {
+      localStorage.removeItem('auth_token')
+      localStorage.removeItem('auth_user')
+    }
     navigateTo('/auth/login')
     useNuxtApp().$toast.info('با موفقیت خارج شدید')
   }

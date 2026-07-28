@@ -1,13 +1,13 @@
 <template>
   <UiPageContainer>
-    <UiPageHeader title="پیام‌ها" subtitle="ارسال و دریافت پیام‌های داخلی" />
+    <UiPageHeader :title="$t('messaging.title')" :subtitle="$t('messaging.subtitle')" />
 
     <div class="flex flex-col lg:flex-row gap-5 h-[calc(100vh-16rem)] min-h-[600px]">
       <UiContentCard card-class="min-w-[360px] shrink-0 flex flex-col!">
         <div class="px-2 pt-2 border-b border-slate-200/60 space-y-3">
           <div class="flex items-center gap-2">
             <v-btn color="#4F46E5" class="flex-1 font-bold" prepend-icon="mdi-pencil" @click="startCompose">
-              نوشتن پیام جدید
+              {{ $t('messaging.newMessage') }}
             </v-btn>
             <v-btn icon variant="text" color="slate" class="dark:text-slate-400!" @click="refreshMessages">
               <v-icon>mdi-refresh</v-icon>
@@ -15,25 +15,25 @@
           </div>
           <v-tabs v-model="tab" color="#4F46E5" bg-color="transparent" density="compact" class="border-b border-slate-200 text-slate-800 dark:text-slate-300!">
             <v-tab value="inbox" class="text-xs font-bold tracking-wide">
-              صندوق دریافتی
+              {{ $t('messaging.inbox') }}
               <v-badge v-if="unreadCount > 0" :content="unreadCount" color="red" inline class="mr-1" />
             </v-tab>
-            <v-tab value="sent" class="text-xs font-bold tracking-wide">ارسال شده</v-tab>
+            <v-tab value="sent" class="text-xs font-bold tracking-wide">{{ $t('messaging.sent') }}</v-tab>
           </v-tabs>
         </div>
 
         <div class="flex-1 overflow-y-auto">
           <div v-if="loading" class="flex flex-col items-center justify-center py-16">
             <v-progress-circular indeterminate size="32" color="#4F46E5" />
-            <p class="mt-3 text-xs font-medium text-slate-500">در حال دریافت پیام‌ها...</p>
+            <p class="mt-3 text-xs font-medium text-slate-500">{{ $t('messaging.loadingMessages') }}</p>
           </div>
 
           <div v-else-if="!messages.length" class="flex flex-col items-center justify-center py-16 px-4">
             <div class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
               <v-icon size="28" color="slate-300">mdi-email-outline</v-icon>
             </div>
-            <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">{{ tab === 'inbox' ? 'صندوق دریافتی خالی است' : 'پیامی ارسال نکرده‌اید' }}</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">{{ tab === 'inbox' ? 'هیچ پیامی برای شما ارسال نشده است' : 'روی دکمه بالا کلیک کنید تا پیام جدیدی ارسال کنید' }}</p>
+            <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">{{ tab === 'inbox' ? $t('messaging.emptyInbox') : $t('messaging.emptySent') }}</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">{{ tab === 'inbox' ? $t('messaging.noInboxMessages') : $t('messaging.composeHint') }}</p>
           </div>
 
           <div v-else class="divide-y divide-slate-100">
@@ -48,7 +48,7 @@
                 <div class="flex-1 min-w-0 py-2">
                   <div class="flex items-center gap-2 mb-1">
                     <span v-if="!msg.isRead && tab === 'inbox'" class="w-2 h-2 rounded-full bg-electric-sapphire shrink-0" />
-                    <span v-if="msg.priority === 'urgent'" class="w-2 h-2 rounded-full bg-red-500 shrink-0" title="فوری" />
+                    <span v-if="msg.priority === 'urgent'" class="w-2 h-2 rounded-full bg-red-500 shrink-0" :title="$t('messaging.urgent')" />
                     <span class="text-sm font-bold text-slate-800 truncate">
                       {{ tab === 'inbox' ? msg.sender_name : (msg.patient ? `${msg.patient.firstName} ${msg.patient.lastName}` : msg.recipient_name) }}
                     </span>
@@ -67,7 +67,7 @@
                   <p class="text-[11px] text-slate-400 mt-1">{{ formatDate(msg.createdAt) }}</p>
                 </div>
                 <div v-if="msg.confidential" class="shrink-0">
-                  <span class="px-1.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded text-[10px] font-bold">محرمانه</span>
+                  <span class="px-1.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded text-[10px] font-bold">{{ $t('messaging.confidential') }}</span>
                 </div>
               </div>
             </div>
@@ -80,7 +80,7 @@
         <template v-if="composing">
           <div class="p-6 pt-2">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-300">ارسال پیام جدید</h2>
+              <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-300">{{ $t('messaging.composeTitle') }}</h2>
               <v-btn icon variant="text" size="small" color="slate" @click="cancelCompose">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -96,7 +96,7 @@
                 <div class="flex items-center gap-2 mb-1">
                   <p class="text-sm font-bold text-slate-800 truncate">{{ selectedPatient.firstName }} {{ selectedPatient.lastName }}</p>
                   <span v-if="selectedPatient.gender" class="text-[11px] text-slate-400 bg-white/60 px-2 py-0.5 rounded-md shrink-0">
-                    {{ selectedPatient.gender === 'male' ? 'مرد' : selectedPatient.gender === 'female' ? 'زن' : selectedPatient.gender }}
+                    {{ selectedPatient.gender === 'male' ? $t('messaging.genderMale') : selectedPatient.gender === 'female' ? $t('messaging.genderFemale') : selectedPatient.gender }}
                   </span>
                 </div>
                 <div class="flex flex-wrap gap-x-4 gap-y-1">
@@ -122,23 +122,23 @@
             <!-- Patient search button and manual entry -->
             <div v-if="!selectedPatient" class="mb-4">
               <v-btn variant="outlined" color="#4F46E5" block class="mb-3" prepend-icon="mdi-account-search" @click="patientSearchDialog = true">
-                جستجو و انتخاب بیمار
+                {{ $t('messaging.searchAndSelectPatient') }}
               </v-btn>
               <v-text-field
                 v-model="composeForm.recipient"
-                label="گیرنده (شناسه کاربر یا نام)"
+                :label="$t('messaging.recipientLabel')"
                 variant="outlined"
                 density="compact"
                 hide-details
                 class="dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
-                placeholder="یا نام کاربر را وارد کنید..."
+                :placeholder="$t('messaging.recipientPlaceholder')"
               />
             </div>
 
             <v-select
               v-model="composeForm.priority"
               :items="priorityOptions"
-              label="اولویت"
+              :label="$t('messaging.priority')"
               variant="outlined"
               density="compact"
               class="mb-4 dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
@@ -146,7 +146,7 @@
             />
             <v-text-field
               v-model="composeForm.subject"
-              label="موضوع"
+              :label="$t('messaging.subject')"
               variant="outlined"
               density="compact"
               class="mb-4 dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
@@ -154,7 +154,7 @@
             />
             <v-textarea
               v-model="composeForm.body"
-              label="متن پیام"
+              :label="$t('messaging.messageBody')"
               variant="outlined"
               density="compact"
               class="mb-4 dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
@@ -163,21 +163,21 @@
             />
             <v-checkbox
               v-model="composeForm.confidential"
-              label="محرمانه"
+              :label="$t('messaging.confidentialLabel')"
               color="amber"
               density="compact"
               hide-details
               class="mb-4 dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
             />
             <div class="flex justify-end gap-3 py-2">
-              <v-btn variant="tonal" color="slate" class="bg-slate-30/80!" @click="cancelCompose">انصراف</v-btn>
+              <v-btn variant="tonal" color="slate" class="bg-slate-30/80!" @click="cancelCompose">{{ $t('common.cancel') }}</v-btn>
               <v-btn
                 color="#4F46E5"
                 :loading="sending"
                 :disabled="sending"
                 @click="sendMessage"
               >
-                ارسال پیام
+                {{ $t('messaging.sendMessage') }}
               </v-btn>
             </div>
           </div>
@@ -189,8 +189,8 @@
             <div class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
               <v-icon size="36" color="slate-300">mdi-email-open-outline</v-icon>
             </div>
-            <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">پیامی را انتخاب کنید</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">برای مشاهده متن پیام، یکی از پیام‌های سمت چپ را انتخاب کنید</p>
+            <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">{{ $t('messaging.selectMessage') }}</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">{{ $t('messaging.selectMessageHint') }}</p>
           </div>
         </template>
 
@@ -201,13 +201,13 @@
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-1">
                   <h2 class="text-lg font-extrabold text-slate-800 truncate">{{ selected.subject }}</h2>
-                  <span v-if="selected.confidential" class="px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded text-[11px] font-bold shrink-0">محرمانه</span>
-                  <span v-if="selected.priority === 'urgent'" class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200/60 rounded text-[11px] font-bold shrink-0">فوری</span>
-                  <span v-else-if="selected.priority === 'low'" class="px-2 py-0.5 bg-slate-50 text-slate-600 border border-slate-200 rounded text-[11px] font-bold shrink-0">کم اولویت</span>
+                  <span v-if="selected.confidential" class="px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200/60 rounded text-[11px] font-bold shrink-0">{{ $t('messaging.confidential') }}</span>
+                  <span v-if="selected.priority === 'urgent'" class="px-2 py-0.5 bg-red-50 text-red-700 border border-red-200/60 rounded text-[11px] font-bold shrink-0">{{ $t('messaging.urgent') }}</span>
+                  <span v-else-if="selected.priority === 'low'" class="px-2 py-0.5 bg-slate-50 text-slate-600 border border-slate-200 rounded text-[11px] font-bold shrink-0">{{ $t('messaging.lowPriority') }}</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500">
                   <template v-if="tab === 'sent' && selected.patient">
-                    <span class="font-medium">گیرنده:</span>
+                    <span class="font-medium">{{ $t('messaging.recipient') }}: </span>
                     <span class="text-slate-700 font-bold">{{ selected.patient.firstName }} {{ selected.patient.lastName }}</span>
                     <span class="w-1 h-1 rounded-full bg-slate-300" />
                     <span class="inline-flex items-center gap-1">
@@ -221,7 +221,7 @@
                   </template>
                   <template v-else>
                     <span class="font-medium">
-                      {{ tab === 'inbox' ? 'فرستنده' : 'گیرنده' }}: <span class="text-slate-700">{{ tab === 'inbox' ? selected.sender_name : selected.recipient_name }}</span>
+                      {{ tab === 'inbox' ? $t('messaging.sender') : $t('messaging.recipient') }}: <span class="text-slate-700">{{ tab === 'inbox' ? selected.sender_name : selected.recipient_name }}</span>
                     </span>
                   </template>
                   <span class="w-1 h-1 rounded-full bg-slate-300" />
@@ -239,7 +239,7 @@
                 @click="deleteMessage(selected)"
               >
                 <v-icon size="20">mdi-trash-can-outline</v-icon>
-                <v-tooltip activator="parent" location="bottom">حذف پیام</v-tooltip>
+                <v-tooltip activator="parent" location="bottom">{{ $t('messaging.deleteMessage') }}</v-tooltip>
               </v-btn>
             </div>
           </div>
@@ -258,6 +258,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import moment from 'moment-jalaali'
 
+const { t } = useI18n()
 const { apiFetch } = useApi()
 const { $toast } = useNuxtApp()
 const { user } = useAuth()
@@ -283,9 +284,9 @@ const composeForm = ref({
 })
 
 const priorityOptions = [
-  { title: 'عادی', value: 'normal' },
-  { title: 'فوری', value: 'urgent' },
-  { title: 'کم اولویت', value: 'low' },
+  { title: t('messaging.priorityOptions.normal'), value: 'normal' },
+  { title: t('messaging.priorityOptions.urgent'), value: 'urgent' },
+  { title: t('messaging.priorityOptions.low'), value: 'low' },
 ]
 
 async function fetchMessages() {
@@ -297,7 +298,7 @@ async function fetchMessages() {
       messages.value = res.data
     }
   } catch {
-    $toast.error('خطا در دریافت پیام‌ها')
+    $toast.error(t('messaging.fetchError'))
   } finally {
     loading.value = false
   }
@@ -332,15 +333,15 @@ async function selectMessage(msg: any) {
 async function sendMessage() {
   const { recipient, subject, body, priority, confidential } = composeForm.value
   if (!recipient.trim() && !selectedPatient.value) {
-    $toast.error('لطفاً گیرنده را انتخاب کنید')
+    $toast.error(t('messaging.selectRecipientError'))
     return
   }
   if (!subject.trim()) {
-    $toast.error('لطفاً موضوع را وارد کنید')
+    $toast.error(t('messaging.enterSubjectError'))
     return
   }
   if (!body.trim()) {
-    $toast.error('لطفاً متن پیام را وارد کنید')
+    $toast.error(t('messaging.enterBodyError'))
     return
   }
 
@@ -358,7 +359,7 @@ async function sendMessage() {
       body: payload,
     })
     if (res.success) {
-      $toast.success('پیام با موفقیت ارسال شد')
+      $toast.success(t('messaging.sendSuccess'))
       composing.value = false
       composeForm.value = { recipient: '', subject: '', body: '', priority: 'normal', confidential: false }
       selectedPatient.value = null
@@ -368,7 +369,7 @@ async function sendMessage() {
       }
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در ارسال پیام')
+    $toast.error(err.data?.error || t('messaging.sendError'))
   } finally {
     sending.value = false
   }
@@ -376,13 +377,13 @@ async function sendMessage() {
 
 async function deleteMessage(msg: any) {
   if (!msg?.id) return
-  const confirmed = confirm('آیا از حذف این پیام اطمینان دارید؟')
+  const confirmed = confirm(t('messaging.deleteConfirm'))
   if (!confirmed) return
   deleting.value = true
   try {
     const res = await apiFetch<any>(`/api/messaging/${msg.id}`, { method: 'DELETE' })
     if (res.success) {
-      $toast.success('پیام با موفقیت حذف شد')
+      $toast.success(t('messaging.deleteSuccess'))
       messages.value = messages.value.filter(m => m.id !== msg.id)
       if (selected.value?.id === msg.id) {
         selected.value = messages.value.length > 0 ? messages.value[0] : null
@@ -392,7 +393,7 @@ async function deleteMessage(msg: any) {
       }
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در حذف پیام')
+    $toast.error(err.data?.error || t('messaging.deleteError'))
   } finally {
     deleting.value = false
   }
@@ -442,6 +443,6 @@ onMounted(() => {
 })
 
 useSeoMeta({
-  title: 'پیام‌ها | سیستم مدیریت',
+  title: t('messaging.titleSeo'),
 })
 </script>

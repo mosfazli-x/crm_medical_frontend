@@ -1,6 +1,6 @@
 <template>
     <UiPageContainer>
-        <UiPageHeader title="تقویم ویزیت‌ها" />
+        <UiPageHeader :title="$t('calendar.title')" />
 
         <UiContentCard :class="{ 'dark': isDarkMode }">
             <FullCalendar ref="calendarRef" :options="calendarOptions" />
@@ -13,7 +13,7 @@
                     class="bg-white dark:bg-slate-800! border-b border-slate-100 dark:border-slate-700 py-5 px-6 md:px-8">
                     <div class="flex items-center justify-between">
                         <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">
-                            {{ isEditMode ? 'ویرایش اطلاعات نوبت' : 'ثبت نوبت جدید' }}
+                            {{ isEditMode ? $t('calendar.editVisit') : $t('calendar.newVisit') }}
                         </h2>
                         <v-btn icon variant="text"
                             class="text-slate-400 dark:text-slate-500 hover:text-slate-600 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600! rounded-full dark:fill-slate-300"
@@ -26,40 +26,38 @@
                 <v-card-text class="pt-6 px-6 md:pt-8 md:px-8 bg-slate-50/50 dark:bg-slate-800">
                     <v-row>
                         <v-col cols="12">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">بیمار
-                                <span class="text-red-500">*</span></label>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('calendar.patient') }}
+                                <span class="text-red-500">{{ $t('calendar.required') }}</span></label>
                             <v-autocomplete v-model="newVisit.patientId" :items="patients" item-title="fullName"
-                                item-value="id" placeholder="جستجو و انتخاب بیمار..." variant="outlined"
+                                item-value="id"                                 :placeholder="$t('calendar.searchPatient')" variant="outlined"
                                 density="comfortable" prepend-inner-icon="mdi-account-search-outline" clearable
                                 class="dark:text-slate-300 dark:bg-slate-700 dark:border-slate-600" hide-details="auto"
                                 :loading="patientsLoading">
                                 <template v-slot:no-data>
                                     <div class="pa-4 text-center text-slate-500 dark:text-slate-400 text-sm">
-                                        {{ patientsLoading ? 'در حال جستجو...' : 'بیماری در سیستم یافت نشد.' }}
+                                        {{ patientsLoading ? $t('calendar.searching') : $t('calendar.noPatientFound') }}
                                     </div>
                                 </template>
                             </v-autocomplete>
                         </v-col>
 
                         <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">زمان شروع
-                                <span class="text-red-500">*</span></label>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('calendar.startTime') }}
+                                <span class="text-red-500">{{ $t('calendar.required') }}</span></label>
                             <PersianDatetimePicker v-model="newVisit.start" type="datetime"
                                 display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4F46E5"
                                 auto-submit custom-input class="w-full" />
                         </v-col>
 
                         <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">زمان
-                                پایان</label>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('calendar.endTime') }}</label>
                             <PersianDatetimePicker v-model="newVisit.end" type="datetime"
                                 display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4F46E5"
                                 auto-submit custom-input class="w-full" />
                         </v-col>
 
                         <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">نوع
-                                ویزیت</label>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('calendar.visitType') }}</label>
                             <v-select v-model="newVisit.type" :items="visitTypes" variant="outlined"
                                 class="dark:text-slate-300 dark:bg-slate-700 dark:border-slate-600"
                                 density="comfortable" hide-details="auto" />
@@ -67,16 +65,15 @@
 
                         <v-col cols="12" md="6">
                             <label
-                                class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">وضعیت</label>
-                            <v-select v-model="newVisit.status" :items="['تایید شده', 'در انتظار', 'لغو شده']"
+                                class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('common.status') }}</label>
+                            <v-select v-model="newVisit.status" :items="$t('calendar.statusOptions')"
                                 class="dark:text-slate-300 dark:bg-slate-700 dark:border-slate-600" variant="outlined"
                                 density="comfortable" hide-details="auto" />
                         </v-col>
 
                         <v-col cols="12">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">یادداشت
-                                پزشک</label>
-                            <v-textarea v-model="newVisit.notes" placeholder="در صورت نیاز توضیحاتی وارد کنید..."
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('calendar.doctorNotes') }}</label>
+                            <v-textarea v-model="newVisit.notes" :placeholder="$t('calendar.notesPlaceholder')"
                                 class="dark:text-slate-300 dark:bg-slate-700 dark:border-slate-600" variant="outlined"
                                 rows="3" density="comfortable" hide-details="auto" />
                         </v-col>
@@ -87,7 +84,7 @@
                     class="px-6 py-5 md:px-8 md:py-6 bg-white dark:bg-slate-800! border-t border-slate-100 dark:border-slate-700 flex flex-col-reverse md:flex-row gap-3">
                     <v-btn v-if="isEditMode" color="red-darken-1" variant="text" size="large"
                         class="w-full md:w-auto font-medium tracking-wide rounded-lg" @click="deleteVisit">
-                        حذف نوبت
+                        {{ $t('calendar.deleteVisit') }}
                     </v-btn>
 
                     <v-spacer class="hidden md:block" />
@@ -95,13 +92,13 @@
                     <v-btn color="slate-600" variant="tonal" size="large"
                         class="w-full md:w-auto font-medium tracking-wide rounded-lg hover:bg-slate-200 hover:opacity-65 dark:hover:opacity-85 text-slate-800 dark:text-slate-200!"
                         @click="closeVisitDialog">
-                        انصراف
+                        {{ $t('common.cancel') }}
                     </v-btn>
 
                     <v-btn color="#4F46E5" variant="flat" size="large"
                         class="px-8 w-full md:w-auto font-medium tracking-wide rounded-lg shadow-md shadow-periwinkle hover:opacity-85"
                         :loading="saving" @click="saveVisit">
-                        {{ isEditMode ? 'ذخیره تغییرات' : 'ثبت نوبت' }}
+                        {{ isEditMode ? $t('calendar.saveChanges') : $t('calendar.registerVisit') }}
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -119,6 +116,7 @@ import faLocale from '@fullcalendar/core/locales/fa'
 import CloseCircle from '~/components/icons/CloseCircle.vue'
 import { useEventBus } from '~/composables/useEventBus'
 
+const { t } = useI18n()
 const calendarRef = ref<InstanceType<typeof FullCalendar> | null>(null)
 
 // جلوگیری از خطای SSR در مقداردهی اولیه با window
@@ -138,14 +136,14 @@ const saving = ref(false)
 const isEditMode = ref(false)
 const currentVisitId = ref<string | null>(null)
 
-const visitTypes = ['ویزیت اولیه', 'پیگیری', 'چکاپ بارداری', 'چکاپ دوره‌ای', 'اورژانسی']
+const visitTypes = computed(() => t('calendar.visitTypes'))
 
 const newVisit = ref({
     start: '',
     end: '',
     patientId: null as string | null,
-    type: 'ویزیت اولیه',
-    status: 'تایید شده',
+    type: '',
+    status: '',
     notes: '',
 })
 
@@ -165,8 +163,8 @@ const closeVisitDialog = () => {
         start: '',
         end: '',
         patientId: null,
-        type: 'ویزیت اولیه',
-        status: 'تایید شده',
+        type: '',
+        status: '',
         notes: '',
     }
 }
@@ -179,7 +177,7 @@ const fetchPatients = async () => {
             patients.value = response.data
         }
     } catch (err) {
-        $toast.error('خطا در دریافت لیست بیماران')
+        $toast.error(t('calendar.fetchPatientsError'))
     } finally {
         patientsLoading.value = false
     }
@@ -187,7 +185,7 @@ const fetchPatients = async () => {
 
 const saveVisit = async () => {
     if (!newVisit.value.patientId || !newVisit.value.start) {
-        $toast.error('لطفاً بیمار و زمان شروع را انتخاب کنید.')
+        $toast.error(t('calendar.selectPatientError'))
         return
     }
 
@@ -216,37 +214,37 @@ const saveVisit = async () => {
         const response = await apiFetch(endpoint, { method, body: payload })
 
         if (response.success) {
-            $toast.success(isEditMode.value ? 'نوبت با موفقیت به‌روزرسانی شد.' : 'نوبت جدید ثبت شد.')
+            $toast.success(isEditMode.value ? t('calendar.visitSaved') : t('calendar.visitCreated'))
             closeVisitDialog()
             calendarRef.value?.getApi()?.refetchEvents()
         } else {
-            $toast.error(response.error || 'خطایی رخ داد.')
+            $toast.error(response.error || t('calendar.saveError'))
         }
     } catch (err: any) {
-        $toast.error(err.data?.error || 'خطا در ارتباط با سرور')
+        $toast.error(err.data?.error || t('calendar.serverError'))
     } finally {
         saving.value = false
     }
 }
 
 const deleteVisit = async () => {
-    if (!currentVisitId.value || !confirm('آیا از حذف دائم این نوبت اطمینان دارید؟')) return
+    if (!currentVisitId.value || !confirm(t('calendar.confirmDeleteVisit'))) return
 
     try {
         const response = await apiFetch(`/api/visits/${currentVisitId.value}`, { method: 'DELETE' })
         if (response.success) {
-            $toast.success('نوبت با موفقیت حذف شد.')
+            $toast.success(t('calendar.visitDeleted'))
             closeVisitDialog()
             calendarRef.value?.getApi()?.refetchEvents()
         } else {
-            $toast.error(response.error || 'خطا در حذف نوبت')
+            $toast.error(response.error || t('calendar.deleteError'))
         }
     } catch (err: any) {
-        $toast.error(err.data?.error || 'خطا در ارتباط با سرور')
+        $toast.error(err.data?.error || t('calendar.serverError'))
     }
 }
 
-const calendarOptions = ref({
+const calendarOptions = computed(() => ({
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
     initialView: 'timeGridWeek',
     headerToolbar: {
@@ -266,10 +264,10 @@ const calendarOptions = ref({
     slotDuration: '00:30:00',
     allDaySlot: false,
     buttonText: {
-        today: 'امروز',
-        month: 'ماه',
-        week: 'هفته',
-        day: 'روز'
+        today: t('calendar.buttonText.today'),
+        month: t('calendar.buttonText.month'),
+        week: t('calendar.buttonText.week'),
+        day: t('calendar.buttonText.day')
     },
 
     events: async (fetchInfo: any, successCallback: Function, failureCallback: Function) => {
@@ -280,7 +278,7 @@ const calendarOptions = ref({
             successCallback(events)
         } catch (err) {
             failureCallback(err)
-            $toast.error('خطا در بارگذاری تقویم')
+            $toast.error(t('calendar.calendarLoadError'))
         }
     },
 
@@ -290,10 +288,10 @@ const calendarOptions = ref({
                 method: 'PUT',
                 body: { visitDate: info.event.start.toISOString() },
             })
-            $toast.success('زمان ویزیت تغییر کرد.')
+            $toast.success(t('calendar.timeChanged'))
         } catch {
             info.revert()
-            $toast.error('امکان تغییر زمان وجود ندارد.')
+            $toast.error(t('calendar.timeChangeError'))
         }
     },
 
@@ -307,10 +305,10 @@ const calendarOptions = ref({
                     durationMinutes: diffMins
                 },
             })
-            $toast.success('مدت زمان ویزیت تغییر کرد.')
+            $toast.success(t('calendar.durationChanged'))
         } catch {
             info.revert()
-            $toast.error('امکان تغییر زمان وجود ندارد.')
+            $toast.error(t('calendar.timeChangeError'))
         }
     },
 
@@ -330,15 +328,15 @@ const calendarOptions = ref({
             start: event.startStr.slice(0, 16).replace('T', ' '),
             end: event.endStr ? event.endStr.slice(0, 16).replace('T', ' ') : '',
             patientId: event.extendedProps.patientId || null,
-            type: event.extendedProps.type || 'ویزیت اولیه',
-            status: 'تایید شده',
+            type: event.extendedProps.type || t('calendar.visitTypes')[0],
+            status: t('calendar.statusOptions')[0],
             notes: event.extendedProps.notes || '',
         }
         currentVisitId.value = event.id
         isEditMode.value = true
         visitDialog.value = true
     },
-})
+}))
 
 onMounted(() => {
     isMobile.value = window.innerWidth < 768
@@ -369,7 +367,7 @@ onBeforeUnmount(() => {
 })
 
 useSeoMeta({
-    title: 'تقویم نوبت‌دهی | سیستم مدیریت',
+    title: t('calendar.titleSeo'),
 })
 </script>
 

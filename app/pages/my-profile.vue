@@ -1,8 +1,8 @@
 <template>
   <UiPageContainer>
-    <UiPageHeader title="پروفایل من" subtitle="مدیریت اطلاعات و تنظیمات امنیتی حساب کاربری شما" />
+    <UiPageHeader :title="$t('myProfile.title')" :subtitle="$t('myProfile.subtitle')" />
 
-    <UiContentCard card-class="mb-8! p-6 md:p-8!">
+    <UiContentCard card-class="mb-8! p-6! md:p-8!">
       <div class="!flex !items-center !gap-6">
         <div
           class="!w-20 !h-20 !rounded-full !bg-gradient-to-tr !from-blue-600 !to-indigo-500 !p-1 !shadow-md !shrink-0">
@@ -13,7 +13,7 @@
 
         <div class="!flex !flex-col !min-w-0 !gap-1.5">
           <h2 class="!text-2xl !font-bold !text-slate-800 dark:!text-slate-100 !truncate">
-            {{ userData?.fullName || 'کاربر گرامی' }}
+            {{ userData?.fullName || t('myProfile.helloUser') }}
           </h2>
           <div class="!flex !items-center !gap-3 !text-sm">
             <v-chip size="small" color="primary" variant="flat" class="!font-bold !px-3">
@@ -36,8 +36,8 @@
           <div class="!flex !items-center !gap-3">
             <v-icon color="primary" size="x-large">mdi-account-details-outline</v-icon>
             <div>
-              <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">اطلاعات هویتی</h2>
-              <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">مشخصات فردی و سازمانی خود را ویرایش کنید
+              <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.identityInfo') }}</h2>
+              <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">{{ t('myProfile.identityInfoDesc') }}
               </p>
             </div>
           </div>
@@ -45,29 +45,28 @@
 
         <div class="!p-8">
           <v-form ref="profileFormRef" @submit.prevent="handleUpdateProfile">
-            <v-text-field v-model="profileForm.fullName" label="نام و نام خانوادگی" variant="outlined"
+            <v-text-field v-model="profileForm.fullName" :label="$t('myProfile.fullName')" variant="outlined"
               density="comfortable" prepend-inner-icon="mdi-account-edit-outline"
-              :rules="[v => !v || v.length >= 2 || 'حداقل ۲ کاراکتر الزامی است']" class="!mb-2" dir="rtl" clearable />
+              :rules="[v => !v || v.length >= 2 || t('myProfile.fullNameMinError')]" class="!mb-2" dir="rtl" clearable />
 
-            <v-text-field v-if="isLabOrPharmacy" v-model="profileForm.organizationName" label="نام سازمان / مرکز درمانی"
+            <v-text-field v-if="isLabOrPharmacy" v-model="profileForm.organizationName" :label="$t('myProfile.organizationName')"
               variant="outlined" density="comfortable" prepend-inner-icon="mdi-domain"
-              :rules="[v => !v || v.length >= 1 || 'حداقل ۱ کاراکتر الزامی است']" class="!mb-2" dir="rtl" clearable />
+              :rules="[v => !v || v.length >= 1 || t('myProfile.organizationMinError')]" class="!mb-2" dir="rtl" clearable />
 
             <div class="!mb-6">
-              <label class="!text-sm !font-semibold !text-slate-600 dark:!text-slate-300 !mb-2 !block">شماره موبایل (نام
-                کاربری)</label>
+              <label class="!text-sm !font-semibold !text-slate-600 dark:!text-slate-300 !mb-2 !block">{{ t('myProfile.mobileLabel') }}</label>
               <div
                 class="!flex !items-center !gap-4 !px-5 !py-4 !rounded-xl !bg-slate-100 dark:!bg-slate-900/50 !border !border-slate-200 dark:!border-slate-700">
                 <v-icon class="!text-slate-500">mdi-cellphone</v-icon>
                 <span dir="ltr" class="!text-base !font-bold !text-slate-800 dark:!text-slate-200 !tracking-widest">
                   {{ userData?.phone || '---' }}
                 </span>
-                <v-tooltip text="برای تغییر شماره با پشتیبانی تماس بگیرید" location="top">
+                <v-tooltip :text="$t('myProfile.phoneTooltip')" location="top">
                   <template v-slot:activator="{ props }">
                     <v-chip v-bind="props" size="small" color="grey" variant="tonal"
                       class="!mr-auto !text-xs !font-bold !cursor-help">
                       <v-icon start icon="mdi-lock-outline" size="small"></v-icon>
-                      غیرقابل تغییر
+                      {{ t('myProfile.immutable') }}
                     </v-chip>
                   </template>
                 </v-tooltip>
@@ -77,7 +76,7 @@
             <v-btn type="submit" color="primary" size="x-large" block elevation="2" :loading="profileLoading"
               class="!font-bold !tracking-wide !rounded-xl !mt-2">
               <v-icon start>mdi-check-circle-outline</v-icon>
-              ثبت تغییرات پروفایل
+              {{ t('myProfile.saveProfile') }}
             </v-btn>
           </v-form>
         </div>
@@ -90,42 +89,42 @@
           <div class="!flex !items-center !gap-3">
             <v-icon color="error" size="x-large">mdi-shield-lock-outline</v-icon>
             <div>
-              <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">امنیت و رمز عبور</h2>
-              <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">رمز عبور قوی حداقل شامل ۸ کاراکتر است</p>
+              <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.security') }}</h2>
+              <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">{{ t('myProfile.securityDesc') }}</p>
             </div>
           </div>
         </div>
 
         <div class="!p-8">
           <v-form ref="passwordFormRef" @submit.prevent="handleChangePassword">
-            <v-text-field v-model="passwordForm.currentPassword" label="رمز عبور فعلی"
+            <v-text-field v-model="passwordForm.currentPassword" :label="$t('myProfile.currentPassword')"
               :type="showCurrentPassword ? 'text' : 'password'" variant="outlined" density="comfortable"
               prepend-inner-icon="mdi-lock-outline" :append-inner-icon="showCurrentPassword ? 'mdi-eye-off' : 'mdi-eye'"
               @click:append-inner="showCurrentPassword = !showCurrentPassword"
-              :rules="[v => !!v || 'وارد کردن رمز عبور فعلی الزامی است']" class="ltr-field !mb-2" />
+              :rules="[v => !!v || t('myProfile.currentPasswordRequired')]" class="ltr-field !mb-2" />
 
-            <v-text-field v-model="passwordForm.newPassword" label="رمز عبور جدید"
+            <v-text-field v-model="passwordForm.newPassword" :label="$t('myProfile.newPassword')"
               :type="showNewPassword ? 'text' : 'password'" variant="outlined" density="comfortable"
               prepend-inner-icon="mdi-lock-plus-outline"
               :append-inner-icon="showNewPassword ? 'mdi-eye-off' : 'mdi-eye'"
               @click:append-inner="showNewPassword = !showNewPassword" :rules="[
-                v => !!v || 'رمز عبور جدید الزامی است',
-                v => (v && v.length >= 8) || 'رمز عبور باید حداقل ۸ کاراکتر باشد'
+                v => !!v || t('myProfile.newPasswordRequired'),
+                v => (v && v.length >= 8) || t('myProfile.passwordMinError')
               ]" class="ltr-field !mb-2" />
 
-            <v-text-field v-model="passwordForm.confirmPassword" label="تکرار رمز عبور جدید"
+            <v-text-field v-model="passwordForm.confirmPassword" :label="$t('myProfile.confirmPassword')"
               :type="showConfirmPassword ? 'text' : 'password'" variant="outlined" density="comfortable"
               prepend-inner-icon="mdi-lock-check-outline"
               :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
               @click:append-inner="showConfirmPassword = !showConfirmPassword" :rules="[
-                v => !!v || 'تکرار رمز عبور الزامی است',
-                v => v === passwordForm.newPassword || 'رمز عبور وارد شده مطابقت ندارد'
+                v => !!v || t('myProfile.confirmPasswordRequired'),
+                v => v === passwordForm.newPassword || t('myProfile.passwordMismatch')
               ]" class="ltr-field !mb-6" />
 
             <v-btn type="submit" color="error" size="x-large" block elevation="2" variant="flat"
               :loading="passwordLoading" class="!font-bold !tracking-wide !rounded-xl">
               <v-icon start>mdi-key-variant</v-icon>
-              تغییر رمز عبور
+              {{ t('myProfile.changePassword') }}
             </v-btn>
           </v-form>
         </div>
@@ -140,8 +139,8 @@
         <div class="!flex !items-center !gap-3">
           <v-icon color="primary" size="x-large">mdi-bell-ring-outline</v-icon>
           <div>
-            <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">تنظیمات اعلان‌ها</h2>
-            <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">مدیریت ارسال اعلان‌ها از طریق پیامک و تلگرام</p>
+              <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.notifications') }}</h2>
+              <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">{{ t('myProfile.notificationsDesc') }}</p>
           </div>
         </div>
       </div>
@@ -165,8 +164,8 @@
                 <v-icon color="primary" size="22">mdi-message-text-outline</v-icon>
               </div>
               <div>
-                <p class="!font-bold !text-slate-800 dark:!text-slate-100">پیامک (SMS)</p>
-                <p class="!text-xs !text-slate-500 dark:!text-slate-400">دریافت اعلان‌ها از طریق پیامک</p>
+                <p class="!font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.smsNotifications') }}</p>
+                <p class="!text-xs !text-slate-500 dark:!text-slate-400">{{ t('myProfile.smsNotificationsDesc') }}</p>
               </div>
             </div>
             <v-switch
@@ -185,11 +184,11 @@
                 <v-icon color="info" size="22">mdi-send-variant-outline</v-icon>
               </div>
               <div>
-                <p class="!font-bold !text-slate-800 dark:!text-slate-100">تلگرام</p>
-                <p class="!text-xs !text-slate-500 dark:!text-slate-400">دریافت اعلان‌ها از طریق ربات تلگرام</p>
+                <p class="!font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.telegramNotifications') }}</p>
+                <p class="!text-xs !text-slate-500 dark:!text-slate-400">{{ t('myProfile.telegramNotificationsDesc') }}</p>
               </div>
             </div>
-            <v-tooltip v-if="telegramToggleDisabled" text="ابتدا حساب تلگرام خود را متصل کنید" location="top">
+            <v-tooltip v-if="telegramToggleDisabled" :text="$t('myProfile.connectTelegramFirst')" location="top">
               <template v-slot:activator="{ props }">
                 <div v-bind="props">
                   <v-switch
@@ -222,8 +221,8 @@
         <div class="!flex !items-center !gap-3">
           <v-icon color="primary" size="x-large">mdi-send-variant-outline</v-icon>
           <div>
-            <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">اتصال به ربات تلگرام</h2>
-            <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">مدیریت اتصال حساب کاربری به ربات تلگرام کلینیک
+            <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.telegramConnection') }}</h2>
+            <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">{{ t('myProfile.telegramConnectionDesc') }}
             </p>
           </div>
         </div>
@@ -239,20 +238,20 @@
             <div class="!flex-1 !min-w-0">
               <p class="!font-bold !text-green-800 dark:!text-green-200">
                 <template v-if="telegramData?.username">
-                  متصل به @{{ telegramData.username }}
+                  {{ t('myProfile.linkedToUser') }}{{ telegramData.username }}
                 </template>
                 <template v-else-if="telegramData?.firstName">
-                  متصل به {{ telegramData.firstName }}
+                  {{ t('myProfile.linkedToFirst') }}{{ telegramData.firstName }}
                 </template>
                 <template v-else>
-                  به ربات تلگرام متصل شدید
+                  {{ t('myProfile.connectedToBot') }}
                 </template>
               </p>
-              <p class="!text-xs !text-green-600 dark:!text-green-400 !mt-0.5">حساب تلگرام شما به سیستم متصل است</p>
+              <p class="!text-xs !text-green-600 dark:!text-green-400 !mt-0.5">{{ t('myProfile.connectedDesc') }}</p>
             </div>
             <v-btn color="error" variant="tonal" size="small" @click="confirmUnlink">
               <v-icon start size="small">mdi-link-variant-off</v-icon>
-              قطع اتصال
+              {{ t('myProfile.unlinkButton') }}
             </v-btn>
           </div>
         </div>
@@ -260,7 +259,7 @@
         <div v-else-if="telegramState === 'code' || telegramState === 'polling'">
           <div class="!text-center !mb-6">
             <div v-if="telegramState === 'code'" class="!mb-6">
-              <p class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400 !mb-3">کد اتصال خود را در ربات تلگرام وارد کنید</p>
+              <p class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400 !mb-3">{{ t('myProfile.enterCodePrompt') }}</p>
               <div class="!flex !items-center !justify-center !gap-3">
                 <div class="!relative !inline-block">
                   <div
@@ -275,9 +274,9 @@
               </div>
               <div class="!mt-4">
                 <span class="!text-sm !text-slate-500 dark:!text-slate-400">
-                  این کد تا
+                  {{ t('myProfile.codeValidUntil') }}
                   <span class="!font-bold !text-orange-500 dark:!text-orange-400">{{ countdownDisplay }}</span>
-                  دیگر معتبر است
+                  {{ t('myProfile.codeValidStill') }}
                 </span>
               </div>
             </div>
@@ -285,29 +284,29 @@
             <div v-if="telegramState === 'polling'" class="!mb-6">
               <div class="!flex !items-center !justify-center !gap-3 !mb-4">
                 <v-progress-circular indeterminate color="primary" size="32" width="3" />
-                <span class="!font-bold !text-slate-600 dark:!text-slate-300">در انتظار تایید اتصال...</span>
+                <span class="!font-bold !text-slate-600 dark:!text-slate-300">{{ t('myProfile.waitConfirmation') }}</span>
               </div>
               <p class="!text-sm !text-slate-500 dark:!text-slate-400">
-                کد
+                {{ $t('common.pending') }}
                 <span class="!font-bold !font-mono !tracking-wider !text-blue-600 dark:!text-blue-400">{{ linkCode }}</span>
-                را در ربات تلگرام ارسال کنید
+                {{ t('myProfile.sendCodeInstruction') }}
               </p>
             </div>
 
             <div
               class="!inline-flex !items-center !gap-3 !bg-amber-50 dark:!bg-amber-900/20 !border !border-amber-200 dark:!border-amber-700/50 !rounded-xl !px-5 !py-3 !text-sm !text-amber-700 dark:!text-amber-300">
               <v-icon size="20" color="warning">mdi-send-variant-outline</v-icon>
-              <span>ربات کلینیک را در تلگرام باز کنید و دستور <span class="!font-bold !font-mono" dir="ltr">/link {{ linkCode }}</span> را ارسال نمایید</span>
+              <span>{{ t('myProfile.linkInstruction') }} <span class="!font-bold !font-mono" dir="ltr">/link {{ linkCode }}</span>{{ t('myProfile.sendCommand') }}</span>
             </div>
 
             <div class="!mt-6">
               <v-btn variant="text" color="grey" size="small" :disabled="telegramState === 'polling'" @click="resetTelegram">
                 <v-icon start size="small">mdi-close</v-icon>
-                انصراف
+                {{ $t('common.cancel') }}
               </v-btn>
               <v-btn v-if="telegramState === 'code'" variant="text" color="primary" size="small" class="!mr-2" @click="handleGenerateCode">
                 <v-icon start size="small">mdi-refresh</v-icon>
-                تولید کد جدید
+                {{ t('myProfile.generateNewCode') }}
               </v-btn>
             </div>
           </div>
@@ -318,11 +317,11 @@
             class="!flex !items-center !gap-4 !p-4 !rounded-xl !bg-red-50 dark:!bg-red-900/20 !border !border-red-200 dark:!border-red-700/50">
             <v-icon color="error" size="28">mdi-alert-circle-outline</v-icon>
             <div class="!flex-1">
-              <p class="!font-bold !text-red-700 dark:!text-red-300">خطا در اتصال</p>
+              <p class="!font-bold !text-red-700 dark:!text-red-300">{{ t('myProfile.connectionError') }}</p>
               <p class="!text-xs !text-red-500 dark:!text-red-400 !mt-0.5">{{ telegramError }}</p>
             </div>
             <v-btn color="error" variant="tonal" size="small" @click="resetTelegram">
-              تلاش مجدد
+              {{ $t('common.retry') }}
             </v-btn>
           </div>
         </div>
@@ -332,12 +331,12 @@
             <div class="!w-16 !h-16 !rounded-full !bg-blue-50 dark:!bg-blue-900/30 !flex !items-center !justify-center !mx-auto !mb-4">
               <v-icon color="primary" size="32">mdi-send-variant-outline</v-icon>
             </div>
-            <p class="!text-slate-600 dark:!text-slate-300 !font-medium !mb-1">حساب شما به ربات تلگرام متصل نیست</p>
-            <p class="!text-xs !text-slate-400 dark:!text-slate-500 !mb-6">با اتصال تلگرام، اعلان‌های مهم را مستقیماً در پیام‌رسان دریافت کنید</p>
+            <p class="!text-slate-600 dark:!text-slate-300 !font-medium !mb-1">{{ t('myProfile.notConnected') }}</p>
+            <p class="!text-xs !text-slate-400 dark:!text-slate-500 !mb-6">{{ t('myProfile.connectDescription') }}</p>
             <v-btn color="primary" size="large" elevation="2" :loading="codeLoading" @click="handleGenerateCode"
               class="!font-bold !rounded-xl !px-8">
               <v-icon start>mdi-send-variant-outline</v-icon>
-              اتصال به ربات تلگرام
+              {{ t('myProfile.connectButton') }}
             </v-btn>
           </div>
         </div>
@@ -351,18 +350,18 @@
           <v-icon color="error" size="28">mdi-link-variant-off</v-icon>
         </div>
         <v-card-title class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100 !justify-center !px-0 !pt-0">
-          قطع اتصال تلگرام
+          {{ t('myProfile.unlinkTitle') }}
         </v-card-title>
         <v-card-text class="!text-sm !text-slate-500 dark:!text-slate-400 !px-0 !pb-2">
-          آیا از قطع اتصال حساب تلگرام خود اطمینان دارید؟ با این کار اعلان‌های تلگرامی غیرفعال خواهند شد.
+          {{ t('myProfile.unlinkConfirm') }}
         </v-card-text>
         <v-card-actions class="!justify-center !gap-3 !px-0 !pb-0 !pt-2">
           <v-btn variant="outlined" color="grey" size="large" @click="unlinkDialog = false" class="!rounded-xl !px-6">
-            انصراف
+            {{ $t('common.cancel') }}
           </v-btn>
           <v-btn color="error" size="large" :loading="unlinkLoading" @click="handleUnlink" class="!rounded-xl !px-6">
             <v-icon start size="small">mdi-link-variant-off</v-icon>
-            قطع اتصال
+            {{ t('myProfile.unlinkButton') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -373,6 +372,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 
+const { t } = useI18n()
 const { apiFetch } = useApi()
 const { user: authUser } = useAuth()
 const toast = useNuxtApp().$toast
@@ -402,13 +402,13 @@ const passwordForm = reactive({
 
 const roleLabel = computed(() => {
   const roles: Record<string, string> = {
-    admin_doctor: 'مدیر کلینیک',
-    doctor: 'پزشک',
-    pharmacy: 'مسئول داروخانه',
-    lab: 'آزمایشگاه',
-    patient: 'بیمار',
+    admin_doctor: t('users.roles.admin_doctor'),
+    doctor: t('users.roles.doctor'),
+    pharmacy: t('users.roles.pharmacy'),
+    lab: t('users.roles.lab'),
+    patient: t('users.roles.patient'),
   }
-  return roles[userData.value?.role ?? ''] || 'کاربر سیستم'
+  return roles[userData.value?.role ?? ''] || t('users.roles.patient')
 })
 
 const userInitial = computed(() => {
@@ -453,7 +453,7 @@ async function handleUpdateProfile() {
     }
 
     if (!Object.keys(body).length) {
-      toast.info('هیچ تغییری برای ذخیره وجود ندارد.')
+      toast.info(t('myProfile.noChanges'))
       return
     }
 
@@ -464,10 +464,10 @@ async function handleUpdateProfile() {
 
     if (res.success) {
       authUser.value = res.user
-      toast.success(res.message || 'پروفایل با موفقیت به‌روزرسانی شد.')
+      toast.success(res.message || t('myProfile.profileUpdated'))
     }
   } catch (err: any) {
-    const msg = err?.data?.error || 'خطا در به‌روزرسانی اطلاعات پروفایل.'
+    const msg = err?.data?.error || t('myProfile.profileUpdateError')
     toast.error(msg)
   } finally {
     profileLoading.value = false
@@ -492,7 +492,7 @@ async function handleChangePassword() {
     })
 
     if (res.success) {
-      toast.success(res.message || 'رمز عبور شما با موفقیت تغییر یافت.')
+      toast.success(res.message || t('myProfile.passwordChanged'))
 
       passwordForm.currentPassword = ''
       passwordForm.newPassword = ''
@@ -506,9 +506,9 @@ async function handleChangePassword() {
   } catch (err: any) {
     const status = err?.response?.status
     if (status === 401) {
-      toast.error('رمز عبور فعلی اشتباه است.')
+      toast.error(t('myProfile.wrongPassword'))
     } else {
-      toast.error(err?.data?.error || 'مشکلی در تغییر رمز عبور رخ داد.')
+      toast.error(err?.data?.error || t('myProfile.passwordChangeError'))
     }
   } finally {
     passwordLoading.value = false
@@ -573,11 +573,11 @@ async function togglePref(type: 'sms' | 'telegram', newValue: boolean) {
         telegramEnabled: updated.telegramEnabled,
       }
     }
-    toast.success('تنظیمات اعلان‌ها با موفقیت به‌روزرسانی شد.')
+    toast.success(t('myProfile.notificationUpdated'))
   } catch (err: any) {
     smsEnabled.value = prevSms
     telegramEnabled.value = prevTelegram
-    toast.error(err?.data?.error || 'خطا در به‌روزرسانی تنظیمات اعلان‌ها.')
+    toast.error(err?.data?.error || t('myProfile.notificationUpdateError'))
   } finally {
     loadingRef.value = false
   }
@@ -637,9 +637,9 @@ async function handleGenerateCode() {
   } catch (err: any) {
     const status = err?.response?.status
     if (status === 409) {
-      telegramError.value = 'شما قبلاً یک اتصال فعال تلگرام دارید. ابتدا آن را قطع کنید.'
+      telegramError.value = t('myProfile.existingConnectionError')
     } else {
-      telegramError.value = err?.data?.error || 'خطا در تولید کد اتصال. لطفاً دوباره تلاش کنید.'
+      telegramError.value = err?.data?.error || t('myProfile.generateCodeError')
     }
     telegramState.value = 'idle'
   } finally {
@@ -656,7 +656,7 @@ function startCountdown() {
     countdownDisplay.value = `${minutes}:${seconds.toString().padStart(2, '0')}`
     if (remaining <= 0) {
       clearTimers()
-      telegramError.value = 'کد اتصال منقضی شد. لطفاً یک کد جدید تولید کنید.'
+      telegramError.value = t('myProfile.codeExpired')
       telegramState.value = 'idle'
     }
   }
@@ -674,7 +674,7 @@ function startPolling() {
         telegramData.value = status
         telegramState.value = 'idle'
         clearTimers()
-        toast.success('حساب تلگرام شما با موفقیت متصل شد.')
+        toast.success(t('myProfile.connectedSuccess'))
       } else {
         telegramState.value = 'polling'
       }
@@ -705,12 +705,12 @@ async function handleUnlink() {
     telegramState.value = 'idle'
     telegramEnabled.value = false
     unlinkDialog.value = false
-    toast.success('حساب تلگرام با موفقیت جدا شد.')
+    toast.success(t('myProfile.unlinkSuccess'))
   } catch (err: any) {
     if (err?.response?.status === 404) {
-      toast.error('اتصال تلگرامی یافت نشد.')
+      toast.error(t('myProfile.telegramNotFound'))
     } else {
-      toast.error(err?.data?.error || 'خطا در قطع اتصال تلگرام.')
+      toast.error(err?.data?.error || t('myProfile.telegramDisconnectError'))
     }
   } finally {
     unlinkLoading.value = false
@@ -726,8 +726,8 @@ function resetTelegram() {
 }
 
 useSeoMeta({
-  title: 'پروفایل من | سیستم مدیریت',
-  ogTitle: 'پروفایل من',
+  title: t('myProfile.titleSeo'),
+  ogTitle: t('myProfile.title'),
 })
 
 definePageMeta({

@@ -235,7 +235,8 @@ export const usePatientProfile = (options: UsePatientProfileOptions = {}): UsePa
         medicalHistory: {
           diseases: patientRes.success ? patientRes.data.diseases ?? [] : [],
           allergies: patientRes.success ? patientRes.data.allergies ?? [] : [],
-          medications: patientRes.success ? patientRes.data.medications ?? [] : []
+          medications: patientRes.success ? patientRes.data.medications ?? [] : [],
+          vaccinations: patientRes.success ? patientRes.data.vaccinations ?? [] : [],
         },
         reproductiveHealth: reproRes.success ? reproRes.data : null,
         obstetricHistory: {

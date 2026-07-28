@@ -1,6 +1,6 @@
 <template>
   <UiPageContainer>
-    <UiPageHeader title="لیست بیماران" subtitle="مدیریت و مشاهده پرونده بیماران کلینیک">
+    <UiPageHeader :title="$t('patients.title')" :subtitle="$t('patients.subtitle')">
       <template #actions>
         <AddNewPatientButton />
         <PatientFormDialog />
@@ -12,13 +12,13 @@
         <table class="crm-table">
           <thead>
             <tr>
-              <th>نام و نام خانوادگی</th>
-              <th>کد ملی</th>
-              <th>شماره تماس</th>
-              <th>تاریخ تولد</th>
-              <th>وضعیت تأهل</th>
-              <th>تاریخ ثبت</th>
-              <th class="text-center!">عملیات</th>
+              <th>{{ $t('patients.fullName') }}</th>
+              <th>{{ $t('patients.nationalId') }}</th>
+              <th>{{ $t('patients.phone') }}</th>
+              <th>{{ $t('patients.birthDate') }}</th>
+              <th>{{ $t('patients.maritalStatus') }}</th>
+              <th>{{ $t('patients.registrationDate') }}</th>
+              <th class="text-center!">{{ $t('common.actions') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -30,7 +30,7 @@
 
             <tr v-else-if="!patients.length">
               <td colspan="7">
-                <UiEmptyState title="هیچ بیماری تا کنون ثبت نشده است.">
+                <UiEmptyState :title="$t('patients.noPatients')">
                   <template #icon>
                     <v-icon icon="mdi-account-group-outline" size="32" color="slate-400" />
                   </template>
@@ -51,13 +51,13 @@
               <td>{{ formatJalaliDate(patient.birthDate) }}</td>
               <td>
                 <span :class="maritalBadgeClass(patient.maritalStatus)">
-                  {{ patient.maritalStatus || 'نامشخص' }}
+                  {{ patient.maritalStatus || $t('patients.unknown') }}
                 </span>
               </td>
               <td>{{ formatJalaliDate(patient.createdAt) }}</td>
               <td class="text-center!">
                 <div class="flex items-center justify-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
-                  <v-tooltip text="پرونده کامل" location="top">
+                  <v-tooltip :text="$t('patients.fullRecord')" location="top">
                     <template #activator="{ props }">
                       <v-btn v-bind="props" icon variant="text" size="small" class="crm-icon-btn"
                         @click.stop="navigateTo(`/patients/${patient.id}`)">
@@ -66,7 +66,16 @@
                     </template>
                   </v-tooltip>
 
-                  <v-tooltip text="ارسال پیامک" location="top">
+                  <v-tooltip :text="$t('patients.printRecord')" location="top">
+                    <template #activator="{ props }">
+                      <v-btn v-bind="props" icon variant="text" size="small" class="crm-icon-btn text-blue-500!"
+                        @click.stop="openFullRecord(patient)">
+                        <v-icon size="20">mdi-printer-outline</v-icon>
+                      </v-btn>
+                    </template>
+                  </v-tooltip>
+
+                  <v-tooltip :text="$t('patients.sendSms')" location="top">
                     <template #activator="{ props }">
                       <v-btn v-bind="props" icon variant="text" size="small" class="crm-icon-btn"
                         @click.stop="openSmsModal(patient)">
@@ -75,7 +84,7 @@
                     </template>
                   </v-tooltip>
 
-                  <v-tooltip text="ویرایش اطلاعات" location="top">
+                  <v-tooltip :text="$t('patients.editInfo')" location="top">
                     <template #activator="{ props }">
                       <v-btn v-bind="props" icon variant="text" size="small" class="crm-icon-btn text-emerald-500!"
                         @click.stop="openPatientForEdit(patient)">
@@ -84,7 +93,7 @@
                     </template>
                   </v-tooltip>
 
-                  <v-tooltip text="حذف پرونده" location="top">
+                  <v-tooltip :text="$t('patients.deleteRecord')" location="top">
                     <template #activator="{ props }">
                       <v-btn v-bind="props" icon variant="text" size="small" class="crm-icon-btn crm-icon-btn-danger"
                         @click.stop="confirmDelete(patient)">
@@ -121,7 +130,7 @@
           </div>
         </div>
         <div class="crm-dialog-footer">
-          <button class="crm-btn crm-btn-ghost" @click="profileDialog = false">بستن</button>
+          <button class="crm-btn crm-btn-ghost" @click="profileDialog = false">{{ $t('common.close') }}</button>
         </div>
       </div>
     </v-dialog>
@@ -130,7 +139,7 @@
     <v-dialog v-model="smsDialog" max-width="500">
       <div class="crm-dialog">
         <div class="crm-dialog-header">
-          <h3 class="crm-dialog-title">ارسال پیامک</h3>
+          <h3 class="crm-dialog-title">{{ $t('patients.smsTitle') }}</h3>
           <v-btn icon variant="text" size="small" @click="smsDialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
@@ -138,21 +147,21 @@
 
         <div class="crm-dialog-body">
           <div v-if="selectedSmsPatient" class="crm-info-box">
-            <p class="text-sm text-slate-600 dark:text-slate-400">گیرنده:</p>
+            <p class="text-sm text-slate-600 dark:text-slate-400">{{ $t('patients.recipient') }}</p>
             <p class="font-bold text-electric-sapphire mt-1">
               {{ selectedSmsPatient.firstName }} {{ selectedSmsPatient.lastName }}
               <span class="font-mono text-cornflower-blue text-sm mr-2 crm-ltr">({{ selectedSmsPatient.phone }})</span>
             </p>
           </div>
 
-          <label class="crm-label">متن پیام</label>
+          <label class="crm-label">{{ $t('patients.messageText') }}</label>
           <textarea v-model="smsText" rows="4" class="crm-input crm-textarea"
-            placeholder="متن پیامک خود را اینجا بنویسید..." />
+            :placeholder="$t('patients.smsPlaceholder')" />
         </div>
 
         <div class="crm-dialog-footer">
-          <button class="crm-btn crm-btn-danger" @click="smsDialog = false">انصراف</button>
-          <button class="crm-btn crm-btn-accent" @click="sendSms">ارسال پیامک</button>
+          <button class="crm-btn crm-btn-danger" @click="smsDialog = false">{{ $t('common.cancel') }}</button>
+          <button class="crm-btn crm-btn-accent" @click="sendSms">{{ $t('patients.sendSmsBtn') }}</button>
         </div>
       </div>
     </v-dialog>
@@ -161,6 +170,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+const { t } = useI18n()
 import PatientFormDialog from '~/components/PatientFormDialog.vue'
 import TrashBin from '~/components/icons/TrashBin.vue'
 import { usePatientFormDialog } from '~/composables/usePatientFormDialog'
@@ -193,10 +203,10 @@ const profileFields = computed(() => {
   if (!selectedProfile.value) return []
   const p = selectedProfile.value
   return [
-    { label: 'شماره تماس', value: p.phone || 'ثبت نشده', ltr: true },
-    { label: 'تاریخ تولد', value: formatJalaliDate(p.birthDate) },
-    { label: 'وضعیت تأهل', value: p.maritalStatus || 'نامشخص' },
-    { label: 'تاریخ تشکیل پرونده', value: formatJalaliDate(p.createdAt) },
+    { label: t('patients.phoneLabel'), value: p.phone || t('patients.notRegistered'), ltr: true },
+    { label: t('patients.birthDateLabel'), value: formatJalaliDate(p.birthDate) },
+    { label: t('patients.maritalStatusLabel'), value: p.maritalStatus || t('patients.unknown') },
+    { label: t('patients.registrationDateLabel'), value: formatJalaliDate(p.createdAt) },
   ]
 })
 
@@ -205,9 +215,9 @@ const fetchPatients = async () => {
   try {
     const response = await apiFetch('/api/patients', { baseURL: useRuntimeConfig().public.apiBase })
     if (response.success) patients.value = response.data
-    else $toast.error('خطا در دریافت لیست بیماران.')
+    else $toast.error(t('patients.fetchError'))
   } catch {
-    $toast.error('خطا در ارتباط با سرور.')
+    $toast.error(t('patients.serverError'))
   } finally {
     loading.value = false
   }
@@ -218,13 +228,34 @@ const openPatientProfile = (patient: any) => {
   profileDialog.value = true
 }
 
+const openFullRecord = async (patient: any) => {
+  try {
+    const { token } = useAuth()
+    const apiBase = useRuntimeConfig().public.apiBase || ''
+    const url = `${apiBase}/api/patients/${patient.id}/full-record`
+
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${token.value}` },
+    })
+
+    if (!response.ok) throw new Error('Failed to fetch record')
+
+    const html = await response.text()
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
+    const blobUrl = URL.createObjectURL(blob)
+    window.open(blobUrl, '_blank')
+  } catch {
+    $toast.error(t('patients.fetchFullRecordError'))
+  }
+}
+
 const openPatientForEdit = async (patient: any) => {
   try {
     const result = await apiFetch(`/api/patients/${patient.id}/profile`)
     if (result.success && result.data) openEdit(patient.id, result.data)
-    else $toast.error('خطا در دریافت اطلاعات بیمار برای ویرایش.')
+    else $toast.error(t('patients.fetchForEditError'))
   } catch {
-    $toast.error('خطا در ارتباط با سرور.')
+    $toast.error(t('patients.serverError'))
   }
 }
 
@@ -236,7 +267,7 @@ const openSmsModal = (patient: any) => {
 
 const sendSms = async () => {
   if (!smsText.value.trim()) {
-    $toast.error('لطفاً متن پیامک را وارد کنید.')
+    $toast.error(t('patients.smsEmptyError'))
     return
   }
   try {
@@ -244,25 +275,25 @@ const sendSms = async () => {
       method: 'POST',
       body: { phone: selectedSmsPatient.value.phone, text: smsText.value },
     })
-    $toast.success('پیامک با موفقیت در صف ارسال قرار گرفت.')
+    $toast.success(t('patients.smsSentSuccess'))
     smsDialog.value = false
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در ارسال پیامک')
+    $toast.error(err.data?.error || t('patients.smsSendError'))
   }
 }
 
 const confirmDelete = async (patient: any) => {
-  if (!confirm(`آیا از حذف دائم پرونده "${patient.firstName} ${patient.lastName}" اطمینان دارید؟`)) return
+  if (!confirm(t('patients.deleteConfirm', { name: `${patient.firstName} ${patient.lastName}` }))) return
   try {
     const response = await apiFetch(`/api/patients/${patient.id}`, { method: 'DELETE' })
     if (response.success) {
-      $toast.success('پرونده بیمار با موفقیت حذف شد.')
+      $toast.success(t('patients.deleteSuccess'))
       emit('patient:changed')
     } else {
-      $toast.error(response.error || 'خطا در انجام عملیات حذف.')
+      $toast.error(response.error || t('patients.deleteError'))
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در ارتباط با سرور.')
+    $toast.error(err.data?.error || t('patients.serverError'))
   }
 }
 
@@ -273,5 +304,5 @@ onMounted(() => {
 
 onBeforeUnmount(() => off('patient:changed'))
 
-useSeoMeta({ title: 'لیست بیماران | سیستم کلینیک', ogTitle: 'مدیریت بیماران' })
+useSeoMeta({ title: () => t('patients.titleSeo'), ogTitle: () => t('patients.ogTitle') })
 </script>

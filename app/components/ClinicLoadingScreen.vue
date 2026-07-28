@@ -59,6 +59,8 @@ import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import MedicalKit from '~/components/icons/MedicalKit.vue'
 import pulseAnimation from '~/lottie/medical-pulse.json'
 
+const { t } = useI18n()
+
 const props = withDefaults(defineProps<{
   show: boolean
   clinicName?: string
@@ -70,12 +72,12 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{ (e: 'finished'): void }>()
 
-const statusMessages = [
-  'در حال برقراری اتصال امن...',
-  'بارگذاری اطلاعات کاربری...',
-  'آماده‌سازی داشبورد کلینیک...',
-  'چند لحظه دیگر...',
-]
+const statusMessages = computed(() => [
+  t('clinicLoading.status1'),
+  t('clinicLoading.status2'),
+  t('clinicLoading.status3'),
+  t('clinicLoading.status4'),
+])
 
 const rendered = ref(true)
 const displayProgress = ref(0)

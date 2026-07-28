@@ -5,10 +5,10 @@
             <div class="crm-dialog-header">
                 <div>
                     <h2 class="crm-dialog-title text-xl!">
-                        {{ mode === 'edit' ? 'پرونده پزشکی بیمار' : 'ثبت بیمار جدید' }}
+                        {{ mode === 'edit' ? t('patientForm.medicalRecord') : t('patientForm.newPatient') }}
                     </h2>
                     <span class="text-xs text-slate-500 dark:text-slate-400 mt-1 block font-normal">
-                        {{ mode === 'edit' ? 'ویرایش اطلاعات و سوابق' : 'تکمیل اطلاعات اولیه و اولین ویزیت' }}
+                        {{ mode === 'edit' ? t('patientForm.editInfo') : t('patientForm.initialInfo') }}
                     </span>
                 </div>
                 <v-btn icon variant="text" size="small" class="text-slate-400 hover:text-slate-800"
@@ -19,10 +19,11 @@
 
             <div class="px-8 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800!">
                 <v-tabs v-model="activeTab" color="#4F46E5" bg-color="transparent" height="56">
-                    <v-tab value="basic" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">اطلاعات پایه</v-tab>
-                    <v-tab value="medical" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">سابقه پزشکی</v-tab>
-                    <v-tab value="pregnancy" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">زایمان و بارداری</v-tab>
-                    <v-tab value="attachments" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">مستندات</v-tab>
+                    <v-tab value="basic" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">{{ t('patientForm.tabs.basic') }}</v-tab>
+                    <v-tab value="medical" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">{{ t('patientForm.tabs.medical') }}</v-tab>
+                    <v-tab value="pregnancy" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">{{ t('patientForm.tabs.pregnancy') }}</v-tab>
+                    <v-tab value="vaccination" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">{{ t('patientForm.tabs.vaccination') }}</v-tab>
+                    <v-tab value="attachments" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">{{ t('patientForm.tabs.attachments') }}</v-tab>
                 </v-tabs>
             </div>
 
@@ -41,6 +42,10 @@
     v-model:generalNotes="pregnancyGeneralNotes" />
                     </v-window-item>
 
+                    <v-window-item value="vaccination" transition="fade-transition">
+<PatientTabsVaccination v-model:records="vaccinationRecords" />
+                    </v-window-item>
+
                     <v-window-item value="attachments" transition="fade-transition">
                         <PatientTabsAttachments v-model:attachments="attachments"
                             v-model:existingAttachments="existingAttachments" :patient-id="patientId" />
@@ -50,9 +55,9 @@
 
             <v-card-actions class="crm-dialog-footer">
                 <v-spacer />
-                <button class="crm-btn crm-btn-ghost" @click="close">انصراف</button>
+                <button class="crm-btn crm-btn-ghost" @click="close">{{ t('patientForm.cancel') }}</button>
                 <button class="crm-btn crm-btn-accent" :disabled="loading" @click="submitForm">
-                    {{ loading ? 'در حال ذخیره...' : (mode === 'edit' ? 'ذخیره تغییرات' : 'ثبت پرونده') }}
+                    {{ loading ? t('patientForm.saving') : (mode === 'edit' ? t('patientForm.saveChanges') : t('patientForm.registerRecord')) }}
                 </button>
             </v-card-actions>
 
@@ -70,8 +75,10 @@ import { useApi } from '~/composables/useApi'
 import PatientTabsBasicInfo from '~/components/patient/tabs/BasicInfo.vue'
 import PatientTabsMedicalHistory from '~/components/patient/tabs/MedicalHistory.vue'
 import PatientTabsPregnancyHistory from '~/components/patient/tabs/PregnancyHistory.vue'
+import PatientTabsVaccination from '~/components/patient/tabs/VaccinationTab.vue'
 import PatientTabsAttachments from '~/components/patient/tabs/Attachments.vue'
 
+const { t } = useI18n()
 const { emit } = useEventBus()
 const {
     isOpen,
@@ -121,6 +128,7 @@ const form = reactive({
 
 const pregnancyRecords = ref<any[]>([])
 const pregnancyGeneralNotes = ref('')
+const vaccinationRecords = ref<any[]>([])
 
 const attachments = reactive({
     ultrasound: [] as File[],
@@ -188,6 +196,19 @@ const submitForm = async () => {
                 newborns_details: p.newborns_details || [],
                 notes: p.notes || null,
             }))
+            payload.vaccinations = vaccinationRecords.value.map((v) => ({
+                ...(v.id ? { id: v.id } : {}),
+                vaccine_name: v.vaccine_name || '',
+                dose_number: v.dose_number || null,
+                date_administered: v.date_administered || null,
+                lot_number: v.lot_number || null,
+                manufacturer: v.manufacturer || null,
+                site: v.site || null,
+                administered_by: v.administered_by || null,
+                next_dose_date: v.next_dose_date || null,
+                status: v.status || null,
+                notes: v.notes || null,
+            }))
         } else {
             payload.diseases = form.diseases.map((d) => ({
                 name: d.name,
@@ -216,6 +237,18 @@ const submitForm = async () => {
                 prenatal_screenings: p.prenatal_screenings || {},
                 newborns_details: p.newborns_details || [],
                 notes: p.notes || null,
+            }))
+            payload.vaccinations = vaccinationRecords.value.map((v) => ({
+                vaccine_name: v.vaccine_name || '',
+                dose_number: v.dose_number || null,
+                date_administered: v.date_administered || null,
+                lot_number: v.lot_number || null,
+                manufacturer: v.manufacturer || null,
+                site: v.site || null,
+                administered_by: v.administered_by || null,
+                next_dose_date: v.next_dose_date || null,
+                status: v.status || null,
+                notes: v.notes || null,
             }))
         }
 
@@ -249,15 +282,15 @@ const submitForm = async () => {
 
         const successMsg =
             mode.value === 'edit'
-                ? 'اطلاعات با موفقیت به‌روزرسانی شد'
+                ? t('patientForm.updateSuccess')
                 : form.phone
-                    ? 'بیمار جدید با موفقیت ثبت شد. نام کاربری: شماره تماس، رمز عبور: کد ملی (تغییر در اولین ورود)'
-                    : 'بیمار جدید با موفقیت ثبت شد (بدون حساب کاربری)'
+                    ? t('patientForm.createSuccessWithPhone')
+                    : t('patientForm.createSuccessNoAccount')
         $toast.success(successMsg)
         emit('patient:changed')
         close()
     } catch (error: any) {
-        const message = error?.data?.error || error?.message || 'خطا در ثبت اطلاعات'
+        const message = error?.data?.error || error?.message || t('patientForm.submitError')
         $toast.error(message)
         console.error('Submit Error:', error)
     } finally {
@@ -282,6 +315,7 @@ function resetForm() {
 
     pregnancyRecords.value = []
     pregnancyGeneralNotes.value = ''
+    vaccinationRecords.value = []
 
     attachments.ultrasound = []
     attachments.lab = []
@@ -351,6 +385,20 @@ function fillForm(data: any) {
       prenatal_screenings: p.prenatalScreenings ?? p.prenatal_screenings ?? {},
       newborns_details: p.newbornsDetails ?? p.newborns_details ?? [],
       notes: p.notes || ''
+    }))
+
+    vaccinationRecords.value = (medHistory.vaccinations || []).map((v: any) => ({
+      id: v.id,
+      vaccine_name: v.vaccineName ?? v.vaccine_name ?? '',
+      dose_number: v.doseNumber ?? v.dose_number ?? '',
+      date_administered: v.dateAdministered ?? v.date_administered ?? null,
+      lot_number: v.lotNumber ?? v.lot_number ?? '',
+      manufacturer: v.manufacturer ?? '',
+      site: v.site ?? '',
+      administered_by: v.administeredBy ?? v.administered_by ?? '',
+      next_dose_date: v.nextDoseDate ?? v.next_dose_date ?? null,
+      status: v.status ?? 'completed',
+      notes: v.notes ?? '',
     }))
 
     existingAttachments.ultrasound = [...(data.attachments?.ultrasound ?? [])]

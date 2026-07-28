@@ -1,6 +1,8 @@
 declare module 'moment-jalaali' {
   import { Moment as BaseMoment, MomentFormatSpecification, MomentInput } from 'moment'
 
+  type JalaaliUnit = 'jYear' | 'jMonth' | 'jDate' | 'jDayOfYear' | 'year' | 'month' | 'date' | 'day' | 'hour' | 'minute' | 'second' | 'millisecond'
+
   interface JalaaliMoment extends BaseMoment {
     jYear(): number
     jYear(y: number): JalaaliMoment
@@ -12,6 +14,8 @@ declare module 'moment-jalaali' {
     jWeekday(): number
     jIsLeapYear(): boolean
     jDaysInMonth(): number
+    subtract(amount: number, unit: JalaaliUnit): JalaaliMoment
+    add(amount: number, unit: JalaaliUnit): JalaaliMoment
     format(format?: string): string
   }
 

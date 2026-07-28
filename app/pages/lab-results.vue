@@ -3,9 +3,8 @@
 
     <div class="!mb-8 flex flex-col md:flex-row md:!items-center justify-between !gap-6">
       <div>
-        <h1 class="crm-page-title">نتایج آزمایشگاه</h1>
-        <p class="crm-page-subtitle">مدیریت، بررسی عمیق و ردیابی نموداری بیومارکرهای
-          آزمایشگاهی و هورمونی بیماران</p>
+        <h1 class="crm-page-title">{{ t('labResults.title') }}</h1>
+        <p class="crm-page-subtitle">{{ t('labResults.subtitle') }}</p>
       </div>
 
       <div class="!relative !w-full md:!w-96 group">
@@ -15,7 +14,7 @@
         </div>
         <input v-model="searchQuery" type="text"
           class="!w-full !bg-white !border !border-zinc-200/80 !text-zinc-900 !text-xs !rounded-xl focus:!ring-4 focus:!ring-zinc-900/5 focus:!border-zinc-900 !block !pr-10 !pl-12 !py-3 !transition-all !outline-none placeholder:!text-zinc-400 !shadow-sm"
-          placeholder="جستجوی پرونده بیمار (نام، کد ملی)..." @input="onSearchInput" />
+          :placeholder="t('labResults.searchPlaceholder')" @input="onSearchInput" />
         <div class="!absolute !inset-y-0 !left-3 !flex !items-center">
           <v-progress-circular v-if="searching" indeterminate size="14" width="2" color="#18181b" />
           <button v-else-if="searchQuery" @click="clearSearch"
@@ -31,7 +30,7 @@
       <div class="!px-3 !py-2 !border-b !border-zinc-100 !mb-1.5">
         <p class="!text-[10px] !font-bold !text-zinc-400 !tracking-wider !flex !items-center !gap-2">
           <Icon name="lucide:users" class="!w-3.5 !h-3.5" />
-          نتیجه همپوشانی پرونده‌ها ({{ searchResults.length }} مورد)
+          {{ t('labResults.searchResultsTitle', { count: searchResults.length }) }}
         </p>
       </div>
       <div class="!grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-3 !gap-1">
@@ -57,8 +56,8 @@
         class="!w-10 !h-10 !bg-zinc-50 !rounded-xl !flex !items-center !justify-center !mb-3 !border !border-zinc-100">
         <Icon name="lucide:user-x" class="!w-4 !h-4 !text-zinc-400" />
       </div>
-      <p class="!text-xs !font-semibold !text-zinc-900">هیچ رکوردی یافت نشد</p>
-      <p class="!text-[11px] !text-zinc-400 !mt-1">عبارت جستجو شده با هیچ پرونده فعالی مطابقت ندارد.</p>
+      <p class="!text-xs !font-semibold !text-zinc-900">{{ t('labResults.noRecords') }}</p>
+      <p class="!text-[11px] !text-zinc-400 !mt-1">{{ t('labResults.noRecordsDesc') }}</p>
     </div>
 
     <template v-if="selectedPatient">
@@ -74,11 +73,10 @@
             <div class="!flex !items-center !gap-2">
               <h2 class="!text-sm !font-bold !text-zinc-900 !tracking-tight">{{ selectedPatient.firstName }} {{
                 selectedPatient.lastName }}</h2>
-              <span class="!px-2 !py-0.5 !bg-zinc-100 !text-zinc-700 !rounded-md !text-[9px] !font-bold">پرونده
-                فعال</span>
+              <span class="!px-2 !py-0.5 !bg-zinc-100 !text-zinc-700 !rounded-md !text-[9px] !font-bold">{{ t('labResults.activeFile') }}</span>
             </div>
             <div class="!flex !items-center !gap-1.5 !mt-1 !text-[11px] !text-zinc-400">
-              <span>شناسه ملی:</span>
+              <span>{{ t('labResults.nationalIdLabel') }}</span>
               <span class="!font-mono !tracking-wider !text-zinc-600" dir="ltr">{{ selectedPatient.nationalId }}</span>
             </div>
           </div>
@@ -88,13 +86,13 @@
             class="!flex-1 sm:!flex-none !flex !items-center !justify-center !gap-1.5 !px-3.5 !py-2.5 !bg-white !border !border-zinc-200 hover:!border-zinc-300 !text-zinc-700 !text-xs !font-semibold !rounded-xl !transition-all !shadow-sm"
             @click="clearPatient">
             <Icon name="lucide:arrow-right-left" class="!w-3.5 !h-3.5 !text-zinc-400" />
-            تغییر پرونده بیمار
+            {{ t('labResults.changePatient') }}
           </button>
           <button
             class="!flex-1 sm:!flex-none !flex !items-center !justify-center !gap-1.5 !px-4 !py-2.5 !bg-zinc-900 hover:!bg-zinc-800 !text-white !text-xs !font-semibold !rounded-xl !transition-all !shadow-sm"
             @click="openAddDialog">
             <Icon name="lucide:plus" class="!w-3.5 !h-3.5" />
-            ثبت آزمایش جدید
+            {{ t('labResults.addLabResult') }}
           </button>
         </div>
       </div>
@@ -121,7 +119,7 @@
 
         <div v-if="loadingResults" class="!p-16 !text-center !flex !flex-col !items-center !justify-center">
           <v-progress-circular indeterminate color="#18181b" size="28" width="2" />
-          <p class="!text-xs !text-zinc-400 !mt-4 !font-medium">در حال واکشی ترنزکشن‌های آزمایشگاهی...</p>
+          <p class="!text-xs !text-zinc-400 !mt-4 !font-medium">{{ t('labResults.fetchingTransactions') }}</p>
         </div>
 
         <div v-else-if="filteredResults.length === 0" class="!py-20 !text-center">
@@ -130,8 +128,8 @@
               class="!w-10 !h-10 !rounded-xl !bg-zinc-50 !border !border-zinc-100 !flex !items-center !justify-center !mb-3.5">
               <Icon name="lucide:microscope" class="!w-4 !h-4 !text-zinc-400" />
             </div>
-            <p class="!text-zinc-900 !font-semibold !text-xs">هیچ رکوردی یافت نشد</p>
-            <p class="!text-[11px] !text-zinc-400 !mt-1">در این دسته‌بندی دیتای ثبت شده‌ای وجود ندارد.</p>
+            <p class="!text-zinc-900 !font-semibold !text-xs">{{ t('labResults.noRecords') }}</p>
+            <p class="!text-[11px] !text-zinc-400 !mt-1">{{ t('labResults.noResultsInCategory') }}</p>
           </div>
         </div>
 
@@ -140,18 +138,17 @@
             <thead>
               <tr class="!bg-zinc-50/60 !border-b !border-zinc-200/60">
                 <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">
-                  بیومارکر / تست</th>
+                  {{ t('labResults.biomarkerTest') }}</th>
                 <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">
-                  تاریخ ثبت</th>
+                  {{ t('labResults.registrationDate') }}</th>
                 <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">
-                  مقدار گزارش شده</th>
-                <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">بازه
-                  رفرنس استاندارد</th>
+                  {{ t('labResults.reportedValue') }}</th>
+                <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">{{ t('labResults.referenceRange') }}</th>
                 <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">
-                  وضعیت کلینیکال</th>
+                  {{ t('labResults.clinicalStatus') }}</th>
                 <th
                   class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap !text-left">
-                  اقدامات</th>
+                  {{ t('labResults.actions') }}</th>
               </tr>
             </thead>
             <tbody class="!divide-y !divide-zinc-100">
@@ -190,7 +187,7 @@
                       :class="['!w-1.5 !h-1.5 !rounded-full', result.abnormal_flag ? '!bg-red-500' : '!bg-emerald-500']"></span>
                     <span
                       :class="['!text-[11px] !font-semibold', result.abnormal_flag ? '!text-red-600' : '!text-zinc-600']">
-                      {{ result.abnormal_flag ? 'خارج از محدوده مرجع' : 'نرمال و طبیعی' }}
+                      {{ result.abnormal_flag ? t('labResults.outsideRange') : t('labResults.normalStatus') }}
                     </span>
                   </div>
                 </td>
@@ -200,12 +197,12 @@
                     class="!flex !items-center !justify-end !gap-0.5 md:!opacity-0 group-hover:!opacity-100 !transition-opacity">
                     <button
                       class="!p-1.5 !text-zinc-400 hover:!text-zinc-900 hover:!bg-zinc-100 !rounded-lg !transition-colors"
-                      title="آنالیز روند تغییرات" @click="showTrend(result)">
+                      :title="t('labResults.trendAnalysis')" @click="showTrend(result)">
                       <Icon name="lucide:line-chart" class="!w-4 !h-4" />
                     </button>
                     <button
                       class="!p-1.5 !text-zinc-400 hover:!text-red-600 hover:!bg-red-50 !rounded-lg !transition-colors"
-                      title="حذف رکورد" @click="confirmDelete(result)">
+                      :title="t('labResults.deleteRecord')" @click="confirmDelete(result)">
                       <Icon name="lucide:trash-2" class="!w-4 !h-4" />
                     </button>
                   </div>
@@ -223,16 +220,14 @@
         class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
         <Icon name="lucide:folder-heart" class="!w-6 !h-6 !text-zinc-300" />
       </div>
-      <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">میز کار پایش اسناد آزمایشگاهی</h3>
-      <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">برای بررسی بیومارکرها، مشاهده گراف‌های تحلیلی
-        یا
-        ثبت نتایج آزمایش جدید، پرونده بیمار مورد نظر را از کادر بالا فراخوانی کنید.</p>
+      <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">{{ t('labResults.workstationTitle') }}</h3>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">{{ t('labResults.workstationDesc') }}</p>
     </div>
 
     <v-dialog v-model="addDialog" max-width="540" persistent class="backdrop-blur-sm">
       <div class="!bg-white !rounded-2xl !border !border-zinc-200/80 !shadow-2xl !overflow-hidden">
         <div class="!flex !items-center justify-between !px-6 !py-4 !border-b !border-zinc-100">
-          <h3 class="!text-xs !font-bold !text-zinc-900">ثبت رسمی نتیجه آزمایش جدید</h3>
+          <h3 class="!text-xs !font-bold !text-zinc-900">{{ t('labResults.addResultTitle') }}</h3>
           <button class="!text-zinc-400 hover:!text-zinc-900 !transition-colors" @click="addDialog = false">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
@@ -243,44 +238,35 @@
             <div class="!grid !grid-cols-1 md:!grid-cols-2 !gap-4">
 
               <div class="md:!col-span-2">
-                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">عنوان
-                  آزمایش
-                  / بیومارکر</label>
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.testName') }}</label>
                 <v-combobox v-model="form.test_name" variant="outlined" density="compact" :items="commonTestNames"
-                  :rules="[v => !!v || 'وارد کردن نام آزمایش الزامی است']" hide-details="auto" class="custom-v-input"
+                  :rules="[v => !!v || t('labResults.testNameRequired')]" hide-details="auto" class="custom-v-input"
                   color="#18181b" base-color="#e4e4e7" />
               </div>
 
               <div>
                 <label
-                  class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">دسته‌بندی
-                  ارجاع</label>
+                  class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.category') }}</label>
                 <v-select v-model="form.category" :items="categoryOptions" item-title="label" item-value="value"
-                  variant="outlined" density="compact" :rules="[v => !!v || 'انتخاب دسته‌بندی الزامی است']"
+                  variant="outlined" density="compact" :rules="[v => !!v || t('labResults.categoryRequired')]"
                   hide-details="auto" class="custom-v-input" color="#18181b" base-color="#e4e4e7" />
               </div>
 
               <div>
-                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">مقدار
-                  کمی
-                  (Value)</label>
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.value') }}</label>
                 <v-text-field v-model="form.value" variant="outlined" density="compact" type="number" step="any"
-                  :rules="[v => !!v || 'درج مقدار الزامی است']" hide-details="auto" class="custom-v-input !font-mono"
+                  :rules="[v => !!v || t('labResults.valueRequired')]" hide-details="auto" class="custom-v-input !font-mono"
                   color="#18181b" base-color="#e4e4e7" />
               </div>
 
               <div>
-                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">واحد
-                  سنجش
-                  (Unit)</label>
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.unit') }}</label>
                 <v-text-field v-model="form.unit" variant="outlined" density="compact" hide-details="auto"
                   placeholder="e.g. mIU/L" class="custom-v-input !font-mono" color="#18181b" base-color="#e4e4e7" />
               </div>
 
               <div>
-                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">بازه
-                  رفرنس
-                  (Reference Range)</label>
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.refRange') }}</label>
                 <v-text-field v-model="form.reference_range" variant="outlined" density="compact" hide-details="auto"
                   placeholder="e.g. 0.5 - 4.5" class="custom-v-input !font-mono" color="#18181b" base-color="#e4e4e7" />
               </div>
@@ -288,20 +274,15 @@
               <div
                 class="md:!col-span-2 !bg-white !border !border-zinc-200/80 !rounded-xl !p-3.5 !flex !items-center !justify-between !mt-1">
                 <div>
-                  <label class="!text-xs !font-semibold !text-zinc-900 !block">نشان‌گذاری کلینیکال به عنوان
-                    غیرطبیعی</label>
-                  <span class="!text-[10px] !text-zinc-400 !block !mt-0.5">آیا نتیجه خارج از حدود فیزیولوژیک یا نرمال
-                    کیت
-                    آزمایشگاهی است؟</span>
+                  <label class="!text-xs !font-semibold !text-zinc-900 !block">{{ t('labResults.abnormalFlag') }}</label>
+                  <span class="!text-[10px] !text-zinc-400 !block !mt-0.5">{{ t('labResults.abnormalDesc') }}</span>
                 </div>
                 <v-switch v-model="form.abnormal_flag" color="error" inset hide-details
                   class="!pt-0 !mt-0 !flex-none" />
               </div>
 
               <div class="md:!col-span-2 !mt-1">
-                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">تاریخ
-                  دقیق
-                  انجام نمونه‌گیری</label>
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.samplingDate') }}</label>
                 <PersianDatetimePicker v-model="form.performed_date" format="YYYY-MM-DD"
                   placeholder="انتخاب تاریخ خورشیدی..." class="custom-picker-input" />
                 <p v-if="formDateError" class="!text-red-500 !text-[10px] !font-semibold !mt-1">{{ formDateError }}</p>
@@ -309,8 +290,7 @@
 
               <div class="md:!col-span-2">
                 <label
-                  class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">یادداشت‌های
-                  پیوست یا تشخیصی پزشک</label>
+                  class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.clinicalNotes') }}</label>
                 <v-textarea v-model="form.notes" variant="outlined" density="compact" rows="2" hide-details
                   class="custom-v-input" color="#18181b" base-color="#e4e4e7" />
               </div>
@@ -321,12 +301,12 @@
         <div class="!px-6 !py-4 !bg-white !border-t !border-zinc-100 !flex !justify-end !gap-2.5">
           <button
             class="!px-4 !py-2 !text-xs !font-semibold !text-zinc-500 hover:!bg-zinc-100 !rounded-xl !transition-colors"
-            @click="addDialog = false">انصراف</button>
+            @click="addDialog = false">{{ $t('common.cancel') }}</button>
           <button
             class="!px-5 !py-2 !text-xs !font-semibold !text-white !bg-zinc-900 hover:!bg-zinc-800 !rounded-xl !transition-colors !shadow-sm !flex !items-center !justify-center !min-w-[100px]"
             :disabled="submitting" @click="submitResult">
             <v-progress-circular v-if="submitting" indeterminate size="12" width="2" color="white" class="!ml-2" />
-            ذخیره و ثبت نهایی
+            {{ t('labResults.saveAndFinalize') }}
           </button>
         </div>
       </div>
@@ -339,9 +319,7 @@
           <div>
             <h3 class="!text-xs !font-bold !text-zinc-900 !flex !items-center !gap-2">
               <Icon name="lucide:activity" class="!text-zinc-900 !w-4 !h-4" />
-              منحنی تغییرات دوره‌ای بیومارکر: <span class="!font-mono !text-xs !text-blue-600 !font-bold">{{
-                trendTestName
-                }}</span>
+              {{ t('labResults.trendTitle', { name: trendTestName }) }}
             </h3>
           </div>
           <button class="!text-zinc-400 hover:!text-zinc-900 !transition-colors" @click="trendDialog = false">
@@ -397,9 +375,9 @@
               <table class="!w-full !text-right !text-xs">
                 <thead>
                   <tr class="!bg-zinc-50/50 !border-b !border-zinc-200/60 !text-zinc-400">
-                    <th class="!px-4 !py-3 !font-semibold">تاریخ نمونه‌گیری</th>
-                    <th class="!px-4 !py-3 !font-semibold">مقدار یافته</th>
-                    <th class="!px-4 !py-3 !font-semibold">محدوده مرجع کیت</th>
+                    <th class="!px-4 !py-3 !font-semibold">{{ t('labResults.samplingDateLabel') }}</th>
+                    <th class="!px-4 !py-3 !font-semibold">{{ t('labResults.foundValue') }}</th>
+                    <th class="!px-4 !py-3 !font-semibold">{{ t('labResults.kitReference') }}</th>
                   </tr>
                 </thead>
                 <tbody class="!divide-y !divide-zinc-100 !text-zinc-600">
@@ -424,20 +402,18 @@
           class="!w-11 !h-11 !rounded-xl !bg-red-50 !flex !items-center !justify-center !mx-auto !mb-3.5 !border !border-red-100">
           <Icon name="lucide:trash-2" class="!w-4 !h-4 !text-red-600" />
         </div>
-        <h3 class="!text-xs !font-bold !text-zinc-900 !mb-1.5">حذف سابقه تراکنش آزمایشگاه</h3>
-        <p class="!text-zinc-400 !text-[11px] !leading-relaxed">آیا از پاک کردن کامل این رکورد اطمینان دارید؟ این عمل
-          قابل
-          لغو یا بازیابی نخواهد بود.</p>
+        <h3 class="!text-xs !font-bold !text-zinc-900 !mb-1.5">{{ t('labResults.deleteLabTitle') }}</h3>
+        <p class="!text-zinc-400 !text-[11px] !leading-relaxed">{{ t('labResults.deleteLabConfirm') }}</p>
 
         <div class="!flex !justify-center !gap-2 !mt-5">
           <button
             class="!flex-1 !px-4 !py-2 !bg-zinc-100 hover:!bg-zinc-200 !text-zinc-600 !text-xs !font-semibold !rounded-xl !transition-colors"
-            @click="deleteDialog = false">انصراف</button>
+            @click="deleteDialog = false">{{ $t('common.cancel') }}</button>
           <button
             class="!flex-1 !px-4 !py-2 !bg-red-600 hover:!bg-red-700 !text-white !text-xs !font-semibold !rounded-xl !transition-colors !shadow-sm !flex !items-center !justify-center"
             :disabled="deleting" @click="deleteResult">
             <v-progress-circular v-if="deleting" indeterminate size="12" width="2" color="white" class="!mr-2" />
-            <span v-else>پاک کردن قطعی</span>
+            <span v-else>{{ t('labResults.deletePermanently') }}</span>
           </button>
         </div>
       </div>
@@ -448,6 +424,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 
+const { t } = useI18n()
 const { apiFetch } = useApi()
 const { $toast } = useNuxtApp()
 
@@ -477,14 +454,14 @@ const deleting = ref(false)
 const deleteTarget = ref<any>(null)
 
 const categoryLabels: Record<string, string> = {
-  all: 'همه نتایج اسناد',
-  hormone: 'هورمون‌ها',
-  tumor_marker: 'مارکرهای توموری',
-  cytology: 'سیتولوژی',
-  pathology: 'پاتولوژی',
-  microbiology: 'میکروبیولوژی',
-  genetic: 'ژنتیک',
-  other: 'سایر موارد',
+  all: t('labResults.categories.all'),
+  hormone: t('labResults.categories.hormone'),
+  tumor_marker: t('labResults.categories.tumor_marker'),
+  cytology: t('labResults.categories.cytology'),
+  pathology: t('labResults.categories.pathology'),
+  microbiology: t('labResults.categories.microbiology'),
+  genetic: t('labResults.categories.genetic'),
+  other: t('labResults.categories.other'),
 }
 
 const categoryOptions = Object.entries(categoryLabels)
@@ -574,7 +551,7 @@ async function searchPatients() {
     }
   } catch {
     searchResults.value = []
-    $toast.error('خطا در جستجوی بیماران')
+    $toast.error(t('labResults.fetchSearchError'))
   } finally {
     searching.value = false
   }
@@ -596,11 +573,11 @@ async function fetchResults() {
       results.value = res.data || []
     } else {
       results.value = []
-      $toast.error('خطا در دریافت نتایج آزمایشگاه')
+      $toast.error(t('labResults.fetchResultsError'))
     }
   } catch {
     results.value = []
-    $toast.error('خطا در ارتباط با سرور')
+    $toast.error(t('labResults.serverError'))
   } finally {
     loadingResults.value = false
   }
@@ -614,7 +591,7 @@ function openAddDialog() {
 
 async function submitResult() {
   if (!form.value.performed_date) {
-    formDateError.value = 'تاریخ انجام آزمایش الزامی است'
+    formDateError.value = t('labResults.samplingDateRequired')
     return
   }
   formDateError.value = ''
@@ -640,14 +617,14 @@ async function submitResult() {
       body,
     })
     if (res.success) {
-      $toast.success('نتیجه آزمایش با موفقیت ثبت شد')
+      $toast.success(t('labResults.resultSaved'))
       addDialog.value = false
       await fetchResults()
     } else {
-      $toast.error(res.error || 'خطا در ثبت نتیجه')
+      $toast.error(res.error || t('labResults.resultSaveError'))
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در ثبت نتیجه آزمایش')
+    $toast.error(err.data?.error || t('labResults.labResultSaved'))
   } finally {
     submitting.value = false
   }
@@ -667,11 +644,11 @@ async function showTrend(result: any) {
       )
     } else {
       trendData.value = []
-      $toast.error('خطا در دریافت داده‌های روند')
+      $toast.error(t('labResults.fetchTrendError'))
     }
   } catch {
     trendData.value = []
-    $toast.error('خطا در دریافت روند آزمایش')
+    $toast.error(t('labResults.trendFetchError'))
   } finally {
     trendLoading.value = false
   }
@@ -762,21 +739,21 @@ async function deleteResult() {
   try {
     const res = await apiFetch<any>(`/api/lab-results/${deleteTarget.value.id}`, { method: 'DELETE' })
     if (res.success) {
-      $toast.success('نتیجه آزمایش با موفقیت حذف شد')
+      $toast.success(t('labResults.resultDeleted'))
       deleteDialog.value = false
       deleteTarget.value = null
       await fetchResults()
     } else {
-      $toast.error(res.error || 'خطا در حذف نتیجه')
+      $toast.error(res.error || t('labResults.deleteError'))
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در حذف نتیجه آزمایش')
+    $toast.error(err.data?.error || t('labResults.labDeleteError'))
   } finally {
     deleting.value = false
   }
 }
 
-useSeoMeta({ title: 'نتایج آزمایشگاه | سیستم کلینیک' })
+useSeoMeta({ title: t('labResults.titleSeo') })
 </script>
 
 <style scoped>

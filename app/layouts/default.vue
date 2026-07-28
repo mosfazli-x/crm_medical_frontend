@@ -1,5 +1,5 @@
 <template>
-  <v-locale-provider rtl>
+  <v-locale-provider :rtl="locale === 'fa'">
     <ClinicLoadingScreen :show="isLoading" />
 
     <v-app v-if="!isLoading" class="!bg-[#f0f2f5] dark:!bg-[#0f1117] transition-colors duration-300 relative">
@@ -102,8 +102,8 @@
             <span class="text-[#059669] text-sm">&#10003;</span>
           </div>
           <div>
-            <p class="text-sm font-semibold text-[#111827] dark:text-[#f3f4f6] leading-tight">خوش آمدید</p>
-            <p class="text-[11px] text-[#9ca3af]">آماده مدیریت کلینیک</p>
+            <p class="text-sm font-semibold text-[#111827] dark:text-[#f3f4f6] leading-tight">{{ t('dashboard.patientWelcome') }}</p>
+            <p class="text-[11px] text-[#9ca3af]">{{ t('dashboard.adminWelcome') }}</p>
           </div>
         </div>
 
@@ -114,6 +114,30 @@
             <Sun v-if="!isDark" class="w-[18px] h-[18px] stroke-[#6b7280] fill-none" />
             <Moon v-else class="w-[18px] h-[18px] fill-[#9ca3af]" />
           </v-btn>
+
+          <v-menu offset-y :close-on-content-click="true">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" icon variant="text" size="small" class="!text-[#6b7280]">
+                <Globe class="w-[18px] h-[18px]" />
+              </v-btn>
+            </template>
+            <v-list density="compact" class="!py-1 !rounded-lg !border !border-[#e5e7eb] dark:!border-[#2a2c36] !bg-white dark:!bg-[#1e2028] min-w-[140px]">
+              <v-list-item
+                v-for="lang in languages"
+                :key="lang.code"
+                @click="switchLanguage(lang.code)"
+                :active="locale === lang.code"
+                active-class="!bg-[#EEF2FF] dark:!bg-[#1e1b4b]/50 !text-[#4F46E5] dark:!text-[#818cf8]"
+                class="!rounded-md !mx-1 !my-0.5"
+              >
+                <template #prepend>
+                  <span class="text-base mr-0">{{ lang.flag }}</span>
+                </template>
+                <v-list-item-title class="text-[13px] font-medium">{{ lang.label }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+
           <v-btn icon variant="text" size="small" class="!text-[#6b7280] hover:!text-[#ef4444]!" @click="logout">
             <TurnOffIcon class="w-[18px] h-[18px] fill-[#9ca3af]" />
           </v-btn>
@@ -149,13 +173,27 @@ import Wallet from '~/components/icons/Wallet.vue'
 import Profile from '~/components/icons/Profile.vue'
 import Sun from '~/components/icons/Sun.vue'
 import Moon from '~/components/icons/Moon.vue'
+import Globe from '~/components/icons/Globe.vue'
 import Users from '~/components/icons/Users.vue'
+import Settings from '~/components/icons/Settings.vue'
+import Bell from '~/components/icons/Bell.vue'
+import AddClipboard from '~/components/icons/AddClipboard.vue'
 
 const route = useRoute()
 const { user, logout } = useAuth()
 const { apiLoading } = useApi()
 const { smAndDown } = useDisplay()
 const { isDark, toggleTheme, initTheme } = useThemeMode()
+const { t, locale, setLocale } = useI18n()
+
+const languages = [
+  { code: 'fa' as const, label: 'فارسی', flag: '🇮🇷' },
+  { code: 'en' as const, label: 'English', flag: '🇬🇧' },
+]
+
+const switchLanguage = async (code: 'fa' | 'en') => {
+  await setLocale(code)
+}
 
 const drawer = ref(true)
 const rail = ref(false)
@@ -176,6 +214,11 @@ onMounted(() => {
   updateDrawerState()
   window.addEventListener('resize', updateDrawerState)
   initTheme()
+
+  const savedLocale = localStorage.getItem('locale')
+  if (savedLocale && (savedLocale === 'fa' || savedLocale === 'en')) {
+    setLocale(savedLocale)
+  }
 })
 
 onBeforeUnmount(() => {
@@ -184,11 +227,11 @@ onBeforeUnmount(() => {
 
 const roleLabel = computed(() => {
   const roles: Record<string, string> = {
-    admin_doctor: 'مدیر کلینیک',
-    doctor: 'پزشک',
-    pharmacy: 'مسئول داروخانه',
-    lab: 'آزمایشگاه',
-    patient: 'بیمار',
+    admin_doctor: t('users.roles.admin_doctor'),
+    doctor: t('users.roles.doctor'),
+    pharmacy: t('users.roles.pharmacy'),
+    lab: t('users.roles.lab'),
+    patient: t('users.roles.patient'),
   }
   const currentRole = user?.value?.role || (user as any)?.role
   return roles[currentRole] || 'کاربر سیستم'
@@ -199,23 +242,28 @@ const userInitial = computed(() => {
   return name ? name.charAt(0) : 'U'
 })
 
-const ALL_MENUS = [
-  { title: 'داشبورد', to: '/dashboard', icon: HomeAngle, roles: ['all'], category: 'primary' },
-  { title: 'تقویم کاری', to: '/calendar', icon: Calendar, roles: ['admin_doctor', 'doctor'], category: 'primary' },
-  { title: 'زمانبندی رزروها', to: '/scheduling', icon: Clock, roles: ['admin_doctor', 'doctor'], category: 'primary' },
-  { title: 'نوبت‌های بیماران', to: '/appointments', icon: Grid, roles: ['admin_doctor', 'doctor'], category: 'primary' },
-  { title: 'انواع نوبت', to: '/visit-types', icon: DocumentText, roles: ['admin_doctor', 'doctor'], category: 'primary' },
-  { title: 'لیست کاربران', to: '/users', icon: Users, roles: ['admin_doctor'], category: 'primary' },
-  { title: 'پیام‌ها', to: '/messaging', icon: ChatDots, roles: ['admin_doctor', 'doctor', 'lab', 'pharmacy'], category: 'primary' },
-  { title: 'ابزارهای بالینی', to: '/clinical-tools', icon: Calculator, roles: ['admin_doctor', 'doctor'], category: 'primary' },
-  { title: 'صورتحساب', to: '/billing', icon: Wallet, roles: ['admin_doctor'], category: 'primary' },
-  { title: 'غربالگری', to: '/screening', icon: ShieldCheck, roles: ['admin_doctor', 'doctor'], category: 'primary' },
-  { title: 'نتایج آزمایش', to: '/lab-results', icon: DocumentText, roles: ['admin_doctor', 'doctor', 'lab'], category: 'primary' },
-  { title: 'نسخه‌ها', to: '/prescriptions', icon: Calendar, roles: ['pharmacy'], category: 'primary' },
-  { title: 'پروفایل من', to: '/my-profile', icon: Profile, roles: ['all'], category: 'primary' },
-  { title: 'پیام‌ها', to: '/patient/messaging', icon: ChatDots, roles: ['patient'], category: 'primary' },
-  { title: 'لیست بیماران', to: '/patients', icon: UsersGroup, roles: ['admin_doctor', 'doctor'], category: 'patient' },
-]
+const ALL_MENUS = computed(() => [
+  { title: t('dashboard.title'), to: '/dashboard', icon: HomeAngle, roles: ['all'], category: 'primary' },
+  { title: t('calendar.title'), to: '/calendar', icon: Calendar, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: t('scheduling.title'), to: '/scheduling', icon: Clock, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: t('appointments.title'), to: '/appointments', icon: Grid, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: t('visitTypes.title'), to: '/visit-types', icon: DocumentText, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: t('users.title'), to: '/users', icon: Users, roles: ['admin_doctor'], category: 'primary' },
+  { title: t('messaging.title'), to: '/messaging', icon: ChatDots, roles: ['admin_doctor', 'doctor', 'lab', 'pharmacy'], category: 'primary' },
+  { title: t('clinicalTools.title'), to: '/clinical-tools', icon: Calculator, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: t('billing.title'), to: '/billing', icon: Wallet, roles: ['admin_doctor'], category: 'primary' },
+  { title: t('staff.title'), to: '/staff', icon: UsersGroup, roles: ['admin_doctor'], category: 'primary' },
+  { title: t('adminSchedule.title'), to: '/admin/schedule', icon: Clock, roles: ['admin_doctor'], category: 'primary' },
+  { title: t('attendance.title'), to: '/attendance', icon: Bell, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: t('adminSettings.title'), to: '/admin/settings', icon: Settings, roles: ['admin_doctor'], category: 'primary' },
+  { title: t('screening.title'), to: '/screening', icon: ShieldCheck, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: t('labResults.title'), to: '/lab-results', icon: DocumentText, roles: ['admin_doctor', 'doctor', 'lab'], category: 'primary' },
+  { title: t('prescriptions.title'), to: '/prescriptions', icon: MedicalKit, roles: ['admin_doctor', 'doctor', 'pharmacy'], category: 'primary' },
+  { title: t('auditLogs.title'), to: '/admin/audit', icon: AddClipboard, roles: ['admin_doctor'], category: 'primary' },
+  { title: t('myProfile.title'), to: '/my-profile', icon: Profile, roles: ['all'], category: 'primary' },
+  { title: t('patientMessaging.title'), to: '/patient/messaging', icon: ChatDots, roles: ['patient'], category: 'primary' },
+  { title: t('patients.title'), to: '/patients', icon: UsersGroup, roles: ['admin_doctor', 'doctor'], category: 'patient' },
+])
 
 const hasAccess = (itemRoles: string[]) => {
   if (itemRoles.includes('all')) return true
@@ -225,15 +273,15 @@ const hasAccess = (itemRoles: string[]) => {
 }
 
 const primaryMenu = computed(() =>
-  ALL_MENUS.filter(item => item.category === 'primary' && hasAccess(item.roles))
+  ALL_MENUS.value.filter(item => item.category === 'primary' && hasAccess(item.roles))
 )
 
 const patientMenu = computed(() =>
-  ALL_MENUS.filter(item => item.category === 'patient' && hasAccess(item.roles))
+  ALL_MENUS.value.filter(item => item.category === 'patient' && hasAccess(item.roles))
 )
 
 const menuSections = computed(() => [
-  { label: 'منوی اصلی', items: primaryMenu.value },
-  { label: 'بیماران', items: patientMenu.value },
+  { label: t('layout.mainMenu'), items: primaryMenu.value },
+  { label: t('layout.patientsMenu'), items: patientMenu.value },
 ])
 </script>

@@ -1,6 +1,6 @@
 <template>
   <UiPageContainer>
-    <UiPageHeader title="مدیریت صورتحساب‌ها" subtitle="مدیریت جامع هزینه‌ها، کدهای خدمات و وضعیت پرداخت بیماران" />
+    <UiPageHeader :title="$t('billing.title')" :subtitle="$t('billing.subtitle')" />
 
     <div class="crm-tabs mb-8">
       <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key"
@@ -15,10 +15,11 @@
         <div
           class="!bg-white dark:!bg-[#0f1115] !rounded-2xl !border !border-slate-200/60 dark:!border-slate-800/60 !p-6 !shadow-sm !transition-all hover:!shadow-md">
           <div class="!flex !items-center !gap-3 !mb-3">
-            <div class="!p-2 !bg-slate-100 dark:!bg-slate-800/50 !rounded-lg text-slate-600 dark:text-slate-400 flex justify-center align-middle items-center">
+            <div
+              class="!p-2 !bg-slate-100 dark:!bg-slate-800/50 !rounded-lg text-slate-600 dark:text-slate-400 flex justify-center align-middle items-center">
               <Icon name="lucide:receipt" class="!w-5 !h-5" />
             </div>
-            <div class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400">مجموع صورتحساب‌ها</div>
+            <div class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400">{{ $t('billing.totalBilled') }}</div>
           </div>
           <div class="!text-3xl !font-black !text-slate-900 dark:!text-white !tracking-tight">{{
             formatPrice(summary.totalBilled) }}</div>
@@ -27,10 +28,11 @@
         <div
           class="!bg-white dark:!bg-[#0f1115] !rounded-2xl !border !border-slate-200/60 dark:!border-slate-800/60 !p-6 !shadow-sm !transition-all hover:!shadow-md">
           <div class="!flex !items-center !gap-3 !mb-3">
-            <div class="!p-2 !bg-emerald-50 dark:!bg-emerald-900/20 !rounded-lg text-emerald-600 dark:text-emerald-400 flex justify-center align-middle items-center">
+            <div
+              class="!p-2 !bg-emerald-50 dark:!bg-emerald-900/20 !rounded-lg text-emerald-600 dark:text-emerald-400 flex justify-center align-middle items-center">
               <Icon name="lucide:trending-up" class="!w-5 !h-5" />
             </div>
-            <div class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400">وصول شده</div>
+            <div class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400">{{ $t('billing.totalCollected') }}</div>
           </div>
           <div class="!text-3xl !font-black !text-emerald-600 dark:!text-emerald-400 !tracking-tight">{{
             formatPrice(summary.totalCollected) }}</div>
@@ -39,10 +41,11 @@
         <div
           class="!bg-white dark:!bg-[#0f1115] !rounded-2xl !border !border-slate-200/60 dark:!border-slate-800/60 !p-6 !shadow-sm !transition-all hover:!shadow-md">
           <div class="!flex !items-center !gap-3 !mb-3">
-            <div class="!p-2 !bg-amber-50 dark:!bg-amber-900/20 !rounded-lg text-amber-600 dark:text-amber-400 flex justify-center align-middle items-center">
+            <div
+              class="!p-2 !bg-amber-50 dark:!bg-amber-900/20 !rounded-lg text-amber-600 dark:text-amber-400 flex justify-center align-middle items-center">
               <Icon name="lucide:clock" class="!w-5 !h-5" />
             </div>
-            <div class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400">در انتظار پرداخت</div>
+            <div class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400">{{ $t('billing.totalPending') }}</div>
           </div>
           <div class="!text-3xl !font-black !text-amber-600 dark:!text-amber-400 !tracking-tight">{{
             formatPrice(summary.totalPending) }}</div>
@@ -52,7 +55,7 @@
       <div class="!flex !flex-col sm:!flex-row !justify-between !items-start sm:!items-center !gap-4 !pb-2">
         <div class="!w-full sm:!max-w-md !relative">
           <v-text-field v-model="searchQuery" variant="outlined" density="comfortable"
-            placeholder="جستجو با نام بیمار..." hide-details clearable class="!bg-white dark:!bg-[#0f1115] !rounded-xl">
+            :placeholder="$t('billing.searchPlaceholder')" hide-details clearable class="!bg-white dark:!bg-[#0f1115] !rounded-xl">
             <template #prepend-inner>
               <Icon name="lucide:search" class="!w-5 !h-5 !text-slate-400 !mr-2" />
             </template>
@@ -62,12 +65,12 @@
           <button @click="openBalanceDialog"
             class="!flex-1 sm:!flex-none !flex !items-center !justify-center !gap-2 !px-4 !py-2.5 !bg-white dark:!bg-slate-800 !text-slate-700 dark:!text-slate-200 !font-semibold !text-sm !rounded-xl !border !border-slate-200 dark:!border-slate-700 hover:!bg-slate-50 dark:hover:!bg-slate-700 !transition-colors !shadow-sm">
             <Icon name="lucide:wallet" class="!w-4 !h-4" />
-            <span>حساب بیمار</span>
+            <span>{{ $t('billing.patientAccount') }}</span>
           </button>
           <button @click="openAddRecordDialog"
             class="!flex-1 sm:!flex-none !flex !items-center !justify-center !gap-2 !px-4 !py-2.5 !bg-slate-900 dark:!bg-white !text-white dark:!text-slate-900 !font-semibold !text-sm !rounded-xl hover:!bg-slate-800 dark:hover:!bg-slate-100 !transition-colors !shadow-sm">
             <Icon name="lucide:plus" class="!w-4 !h-4 fill-amber-300!" />
-            <span>ثبت صورتحساب</span>
+            <span>{{ $t('billing.addRecord') }}</span>
           </button>
         </div>
       </div>
@@ -81,28 +84,28 @@
               <tr>
                 <th
                   class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  بیمار</th>
+                   {{ $t('billing.patient') }}</th>
                 <th
                   class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  خدمت</th>
+                   {{ $t('billing.service') }}</th>
                 <th
                   class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  تاریخ</th>
+                   {{ $t('billing.date') }}</th>
                 <th
                   class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  مبلغ (تومان)</th>
+                   {{ $t('billing.amount') }}</th>
                 <th
                   class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  بیمه</th>
+                   {{ $t('billing.insurance') }}</th>
                 <th
                   class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  بیمار</th>
+                   {{ $t('billing.patientPortion') }}</th>
                 <th
                   class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  وضعیت</th>
+                   {{ $t('billing.status') }}</th>
                 <th
                   class="!px-6 !py-4 !text-center !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  عملیات</th>
+                   {{ $t('billing.actions') }}</th>
               </tr>
             </thead>
             <tbody class="!divide-y !divide-slate-100 dark:!divide-slate-800/60">
@@ -118,14 +121,16 @@
                       class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
                       <Icon name="lucide:file-x" class="!w-10 !h-10 text-slate-300" />
                     </div>
-                    <p class="text-lg font-bold text-slate-700 dark:text-slate-300">هیچ صورتحسابی یافت نشد.</p>
+                    <p class="text-lg font-bold text-slate-700 dark:text-slate-300">{{ $t('billing.noRecords') }}</p>
                   </div>
                 </td>
               </tr>
               <tr v-else v-for="record in filteredRecords" :key="record.id"
                 class="hover:!bg-slate-50/50 dark:hover:!bg-slate-800/30 !transition-colors !group">
                 <td class="!px-6 !py-4 !text-sm !font-bold !text-slate-900 dark:!text-slate-100 !whitespace-nowrap">
-                  {{ record.patient_name || [record.patientFirstName, record.patientLastName].filter(Boolean).join(' ') || '---' }}
+                  {{ record.patient_name || [record.patientFirstName, record.patientLastName].filter(Boolean).join(' ')
+                    ||
+                    '---' }}
                 </td>
                 <td class="!px-6 !py-4 !text-sm !font-medium !text-slate-600 dark:!text-slate-300 !whitespace-nowrap">
                   {{ record.procedure_name || record.procedureCode?.name || '---' }}
@@ -135,15 +140,15 @@
                 </td>
                 <td class="!px-6 !py-4 !text-sm !font-black !text-slate-900 dark:!text-slate-100 !whitespace-nowrap"
                   dir="ltr">
-                  {{ formatPrice(record.amount).replace(' تومان', '') }}
+                  {{ formatPrice(record.amount).replace(` ${$t('common.toman')}`, '') }}
                 </td>
                 <td class="!px-6 !py-4 !text-sm !font-bold !text-emerald-600 dark:!text-emerald-400 !whitespace-nowrap"
                   dir="ltr">
-                  {{ formatPrice(record.insurance_portion).replace(' تومان', '') }}
+                  {{ formatPrice(record.insurance_portion).replace(` ${$t('common.toman')}`, '') }}
                 </td>
                 <td class="!px-6 !py-4 !text-sm !font-bold !text-amber-600 dark:!text-amber-400 !whitespace-nowrap"
                   dir="ltr">
-                  {{ formatPrice(record.patient_portion).replace(' تومان', '') }}
+                  {{ formatPrice(record.patient_portion).replace(` ${$t('common.toman')}`, '') }}
                 </td>
                 <td class="!px-6 !py-4 !whitespace-nowrap">
                   <span :class="[
@@ -162,19 +167,19 @@
                     <template v-if="record.status === 'pending'">
                       <button @click="updateRecordStatus(record.id, 'paid')"
                         class="!p-1.5 !text-emerald-500 hover:!bg-emerald-50 dark:hover:!bg-emerald-900/20 !rounded-lg !transition-colors"
-                        title="تأیید پرداخت">
+                        :title="$t('billing.confirmPayment')">
                         <Icon name="lucide:check-circle" class="!w-5 !h-5" />
                       </button>
                       <button @click="updateRecordStatus(record.id, 'cancelled')"
                         class="!p-1.5 !text-red-500 hover:!bg-red-50 dark:hover:!bg-red-900/20 !rounded-lg !transition-colors"
-                        title="لغو">
+                        :title="$t('billing.cancelBtn')">
                         <Icon name="lucide:x-circle" class="!w-5 !h-5" />
                       </button>
                     </template>
                     <template v-else-if="record.status === 'partial'">
                       <button @click="updateRecordStatus(record.id, 'paid')"
                         class="!p-1.5 !text-emerald-500 hover:!bg-emerald-50 dark:hover:!bg-emerald-900/20 !rounded-lg !transition-colors"
-                        title="تسویه کامل">
+                        :title="$t('billing.settleFull')">
                         <Icon name="lucide:check-square" class="!w-5 !h-5" />
                       </button>
                     </template>
@@ -191,7 +196,7 @@
       <div class="!flex !flex-col sm:!flex-row !justify-between !items-start sm:!items-center !gap-4 !pb-2">
         <div class="!w-full sm:!max-w-xs">
           <v-select v-model="categoryFilter" :items="categoryOptions" item-title="label" item-value="value"
-            variant="outlined" density="comfortable" placeholder="همه دسته‌بندی‌ها" hide-details clearable
+            variant="outlined" density="comfortable" :placeholder="$t('billing.categories.allCategories')" hide-details clearable
             class="!bg-white dark:!bg-[#0f1115] !rounded-xl">
             <template #prepend-inner>
               <Icon name="lucide:filter" class="!w-5 !h-5 !text-slate-400 !mr-2" />
@@ -201,7 +206,7 @@
         <button @click="openAddCodeDialog"
           class="!w-full sm:!w-auto !flex !items-center !justify-center !gap-2 !px-4 !py-2.5 !bg-slate-900 dark:!bg-white !text-white dark:!text-slate-900 !font-semibold !text-sm !rounded-xl hover:!bg-slate-800 dark:hover:!bg-slate-100 !transition-colors !shadow-sm">
           <Icon name="lucide:plus" class="!w-4 !h-4" />
-          <span>افزودن کد خدمت</span>
+            <span>{{ $t('billing.addServiceCode') }}</span>
         </button>
       </div>
 
@@ -214,22 +219,22 @@
               <tr>
                 <th
                   class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  کد</th>
+                   {{ $t('billing.code') }}</th>
                 <th
                   class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  نام خدمت</th>
+                   {{ $t('billing.serviceName') }}</th>
                 <th
                   class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  توضیحات</th>
+                   {{ $t('billing.description') }}</th>
                 <th
                   class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  قیمت</th>
+                   {{ $t('billing.price') }}</th>
                 <th
                   class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  پوشش بیمه</th>
+                   {{ $t('billing.insuranceCoverage') }}</th>
                 <th
                   class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                  دسته‌بندی</th>
+                   {{ $t('billing.category') }}</th>
               </tr>
             </thead>
             <tbody class="!divide-y !divide-slate-100 dark:!divide-slate-800/60">
@@ -245,7 +250,7 @@
                       class="!bg-slate-50 dark:!bg-slate-800/50 !p-5 !rounded-full !text-slate-300 dark:!text-slate-600">
                       <Icon name="lucide:clipboard-list" class="!w-10 !h-10" />
                     </div>
-                    <p class="!text-slate-500 dark:!text-slate-400 !font-semibold !text-sm">هیچ کد خدمتی یافت نشد.</p>
+                    <p class="!text-slate-500 dark:!text-slate-400 !font-semibold !text-sm">{{ $t('billing.noCodes') }}</p>
                   </div>
                 </td>
               </tr>
@@ -285,7 +290,7 @@
         class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden !border !border-slate-200/50 dark:!border-slate-800">
         <div
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
-          <h2 class="!text-xl !font-black !text-slate-900 dark:!text-white">ثبت صورتحساب جدید</h2>
+          <h2 class="!text-xl !font-black !text-slate-900 dark:!text-white">{{ $t('billing.addRecordTitle') }}</h2>
           <button @click="recordDialog = false"
             class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors aspect-square justify-center align-middle flex hover:bg-slate-100 dark:hover:bg-slate-700!">
             <Icon name="lucide:x" class="!w-4 !h-4" />
@@ -293,58 +298,70 @@
         </div>
         <div class="!p-8 !space-y-5">
           <div class="!relative">
-            <div v-if="selectedRecordPatient" class="!flex !items-center !gap-2 !p-3 !bg-slate-50 dark:!bg-slate-800/50 !rounded-xl !border !border-slate-200 dark:!border-slate-700">
+            <div v-if="selectedRecordPatient"
+              class="!flex !items-center !gap-2 !p-3 !bg-slate-50 dark:!bg-slate-800/50 !rounded-xl !border !border-slate-200 dark:!border-slate-700">
               <div class="!flex-1 !min-w-0">
-                <div class="!text-sm !font-bold !text-slate-900 dark:!text-white !truncate">{{ selectedRecordPatient.firstName }} {{ selectedRecordPatient.lastName }}</div>
-                <div class="!text-xs !text-slate-500 dark:!text-slate-400">{{ selectedRecordPatient.nationalId || selectedRecordPatient.phone || '' }}</div>
+                <div class="!text-sm !font-bold !text-slate-900 dark:!text-white !truncate">{{
+                  selectedRecordPatient.firstName }} {{ selectedRecordPatient.lastName }}</div>
+                <div class="!text-xs !text-slate-500 dark:!text-slate-400">{{ selectedRecordPatient.nationalId ||
+                  selectedRecordPatient.phone || '' }}</div>
               </div>
-              <button @click="clearRecordPatient()" class="!p-1 !text-slate-400 hover:!text-red-500 !rounded-lg hover:!bg-red-50 dark:hover:!bg-red-900/20 !transition-colors">
+              <button @click="clearRecordPatient()"
+                class="!p-1 !text-slate-400 hover:!text-red-500 !rounded-lg hover:!bg-red-50 dark:hover:!bg-red-900/20 !transition-colors">
                 <Icon name="lucide:x" class="!w-4 !h-4" />
               </button>
             </div>
-            <v-text-field v-else v-model="recordPatientSearchQuery" @input="onRecordPatientSearchInput" @blur="hideRecordPatientResults" @focus="recordPatientSearchQuery?.trim()?.length >= 2 && recordPatientSearchResults.length && (showRecordPatientResults = true)" variant="outlined" density="comfortable" label="بیمار" placeholder="جستجو با نام، کد ملی یا تلفن..." hide-details="auto" :loading="recordPatientSearching">
+            <v-text-field v-else v-model="recordPatientSearchQuery" @input="onRecordPatientSearchInput"
+              @blur="hideRecordPatientResults"
+              @focus="recordPatientSearchQuery?.trim()?.length >= 2 && recordPatientSearchResults.length && (showRecordPatientResults = true)"
+                variant="outlined" density="comfortable" :label="$t('billing.patient')" :placeholder="$t('billing.searchPatientPlaceholder')"
+              hide-details="auto" :loading="recordPatientSearching">
               <template #prepend-inner>
                 <Icon name="lucide:search" class="!w-5 !h-5 !text-slate-400 !mr-2" />
               </template>
             </v-text-field>
-            <div v-if="showRecordPatientResults && recordPatientSearchResults.length" class="!absolute !z-50 !mt-1 !w-full !bg-white dark:!bg-slate-800 !rounded-xl !shadow-xl !border !border-slate-200 dark:!border-slate-700 !overflow-hidden">
-              <button v-for="p in recordPatientSearchResults" :key="p.id" @mousedown.prevent="selectRecordPatient(p)" class="!w-full !px-4 !py-3 !flex !flex-col !items-start !gap-0.5 hover:!bg-slate-50 dark:hover:!bg-slate-700/50 !transition-colors !text-right !border-b !border-slate-100 dark:!border-slate-700/50 last:!border-b-0">
-                <span class="!text-sm !font-bold !text-slate-900 dark:!text-white">{{ p.firstName }} {{ p.lastName }}</span>
+            <div v-if="showRecordPatientResults && recordPatientSearchResults.length"
+              class="!absolute !z-50 !mt-1 !w-full !bg-white dark:!bg-slate-800 !rounded-xl !shadow-xl !border !border-slate-200 dark:!border-slate-700 !overflow-hidden">
+              <button v-for="p in recordPatientSearchResults" :key="p.id" @mousedown.prevent="selectRecordPatient(p)"
+                class="!w-full !px-4 !py-3 !flex !flex-col !items-start !gap-0.5 hover:!bg-slate-50 dark:hover:!bg-slate-700/50 !transition-colors !text-right !border-b !border-slate-100 dark:!border-slate-700/50 last:!border-b-0">
+                <span class="!text-sm !font-bold !text-slate-900 dark:!text-white">{{ p.firstName }} {{ p.lastName
+                }}</span>
                 <span class="!text-xs !text-slate-500 dark:!text-slate-400">{{ p.nationalId || p.phone || '' }}</span>
               </button>
             </div>
           </div>
           <v-select v-model="recordForm.procedure_code_id" :items="procedureCodes" item-title="name" item-value="id"
-            variant="outlined" density="comfortable" label="کد خدمت" placeholder="انتخاب خدمت" hide-details="auto" />
+            variant="outlined" density="comfortable" :label="$t('billing.serviceCode')" :placeholder="$t('billing.selectService')" hide-details="auto" />
           <div class="!grid !grid-cols-2 !gap-4">
-            <v-text-field v-model="recordForm.amount" variant="outlined" density="comfortable" label="مبلغ کل"
-              placeholder="مبلغ (تومان)" type="number" hide-details="auto" />
+            <v-text-field v-model="recordForm.amount" variant="outlined" density="comfortable" :label="$t('billing.totalAmount')"
+              :placeholder="$t('billing.amountPlaceholder')" type="number" hide-details="auto" />
             <v-select v-model="recordForm.status" :items="statusOptions" item-title="label" item-value="value"
-              variant="outlined" density="comfortable" label="وضعیت" placeholder="انتخاب وضعیت" hide-details="auto" />
+              variant="outlined" density="comfortable" :label="$t('billing.status')" :placeholder="$t('billing.selectStatus')" hide-details="auto" />
           </div>
           <div class="!grid !grid-cols-2 !gap-4">
             <v-text-field v-model="recordForm.insurance_portion" variant="outlined" density="comfortable"
-              class="!col-span-1 sm:!col-span-1" label="سهم بیمه" placeholder="سهم بیمه" type="number"
+              class="!col-span-1 sm:!col-span-1" :label="$t('billing.insurancePortion')" :placeholder="$t('billing.insurancePortion')" type="number"
               hide-details="auto" />
             <v-text-field v-model="recordForm.patient_portion" variant="outlined" density="comfortable"
-              class="!col-span-1 sm:!col-span-1" label="سهم بیمار" placeholder="سهم بیمار" type="number"
+              class="!col-span-1 sm:!col-span-1" :label="$t('billing.patientPortion')" :placeholder="$t('billing.patientPortion')" type="number"
               hide-details="auto" />
           </div>
           <div class="!grid !grid-cols-2 !gap-4">
-            <PersianDatetimePicker v-model="recordForm.billing_date" type="date" placeholder="تاریخ صورتحساب"
-              display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#0f172a" auto-submit clearable custom-input />
-            <v-textarea v-model="recordForm.notes" variant="outlined" density="comfortable" label="یادداشت"
-              placeholder="توضیحات تکمیلی (اختیاری)" rows="1" hide-details="auto" />
+            <PersianDatetimePicker v-model="recordForm.billing_date" type="date" :placeholder="$t('billing.billingDate')"
+              display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#000000" auto-submit clearable custom-input
+              class="relative h-max border rounded overflow-hidden" />
+            <v-textarea v-model="recordForm.notes" variant="outlined" density="comfortable" :label="$t('common.notes')"
+              :placeholder="$t('billing.optionalNotes')" rows="1" hide-details="auto" />
           </div>
         </div>
         <div
           class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
           <button @click="recordDialog = false"
-            class="!px-5 !py-2.5 !text-sm !font-bold !text-slate-600 dark:!text-slate-300 hover:!bg-slate-100 dark:hover:!bg-slate-800 !rounded-xl !transition-colors">انصراف</button>
+            class="!px-5 !py-2.5 !text-sm !font-bold !text-slate-600 dark:!text-slate-300 hover:!bg-slate-100 dark:hover:!bg-slate-800 !rounded-xl !transition-colors">{{ $t('billing.cancelBtn') }}</button>
           <button :disabled="savingRecord" @click="saveBillingRecord"
             class="!px-6 !py-2.5 !text-sm !font-bold !text-white !bg-slate-900 dark:!bg-white dark:!text-slate-900 hover:!bg-slate-800 dark:hover:!bg-slate-100 !rounded-xl !shadow-sm !transition-colors !flex !items-center !gap-2 disabled:!opacity-50">
             <Icon v-if="savingRecord" name="lucide:loader-2" class="!w-4 !h-4 !animate-spin" />
-            ذخیره صورتحساب
+            {{ $t('billing.saveRecord') }}
           </button>
         </div>
       </div>
@@ -355,7 +372,7 @@
         class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden !border !border-slate-200/50 dark:!border-slate-800">
         <div
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
-          <h2 class="!text-xl !font-black !text-slate-900 dark:!text-white">افزودن کد خدمت</h2>
+          <h2 class="!text-xl !font-black !text-slate-900 dark:!text-white">{{ $t('billing.addCodeTitle') }}</h2>
           <button @click="codeDialog = false"
             class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors aspect-square justify-center align-middle flex hover:bg-slate-100 dark:hover:bg-slate-700!">
             <Icon name="lucide:x" class="!w-4 !h-4" />
@@ -363,30 +380,30 @@
         </div>
         <div class="!p-8 !space-y-5">
           <div class="!grid !grid-cols-2 !gap-4">
-            <v-text-field v-model="codeForm.code" variant="outlined" density="comfortable" label="کد اختصاصی"
-              placeholder="مثال: CON-001" hide-details="auto" />
+            <v-text-field v-model="codeForm.code" variant="outlined" density="comfortable" :label="$t('billing.code')"
+              :placeholder="$t('billing.codePlaceholder')" hide-details="auto" />
             <v-select v-model="codeForm.category" :items="categoryOptions" item-title="label" item-value="value"
-              variant="outlined" density="comfortable" label="دسته‌بندی" placeholder="انتخاب..." hide-details="auto" />
+              variant="outlined" density="comfortable" :label="$t('billing.category')" :placeholder="$t('billing.selectCategory')" hide-details="auto" />
           </div>
-          <v-text-field v-model="codeForm.name" variant="outlined" density="comfortable" label="عنوان خدمت"
-            placeholder="نام دقیق خدمت" hide-details="auto" />
-          <v-textarea v-model="codeForm.description" variant="outlined" density="comfortable" label="شرح"
-            placeholder="توضیحات تکمیلی (اختیاری)" rows="2" hide-details="auto" />
+          <v-text-field v-model="codeForm.name" variant="outlined" density="comfortable" :label="$t('billing.serviceTitle')"
+            :placeholder="$t('billing.serviceNamePlaceholder')" hide-details="auto" />
+          <v-textarea v-model="codeForm.description" variant="outlined" density="comfortable" :label="$t('billing.description')"
+            :placeholder="$t('billing.optionalNotes')" rows="2" hide-details="auto" />
           <div class="!grid !grid-cols-2 !gap-4">
-            <v-text-field v-model="codeForm.price" variant="outlined" density="comfortable" label="قیمت پایه"
-              placeholder="تومان" type="number" hide-details="auto" />
+            <v-text-field v-model="codeForm.price" variant="outlined" density="comfortable" :label="$t('billing.basePrice')"
+              :placeholder="$t('common.toman')" type="number" hide-details="auto" />
             <v-text-field v-model="codeForm.insurance_coverage_percent" variant="outlined" density="comfortable"
-              label="پوشش بیمه (%)" placeholder="مثال: 70" type="number" hide-details="auto" />
+              :label="$t('billing.insuranceCoveragePercent')" :placeholder="$t('billing.insuranceCoveragePlaceholder')" type="number" hide-details="auto" />
           </div>
         </div>
         <div
           class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
           <button @click="codeDialog = false"
-            class="!px-5 !py-2.5 !text-sm !font-bold !text-slate-600 dark:!text-slate-300 hover:!bg-slate-100 dark:hover:!bg-slate-800 !rounded-xl !transition-colors">انصراف</button>
+            class="!px-5 !py-2.5 !text-sm !font-bold !text-slate-600 dark:!text-slate-300 hover:!bg-slate-100 dark:hover:!bg-slate-800 !rounded-xl !transition-colors">{{ $t('billing.cancelBtn') }}</button>
           <button :disabled="savingCode" @click="saveProcedureCode"
             class="!px-6 !py-2.5 !text-sm !font-bold !text-white !bg-slate-900 dark:!bg-white dark:!text-slate-900 hover:!bg-slate-800 dark:hover:!bg-slate-100 !rounded-xl !shadow-sm !transition-colors !flex !items-center !gap-2 disabled:!opacity-50">
             <Icon v-if="savingCode" name="lucide:loader-2" class="!w-4 !h-4 !animate-spin" />
-            ذخیره سرویس
+            {{ $t('billing.saveService') }}
           </button>
         </div>
       </div>
@@ -397,7 +414,7 @@
         class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden !border !border-slate-200/50 dark:!border-slate-800">
         <div
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
-          <h2 class="!text-xl !font-black !text-slate-900 dark:!text-white">بررسی حساب بیمار</h2>
+          <h2 class="!text-xl !font-black !text-slate-900 dark:!text-white">{{ $t('billing.checkPatientAccount') }}</h2>
           <button @click="balanceDialog = false"
             class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors aspect-square justify-center align-middle flex hover:bg-slate-100 dark:hover:bg-slate-700!">
             <Icon name="lucide:x" class="!w-4 !h-4" />
@@ -406,23 +423,35 @@
         <div class="!p-8 !space-y-6">
           <div class="!flex !gap-3">
             <div class="!flex-1 !relative">
-              <div v-if="selectedBalancePatient" class="!flex !items-center !gap-2 !p-3 !bg-slate-50 dark:!bg-slate-800/50 !rounded-xl !border !border-slate-200 dark:!border-slate-700">
+              <div v-if="selectedBalancePatient"
+                class="!flex !items-center !gap-2 !p-3 !bg-slate-50 dark:!bg-slate-800/50 !rounded-xl !border !border-slate-200 dark:!border-slate-700">
                 <div class="!flex-1 !min-w-0">
-                  <div class="!text-sm !font-bold !text-slate-900 dark:!text-white !truncate">{{ selectedBalancePatient.firstName }} {{ selectedBalancePatient.lastName }}</div>
-                  <div class="!text-xs !text-slate-500 dark:!text-slate-400">{{ selectedBalancePatient.nationalId || selectedBalancePatient.phone || '' }}</div>
+                  <div class="!text-sm !font-bold !text-slate-900 dark:!text-white !truncate">{{
+                    selectedBalancePatient.firstName }} {{ selectedBalancePatient.lastName }}</div>
+                  <div class="!text-xs !text-slate-500 dark:!text-slate-400">{{ selectedBalancePatient.nationalId ||
+                    selectedBalancePatient.phone || '' }}</div>
                 </div>
-                <button @click="clearBalancePatient()" class="!p-1 !text-slate-400 hover:!text-red-500 !rounded-lg hover:!bg-red-50 dark:hover:!bg-red-900/20 !transition-colors">
+                <button @click="clearBalancePatient()"
+                  class="!p-1 !text-slate-400 hover:!text-red-500 !rounded-lg hover:!bg-red-50 dark:hover:!bg-red-900/20 !transition-colors">
                   <Icon name="lucide:x" class="!w-4 !h-4" />
                 </button>
               </div>
-              <v-text-field v-else v-model="balancePatientSearchQuery" @input="onBalancePatientSearchInput" @blur="hideBalancePatientResults" @focus="balancePatientSearchQuery?.trim()?.length >= 2 && balancePatientSearchResults.length && (showBalancePatientResults = true)" variant="outlined" density="comfortable" label="بیمار" placeholder="جستجو با نام، کد ملی یا تلفن..." hide-details="auto" :loading="balancePatientSearching">
+              <v-text-field v-else v-model="balancePatientSearchQuery" @input="onBalancePatientSearchInput"
+                @blur="hideBalancePatientResults"
+                @focus="balancePatientSearchQuery?.trim()?.length >= 2 && balancePatientSearchResults.length && (showBalancePatientResults = true)"
+              variant="outlined" density="comfortable" :label="$t('billing.patient')" :placeholder="$t('billing.searchPatientPlaceholder')"
+                hide-details="auto" :loading="balancePatientSearching">
                 <template #prepend-inner>
                   <Icon name="lucide:search" class="!w-5 !h-5 !text-slate-400 !mr-2" />
                 </template>
               </v-text-field>
-              <div v-if="showBalancePatientResults && balancePatientSearchResults.length" class="!absolute !z-50 !mt-1 !w-full !bg-white dark:!bg-slate-800 !rounded-xl !shadow-xl !border !border-slate-200 dark:!border-slate-700 !overflow-hidden">
-                <button v-for="p in balancePatientSearchResults" :key="p.id" @mousedown.prevent="selectBalancePatient(p)" class="!w-full !px-4 !py-3 !flex !flex-col !items-start !gap-0.5 hover:!bg-slate-50 dark:hover:!bg-slate-700/50 !transition-colors !text-right !border-b !border-slate-100 dark:!border-slate-700/50 last:!border-b-0">
-                  <span class="!text-sm !font-bold !text-slate-900 dark:!text-white">{{ p.firstName }} {{ p.lastName }}</span>
+              <div v-if="showBalancePatientResults && balancePatientSearchResults.length"
+                class="!absolute !z-50 !mt-1 !w-full !bg-white dark:!bg-slate-800 !rounded-xl !shadow-xl !border !border-slate-200 dark:!border-slate-700 !overflow-hidden">
+                <button v-for="p in balancePatientSearchResults" :key="p.id"
+                  @mousedown.prevent="selectBalancePatient(p)"
+                  class="!w-full !px-4 !py-3 !flex !flex-col !items-start !gap-0.5 hover:!bg-slate-50 dark:hover:!bg-slate-700/50 !transition-colors !text-right !border-b !border-slate-100 dark:!border-slate-700/50 last:!border-b-0">
+                  <span class="!text-sm !font-bold !text-slate-900 dark:!text-white">{{ p.firstName }} {{ p.lastName
+                  }}</span>
                   <span class="!text-xs !text-slate-500 dark:!text-slate-400">{{ p.nationalId || p.phone || '' }}</span>
                 </button>
               </div>
@@ -437,18 +466,18 @@
           <div v-if="patientBalance !== null"
             class="!bg-slate-50/80 dark:!bg-slate-800/40 !rounded-2xl !p-6 !space-y-4 !border !border-slate-200/60 dark:!border-slate-700/60">
             <div class="!flex !justify-between !items-center">
-              <span class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400">کل صورتحساب‌ها</span>
+              <span class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400">{{ $t('billing.totalInvoices') }}</span>
               <span class="!text-lg !font-black !text-slate-900 dark:!text-white" dir="ltr">{{
                 formatPrice(patientBalance.total_billed || 0) }}</span>
             </div>
             <div class="!flex !justify-between !items-center">
-              <span class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400">مبلغ پرداخت شده</span>
+              <span class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400">{{ $t('billing.paidAmount') }}</span>
               <span class="!text-lg !font-black !text-emerald-600 dark:!text-emerald-400" dir="ltr">{{
                 formatPrice(patientBalance.total_paid || 0) }}</span>
             </div>
             <div
               class="!border-t !border-slate-200/80 dark:!border-slate-700 !pt-4 !flex !justify-between !items-center">
-              <span class="!text-base !font-black !text-slate-700 dark:!text-slate-300">مانده حساب</span>
+              <span class="!text-base !font-black !text-slate-700 dark:!text-slate-300">{{ $t('billing.balance') }}</span>
               <span
                 :class="['!text-2xl !font-black', (patientBalance.balance || 0) > 0 ? '!text-red-500 dark:!text-red-400' : '!text-emerald-500 dark:!text-emerald-400']"
                 dir="ltr">
@@ -465,6 +494,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useApi } from '~/composables/useApi'
+const { t } = useI18n()
 // از آنجایی که Nuxt 3 اتوماتیک Icon را import میکند نیاز به ایمپورت دستی نیست، اما مطمئن شوید @nuxt/icon نصب است.
 
 const { apiFetch } = useApi()
@@ -473,25 +503,25 @@ const { $toast } = useNuxtApp()
 const activeTab = ref<'records' | 'codes'>('records')
 
 const tabs = [
-  { key: 'records', label: 'صورتحساب‌ها' },
-  { key: 'codes', label: 'کدهای خدمات' },
+  { key: 'records', label: t('billing.tabs.records') },
+  { key: 'codes', label: t('billing.tabs.codes') },
 ]
 
 const statusLabels: Record<string, string> = {
-  pending: 'در انتظار پرداخت',
-  paid: 'پرداخت شده',
-  partial: 'پرداخت جزئی',
-  cancelled: 'لغو شده',
+  pending: t('billing.statusLabels.pending'),
+  paid: t('billing.statusLabels.paid'),
+  partial: t('billing.statusLabels.partial'),
+  cancelled: t('billing.statusLabels.cancelled'),
 }
 
 // category ها از نوع UUID یا string هستند طبق درخواست شما دیتا تایپ این بخش ثابت ماند
 const categoryLabels: Record<string, string> = {
-  consultation: 'مشاوره',
-  surgery: 'جراحی',
-  imaging: 'تصویربرداری',
-  lab: 'آزمایشگاه',
-  ultrasound: 'سونوگرافی',
-  other: 'سایر',
+  consultation: t('billing.categories.consultation'),
+  surgery: t('billing.categories.surgery'),
+  imaging: t('billing.categories.imaging'),
+  lab: t('billing.categories.lab'),
+  ultrasound: t('billing.categories.ultrasound'),
+  other: t('billing.categories.other'),
 }
 
 const categoryOptions = Object.entries(categoryLabels).map(([value, label]) => ({ value, label }))
@@ -531,7 +561,7 @@ async function fetchBillingRecords() {
       records.value = res.data
     }
   } catch {
-    $toast.error('خطا در دریافت صورتحساب‌ها')
+    $toast.error(t('billing.fetchRecordsError'))
   } finally {
     recordsLoading.value = false
   }
@@ -619,7 +649,7 @@ function openAddRecordDialog() {
 
 async function saveBillingRecord() {
   if (!selectedRecordPatient.value || !recordForm.value.amount) {
-    $toast.error('لطفاً بیمار و مبلغ را وارد کنید.')
+    $toast.error(t('billing.selectPatientAndAmount'))
     return
   }
   savingRecord.value = true
@@ -638,12 +668,12 @@ async function saveBillingRecord() {
       },
     })
     if (res.success) {
-      $toast.success('صورتحساب با موفقیت ثبت شد.')
+      $toast.success(t('billing.recordSaved'))
       recordDialog.value = false
       await fetchBillingRecords()
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در ثبت صورتحساب')
+    $toast.error(err.data?.error || t('billing.saveRecordError'))
   } finally {
     savingRecord.value = false
   }
@@ -656,11 +686,11 @@ async function updateRecordStatus(id: number, status: string) {
       body: { status },
     })
     if (res.success) {
-      $toast.success('وضعیت صورتحساب به‌روزرسانی شد.')
+      $toast.success(t('billing.statusUpdated'))
       await fetchBillingRecords()
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در به‌روزرسانی وضعیت')
+    $toast.error(err.data?.error || t('billing.statusUpdateError'))
   }
 }
 
@@ -682,7 +712,7 @@ async function fetchProcedureCodes() {
       codes.value = res.data
     }
   } catch {
-    $toast.error('خطا در دریافت کدهای خدمات')
+    $toast.error(t('billing.fetchCodesError'))
   } finally {
     codesLoading.value = false
   }
@@ -715,7 +745,7 @@ function openAddCodeDialog() {
 
 async function saveProcedureCode() {
   if (!codeForm.value.code || !codeForm.value.name || !codeForm.value.price) {
-    $toast.error('لطفاً کد، نام خدمت و قیمت را وارد کنید.')
+    $toast.error(t('billing.fillRequiredFields'))
     return
   }
   savingCode.value = true
@@ -732,12 +762,12 @@ async function saveProcedureCode() {
       },
     })
     if (res.success) {
-      $toast.success('کد خدمت با موفقیت افزوده شد.')
+      $toast.success(t('billing.codeSaved'))
       codeDialog.value = false
       await fetchProcedureCodes()
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در افزودن کد خدمت')
+    $toast.error(err.data?.error || t('billing.saveCodeError'))
   } finally {
     savingCode.value = false
   }
@@ -807,7 +837,7 @@ function openBalanceDialog() {
 
 async function fetchPatientBalance() {
   if (!selectedBalancePatient.value) {
-    $toast.error('لطفاً بیمار را انتخاب کنید.')
+    $toast.error(t('billing.selectPatientError'))
     return
   }
   loadingBalance.value = true
@@ -818,7 +848,7 @@ async function fetchPatientBalance() {
       patientBalance.value = res.data
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در دریافت حساب بیمار')
+    $toast.error(err.data?.error || t('billing.fetchBalanceError'))
   } finally {
     loadingBalance.value = false
   }
@@ -827,7 +857,8 @@ async function fetchPatientBalance() {
 // ==================== Helpers ====================
 function formatPrice(value: number | string | undefined | null): string {
   const num = Number(value) || 0
-  return new Intl.NumberFormat('fa-IR').format(num) + ' تومان'
+  const separated = new Intl.NumberFormat('en-US').format(num)
+  return `${separated} ${t('common.toman')}`
 }
 
 function formatJalaliDate(date: string | null | undefined): string {
@@ -841,5 +872,5 @@ onMounted(() => {
   fetchProcedureCodes()
 })
 
-useSeoMeta({ title: 'مدیریت صورتحساب‌ها | سهاتک', ogTitle: 'مدیریت صورتحساب‌ها' })
+useSeoMeta({ title: t('billing.titleSeo'), ogTitle: t('billing.ogTitle') })
 </script>

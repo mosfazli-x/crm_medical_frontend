@@ -228,8 +228,8 @@
     color: #cbd5e1 !important;
   }
 
-  .crm-table tbody {
-    divide-color: #f3f4f6 !important;
+  .crm-table tbody tr {
+    border-bottom: 1px solid #f3f4f6 !important;
   }
 
   .crm-table td {
@@ -379,7 +379,8 @@
   }
 
   .crm-btn:focus-visible {
-    ring: 2px !important;
+    outline: 2px solid #4F46E5 !important;
+    outline-offset: 2px !important;
   }
 
   .crm-btn-primary {
@@ -649,8 +650,8 @@
   }
 
   /* ── List Items (appointments, etc.) ── */
-  .crm-list {
-    divide-color: rgba(243, 244, 246, 0.8) !important;
+  .crm-list > * + * {
+    border-top: 1px solid rgba(243, 244, 246, 0.8) !important;
   }
 
   .crm-list-item {
@@ -1858,4 +1859,82 @@
 
 .animate-ping-slow {
   animation: ping-slow 4s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+}
+
+/* ─── Page Transitions ─── */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.page-enter-from {
+  opacity: 0 !important;
+  transform: translateY(12px) !important;
+}
+
+.page-leave-to {
+  opacity: 0 !important;
+  transform: translateY(-8px) !important;
+}
+
+/* ─── Staggered Entrance Animations ─── */
+.stagger-enter {
+  opacity: 0 !important;
+  transform: translateY(16px) !important;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important,
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.stagger-enter.visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.stagger-enter.visible:nth-child(1) { transition-delay: 0ms !important; }
+.stagger-enter.visible:nth-child(2) { transition-delay: 60ms !important; }
+.stagger-enter.visible:nth-child(3) { transition-delay: 120ms !important; }
+.stagger-enter.visible:nth-child(4) { transition-delay: 180ms !important; }
+.stagger-enter.visible:nth-child(5) { transition-delay: 240ms !important; }
+.stagger-enter.visible:nth-child(6) { transition-delay: 300ms !important; }
+.stagger-enter.visible:nth-child(7) { transition-delay: 360ms !important; }
+.stagger-enter.visible:nth-child(8) { transition-delay: 420ms !important; }
+
+/* ─── Scale-in Entrance ─── */
+.scale-in {
+  opacity: 0 !important;
+  transform: scale(0.95) !important;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important,
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.scale-in.visible {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+}
+
+/* ─── Slide-in from Right (RTL-friendly) ─── */
+.slide-in-right {
+  opacity: 0 !important;
+  transform: translateX(20px) !important;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important,
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.slide-in-right.visible {
+  opacity: 1 !important;
+  transform: translateX(0) !important;
+}
+
+/* ─── Slide-in from Left ─── */
+.slide-in-left {
+  opacity: 0 !important;
+  transform: translateX(-20px) !important;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important,
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.slide-in-left.visible {
+  opacity: 1 !important;
+  transform: translateX(0) !important;
 }

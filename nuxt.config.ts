@@ -20,6 +20,11 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
 
+  pageTransition: {
+    name: 'page',
+    mode: 'out-in',
+  },
+
   vite: {
     optimizeDeps: {
       include: ['@fullcalendar/core', '@fullcalendar/vue3']
@@ -39,7 +44,8 @@ export default defineNuxtConfig({
     './app/assets/css/fonts.css',
     './app/assets/css/main.css',
     './app/assets/css/design-system.css',
-    './app/assets/css/landing-page.css'
+    './app/assets/css/landing-page.css',
+    './app/assets/css/immersive.css'
   ],
 
   modules: [
@@ -49,6 +55,22 @@ export default defineNuxtConfig({
     'vue-sonner/nuxt',
     '@nuxt/icon',
     '@vueuse/motion/nuxt',
+    '@nuxtjs/i18n',
   ],
+
+  i18n: {
+    locales: [
+      { code: 'fa', name: 'فارسی', file: 'fa.json' },
+      { code: 'en', name: 'English', file: 'en.json' },
+    ],
+    defaultLocale: 'fa',
+    lazy: true,
+    langDir: '../locales',
+    strategy: 'no_prefix',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_lang',
+    },
+  },
 
 })

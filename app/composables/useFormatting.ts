@@ -1,12 +1,22 @@
+import moment from 'moment-jalaali'
+
 export const useFormatting = () => {
-  const formatJalaliDate = (date: string | null | undefined, options?: Intl.DateTimeFormatOptions) => {
+  const formatJalaliDate = (date: string | null | undefined) => {
     if (!date) return '---'
-    const defaults: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    // Shamsi date string like "1404-05-01"
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return moment(date, 'jYYYY-jMM-jDD').format('jDD jMMMM jYYYY')
     }
-    return new Intl.DateTimeFormat('fa-IR', options ?? defaults).format(new Date(date))
+    // Gregorian date string fallback
+    return moment(date).format('jDD jMMMM jYYYY')
+  }
+
+  const formatJalaliDateShort = (date: string | null | undefined) => {
+    if (!date) return '---'
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return moment(date, 'jYYYY-jMM-jDD').format('jYYYY/jMM/jDD')
+    }
+    return moment(date).format('jYYYY/jMM/jDD')
   }
 
   const formatJalaliLong = (date?: Date) => {
@@ -32,5 +42,13 @@ export const useFormatting = () => {
     return `${y}-${m}-${day}`
   }
 
-  return { formatJalaliDate, formatJalaliLong, formatPrice, toDateStr }
+  const toJalaliStr = (date: Date) => {
+    return moment(date).format('jYYYY-jMM-jDD')
+  }
+
+  const todayJalali = () => {
+    return moment().format('jYYYY-jMM-jDD')
+  }
+
+  return { formatJalaliDate, formatJalaliDateShort, formatJalaliLong, formatPrice, toDateStr, toJalaliStr, todayJalali }
 }

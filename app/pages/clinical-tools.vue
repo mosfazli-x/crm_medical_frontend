@@ -1,15 +1,15 @@
 <template>
   <UiPageContainer>
     <UiPageHeader
-      title="ابزارهای تصمیم‌گیری بالینی"
-      subtitle="ابزارهای کمک تشخیصی و ارزیابی بالینی بیماران"
+      :title="$t('clinicalTools.title')"
+      :subtitle="$t('clinicalTools.subtitle')"
     />
 
     <div class="crm-clinical-grid">
       <!-- PCOS Assessment -->
       <UiClinicalToolCard
-        title="ارزیابی PCOS (Rotterdam)"
-        subtitle="تشخیص سندرم تخمدان پلی‌کیستیک بر اساس معیارهای Rotterdam"
+        :title="$t('clinicalTools.pcos.title')"
+        :subtitle="$t('clinicalTools.pcos.subtitle')"
         icon-class="crm-tool-icon--primary"
         :span-two="true"
       >
@@ -22,15 +22,15 @@
 
         <div class="crm-field-grid-3">
           <div>
-            <label class="crm-label">سن</label>
+            <label class="crm-label">{{ $t('clinicalTools.pcos.age') }}</label>
             <input v-model.number="pcos.age" type="number" min="0" class="crm-input" />
           </div>
           <div>
-            <label class="crm-label">BMI</label>
+            <label class="crm-label">{{ $t('clinicalTools.pcos.bmi') }}</label>
             <input v-model.number="pcos.bmi" type="number" min="0" step="0.1" class="crm-input" />
           </div>
           <div>
-            <label class="crm-label">طول سیکل (روز)</label>
+            <label class="crm-label">{{ $t('clinicalTools.pcos.cycleLength') }}</label>
             <input v-model.number="pcos.cycle_length_days" type="number" min="0" class="crm-input" />
           </div>
         </div>
@@ -39,49 +39,49 @@
           <div class="crm-criteria-panel">
             <div class="crm-criteria-panel-header">
               <span class="crm-criteria-badge">1</span>
-              <span class="crm-criteria-title">الیگو / آنوولاسیون</span>
+              <span class="crm-criteria-title">{{ $t('clinicalTools.pcos.criteria1') }}</span>
             </div>
-            <UiClinicalCheckbox v-model="pcos.oligo_anovulation" label="الیگو-تخمک‌گذاری / آنوولاسیون" />
+            <UiClinicalCheckbox v-model="pcos.oligo_anovulation" :label="$t('clinicalTools.pcos.oligoAnovulation')" />
           </div>
 
           <div class="crm-criteria-panel">
             <div class="crm-criteria-panel-header">
               <span class="crm-criteria-badge">2a</span>
-              <span class="crm-criteria-title">هیپرآندروژنیسم بالینی</span>
+              <span class="crm-criteria-title">{{ $t('clinicalTools.pcos.criteria2a') }}</span>
             </div>
             <div class="crm-checkbox-stack">
-              <UiClinicalCheckbox v-model="pcos.hirsutism" label="هیرسوتیسم" />
-              <UiClinicalCheckbox v-model="pcos.acne" label="آکنه" />
-              <UiClinicalCheckbox v-model="pcos.alopecia" label="آلوپسی" />
-              <UiClinicalCheckbox v-model="pcos.acanthosis_nigricans" label="آکانتوزیس نیگریکانس" />
+              <UiClinicalCheckbox v-model="pcos.hirsutism" :label="$t('clinicalTools.pcos.hirsutism')" />
+              <UiClinicalCheckbox v-model="pcos.acne" :label="$t('clinicalTools.pcos.acne')" />
+              <UiClinicalCheckbox v-model="pcos.alopecia" :label="$t('clinicalTools.pcos.alopecia')" />
+              <UiClinicalCheckbox v-model="pcos.acanthosis_nigricans" :label="$t('clinicalTools.pcos.acanthosis')" />
             </div>
           </div>
 
           <div class="crm-criteria-panel">
             <div class="crm-criteria-panel-header">
               <span class="crm-criteria-badge">2b</span>
-              <span class="crm-criteria-title">هیپرآندروژنیسم بیوشیمیایی</span>
+              <span class="crm-criteria-title">{{ $t('clinicalTools.pcos.criteria2b') }}</span>
             </div>
             <div class="crm-checkbox-stack">
-              <UiClinicalCheckbox v-model="pcos.testosterone_elevated" label="تستوسترون بالا" />
-              <UiClinicalCheckbox v-model="pcos.dheas_elevated" label="DHEAS بالا" />
-              <UiClinicalCheckbox v-model="pcos.free_androgen_index_elevated" label="شاخص آندروژن آزاد (FAI) بالا" />
+              <UiClinicalCheckbox v-model="pcos.testosterone_elevated" :label="$t('clinicalTools.pcos.testosteroneHigh')" />
+              <UiClinicalCheckbox v-model="pcos.dheas_elevated" :label="$t('clinicalTools.pcos.dheasHigh')" />
+              <UiClinicalCheckbox v-model="pcos.free_androgen_index_elevated" :label="$t('clinicalTools.pcos.faiHigh')" />
             </div>
           </div>
 
           <div class="crm-criteria-panel crm-criteria-grid-span-3">
             <div class="crm-criteria-panel-header">
               <span class="crm-criteria-badge">3</span>
-              <span class="crm-criteria-title">تخمدان پلی‌کیستیک در سونوگرافی</span>
+              <span class="crm-criteria-title">{{ $t('clinicalTools.pcos.criteria3') }}</span>
             </div>
             <div class="crm-criteria-inner-grid">
-              <UiClinicalCheckbox v-model="pcos.polycystic_ovaries_us" label="PCO در سونوگرافی" />
+              <UiClinicalCheckbox v-model="pcos.polycystic_ovaries_us" :label="$t('clinicalTools.pcos.pcoUS')" />
               <div>
-                <label class="crm-label">تعداد فولیکول</label>
+                <label class="crm-label">{{ $t('clinicalTools.pcos.follicleCount') }}</label>
                 <input v-model.number="pcos.follicle_count_per_ovary" type="number" min="0" class="crm-input" />
               </div>
               <div>
-                <label class="crm-label">حجم تخمدان (ml)</label>
+                <label class="crm-label">{{ $t('clinicalTools.pcos.ovarianVolume') }}</label>
                 <input v-model.number="pcos.ovarian_volume_ml" type="number" min="0" step="0.1" class="crm-input" />
               </div>
             </div>
@@ -94,19 +94,19 @@
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            <span class="crm-exclusion-title">بیماری‌های رد شده (Exclusions)</span>
+            <span class="crm-exclusion-title">{{ $t('clinicalTools.pcos.exclusions') }}</span>
           </div>
           <div class="crm-exclusion-checks">
-            <UiClinicalCheckbox v-model="pcos.excluded_cah" label="CAH رد شده" variant="warning" />
-            <UiClinicalCheckbox v-model="pcos.excluded_cushing" label="کوشینگ رد شده" variant="warning" />
-            <UiClinicalCheckbox v-model="pcos.excluded_tumor" label="تومور رد شده" variant="warning" />
+            <UiClinicalCheckbox v-model="pcos.excluded_cah" :label="$t('clinicalTools.pcos.cahExcluded')" variant="warning" />
+            <UiClinicalCheckbox v-model="pcos.excluded_cushing" :label="$t('clinicalTools.pcos.cushingExcluded')" variant="warning" />
+            <UiClinicalCheckbox v-model="pcos.excluded_tumor" :label="$t('clinicalTools.pcos.tumorExcluded')" variant="warning" />
           </div>
         </div>
 
         <textarea
           v-model="pcos.notes"
           rows="2"
-          placeholder="یادداشت‌های بالینی..."
+          :placeholder="$t('clinicalTools.pcos.notesPlaceholder')"
           class="crm-input crm-textarea crm-clinical-notes"
         />
 
@@ -115,7 +115,7 @@
             <circle class="crm-btn-spinner-track" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
             <path class="crm-btn-spinner-head" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
-          <span>{{ pcosLoading ? 'در حال ارزیابی...' : 'ارزیابی نهایی PCOS' }}</span>
+          <span>{{ pcosLoading ? $t('clinicalTools.pcos.assessing') : $t('clinicalTools.pcos.assessBtn') }}</span>
         </button>
 
         <div
@@ -146,7 +146,7 @@
               >
                 {{ pcosResult.criteriaMet }}<span class="crm-pcos-score-denom">/{{ pcosResult.criteriaRequired }}</span>
               </div>
-              <div class="crm-pcos-score-label">معیار مثبت</div>
+              <div class="crm-pcos-score-label">{{ $t('clinicalTools.pcos.positiveCriteria') }}</div>
             </div>
           </div>
 
@@ -202,8 +202,8 @@
 
       <!-- Menopause Score -->
       <UiClinicalToolCard
-        title="امتیاز یائسگی (Menopause)"
-        subtitle="ارزیابی شدت علائم یائسگی"
+        :title="$t('clinicalTools.menopause.title')"
+        :subtitle="$t('clinicalTools.menopause.subtitle')"
         icon-class="crm-tool-icon--orange"
       >
         <template #icon>
@@ -216,7 +216,7 @@
         </template>
 
         <div class="crm-clinical-section">
-          <label class="crm-label">سن</label>
+          <label class="crm-label">{{ $t('clinicalTools.menopause.age') }}</label>
           <input v-model.number="menopause.age" type="number" min="0" max="120" class="crm-input" />
 
           <div class="crm-symptom-list">
@@ -234,7 +234,7 @@
                 class="crm-range crm-range--orange"
               />
               <div class="crm-range-labels">
-                <span>بدون</span><span>خفیف</span><span>متوسط</span><span>شدید</span>
+                <span>{{ $t('clinicalTools.menopause.severityLabels.none') }}</span><span>{{ $t('clinicalTools.menopause.severityLabels.mild') }}</span><span>{{ $t('clinicalTools.menopause.severityLabels.moderate') }}</span><span>{{ $t('clinicalTools.menopause.severityLabels.severe') }}</span>
               </div>
             </div>
           </div>
@@ -245,7 +245,7 @@
             <circle class="crm-btn-spinner-track" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
             <path class="crm-btn-spinner-head" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
-          <span>{{ menopauseLoading ? 'در حال محاسبه...' : 'محاسبه امتیاز' }}</span>
+          <span>{{ menopauseLoading ? $t('clinicalTools.menopause.calculating') : $t('clinicalTools.menopause.calculateBtn') }}</span>
         </button>
 
         <div
@@ -254,7 +254,7 @@
           :class="menopauseSeverityClass"
         >
           <div class="crm-result-score-badge" :class="menopauseBadgeClass">
-            امتیاز: {{ menopauseResult.score }}
+            {{ $t('clinicalTools.menopause.score') }} {{ menopauseResult.score }}
           </div>
           <div class="crm-result-title">{{ menopauseResult.interpretation }}</div>
           <div class="crm-result-detail">{{ menopauseResult.severity }}</div>
@@ -263,8 +263,8 @@
 
       <!-- Bishop Score -->
       <UiClinicalToolCard
-        title="امتیاز بیشاپ (Bishop Score)"
-        subtitle="ارزیابی آمادگی دهانه رحم برای القای زایمان"
+        :title="$t('clinicalTools.bishop.title')"
+        :subtitle="$t('clinicalTools.bishop.subtitle')"
         icon-class="crm-tool-icon--pink"
       >
         <template #icon>
@@ -275,25 +275,25 @@
 
         <div class="crm-field-grid-2">
           <div>
-            <label class="crm-label">اتساع (0-5)</label>
+            <label class="crm-label">{{ $t('clinicalTools.bishop.dilation') }}</label>
             <input v-model.number="bishop.dilation" type="number" min="0" max="5" class="crm-input" />
           </div>
           <div>
-            <label class="crm-label">محو شدن (0-3)</label>
+            <label class="crm-label">{{ $t('clinicalTools.bishop.effacement') }}</label>
             <input v-model.number="bishop.effacement" type="number" min="0" max="3" class="crm-input" />
           </div>
           <div>
-            <label class="crm-label">استیشن (-3 تا 3)</label>
+            <label class="crm-label">{{ $t('clinicalTools.bishop.station') }}</label>
             <input v-model.number="bishop.station" type="number" min="-3" max="3" class="crm-input" />
           </div>
           <div>
-            <label class="crm-label">قوام</label>
+            <label class="crm-label">{{ $t('clinicalTools.bishop.consistency') }}</label>
             <select v-model="bishop.consistency" class="crm-select">
               <option v-for="opt in consistencyOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
             </select>
           </div>
           <div class="crm-bishop-position">
-            <label class="crm-label">موقعیت</label>
+            <label class="crm-label">{{ $t('clinicalTools.bishop.position') }}</label>
             <select v-model="bishop.position" class="crm-select">
               <option v-for="opt in positionOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
             </select>
@@ -305,7 +305,7 @@
             <circle class="crm-btn-spinner-track" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
             <path class="crm-btn-spinner-head" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
-          <span>{{ bishopLoading ? 'در حال محاسبه...' : 'محاسبه امتیاز بیشاپ' }}</span>
+          <span>{{ bishopLoading ? $t('clinicalTools.bishop.calculating') : $t('clinicalTools.bishop.calculateBtn') }}</span>
         </button>
 
         <div
@@ -314,7 +314,7 @@
           :class="bishopSeverityClass"
         >
           <div class="crm-result-score-badge" :class="bishopBadgeClass">
-            امتیاز: {{ bishopResult.score }}
+            {{ $t('clinicalTools.bishop.score') }} {{ bishopResult.score }}
           </div>
           <div class="crm-result-title">{{ bishopResult.interpretation }}</div>
           <div class="crm-result-detail">{{ bishopResult.detail }}</div>
@@ -323,8 +323,8 @@
 
       <!-- Breast Cancer Risk -->
       <UiClinicalToolCard
-        title="ریسک سرطان پستان"
-        subtitle="ارزیابی ریسک ابتلا به سرطان پستان"
+        :title="$t('clinicalTools.breastCancer.title')"
+        :subtitle="$t('clinicalTools.breastCancer.subtitle')"
         icon-class="crm-tool-icon--red"
         :span-two="true"
       >
@@ -339,11 +339,11 @@
           <div class="crm-breast-col">
             <div class="crm-breast-age-grid">
               <div>
-                <label class="crm-label">سن</label>
+                <label class="crm-label">{{ $t('clinicalTools.breastCancer.age') }}</label>
                 <input v-model.number="breastCancer.age" type="number" min="0" class="crm-input" />
               </div>
               <div>
-                <label class="crm-label">سن اولین قاعدگی</label>
+                <label class="crm-label">{{ $t('clinicalTools.breastCancer.menarcheAge') }}</label>
                 <input v-model.number="breastCancer.menarche_age" type="number" min="0" class="crm-input" />
               </div>
             </div>
@@ -351,12 +351,12 @@
             <div class="crm-criteria-panel">
               <UiClinicalCheckbox
                 v-model="breastCancer.noLiveBirth"
-                label="عدم سابقه زایمان"
+                :label="$t('clinicalTools.breastCancer.noLiveBirth')"
                 variant="danger"
                 class="crm-breast-no-birth"
               />
               <div :class="{ 'crm-field-disabled': breastCancer.noLiveBirth }">
-                <label class="crm-label">سن اولین زایمان</label>
+                <label class="crm-label">{{ $t('clinicalTools.breastCancer.firstBirthAge') }}</label>
                 <input
                   v-model.number="breastCancer.first_live_birth_age"
                   type="number"
@@ -370,13 +370,13 @@
 
           <div class="crm-breast-col">
             <div class="crm-criteria-panel crm-breast-checks">
-              <UiClinicalCheckbox v-model="breastCancer.family_history_breast_cancer" label="سابقه خانوادگی سرطان پستان" variant="danger" />
+              <UiClinicalCheckbox v-model="breastCancer.family_history_breast_cancer" :label="$t('clinicalTools.breastCancer.familyHistory')" variant="danger" />
               <hr class="crm-divider" />
-              <UiClinicalCheckbox v-model="breastCancer.previous_biopsy" label="بیوپسی قبلی پستان" variant="danger" />
+              <UiClinicalCheckbox v-model="breastCancer.previous_biopsy" :label="$t('clinicalTools.breastCancer.previousBiopsy')" variant="danger" />
             </div>
 
             <div>
-              <label class="crm-label">جهش BRCA</label>
+              <label class="crm-label">{{ $t('clinicalTools.breastCancer.brcaMutation') }}</label>
               <select v-model="breastCancer.brca_mutation" class="crm-select">
                 <option v-for="opt in brcaOptions" :key="opt.title" :value="opt.value">{{ opt.title }}</option>
               </select>
@@ -389,7 +389,7 @@
             <circle class="crm-btn-spinner-track" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
             <path class="crm-btn-spinner-head" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
-          <span>{{ breastCancerLoading ? 'در حال ارزیابی...' : 'ارزیابی ریسک' }}</span>
+          <span>{{ breastCancerLoading ? $t('clinicalTools.breastCancer.assessing') : $t('clinicalTools.breastCancer.assessBtn') }}</span>
         </button>
 
         <div
@@ -410,6 +410,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch, computed } from 'vue'
+const { t } = useI18n()
 
 const { apiFetch } = useApi()
 const { $toast } = useNuxtApp()
@@ -507,7 +508,7 @@ async function assessPCOS() {
       const req = d.criteria_required ?? 2
       const diagnosed = crit >= req
       pcosResult.value = {
-        diagnosis: d.diagnosis || (diagnosed ? 'PCOS تشخیص داده شد' : 'PCOS رد شد'),
+        diagnosis: d.diagnosis || (diagnosed ? t('clinicalTools.pcos.assessBtn') : t('clinicalTools.pcos.rejected')),
         diagnosed,
         phenotype: d.phenotype || null,
         criteriaMet: crit,
@@ -515,32 +516,32 @@ async function assessPCOS() {
         criteriaDetails: [
           {
             key: 'c1',
-            label: 'الیگو / آنوولاسیون',
-            description: d.details?.criterion_1_oligo_anovulation?.description || 'نامنظمی سیکل قاعدگی',
+            label: t('clinicalTools.pcos.criteria1'),
+            description: d.details?.criterion_1_oligo_anovulation?.description || t('clinicalTools.pcos.criteria1'),
             met: d.details?.criterion_1_oligo_anovulation?.met ?? pcos.oligo_anovulation,
           },
           {
             key: 'c2',
-            label: 'هیپرآندروژنیسم',
-            description: d.details?.criterion_2_hyperandrogenism?.description || 'علائم بالینی و/یا بیوشیمیایی',
+            label: t('clinicalTools.pcos.criteria2a'),
+            description: d.details?.criterion_2_hyperandrogenism?.description || t('clinicalTools.pcos.criteria2aDesc'),
             met: d.details?.criterion_2_hyperandrogenism?.met ?? (
               pcos.hirsutism || pcos.acne || pcos.alopecia || pcos.testosterone_elevated || pcos.dheas_elevated || pcos.free_androgen_index_elevated
             ),
           },
           {
             key: 'c3',
-            label: 'تخمدان پلی‌کیستیک',
-            description: d.details?.criterion_3_polycystic_ovaries?.description || '≥12 فولیکول یا حجم ≥10ml',
+            label: t('clinicalTools.pcos.criteria3'),
+            description: d.details?.criterion_3_polycystic_ovaries?.description || t('clinicalTools.pcos.follicleDesc'),
             met: d.details?.criterion_3_polycystic_ovaries?.met ?? pcos.polycystic_ovaries_us,
           },
         ],
         recommendation: d.recommendation || '',
       }
     } else {
-      $toast.error('خطا در دریافت نتیجه ارزیابی')
+      $toast.error(t('clinicalTools.pcos.fetchError'))
     }
   } catch {
-    $toast.error('خطا در ارتباط با سرور')
+    $toast.error(t('clinicalTools.pcos.serverError'))
   } finally {
     pcosLoading.value = false
   }
@@ -548,11 +549,11 @@ async function assessPCOS() {
 
 // ── Menopause ──
 const menopauseSymptoms: Array<{ key: MenopauseKey; label: string }> = [
-  { key: 'hot_flashes', label: 'گرگرفتگی' },
-  { key: 'night_sweats', label: 'عرق شبانه' },
-  { key: 'mood_swings', label: 'نوسانات خلقی' },
-  { key: 'vaginal_dryness', label: 'خشکی واژن' },
-  { key: 'sleep_disturbance', label: 'اختلال خواب' },
+  { key: 'hot_flashes', label: t('clinicalTools.menopause.symptoms.hotFlashes') },
+  { key: 'night_sweats', label: t('clinicalTools.menopause.symptoms.nightSweats') },
+  { key: 'mood_swings', label: t('clinicalTools.menopause.symptoms.moodSwings') },
+  { key: 'vaginal_dryness', label: t('clinicalTools.menopause.symptoms.vaginalDryness') },
+  { key: 'sleep_disturbance', label: t('clinicalTools.menopause.symptoms.sleepDisturbance') },
 ]
 
 const menopause = reactive<Record<MenopauseKey, number> & { age: number }>({
@@ -578,10 +579,10 @@ function computedMenopauseScore() {
 }
 
 function menopauseSeverityLabel(score: number) {
-  if (score <= 5) return 'خفیف'
-  if (score <= 10) return 'متوسط'
-  if (score <= 15) return 'شدید'
-  return 'بسیار شدید'
+  if (score <= 5) return t('clinicalTools.menopause.mild')
+  if (score <= 10) return t('clinicalTools.menopause.moderate')
+  if (score <= 15) return t('clinicalTools.menopause.severe')
+  return t('clinicalTools.menopause.verySevere')
 }
 
 async function assessMenopause() {
@@ -603,14 +604,14 @@ async function assessMenopause() {
       const d = res.data
       const score = d.total_score ?? computedMenopauseScore()
       const sev = d.severity || menopauseSeverityLabel(score)
-      menopauseResult.value = { score, interpretation: d.interpretation || `وضعیت ${sev}`, severity: sev }
+      menopauseResult.value = { score, interpretation: d.interpretation || t('clinicalTools.menopause.statusLabel', { severity: sev }), severity: sev }
     } else {
-      $toast.error('خطا در دریافت نتیجه ارزیابی')
+      $toast.error(t('clinicalTools.menopause.fetchError'))
     }
   } catch {
     const score = computedMenopauseScore()
     const sev = menopauseSeverityLabel(score)
-    menopauseResult.value = { score, interpretation: `وضعیت ${sev}`, severity: sev }
+    menopauseResult.value = { score, interpretation: t('clinicalTools.menopause.statusLabel', { severity: sev }), severity: sev }
   } finally {
     menopauseLoading.value = false
   }
@@ -618,15 +619,15 @@ async function assessMenopause() {
 
 // ── Bishop Score ──
 const consistencyOptions = [
-  { label: 'سفت', value: 'firm' },
-  { label: 'متوسط', value: 'medium' },
-  { label: 'نرم', value: 'soft' },
+  { label: t('clinicalTools.bishop.consistencyOptions.firm'), value: 'firm' },
+  { label: t('clinicalTools.bishop.consistencyOptions.medium'), value: 'medium' },
+  { label: t('clinicalTools.bishop.consistencyOptions.soft'), value: 'soft' },
 ]
 
 const positionOptions = [
-  { label: 'خلفی', value: 'posterior' },
-  { label: 'میانی', value: 'mid' },
-  { label: 'قدامی', value: 'anterior' },
+  { label: t('clinicalTools.bishop.positionOptions.posterior'), value: 'posterior' },
+  { label: t('clinicalTools.bishop.positionOptions.mid'), value: 'mid' },
+  { label: t('clinicalTools.bishop.positionOptions.anterior'), value: 'anterior' },
 ]
 
 const bishop = reactive({
@@ -663,14 +664,14 @@ async function assessBishop() {
       const score = d.total_score ?? 0
       bishopResult.value = {
         score,
-        interpretation: d.interpretation || (score <= 4 ? 'نامطلوب' : score <= 8 ? 'نسبتاً مطلوب' : 'مطلوب'),
+        interpretation: d.interpretation || (score <= 4 ? t('clinicalTools.bishop.interpretation.unfavorable') : score <= 8 ? t('clinicalTools.bishop.interpretation.relativelyFavorable') : t('clinicalTools.bishop.interpretation.favorable')),
         detail: d.detail || '',
       }
     } else {
-      $toast.error('خطا در دریافت نتیجه ارزیابی')
+      $toast.error(t('clinicalTools.bishop.fetchError'))
     }
   } catch {
-    $toast.error('خطا در ارتباط با سرور')
+    $toast.error(t('clinicalTools.bishop.serverError'))
   } finally {
     bishopLoading.value = false
   }
@@ -678,9 +679,9 @@ async function assessBishop() {
 
 // ── Breast Cancer Risk ──
 const brcaOptions = [
-  { title: 'مشخص نشده', value: null },
-  { title: 'مثبت', value: true },
-  { title: 'منفی', value: false },
+  { title: t('clinicalTools.breastCancer.brcaOptions.unknown'), value: null },
+  { title: t('clinicalTools.breastCancer.brcaOptions.positive'), value: true },
+  { title: t('clinicalTools.breastCancer.brcaOptions.negative'), value: false },
 ]
 
 const breastCancer = reactive({
@@ -729,22 +730,22 @@ async function assessBreastCancer() {
       const isHigh = riskNorm.includes('high') || riskNorm.includes('بالا')
       const isModerate = riskNorm.includes('moderate') || riskNorm.includes('متوسط')
       breastCancerResult.value = {
-        risk: d.risk || 'نامشخص',
+        risk: d.risk || t('clinicalTools.breastCancer.unknownRisk'),
         interpretation: d.interpretation || '',
         detail: d.detail || '',
         level: isHigh ? 'danger' : isModerate ? 'warning' : 'success',
       }
     } else {
-      $toast.error('خطا در دریافت نتیجه ارزیابی')
+      $toast.error(t('clinicalTools.breastCancer.fetchError'))
     }
   } catch {
-    $toast.error('خطا در ارتباط با سرور')
+    $toast.error(t('clinicalTools.breastCancer.serverError'))
   } finally {
     breastCancerLoading.value = false
   }
 }
 
-useSeoMeta({ title: 'ابزارهای تصمیم‌گیری بالینی | سیستم کلینیک' })
+useSeoMeta({ title: t('clinicalTools.title') + ' | ' + t('seo.clinicSystem') })
 </script>
 
 <style scoped>

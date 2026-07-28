@@ -25,3 +25,4 @@ logs
 *.env
 
 .mimocode
+.playwright-mcp

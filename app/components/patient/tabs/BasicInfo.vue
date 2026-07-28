@@ -50,7 +50,7 @@
                     variant="outlined" density="comfortable" prepend-inner-icon="mdi-ring" />
             </v-col>
             <v-col cols="12" md="4">
-                <div class="relative">
+                <div class="relative h-[48px] border rounded overflow-hidden">
                     <PersianDatetimePicker v-model="form.birth_date" type="date" placeholder="تاریخ تولد"
                         display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#000000" auto-submit clearable
                         custom-input class="w-full !h-[48px] rounded-md px-3 bg-white" />
@@ -123,7 +123,10 @@ const nationalCodeRule = (value: string) => {
 
 <style>
 .vpd-input-group {
-    height: 48px !important;
     position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: 1px;
 }
 </style>

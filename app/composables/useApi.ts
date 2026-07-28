@@ -39,7 +39,7 @@ export const useApi = () => {
 
       throw err
     } finally {
-      apiLoadingCount.value--
+      apiLoadingCount.value = Math.max(0, apiLoadingCount.value - 1)
     }
   }
 

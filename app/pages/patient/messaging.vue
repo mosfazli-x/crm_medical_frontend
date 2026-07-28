@@ -1,6 +1,6 @@
 <template>
   <UiPageContainer>
-    <UiPageHeader title="ارتباط با پزشک" subtitle="ارسال پیام، طرح سوالات و پیگیری روند درمان" />
+    <UiPageHeader :title="$t('patientMessaging.title')" :subtitle="$t('patientMessaging.subtitle')" />
 
     <div class="flex! flex-col! lg:flex-row! gap-6! h-[calc(100vh-16rem)]! min-h-[650px]!">
       
@@ -14,30 +14,30 @@
             height="44"
             @click="startCompose"
           >
-            پیام جدید به پزشک
+            {{ $t('patientMessaging.newMessageToDoctor') }}
           </v-btn>
           
           <v-tabs v-model="tab" color="#4F46E5" bg-color="transparent" density="compact" class="border-b! border-slate-100! text-slate-600!">
             <v-tab value="inbox" class="text-xs! font-bold! tracking-wide!">
-              دریافتی‌ها
+              {{ $t('patientMessaging.inbox') }}
               <v-badge v-if="unreadCount > 0" :content="unreadCount" color="error" inline class="mr-1.5!" />
             </v-tab>
-            <v-tab value="sent" class="text-xs! font-bold! tracking-wide!">ارسال شده</v-tab>
+            <v-tab value="sent" class="text-xs! font-bold! tracking-wide!">{{ $t('patientMessaging.sent') }}</v-tab>
           </v-tabs>
         </div>
 
         <div class="flex-1! overflow-y-auto! bg-slate-50/30!">
           <div v-if="loading" class="flex! flex-col! items-center! justify-center! py-20!">
             <v-progress-circular indeterminate size="28" color="#4F46E5" width="3" />
-            <p class="mt-4! text-xs! font-semibold! text-slate-400!">در حال همگام‌سازی...</p>
+            <p class="mt-4! text-xs! font-semibold! text-slate-400!">{{ $t('patientMessaging.syncing') }}</p>
           </div>
 
           <div v-else-if="!messages.length" class="flex! flex-col! items-center! justify-center! py-20! px-6! text-center!">
             <div class="w-14! h-14! bg-white! rounded-2xl! flex! items-center! justify-center! mb-4! border! border-slate-100! shadow-sm!">
               <v-icon size="24" color="slate-300">mdi-message-outline</v-icon>
             </div>
-            <h3 class="text-sm! font-bold! text-slate-700!">{{ tab === 'inbox' ? 'پیام جدیدی ندارید' : 'پیامی ارسال نکرده‌اید' }}</h3>
-            <p class="text-xs! text-slate-400! mt-2! leading-relaxed!">{{ tab === 'inbox' ? 'پاسخ‌های پزشک در این قسمت نمایش داده می‌شوند.' : 'برای طرح سوال جدید روی دکمه بالا کلیک کنید.' }}</p>
+            <h3 class="text-sm! font-bold! text-slate-700!">{{ tab === 'inbox' ? $t('patientMessaging.noNewMessages') : $t('patientMessaging.noSentMessages') }}</h3>
+            <p class="text-xs! text-slate-400! mt-2! leading-relaxed!">{{ tab === 'inbox' ? $t('patientMessaging.inboxDescription') : $t('patientMessaging.sentDescription') }}</p>
           </div>
 
           <div v-else class="divide-y! divide-slate-100/80!">
@@ -53,10 +53,10 @@
                   <div class="flex! items-center! gap-2! mb-1.5!">
                     <span v-if="msg.isRead === false && tab === 'inbox'" class="w-2! h-2! rounded-full! bg-blue-500! shrink-0!" />
                     <span class="text-sm! font-bold! text-slate-800! truncate!">
-                      {{ tab === 'inbox' ? `دکتر ${msg.receiverFullName}` : msg.subject }}
+                      {{ tab === 'inbox' ? $t('patientMessaging.doctorName', { name: msg.receiverFullName }) : msg.subject }}
                     </span>
                   </div>
-                  <p class="text-xs! font-medium! text-slate-500! truncate!">{{ tab === 'inbox' ? msg.subject : `به: دکتر ${msg.recipient_name}` }}</p>
+                  <p class="text-xs! font-medium! text-slate-500! truncate!">{{ tab === 'inbox' ? msg.subject : $t('patientMessaging.sentToDoctor', { name: msg.recipient_name }) }}</p>
                 </div>
                 <span class="text-[10px]! font-medium! text-slate-400! shrink-0! mt-1!">{{ formatShortDate(msg.createdAt) }}</span>
               </div>
@@ -70,8 +70,8 @@
         <template v-if="composing">
           <div class="px-8! py-5! border-b! border-slate-100! flex! items-center! justify-between! bg-slate-50/30!">
             <div>
-              <h2 class="text-base! font-extrabold! text-slate-800!">پیام جدید</h2>
-              <p class="text-xs! text-slate-500! mt-1!">سوال یا درخواست خود را به صورت واضح بیان کنید.</p>
+              <h2 class="text-base! font-extrabold! text-slate-800!">{{ $t('patientMessaging.newMessage') }}</h2>
+              <p class="text-xs! text-slate-500! mt-1!">{{ $t('patientMessaging.composeDescription') }}</p>
             </div>
             <v-btn icon variant="text" size="small" color="slate-400" @click="cancelCompose">
               <v-icon>mdi-close</v-icon>
@@ -81,7 +81,7 @@
           <div class="flex-1! overflow-y-auto! p-8!">
             <div class="max-w-2xl! space-y-6!">
               <div>
-                <label class="block! text-xs! font-bold! text-slate-700! mb-2!">پزشک معالج <span class="text-red-500!">*</span></label>
+                <label class="block! text-xs! font-bold! text-slate-700! mb-2!">{{ $t('patientMessaging.doctorLabel') }} <span class="text-red-500!">*</span></label>
                 <v-select
                   v-model="composeForm.doctor_id"
                   :items="doctors"
@@ -89,7 +89,7 @@
                   item-value="id"
                   variant="outlined"
                   density="comfortable"
-                  placeholder="پزشک خود را انتخاب کنید"
+                  :placeholder="$t('patientMessaging.selectDoctorPlaceholder')"
                   hide-details
                   class="bg-white!"
                   rounded="lg"
@@ -101,12 +101,12 @@
               </div>
 
               <div>
-                <label class="block! text-xs! font-bold! text-slate-700! mb-2!">موضوع پیام <span class="text-red-500!">*</span></label>
+                <label class="block! text-xs! font-bold! text-slate-700! mb-2!">{{ $t('patientMessaging.subjectLabel') }} <span class="text-red-500!">*</span></label>
                 <v-text-field
                   v-model="composeForm.subject"
                   variant="outlined"
                   density="comfortable"
-                  placeholder="مثال: تداخل دارویی یا عوارض جانبی"
+                  :placeholder="$t('patientMessaging.subjectPlaceholder')"
                   hide-details
                   class="bg-white!"
                   rounded="lg"
@@ -114,7 +114,7 @@
               </div>
 
               <div>
-                <label class="block! text-xs! font-bold! text-slate-700! mb-2!">اولویت بررسی</label>
+                <label class="block! text-xs! font-bold! text-slate-700! mb-2!">{{ $t('patientMessaging.priorityLabel') }}</label>
                 <v-select
                   v-model="composeForm.priority"
                   :items="priorityOptions"
@@ -127,11 +127,11 @@
               </div>
 
               <div>
-                <label class="block! text-xs! font-bold! text-slate-700! mb-2!">شرح کامل <span class="text-red-500!">*</span></label>
+                <label class="block! text-xs! font-bold! text-slate-700! mb-2!">{{ $t('patientMessaging.bodyLabel') }} <span class="text-red-500!">*</span></label>
                 <v-textarea
                   v-model="composeForm.body"
                   variant="outlined"
-                  placeholder="علائم، سوالات یا توضیحات خود را اینجا بنویسید..."
+                  :placeholder="$t('patientMessaging.bodyPlaceholder')"
                   rows="6"
                   hide-details
                   class="bg-white!"
@@ -144,7 +144,7 @@
           
           <div class="p-6! border-t! border-slate-100! bg-slate-50/50! flex! justify-end! gap-3!">
             <v-btn variant="text" color="slate-600" class="font-bold! tracking-wide!" @click="cancelCompose">
-              انصراف
+              {{ $t('common.cancel') }}
             </v-btn>
             <v-btn
               color="#4F46E5"
@@ -154,7 +154,7 @@
               elevation="0"
               @click="sendMessage"
             >
-              ارسال به پزشک
+              {{ $t('patientMessaging.sendToDoctor') }}
             </v-btn>
           </div>
         </template>
@@ -164,8 +164,8 @@
             <div class="w-20! h-20! rounded-full! bg-slate-50! flex! items-center! justify-center! mb-6! border! border-slate-100!">
               <v-icon size="32" color="slate-300">mdi-text-box-search-outline</v-icon>
             </div>
-            <h3 class="text-base! font-extrabold! text-slate-700!">محتوای پیام</h3>
-            <p class="text-sm! text-slate-400! mt-2! max-w-xs!">برای مشاهده جزئیات، یکی از گفتگوهای لیست کناری را انتخاب کنید.</p>
+            <h3 class="text-base! font-extrabold! text-slate-700!">{{ $t('patientMessaging.messageContent') }}</h3>
+            <p class="text-sm! text-slate-400! mt-2! max-w-xs!">{{ $t('patientMessaging.selectConversationHint') }}</p>
           </div>
         </template>
 
@@ -178,11 +178,11 @@
                   <div class="flex! items-center! gap-1.5! bg-slate-50! px-2.5! py-1! rounded-lg! border! border-slate-100!">
                     <v-icon size="14" color="slate-400">mdi-doctor</v-icon>
                     <span class="text-slate-600!">
-                      {{ tab === 'inbox' ? `دکتر ${selected.receiverFullName}` : `ارسال به دکتر ${selected.recipient_name}` }}
+                      {{ tab === 'inbox' ? $t('patientMessaging.doctorName', { name: selected.receiverFullName }) : $t('patientMessaging.sentToDoctor', { name: selected.recipient_name }) }}
                     </span>
                   </div>
                   <span class="text-slate-400!">{{ formatLongDate(selected.created_at) }}</span>
-                  <span v-if="selected.priority === 'urgent'" class="px-2! py-1! bg-red-50! text-red-600! rounded-lg! font-bold!">فوری</span>
+                  <span v-if="selected.priority === 'urgent'" class="px-2! py-1! bg-red-50! text-red-600! rounded-lg! font-bold!">{{ $t('patientMessaging.urgent') }}</span>
                 </div>
                 <v-btn
                   icon
@@ -195,7 +195,7 @@
                   @click="deleteMessage(selected)"
                 >
                   <v-icon size="20">mdi-trash-can-outline</v-icon>
-                  <v-tooltip activator="parent" location="bottom">حذف پیام</v-tooltip>
+                  <v-tooltip activator="parent" location="bottom">{{ $t('patientMessaging.deleteMessageTooltip') }}</v-tooltip>
                 </v-btn>
               </div>
 
@@ -218,6 +218,7 @@
 import { ref, watch, onMounted } from 'vue'
 import moment from 'moment-jalaali'
 
+const { t } = useI18n()
 const { apiFetch } = useApi()
 const { $toast } = useNuxtApp()
 const { user } = useAuth()
@@ -240,10 +241,10 @@ const composeForm = ref({
   priority: 'normal',
 })
 
-const priorityOptions = [
-  { title: 'عادی (پاسخ در زمان آزاد پزشک)', value: 'normal' },
-  { title: 'فوری (نیاز به توجه سریع)', value: 'urgent' },
-]
+const priorityOptions = computed(() => [
+  { title: t('patientMessaging.priorityNormal'), value: 'normal' },
+  { title: t('patientMessaging.priorityUrgent'), value: 'urgent' },
+])
 
 async function fetchDoctors() {
   try {
@@ -268,7 +269,7 @@ async function fetchMessages() {
       messages.value = res.data
     }
   } catch {
-    $toast.error('خطا در دریافت لیست پیام‌ها')
+    $toast.error(t('patientMessaging.fetchError'))
   } finally {
     loading.value = false
   }
@@ -309,15 +310,15 @@ async function sendMessage() {
   const { doctor_id, subject, body, priority } = composeForm.value
   
   if (!doctor_id) {
-    $toast.error('لطفاً پزشک مورد نظر را انتخاب کنید')
+    $toast.error(t('patientMessaging.selectDoctorError'))
     return
   }
   if (!subject.trim()) {
-    $toast.error('وارد کردن موضوع پیام الزامی است')
+    $toast.error(t('patientMessaging.subjectRequired'))
     return
   }
   if (!body.trim()) {
-    $toast.error('لطفاً متن پیام خود را بنویسید')
+    $toast.error(t('patientMessaging.bodyRequired'))
     return
   }
 
@@ -336,7 +337,7 @@ async function sendMessage() {
     })
     
     if (res.success) {
-      $toast.success('پیام شما با موفقیت برای پزشک ارسال شد')
+      $toast.success(t('patientMessaging.sendSuccess'))
       composing.value = false
       resetForm()
       if (tab.value === 'sent') {
@@ -346,7 +347,7 @@ async function sendMessage() {
       }
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'مشکلی در ارسال پیام به وجود آمد')
+    $toast.error(err.data?.error || t('patientMessaging.sendError'))
   } finally {
     sending.value = false
   }
@@ -354,13 +355,13 @@ async function sendMessage() {
 
 async function deleteMessage(msg: any) {
   if (!msg?.id) return
-  const confirmed = confirm('آیا از حذف این پیام اطمینان دارید؟')
+  const confirmed = confirm(t('patientMessaging.deleteConfirm'))
   if (!confirmed) return
   deleting.value = true
   try {
     const res = await apiFetch<any>(`/api/messaging/${msg.id}`, { method: 'DELETE' })
     if (res.success) {
-      $toast.success('پیام با موفقیت حذف شد')
+      $toast.success(t('messaging.deleteSuccess'))
       messages.value = messages.value.filter(m => m.id !== msg.id)
       if (selected.value?.id === msg.id) {
         selected.value = messages.value.length > 0 ? messages.value[0] : null
@@ -370,7 +371,7 @@ async function deleteMessage(msg: any) {
       }
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در حذف پیام')
+    $toast.error(err.data?.error || t('messaging.deleteError'))
   } finally {
     deleting.value = false
   }

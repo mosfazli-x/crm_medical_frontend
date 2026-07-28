@@ -1,8 +1,10 @@
-.dir-rtl {
+.dir-rtl,
+.rtl {
   direction: rtl !important;
 }
 
-.dir-ltr {
+.dir-ltr,
+.ltr {
   direction: ltr !important;
 }
 
@@ -12,4 +14,8 @@ body {
 
 html {
   overflow-x: hidden !important;
+}
+
+.vpd-input-group {
+  height: 100%;
 }

@@ -1,10 +1,10 @@
 <template>
   <UiPageContainer>
-    <UiPageHeader title="غربالگری و مراقبت پیشگیرانه" subtitle="مدیریت برنامه‌های غربالگری و نتایج آزمایشات بیماران">
+    <UiPageHeader :title="$t('screening.title')" :subtitle="$t('screening.subtitle')">
       <template #actions>
         <button class="crm-btn crm-btn-accent" @click="openAddSchedule">
           <Icon name="lucide:plus" class="w-4 h-4" />
-          غربالگری جدید
+          {{ t('screening.addNew') }}
         </button>
       </template>
     </UiPageHeader>
@@ -15,7 +15,7 @@
           <Icon name="lucide:clipboard-list" class="!w-5 !h-5" />
         </div>
         <div>
-          <p class="!text-sm !text-zinc-500 !font-medium !mb-0.5 dark:text-slate-300!">کل برنامه‌ها</p>
+          <p class="!text-sm !text-zinc-500 !font-medium !mb-0.5 dark:text-slate-300!">{{ t('screening.totalPrograms') }}</p>
           <p class="!text-2xl !font-semibold !text-zinc-900 !tracking-tight dark:text-slate-100!">{{ stats.total }}</p>
         </div>
       </div>
@@ -24,7 +24,7 @@
           <Icon name="lucide:alert-circle" class="!w-5 !h-5" />
         </div>
         <div>
-          <p class="!text-sm !text-zinc-500 !font-medium !mb-0.5 dark:text-slate-300!">معوق</p>
+          <p class="!text-sm !text-zinc-500 !font-medium !mb-0.5 dark:text-slate-300!">{{ t('screening.overdue') }}</p>
           <p class="!text-2xl !font-semibold !text-zinc-900 !tracking-tight dark:text-slate-100!">{{ stats.overdue }}</p>
         </div>
       </div>
@@ -33,7 +33,7 @@
           <Icon name="lucide:check-circle-2" class="!w-5 !h-5" />
         </div>
         <div>
-          <p class="!text-sm !text-zinc-500 !font-medium !mb-0.5 dark:text-slate-300!">تکمیل شده (این ماه)</p>
+          <p class="!text-sm !text-zinc-500 !font-medium !mb-0.5 dark:text-slate-300!">{{ t('screening.completedThisMonth') }}</p>
           <p class="!text-2xl !font-semibold !text-zinc-900 !tracking-tight dark:text-slate-100!">{{ stats.completedThisMonth }}</p>
         </div>
       </div>
@@ -49,25 +49,25 @@
               @click="activeTab = 'all'" 
               :class="['!py-3.5 !text-sm !font-medium !transition-colors !border-b-[2px] !whitespace-nowrap', activeTab === 'all' ? '!border-zinc-900 !text-zinc-900 dark:!text-zinc-200' : '!border-transparent !text-zinc-500 dark:text-slate-400! hover:!text-zinc-800 hover:!border-zinc-300']"
             >
-              همه برنامه‌ها
+              {{ t('screening.allPrograms') }}
             </button>
             <button 
               @click="activeTab = 'overdue'" 
               :class="['!py-3.5 !text-sm !font-medium !transition-colors !border-b-[2px] !whitespace-nowrap', activeTab === 'overdue' ? '!border-zinc-900 !text-zinc-900' : '!border-transparent !text-zinc-500 hover:!text-zinc-800 hover:!border-zinc-300']"
             >
-              معوق
+              {{ t('screening.overdue') }}
             </button>
             <button 
               @click="activeTab = 'upcoming'" 
               :class="['!py-3.5 !text-sm !font-medium !transition-colors !border-b-[2px] !whitespace-nowrap', activeTab === 'upcoming' ? '!border-zinc-900 !text-zinc-900' : '!border-transparent !text-zinc-500 hover:!text-zinc-800 hover:!border-zinc-300']"
             >
-              پیش‌رو (۳۰ روز)
+              {{ t('screening.upcoming') }}
             </button>
             <button 
               @click="activeTab = 'results'" 
               :class="['!py-3.5 !text-sm !font-medium !transition-colors !border-b-[2px] !whitespace-nowrap', activeTab === 'results' ? '!border-zinc-900 !text-zinc-900' : '!border-transparent !text-zinc-500 hover:!text-zinc-800 hover:!border-zinc-300']"
             >
-              نتایج آزمایشات
+              {{ t('screening.testResults') }}
             </button>
           </nav>
 
@@ -91,19 +91,19 @@
       <div class="!flex-1 !flex !flex-col">
         <div v-if="loading" class="!flex-1 !flex !flex-col !items-center !justify-center !py-24">
           <Icon name="lucide:loader-2" class="!animate-spin !w-8 !h-8 !text-zinc-300 !mb-4" />
-          <span class="!text-sm !text-zinc-500 !font-medium">در حال دریافت اطلاعات...</span>
+          <span class="!text-sm !text-zinc-500 !font-medium">{{ $t('common.loading') }}</span>
         </div>
 
         <div v-else-if="['all', 'overdue', 'upcoming'].includes(activeTab)" class="!overflow-x-auto !flex-1">
           <table class="!min-w-full !text-right !border-collapse">
             <thead class="!bg-zinc-50/50">
               <tr>
-                <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">بیمار</th>
-                <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">نوع غربالگری</th>
-                <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">تاریخ سررسید</th>
-                <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">سطح خطر</th>
-                <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">وضعیت</th>
-                <th class="!px-6 !py-3.5 !text-center !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">عملیات</th>
+                <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">{{ t('screening.patientHeader') }}</th>
+                <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">{{ t('screening.typeHeader') }}</th>
+                <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">{{ t('screening.dueDateHeader') }}</th>
+                <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">{{ t('screening.riskLevelHeader') }}</th>
+                <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">{{ t('screening.statusHeader') }}</th>
+                <th class="!px-6 !py-3.5 !text-center !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">{{ t('screening.actionsHeader') }}</th>
               </tr>
             </thead>
             <tbody class="!divide-y !divide-zinc-100">
@@ -114,7 +114,7 @@
                     <div class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
                       <Icon name="lucide:inbox" class="!w-6 !h-6 !text-zinc-400" />
                     </div>
-                    <p class="text-lg font-bold text-slate-700 dark:text-slate-300">اطلاعاتی برای نمایش وجود ندارد.</p>
+                    <p class="text-lg font-bold text-slate-700 dark:text-slate-300">{{ t('screening.noData') }}</p>
                   </div>
                 </td>
               </tr>
@@ -151,7 +151,7 @@
                   <button 
                     @click="confirmDelete(schedule)"
                     class="!p-1.5 !rounded-md !text-zinc-400 hover:!text-red-600 hover:!bg-red-50 !transition-colors group-hover:!opacity-100"
-                    title="حذف برنامه"
+                    :title="t('screening.deleteProgram')"
                   >
                     <Icon name="lucide:trash-2" class="!w-4 !h-4" />
                   </button>
@@ -163,25 +163,25 @@
 
         <div v-else-if="activeTab === 'results'" class="!flex-1 !flex !flex-col">
           <div class="!px-6 !py-4 !flex !items-center !justify-between !border-b !border-zinc-200/80 !bg-zinc-50/30">
-            <span class="!text-sm !font-medium !text-zinc-500">{{ results.length }} نتیجه ثبت شده</span>
+            <span class="!text-sm !text-zinc-500 !font-medium">{{ t('screening.resultsCount', { count: results.length }) }}</span>
             <button 
               @click="openAddResult"
               class="!flex !items-center !gap-1.5 !bg-white !border !border-zinc-200 hover:!border-zinc-300 hover:!bg-zinc-50 !text-zinc-700 !px-3 !py-1.5 !rounded-lg !text-xs !font-medium !transition-colors !shadow-sm"
             >
               <Icon name="lucide:plus" class="!w-3.5 !h-3.5" />
-              ثبت نتیجه
+              {{ t('screening.recordResult') }}
             </button>
           </div>
           <div class="!overflow-x-auto !flex-1">
             <table class="!min-w-full !text-right !border-collapse">
               <thead class="!bg-zinc-50/50">
                 <tr>
-                  <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">بیمار</th>
-                  <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">نوع غربالگری</th>
-                  <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">نتیجه</th>
-                  <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">تاریخ</th>
-                  <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">وضعیت</th>
-                  <th class="!px-6 !py-3.5 !text-center !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">یادداشت</th>
+                  <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">{{ t('screening.patientHeader') }}</th>
+                  <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">{{ t('screening.typeHeader') }}</th>
+                  <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">{{ t('screening.resultHeader') }}</th>
+                  <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">{{ t('screening.dateHeader') }}</th>
+                  <th class="!px-6 !py-3.5 !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">{{ t('screening.statusHeader') }}</th>
+                  <th class="!px-6 !py-3.5 !text-center !text-xs !font-medium !text-zinc-500 !border-b !border-zinc-200/80 !whitespace-nowrap">{{ t('screening.notesHeader') }}</th>
                 </tr>
               </thead>
               <tbody class="!divide-y !divide-zinc-100">
@@ -191,7 +191,7 @@
                       <div class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
                         <Icon name="lucide:file-x-2" class="!w-6 !h-6 !text-zinc-400" />
                       </div>
-                      <p class="text-lg font-bold text-slate-700 dark:text-slate-300">نتیجه غربالگری ثبت نشده است.</p>
+                      <p class="text-lg font-bold text-slate-700 dark:text-slate-300">{{ t('screening.noResultsYet') }}</p>
                     </div>
                   </td>
                 </tr>
@@ -206,7 +206,7 @@
                       '!inline-flex !items-center !px-2.5 !py-1 !rounded-md !text-xs !font-medium !border',
                       (result.is_abnormal || result.abnormal) ? '!bg-red-50 !text-red-700 !border-red-200/60' : '!bg-emerald-50 !text-emerald-700 !border-emerald-200/60'
                     ]">
-                      {{ (result.is_abnormal || result.abnormal) ? 'غیرنرمال' : 'نرمال' }}
+                      {{ (result.is_abnormal || result.abnormal) ? t('screening.abnormal') : t('screening.normal') }}
                     </span>
                   </td>
 
@@ -228,7 +228,7 @@
       <div class="!bg-white !rounded-2xl !border !border-zinc-200/80 !shadow-2xl !overflow-auto">
         
         <div class="!px-6 !py-4 !border-b !border-zinc-100 !flex !items-center !justify-between !bg-zinc-50/30">
-          <h3 class="!text-base !font-semibold !text-zinc-900">برنامه غربالگری جدید</h3>
+          <h3 class="!text-base !font-semibold !text-zinc-900">{{ t('screening.newScheduleTitle') }}</h3>
           <button @click="addScheduleDialog = false" class="!p-1.5 !rounded-md !text-zinc-400 hover:!text-zinc-700 hover:!bg-zinc-100 !transition-colors justtify-center align-middle flex">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
@@ -236,12 +236,12 @@
 
         <div class="!p-6 !space-y-4">
           <div class="!space-y-1.5">
-            <label class="!text-xs !font-medium !text-zinc-700">بیمار</label>
+            <label class="!text-xs !font-medium !text-zinc-700">{{ t('screening.patient') }}</label>
             <div class="!relative">
               <input 
                 v-model="patientSearchQuery" 
                 type="text" 
-                placeholder="جستجوی بیمار با نام، کد ملی یا تلفن..."
+                :placeholder="t('screening.searchPatientPlaceholder')"
                 class="!w-full !px-3 !py-2 !bg-white !border !border-zinc-200 !rounded-lg !text-sm !text-zinc-800 focus:!outline-none focus:!ring-2 focus:!ring-zinc-900/10 focus:!border-zinc-900 !transition-all"
                 @input="onPatientSearchInput"
                 @focus="showPatientResults = true"
@@ -265,7 +265,7 @@
                 </div>
               </div>
               <div v-if="showPatientResults && patientSearchQuery.trim() && !patientSearching && patientSearchResults.length === 0 && searchedOnce" class="!absolute !z-50 !mt-1 !w-full !bg-white !border !border-zinc-200 !rounded-lg !shadow-lg !p-3 !text-sm !text-zinc-500 !text-center">
-                بیماری یافت نشد
+                {{ t('screening.noPatientFound') }}
               </div>
             </div>
             <div v-if="selectedPatient" class="!mt-2 !flex !items-center !gap-2 !text-sm !bg-emerald-50 !border !border-emerald-200 !rounded-lg !px-3 !py-2">
@@ -280,19 +280,19 @@
           </div>
 
           <div class="!space-y-1.5">
-            <label class="!text-xs !font-medium !text-zinc-700">نوع غربالگری</label>
+            <label class="!text-xs !font-medium !text-zinc-700">{{ t('screening.screeningType') }}</label>
             <select 
               v-model="scheduleForm.screening_type" 
               class="!w-full !px-3 !py-2 !bg-white !border !border-zinc-200 !rounded-lg !text-sm !text-zinc-800 focus:!outline-none focus:!ring-2 focus:!ring-zinc-900/10 focus:!border-zinc-900 !transition-all !appearance-none"
             >
-              <option value="" disabled>انتخاب کنید...</option>
+              <option value="" disabled>{{ t('screening.selectOption') }}</option>
               <option v-for="opt in screeningTypeOptions" :key="opt.value" :value="opt.value">{{ opt.title }}</option>
             </select>
           </div>
 
           <div class="!space-y-1.5">
-            <label class="!text-xs !font-medium !text-zinc-700">تاریخ سررسید</label>
-            <div class="!relative">
+            <label class="!text-xs !font-medium !text-zinc-700">{{ t('screening.dueDate') }}</label>
+            <div class="h-[40px] border rounded overflow-hidden flex">
               <PersianDatetimePicker 
                 v-model="scheduleForm.due_date" 
                 type="date" 
@@ -303,28 +303,28 @@
                 auto-submit 
                 clearable
                 custom-input 
-                class="!w-full !h-[38px] !text-sm !text-zinc-800 !outline-none !rounded-lg !bg-white !transition-all" 
+                class="!w-full !h-full !text-zinc-800 !outline-none !rounded-lg !bg-white !transition-all" 
               />
             </div>
           </div>
 
           <div class="!space-y-1.5">
-            <label class="!text-xs !font-medium !text-zinc-700">سطح خطر</label>
+            <label class="!text-xs !font-medium !text-zinc-700">{{ t('screening.riskLevel') }}</label>
             <select 
               v-model="scheduleForm.risk_level" 
               class="!w-full !px-3 !py-2 !bg-white !border !border-zinc-200 !rounded-lg !text-sm !text-zinc-800 focus:!outline-none focus:!ring-2 focus:!ring-zinc-900/10 focus:!border-zinc-900 !transition-all !appearance-none"
             >
-              <option value="" disabled>انتخاب کنید...</option>
+              <option value="" disabled>{{ t('screening.selectOption') }}</option>
               <option v-for="opt in riskOptions" :key="opt.value" :value="opt.value">{{ opt.title }}</option>
             </select>
           </div>
 
           <div class="!space-y-1.5">
-            <label class="!text-xs !font-medium !text-zinc-700">یادداشت</label>
+            <label class="!text-xs !font-medium !text-zinc-700">{{ t('screening.notes') }}</label>
             <textarea 
               v-model="scheduleForm.notes" 
               rows="3" 
-              placeholder="توضیحات تکمیلی..."
+              :placeholder="t('screening.notesPlaceholder')"
               class="!w-full !px-3 !py-2 !bg-white !border !border-zinc-200 !rounded-lg !text-sm !text-zinc-800 focus:!outline-none focus:!ring-2 focus:!ring-zinc-900/10 focus:!border-zinc-900 !transition-all !resize-none"
             ></textarea>
           </div>
@@ -332,7 +332,7 @@
 
         <div class="!px-6 !py-4 !border-t !border-zinc-100 !bg-zinc-50/50 !flex !items-center !justify-end !gap-3">
           <button @click="addScheduleDialog = false" class="!px-4 !py-2 !text-sm !font-medium !text-zinc-600 hover:!text-zinc-900 !transition-colors">
-            انصراف
+            {{ $t('common.cancel') }}
           </button>
           <button 
             @click="submitSchedule" 
@@ -340,7 +340,7 @@
             class="!flex !items-center !gap-2 !bg-zinc-900 hover:!bg-zinc-800 disabled:!bg-zinc-300 disabled:!cursor-not-allowed !text-white !px-4 !py-2 !rounded-lg !text-sm !font-medium !shadow-sm !transition-all"
           >
             <Icon v-if="savingSchedule" name="lucide:loader-2" class="!animate-spin !w-4 !h-4" />
-            <span>ثبت برنامه</span>
+            <span>{{ t('screening.saveSchedule') }}</span>
           </button>
         </div>
       </div>
@@ -350,7 +350,7 @@
       <div class="!bg-white !rounded-2xl !border !border-zinc-200/80 !shadow-2xl !overflow-auto">
         
         <div class="!px-6 !py-4 !border-b !border-zinc-100 !flex !items-center !justify-between !bg-zinc-50/30">
-          <h3 class="!text-base !font-semibold !text-zinc-900">ثبت نتیجه غربالگری</h3>
+          <h3 class="!text-base !font-semibold !text-zinc-900">{{ t('screening.resultTitle') }}</h3>
           <button @click="addResultDialog = false" class="!p-1.5 !rounded-md !text-zinc-400 hover:!text-zinc-700 hover:!bg-zinc-100 !transition-colors justtify-center align-middle flex">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
@@ -358,12 +358,12 @@
 
         <div class="!p-6 !space-y-4">
           <div class="!space-y-1.5">
-            <label class="!text-xs !font-medium !text-zinc-700">بیمار</label>
+            <label class="!text-xs !font-medium !text-zinc-700">{{ t('screening.patient') }}</label>
             <div class="!relative">
               <input 
                 v-model="patientSearchQuery" 
                 type="text" 
-                placeholder="جستجوی بیمار با نام، کد ملی یا تلفن..."
+                :placeholder="t('screening.searchPatientPlaceholder')"
                 class="!w-full !px-3 !py-2 !bg-white !border !border-zinc-200 !rounded-lg !text-sm !text-zinc-800 focus:!outline-none focus:!ring-2 focus:!ring-zinc-900/10 focus:!border-zinc-900 !transition-all"
                 @input="onPatientSearchInput"
                 @focus="showPatientResults = true"
@@ -387,7 +387,7 @@
                 </div>
               </div>
               <div v-if="showPatientResults && patientSearchQuery.trim() && !patientSearching && patientSearchResults.length === 0 && searchedOnce" class="!absolute !z-50 !mt-1 !w-full !bg-white !border !border-zinc-200 !rounded-lg !shadow-lg !p-3 !text-sm !text-zinc-500 !text-center">
-                بیماری یافت نشد
+                {{ t('screening.noPatientFound') }}
               </div>
             </div>
             <div v-if="selectedPatient" class="!mt-2 !flex !items-center !gap-2 !text-sm !bg-emerald-50 !border !border-emerald-200 !rounded-lg !px-3 !py-2">
@@ -402,18 +402,18 @@
           </div>
 
           <div class="!space-y-1.5">
-            <label class="!text-xs !font-medium !text-zinc-700">نوع غربالگری</label>
+            <label class="!text-xs !font-medium !text-zinc-700">{{ t('screening.screeningType') }}</label>
             <select 
               v-model="resultForm.screening_type" 
               class="!w-full !px-3 !py-2 !bg-white !border !border-zinc-200 !rounded-lg !text-sm !text-zinc-800 focus:!outline-none focus:!ring-2 focus:!ring-zinc-900/10 focus:!border-zinc-900 !transition-all !appearance-none"
             >
-              <option value="" disabled>انتخاب کنید...</option>
+              <option value="" disabled>{{ t('screening.selectOption') }}</option>
               <option v-for="opt in screeningTypeOptions" :key="opt.value" :value="opt.value">{{ opt.title }}</option>
             </select>
           </div>
 
           <div class="!space-y-1.5">
-            <label class="!text-xs !font-medium !text-zinc-700">نتیجه آزمایش</label>
+            <label class="!text-xs !font-medium !text-zinc-700">{{ t('screening.testResult') }}</label>
             <input 
               v-model="resultForm.result" 
               type="text" 
@@ -424,7 +424,7 @@
 
           <div class="!grid !grid-cols-2 !gap-4">
             <div class="!space-y-1.5">
-              <label class="!text-xs !font-medium !text-zinc-700">تاریخ آزمایش</label>
+              <label class="!text-xs !font-medium !text-zinc-700">{{ t('screening.testDate') }}</label>
               <div class="!relative">
                 <PersianDatetimePicker 
                   v-model="resultForm.test_date" 
@@ -442,23 +442,23 @@
             </div>
 
             <div class="!space-y-1.5">
-              <label class="!text-xs !font-medium !text-zinc-700">وضعیت بالینی</label>
+              <label class="!text-xs !font-medium !text-zinc-700">{{ t('screening.clinicalStatus') }}</label>
               <select 
                 v-model="resultForm.is_abnormal" 
                 class="!w-full !px-3 !py-2 !bg-white !border !border-zinc-200 !rounded-lg !text-sm !text-zinc-800 focus:!outline-none focus:!ring-2 focus:!ring-zinc-900/10 focus:!border-zinc-900 !transition-all !appearance-none"
               >
-                <option :value="false">نرمال</option>
-                <option :value="true">غیرنرمال</option>
+                <option :value="false">{{ t('screening.normal') }}</option>
+                <option :value="true">{{ t('screening.abnormal') }}</option>
               </select>
             </div>
           </div>
 
           <div class="!space-y-1.5">
-            <label class="!text-xs !font-medium !text-zinc-700">یادداشت</label>
+            <label class="!text-xs !font-medium !text-zinc-700">{{ t('screening.notes') }}</label>
             <textarea 
               v-model="resultForm.notes" 
               rows="2" 
-              placeholder="توضیحات تکمیلی..."
+              :placeholder="t('screening.notesPlaceholder')"
               class="!w-full !px-3 !py-2 !bg-white !border !border-zinc-200 !rounded-lg !text-sm !text-zinc-800 focus:!outline-none focus:!ring-2 focus:!ring-zinc-900/10 focus:!border-zinc-900 !transition-all !resize-none"
             ></textarea>
           </div>
@@ -466,7 +466,7 @@
 
         <div class="!px-6 !py-4 !border-t !border-zinc-100 !bg-zinc-50/50 !flex !items-center !justify-end !gap-3">
           <button @click="addResultDialog = false" class="!px-4 !py-2 !text-sm !font-medium !text-zinc-600 hover:!text-zinc-900 !transition-colors">
-            انصراف
+            {{ $t('common.cancel') }}
           </button>
           <button 
             @click="submitResult" 
@@ -474,7 +474,7 @@
             class="!flex !items-center !gap-2 !bg-zinc-900 hover:!bg-zinc-800 disabled:!bg-zinc-300 disabled:!cursor-not-allowed !text-white !px-4 !py-2 !rounded-lg !text-sm !font-medium !shadow-sm !transition-all"
           >
             <Icon v-if="savingResult" name="lucide:loader-2" class="!animate-spin !w-4 !h-4" />
-            <span>ثبت نتیجه</span>
+            <span>{{ t('screening.saveResult') }}</span>
           </button>
         </div>
       </div>
@@ -485,6 +485,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 
+const { t } = useI18n()
 const { apiFetch } = useApi()
 const { $toast } = useNuxtApp()
 
@@ -538,40 +539,40 @@ let patientSearchTimer: ReturnType<typeof setTimeout> | null = null
 
 // Configuration Options
 const screeningTypeOptions = [
-  { title: 'آزمایش پاپ اسمیر', value: 'pap_smear' },
-  { title: 'تست HPV', value: 'hpv' },
-  { title: 'ماموگرافی', value: 'mammography' },
-  { title: 'تراکم استخوان (DEXA)', value: 'dexa' },
-  { title: 'غربالگری STI', value: 'sti' },
-  { title: 'کولپوسکوپی', value: 'colposcopy' },
+  { title: t('screening.screeningTypes.pap_smear'), value: 'pap_smear' },
+  { title: t('screening.screeningTypes.hpv'), value: 'hpv' },
+  { title: t('screening.screeningTypes.mammography'), value: 'mammography' },
+  { title: t('screening.screeningTypes.dexa'), value: 'dexa' },
+  { title: t('screening.screeningTypes.sti'), value: 'sti' },
+  { title: t('screening.screeningTypes.colposcopy'), value: 'colposcopy' },
 ]
 
 const riskOptions = [
-  { title: 'متوسط', value: 'normal' },
-  { title: 'توسعه‌یافته', value: 'elevated' },
-  { title: 'زیاد', value: 'high' },
+  { title: t('screening.riskLevels.normal'), value: 'normal' },
+  { title: t('screening.riskLevels.elevated'), value: 'elevated' },
+  { title: t('screening.riskLevels.high'), value: 'high' },
 ]
 
 const screeningTypeMap: Record<string, string> = {
-  pap_smear: 'آزمایش پاپ اسمیر',
-  hpv: 'تست HPV',
-  mammography: 'ماموگرافی',
-  dexa: 'تراکم استخوان (DEXA)',
-  sti: 'غربالگری STI',
-  colposcopy: 'کولپوسکوپی',
+  pap_smear: t('screening.screeningTypes.pap_smear'),
+  hpv: t('screening.screeningTypes.hpv'),
+  mammography: t('screening.screeningTypes.mammography'),
+  dexa: t('screening.screeningTypes.dexa'),
+  sti: t('screening.screeningTypes.sti'),
+  colposcopy: t('screening.screeningTypes.colposcopy'),
 }
 
 const riskMap: Record<string, string> = {
-  normal: 'معمولی',
-  elevated: 'توسعه یافته',
-  high: 'زیاد',
+  normal: t('screening.riskLevels.normal'),
+  elevated: t('screening.riskLevels.elevated'),
+  high: t('screening.riskLevels.high'),
 }
 
 const statusMap: Record<string, string> = {
-  pending: 'در انتظار',
-  completed: 'تکمیل شده',
-  overdue: 'معوق',
-  cancelled: 'لغو شده',
+  pending: t('screening.statuses.pending'),
+  completed: t('screening.statuses.completed'),
+  overdue: t('screening.statuses.overdue'),
+  cancelled: t('screening.statuses.cancelled'),
 }
 
 function screeningTypeLabel(type: string): string {
@@ -626,7 +627,7 @@ async function fetchAll() {
 
     computeStats()
   } catch (err: any) {
-    $toast.error('خطا در دریافت اطلاعات')
+    $toast.error(t('screening.fetchError'))
   } finally {
     loading.value = false
   }
@@ -648,17 +649,17 @@ function computeStats() {
 
 // Delete schedule
 async function confirmDelete(schedule: any) {
-  if (!confirm(`آیا از حذف این برنامه غربالگری اطمینان دارید؟`)) return
+  if (!confirm(t('screening.deleteConfirm'))) return
   try {
     const res = await apiFetch(`/api/screening/schedules/${schedule.id}`, { method: 'DELETE' })
     if (res.success) {
-      $toast.success('برنامه غربالگری حذف شد')
+      $toast.success(t('screening.programDeleted'))
       await fetchAll()
     } else {
-      $toast.error(res.error || 'خطا در حذف برنامه')
+      $toast.error(res.error || t('screening.saveError'))
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در ارتباط با سرور')
+    $toast.error(err.data?.error || t('screening.serverError'))
   }
 }
 
@@ -676,7 +677,7 @@ function openAddSchedule() {
 // Submit forms keeping UUID intact
 async function submitSchedule() {
   if (!scheduleForm.value.patient_id || !scheduleForm.value.screening_type || !scheduleForm.value.due_date) {
-    $toast.error('لطفاً فیلدهای ضروری را پر کنید')
+    $toast.error(t('screening.fillRequired'))
     return
   }
   savingSchedule.value = true
@@ -692,14 +693,14 @@ async function submitSchedule() {
       },
     })
     if (res.success) {
-      $toast.success('برنامه غربالگری با موفقیت ثبت شد')
+      $toast.success(t('screening.programSaved'))
       addScheduleDialog.value = false
       await fetchAll()
     } else {
-      $toast.error(res.error || 'خطا در ثبت برنامه')
+      $toast.error(res.error || t('screening.saveError'))
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در ارتباط با سرور')
+    $toast.error(err.data?.error || t('screening.serverError'))
   } finally {
     savingSchedule.value = false
   }
@@ -717,7 +718,7 @@ function openAddResult() {
 
 async function submitResult() {
   if (!resultForm.value.patient_id || !resultForm.value.screening_type || !resultForm.value.result) {
-    $toast.error('لطفاً فیلدهای ضروری را پر کنید')
+    $toast.error(t('screening.fillRequired'))
     return
   }
   savingResult.value = true
@@ -734,14 +735,14 @@ async function submitResult() {
       },
     })
     if (res.success) {
-      $toast.success('نتیجه غربالگری با موفقیت ثبت شد')
+      $toast.success(t('screening.resultSaved'))
       addResultDialog.value = false
       await fetchAll()
     } else {
-      $toast.error(res.error || 'خطا در ثبت نتیجه')
+      $toast.error(res.error || t('screening.resultSaveError'))
     }
   } catch (err: any) {
-    $toast.error(err.data?.error || 'خطا در ارتباط با سرور')
+    $toast.error(err.data?.error || t('screening.serverError'))
   } finally {
     savingResult.value = false
   }
@@ -807,5 +808,5 @@ onUnmounted(() => {
   if (patientSearchTimer) clearTimeout(patientSearchTimer)
 })
 
-useSeoMeta({ title: 'غربالگری و مراقبت پیشگیرانه | سیستم کلینیک' })
+useSeoMeta({ title: t('screening.titleSeo') })
 </script>
