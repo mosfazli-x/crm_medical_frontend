@@ -1326,7 +1326,19 @@
     "bookingSuccessDetail": "Appointment request registered successfully and sent for doctor approval",
     "bookingError": "Error registering appointment",
     "titleSeo": "Book Appointment | Management System",
-    "steps": ["Date", "Visit Type", "Time", "Information"]
+    "steps": ["Date", "Visit Type", "Time", "Information"],
+    "selectService": "Select a Service",
+    "selectServiceDesc": "Choose the type of medical service you need",
+    "selectDoctor": "Select a Doctor",
+    "selectDoctorDesc": "Choose a doctor who offers this service",
+    "bookWithDoctor": "Book with {doctor}",
+    "noServices": "No services available",
+    "noServicesDesc": "No services have been configured yet. Please check back later.",
+    "noDoctors": "No doctors available",
+    "noDoctorsDesc": "No doctors offer this service at the moment.",
+    "servicesLoading": "Loading services...",
+    "serviceByDoctors": "{count} doctor(s) available",
+    "titleSeoIndex": "Book Appointment | Select Service"
   },
   "layout": {
     "mainMenu": "Main Menu",
@@ -1516,6 +1528,7 @@
     "error": "Operation error"
   },
   "landing": {
+    "clinicName": "Dr. Hosseini's Clinic",
     "nav": {
       "book": "Book Appointment",
       "home": "Home",
@@ -1539,8 +1552,17 @@
         "satisfaction": "Patient Satisfaction",
         "patients": "Successful Patients"
       },
+      "nextAppointment": "Next Appointment",
+      "appointmentTime": "Today, 4:00 PM",
+      "onlineDoctors": "3 Online",
       "yearsLabel": "Yrs",
       "yearsLabelEn": "Yrs"
+    },
+    "ourStats": {
+      "badge": "By the Numbers",
+      "title1": "Our Impact",
+      "title2": "in Numbers",
+      "desc": "Quality care backed by real results"
     },
     "services": {
       "badge": "Our Services",
@@ -1603,7 +1625,8 @@
       "status1": "Initializing secure connection...",
       "status2": "Loading medical interface...",
       "status3": "Preparing your dashboard...",
-      "status4": "Almost ready..."
+      "status4": "Almost ready...",
+      "status5": "Loading Clinic Panel..."
     },
     "music": {
       "on": "Play music",

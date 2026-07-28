@@ -45,7 +45,8 @@ export default defineNuxtConfig({
     './app/assets/css/main.css',
     './app/assets/css/design-system.css',
     './app/assets/css/landing-page.css',
-    './app/assets/css/immersive.css'
+    './app/assets/css/immersive.css',
+    './app/assets/css/scroll-story.css'
   ],
 
   modules: [

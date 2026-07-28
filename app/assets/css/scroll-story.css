@@ -1,0 +1,119 @@
+.imm-scroll-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.imm-scroll-container {
+  position: relative;
+  z-index: 1;
+}
+
+.imm-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  z-index: 10000;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.imm-progress-bar-inner {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #4F46E5, #6366F1, #818CF8);
+  transition: width 0.1s linear;
+}
+
+.imm-nav-dots {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+[dir="rtl"] .imm-nav-dots {
+  right: auto;
+  left: 24px;
+}
+
+.imm-nav-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.imm-nav-dot:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.2);
+}
+
+.imm-nav-dot.active {
+  border-color: #4F46E5;
+  background: #4F46E5;
+  box-shadow: 0 0 12px rgba(79, 70, 229, 0.5);
+}
+
+[data-theme="light"] .imm-nav-dot {
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .imm-nav-dot:hover {
+  border-color: rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] .imm-nav-dot.active {
+  border-color: #4F46E5;
+  background: #4F46E5;
+}
+
+.imm-stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s ease;
+}
+
+.imm-stat-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+[data-theme="light"] .imm-stat-card {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .imm-stat-card:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .imm-scroll-wrapper {
+    scroll-behavior: auto;
+  }
+  .imm-progress-bar-inner {
+    transition: none;
+  }
+  .imm-nav-dot {
+    transition: none;
+  }
+  .imm-stat-card {
+    transition: none;
+  }
+}

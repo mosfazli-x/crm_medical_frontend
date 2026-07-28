@@ -41,6 +41,25 @@
       <div v-if="!success" class="p-6 sm:p-10 pt-2">
 
         <div class="pb-2" v-show="currentStep === 0">
+          <div v-if="selectedVisitType && visitTypePreSelected"
+               class="flex items-center justify-between bg-light-cyan/40 border border-periwinkle/40 rounded-xl mx-8 mb-4 px-4 py-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                :style="{ backgroundColor: (selectedVisitType?.color || '#3B82F6') + '20' }">
+                <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: selectedVisitType?.color || '#3B82F6' }"></div>
+              </div>
+              <div class="text-sm">
+                <span class="text-slate-500">{{ $t('booking.selectedType') }}</span>
+                <span class="font-bold text-slate-800 mr-1">{{ selectedVisitType?.name }}</span>
+                <span class="text-xs text-slate-400 mr-2">({{ selectedVisitType?.durationMinutes }} {{ $t('booking.minutes') }})</span>
+              </div>
+            </div>
+            <button @click="visitTypePreSelected = false; currentStep = 1"
+              class="text-xs text-electric-sapphire font-medium hover:underline shrink-0">
+              {{ $t('booking.back') }}
+            </button>
+          </div>
+
           <div class="flex items-center justify-between bg-slate-50 rounded-2xl border border-slate-100 mx-8">
             <div class="flex flex-col items-center w-full py-2">
               <span class="text-xs font-medium text-slate-400 mb-0.5">{{ $t('booking.appointmentDate') }}</span>
@@ -63,7 +82,7 @@
           <div v-if="!selectedJalaliDate || fetchingSlots || availableSlots.length" class="my-2 flex justify-center">
             <v-btn variant="flat" color="#4F46E5" size="large"
               class="px-14 font-bold rounded-xl shadow-md shadow-electric-sapphire/30" :disabled="!selectedJalaliDate"
-              @click="currentStep = 1">
+              @click="advanceFromDate">
               {{ $t('booking.continue') }}
             </v-btn>
           </div>
@@ -286,8 +305,10 @@ const { apiFetch } = useApi()
 const steps = computed(() => t('booking.steps') as string[])
 
 const doctorId = computed(() => route.params.doctorId as string)
+const visitTypeIdParam = computed(() => route.query.visitTypeId as string | undefined)
 const doctorName = ref('')
 const currentStep = ref(0)
+const visitTypePreSelected = ref(false)
 
 const visitTypes = ref<any[]>([])
 const selectedVisitType = ref<any | null>(null)
@@ -413,6 +434,10 @@ function selectVisitType(vt: any) {
 function selectSlot(slot: { startTime: string; endTime: string }) {
   selectedSlot.value = slot
   currentStep.value = 3
+}
+
+function advanceFromDate() {
+  currentStep.value = visitTypePreSelected.value ? 2 : 1
 }
 
 function goBackToSlots() {
@@ -573,6 +598,16 @@ onMounted(() => {
   fetchDoctorName()
   fetchVisitTypes()
   fetchMonthAvailability(now.jYear(), now.jMonth() + 1)
+})
+
+watch(visitTypes, (types) => {
+  if (visitTypeIdParam.value && types.length && !visitTypePreSelected.value) {
+    const match = types.find((vt: any) => vt.id === visitTypeIdParam.value)
+    if (match) {
+      selectVisitType(match)
+      visitTypePreSelected.value = true
+    }
+  }
 })
 
 definePageMeta({

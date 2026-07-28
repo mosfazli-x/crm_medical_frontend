@@ -33,11 +33,10 @@
   --imm-glass-hover: rgba(255, 255, 255, 0.85);
 }
 
-/* ── Lock viewport — no scrolling ── */
+/* ── Immersive page viewport ── */
 html.imm-page, body.imm-page {
-  overflow: hidden !important;
-  height: 100vh !important;
-  height: 100dvh !important;
+  overflow-x: hidden !important;
+  overflow-y: auto;
   background: var(--imm-bg) !important;
 }
 

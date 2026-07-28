@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, nextTick, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 definePageMeta({ layout: false })
 
@@ -22,6 +23,12 @@ useSeoMeta({
   ogTitle: pageTitle,
   ogDescription: pageDesc,
 })
+
+const router = useRouter()
+
+function goToBooking() {
+  router.push('/booking/')
+}
 
 /* ── Types ── */
 type Scene = 'home' | 'services' | 'doctors' | 'testimonials' | 'contact'
@@ -404,7 +411,7 @@ const icons: Record<string, string> = {
           <span v-html="icons.lang" aria-hidden="true" />
           <span>{{ t('landing.lang.toggle') }}</span>
         </button>
-        <button class="imm-nav-cta imm-magnetic" @click="transitionTo('contact')">
+        <button class="imm-nav-cta imm-magnetic" @click="goToBooking">
           {{ t('landing.nav.book') }}
           <span v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" />
         </button>
@@ -452,7 +459,7 @@ const icons: Record<string, string> = {
               {{ isLight ? t('landing.theme.dark') : t('landing.theme.light') }}
             </button>
           </div>
-          <button class="imm-mobile-drawer-cta imm-magnetic" @click="transitionTo('contact')">
+          <button class="imm-mobile-drawer-cta imm-magnetic" @click="goToBooking">
             {{ t('landing.nav.book') }}
             <span v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" />
           </button>
@@ -507,7 +514,7 @@ const icons: Record<string, string> = {
               {{ t('landing.home.desc') }}
             </p>
             <div class="scene-stagger imm-home-actions flex justify-center align-middle items-center">
-              <button v-dir class="imm-btn-primary imm-magnetic dir-ltr" @click="transitionTo('contact')">
+              <button v-dir class="imm-btn-primary imm-magnetic dir-ltr" @click="goToBooking">
                 {{ t('landing.home.cta.book') }}
                 <span v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" />
               </button>
@@ -632,7 +639,7 @@ const icons: Record<string, string> = {
                     {{ doc.rating }}
                   </span>
                 </div>
-                <button class="imm-doctor-book-btn" @click="transitionTo('contact')">
+                <button class="imm-doctor-book-btn" @click="goToBooking">
                   {{ t('landing.doctors.book') }}
                 </button>
               </div>
