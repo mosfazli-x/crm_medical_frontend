@@ -6,6 +6,19 @@ export const useAuth = () => {
     sameSite: 'lax',
   })
   const user = useState<User | null>('auth_user', () => null)
+  let _t: ((key: string) => string) | null = null
+  let _tFailed = false
+  const t = (key: string) => {
+    if (!_t && !_tFailed) {
+      try {
+        _t = useI18n().t
+      } catch {
+        _tFailed = true
+        return key
+      }
+    }
+    return _t ? _t(key) : key
+  }
 
   onMounted(() => {
     if (process.client) {
@@ -45,30 +58,30 @@ export const useAuth = () => {
         token.value = response.token
         user.value = response.user
         await navigateTo('/dashboard')
-        useNuxtApp().$toast.success('خوش آمدید!')
+        useNuxtApp().$toast.success(t('auth.login.welcome'))
       } else {
-        useNuxtApp().$toast.error(response.message || 'ورود ناموفق بود')
+        useNuxtApp().$toast.error(response.message || t('auth.errors.loginFailed'))
       }
     } catch (err: any) {
       const status = err?.response?.status
 
       let message: string
       if (err?.name === 'NetworkError' || (!process.server && !navigator.onLine)) {
-        message = 'خطا در اتصال به سرور. اتصال اینترنت خود را بررسی کنید'
+        message = t('auth.errors.networkError')
       } else if (status === 401) {
-        message = 'ایمیل یا رمز عبور اشتباه است'
+        message = t('auth.errors.invalidCredentials')
       } else if (status === 403) {
-        message = 'حساب کاربری شما غیرفعال شده است'
+        message = t('auth.errors.accountDisabled')
       } else if (status === 422) {
-        message = err.data?.error || 'اطلاعات وارد شده معتبر نیست'
+        message = err.data?.error || t('auth.errors.invalidInput')
       } else if (status === 429) {
-        message = 'تعداد درخواست‌ها بیش از حد مجاز است. کمی بعد تلاش کنید'
+        message = t('auth.errors.rateLimited')
       } else if (status && status >= 500) {
-        message = 'خطای سرور. لطفاً چند لحظه بعد دوباره تلاش کنید'
+        message = t('auth.errors.serverError')
       } else if (err?.code === 'ECONNABORTED') {
-        message = 'مدت زمان پاسخ‌دهی سرور به پایان رسید. دوباره تلاش کنید'
+        message = t('auth.errors.timeoutError')
       } else {
-        message = err.data?.error || 'خطا در ورود به سیستم'
+        message = err.data?.error || t('auth.errors.loginError')
       }
 
       useNuxtApp().$toast.error(message)
@@ -83,13 +96,11 @@ export const useAuth = () => {
         baseURL: useRuntimeConfig().public.apiBase,
       })
       if (response.success) {
-        //token.value = response.token
-        //user.value = response.user
         await navigateTo('/auth/login')
-        useNuxtApp().$toast.success('کاربر با موفقیت ساخته شد!')
+        useNuxtApp().$toast.success(t('auth.register.success'))
       }
     } catch (err: any) {
-      useNuxtApp().$toast.error(err.data?.error || 'خطا در ثبت‌نام')
+      useNuxtApp().$toast.error(err.data?.error || t('auth.register.error'))
     }
   }
 
@@ -101,7 +112,7 @@ export const useAuth = () => {
       localStorage.removeItem('auth_user')
     }
     navigateTo('/auth/login')
-    useNuxtApp().$toast.info('با موفقیت خارج شدید')
+    useNuxtApp().$toast.info(t('auth.loggedOut'))
   }
 
   const isAuthenticated = computed(() => {

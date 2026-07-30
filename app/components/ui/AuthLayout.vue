@@ -7,7 +7,7 @@
           <p class="text-xl opacity-90">{{ heroSubtitle }}</p>
           <div class="mt-12">
             <div class="bg-white/20 backdrop-blur rounded-3xl w-72 h-72 mx-auto p-6! flex items-center justify-center">
-              <ClinicLogo class="w-full h-full" />
+              <ClinicLogo class="w-4 h-4" />
             </div>
           </div>
         </div>

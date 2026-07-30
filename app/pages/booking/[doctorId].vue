@@ -79,7 +79,7 @@
             <span class="text-sm font-medium text-amber-700">{{ $t('booking.noSlotsForDay') }}</span>
           </div>
 
-          <div v-if="!selectedJalaliDate || fetchingSlots || availableSlots.length" class="my-2 flex justify-center">
+          <div v-if="selectedJalaliDate && !fetchingSlots && availableSlots.length" class="my-2 flex justify-center">
             <v-btn variant="flat" color="#4F46E5" size="large"
               class="px-14 font-bold rounded-xl shadow-md shadow-electric-sapphire/30" :disabled="!selectedJalaliDate"
               @click="advanceFromDate">
@@ -232,7 +232,10 @@
                   <label class="text-sm font-semibold text-slate-700 mb-2 block">{{ $t('booking.phone') }} <span
                       class="text-red-500">*</span></label>
                   <v-text-field v-model="form.phone" variant="outlined" density="comfortable" :placeholder="$t('booking.phonePlaceholder')"
-                    hide-details="auto" bg-color="white" rounded="lg" :rules="[v => !!v || $t('booking.phoneRequired')]"
+                    hide-details="auto" bg-color="white" rounded="lg" :rules="[
+                      v => !!v || $t('booking.phoneRequired'),
+                      v => /^09\d{9}$/.test(v) || $t('booking.phoneInvalid')
+                    ]"
                     dir="ltr" class="text-right" />
                 </v-col>
               </v-row>
@@ -450,6 +453,7 @@ function resetBooking() {
   currentStep.value = 0
   selectedSlot.value = null
   selectedVisitType.value = null
+  visitTypePreSelected.value = false
   form.value = { firstName: '', lastName: '', nationalId: '', phone: '' }
 
   const today = moment()
@@ -487,7 +491,7 @@ async function fetchMonthAvailability(year: number, month: number) {
     const apiDateStr = `${gregDate.getFullYear()}-${String(gregDate.getMonth() + 1).padStart(2, '0')}-${String(gregDate.getDate()).padStart(2, '0')}`
 
     promises.push(
-      apiFetch<any>(`/api/scheduling/slots/${doctorId.value}?date=${apiDateStr}`)
+      apiFetch<any>(`/api/booking/slots/${doctorId.value}?date=${apiDateStr}`)
         .then(res => ({ dateStr: dateStrJ, hasSlots: res.success && res.data?.length > 0 }))
         .catch(() => ({ dateStr: dateStrJ, hasSlots: false }))
     )
@@ -509,7 +513,7 @@ async function fetchMonthAvailability(year: number, month: number) {
 async function fetchSlots() {
   fetchingSlots.value = true
   try {
-    const res = await apiFetch<any>(`/api/scheduling/slots/${doctorId.value}?date=${dateStr.value}`)
+    const res = await apiFetch<any>(`/api/booking/slots/${doctorId.value}?date=${dateStr.value}`)
     if (res.success) {
       availableSlots.value = res.data
     }
@@ -547,7 +551,7 @@ async function fetchVisitTypes() {
 
 async function fetchDoctorName() {
   try {
-    const res = await apiFetch<any>('/api/scheduling/doctors')
+    const res = await apiFetch<any>('/api/booking/doctors')
     if (res.success) {
       const doctor = res.data.find((d: any) => d.id === doctorId.value)
       if (doctor) {
@@ -570,7 +574,7 @@ async function bookAppointment() {
 
   submitting.value = true
   try {
-    await apiFetch('/api/scheduling/appointments', {
+    await apiFetch('/api/booking/appointments', {
       method: 'POST',
       body: {
         doctorId: doctorId.value,

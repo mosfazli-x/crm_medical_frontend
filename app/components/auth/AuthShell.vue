@@ -6,6 +6,11 @@
  * Right: clean glass card with form slot.
  * Mobile: hero condensed to strip, form full-width.
  */
+import ClinicLogo from '~/components/icons/ClinicLogo.vue'
+const { t, locale } = useI18n()
+
+const isRtl = computed(() => locale.value === 'fa')
+
 defineProps<{
   title: string
   subtitle?: string
@@ -32,23 +37,23 @@ defineProps<{
         <div class="auth-hero__content">
           <div class="auth-hero__logo-wrap">
             <div class="auth-hero__logo-icon">
-              <ClinicLogo class="auth-hero__logo-svg" />
+              <img src="../../assets/images/hastihoseinilogo.png" class="auth-hero__logo-svg">
             </div>
           </div>
-          <h1 class="auth-hero__title">کلینیک دکتر حسینی</h1>
-          <p class="auth-hero__tagline">مراقبت پزشکی پیشرفته</p>
+          <h1 class="auth-hero__title">{{ t('auth.hero.title') }}</h1>
+          <p class="auth-hero__tagline">{{ t('auth.hero.tagline') }}</p>
           <div class="auth-hero__features">
             <div class="auth-hero__feature">
               <span class="auth-hero__feature-dot" />
-              <span>مدیریت هوشمند بیماران</span>
+              <span>{{ t('auth.hero.feature1') }}</span>
             </div>
             <div class="auth-hero__feature">
               <span class="auth-hero__feature-dot" />
-              <span>پرونده الکترونیک سلامت</span>
+              <span>{{ t('auth.hero.feature2') }}</span>
             </div>
             <div class="auth-hero__feature">
               <span class="auth-hero__feature-dot" />
-              <span>امنیت پیشرفته داده‌ها</span>
+              <span>{{ t('auth.hero.feature3') }}</span>
             </div>
           </div>
         </div>
@@ -59,9 +64,9 @@ defineProps<{
         <!-- Mobile-only compact header -->
         <div class="auth-mobile-header">
           <div class="auth-mobile-logo">
-            <ClinicLogo class="auth-mobile-logo-svg" />
+            <img src="../../assets/images/hastihoseinilogo.png" class="auth-mobile-logo-svg">
           </div>
-          <span class="auth-mobile-brand">کلینیک دکتر حسینی</span>
+          <span class="auth-mobile-brand">{{ t('auth.hero.title') }}</span>
         </div>
 
         <div class="auth-form-wrap">
@@ -72,6 +77,12 @@ defineProps<{
             </div>
             <slot />
           </div>
+          <NuxtLink to="/" class="auth-back-link">
+            <svg class="auth-back-link__icon" :class="{ 'auth-back-link__icon--rtl': isRtl }" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 10H5M9 6l-4 4 4 4" />
+            </svg>
+            <span>{{ t('auth.backToHome') }}</span>
+          </NuxtLink>
         </div>
       </div>
     </div>
@@ -113,16 +124,26 @@ defineProps<{
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 30% 40%, rgba(59,130,246,0.12) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 50% at 70% 60%, rgba(34,211,238,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 70% 40% at 50% 80%, rgba(129,140,248,0.06) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 60% at 30% 40%, rgba(59, 130, 246, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 70% 60%, rgba(34, 211, 238, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 40% at 50% 80%, rgba(129, 140, 248, 0.06) 0%, transparent 50%);
   animation: authMeshDrift 20s ease-in-out infinite;
 }
 
 @keyframes authMeshDrift {
-  0%, 100% { transform: scale(1) translate(0, 0); }
-  33% { transform: scale(1.03) translate(1%, -0.5%); }
-  66% { transform: scale(0.98) translate(-0.5%, 1%); }
+
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+  }
+
+  33% {
+    transform: scale(1.03) translate(1%, -0.5%);
+  }
+
+  66% {
+    transform: scale(0.98) translate(-0.5%, 1%);
+  }
 }
 
 /* Grid overlay */
@@ -130,8 +151,8 @@ defineProps<{
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+    linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 75%);
   opacity: 0.6;
@@ -150,7 +171,7 @@ defineProps<{
   height: 320px;
   top: 15%;
   left: 20%;
-  background: rgba(59,130,246,0.15);
+  background: rgba(59, 130, 246, 0.15);
   animation: authOrbFloat1 18s ease-in-out infinite;
 }
 
@@ -159,7 +180,7 @@ defineProps<{
   height: 240px;
   bottom: 20%;
   right: 15%;
-  background: rgba(34,211,238,0.12);
+  background: rgba(34, 211, 238, 0.12);
   animation: authOrbFloat2 22s ease-in-out infinite;
 }
 
@@ -168,33 +189,63 @@ defineProps<{
   height: 180px;
   top: 60%;
   left: 60%;
-  background: rgba(129,140,248,0.1);
+  background: rgba(129, 140, 248, 0.1);
   animation: authOrbFloat3 16s ease-in-out infinite;
 }
 
 @keyframes authOrbFloat1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(20px, -30px) scale(1.05); }
-  50% { transform: translate(-15px, 20px) scale(0.95); }
-  75% { transform: translate(10px, 10px) scale(1.02); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(20px, -30px) scale(1.05);
+  }
+
+  50% {
+    transform: translate(-15px, 20px) scale(0.95);
+  }
+
+  75% {
+    transform: translate(10px, 10px) scale(1.02);
+  }
 }
 
 @keyframes authOrbFloat2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(-25px, 15px) scale(1.08); }
-  66% { transform: translate(15px, -20px) scale(0.96); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(-25px, 15px) scale(1.08);
+  }
+
+  66% {
+    transform: translate(15px, -20px) scale(0.96);
+  }
 }
 
 @keyframes authOrbFloat3 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-20px, -25px) scale(1.1); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(-20px, -25px) scale(1.1);
+  }
 }
 
 /* Vignette */
 .auth-hero__vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 60% 50% at 50% 50%, transparent 20%, rgba(6,10,19,0.5) 100%);
+  background: radial-gradient(ellipse 60% 50% at 50% 50%, transparent 20%, rgba(6, 10, 19, 0.5) 100%);
 }
 
 /* Hero content */
@@ -212,6 +263,7 @@ defineProps<{
     transform: translateY(24px);
     filter: blur(8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -228,8 +280,8 @@ defineProps<{
   height: 72px;
   margin: 0 auto;
   border-radius: 20px;
-  background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(34,211,238,0.15));
-  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(34, 211, 238, 0.15));
+  border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -237,8 +289,7 @@ defineProps<{
 }
 
 .auth-hero__logo-svg {
-  width: 40px;
-  height: 40px;
+  width: 75px;
 }
 
 .auth-hero__title {
@@ -279,7 +330,7 @@ defineProps<{
   border-radius: 50%;
   background: linear-gradient(135deg, #3b82f6, #22d3ee);
   flex-shrink: 0;
-  box-shadow: 0 0 12px rgba(59,130,246,0.4);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
 }
 
 /* ── Form Panel ── */
@@ -322,7 +373,7 @@ defineProps<{
   align-items: center;
   gap: 0.75rem;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 @media (min-width: 1024px) {
@@ -343,8 +394,7 @@ defineProps<{
 }
 
 .auth-mobile-logo-svg {
-  width: 20px;
-  height: 20px;
+  width: 40px;
 }
 
 .auth-mobile-brand {
@@ -359,8 +409,10 @@ defineProps<{
 .auth-form-wrap {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 1.25rem;
   padding: 2rem 1.5rem;
 }
 
@@ -370,18 +422,65 @@ defineProps<{
   }
 }
 
+/* Back-to-home link */
+.auth-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #64748b;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  transition: all 0.25s ease;
+}
+
+.auth-back-link:hover {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.auth-back-link__icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.auth-back-link:hover .auth-back-link__icon {
+  transform: translateX(-2px);
+}
+
+.auth-back-link__icon--rtl {
+  transform: scaleX(-1);
+}
+
+.auth-back-link:hover .auth-back-link__icon--rtl {
+  transform: scaleX(-1) translateX(2px);
+}
+
+:global([data-theme="dark"]) .auth-back-link {
+  color: #94a3b8;
+}
+
+:global([data-theme="dark"]) .auth-back-link:hover {
+  color: #60a5fa;
+  background: rgba(96, 165, 250, 0.1);
+}
+
 /* ── Glass Card ── */
 .auth-card {
   width: 100%;
   max-width: 26rem;
-  background: rgba(255,255,255,0.92);
-  border: 1px solid rgba(0,0,0,0.06);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 1.25rem;
   padding: 2.5rem 2rem;
   box-shadow:
-    0 1px 2px rgba(0,0,0,0.04),
-    0 4px 16px rgba(0,0,0,0.04),
-    0 16px 48px rgba(0,0,0,0.06);
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 4px 16px rgba(0, 0, 0, 0.04),
+    0 16px 48px rgba(0, 0, 0, 0.06);
   backdrop-filter: blur(20px);
   animation: authCardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
@@ -392,6 +491,7 @@ defineProps<{
     transform: translateY(20px) scale(0.98);
     filter: blur(4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -408,8 +508,8 @@ defineProps<{
 /* Dark mode card */
 :global([data-theme="light"]) .auth-card,
 .auth-card {
-  background: rgba(255,255,255,0.92);
-  border-color: rgba(0,0,0,0.06);
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.06);
   color: #0f172a;
 }
 
@@ -419,16 +519,16 @@ defineProps<{
 
 :global([data-theme="dark"]) .auth-card {
   background: rgba(18, 24, 38, 0.85);
-  border-color: rgba(255,255,255,0.06);
+  border-color: rgba(255, 255, 255, 0.06);
   color: #f1f5f9;
   box-shadow:
-    0 1px 2px rgba(0,0,0,0.2),
-    0 4px 16px rgba(0,0,0,0.2),
-    0 16px 48px rgba(0,0,0,0.3);
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    0 16px 48px rgba(0, 0, 0, 0.3);
 }
 
 :global([data-theme="dark"]) .auth-mobile-header {
-  border-bottom-color: rgba(255,255,255,0.06);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
 :global([data-theme="dark"]) .auth-mobile-brand {

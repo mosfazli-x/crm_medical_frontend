@@ -25,8 +25,8 @@
           <img src="../assets/images/logo.jpg" class="!flex !h-9 !w-9 sm:!h-10 sm:!w-10 !items-center !justify-center !rounded-xl sm:!rounded-2xl !bg-ink !transition-all !duration-300 group-hover:!shadow-[0_0_20px_rgba(62,232,168,0.3)] group-hover:!scale-105">
           
           <div v-if="!rail || isMobile" class="flex flex-col overflow-hidden whitespace-nowrap">
-            <span class="font-bold text-sm text-[#111827] dark:text-[#f3f4f6] tracking-tight">کلینیک دکتر حسینی</span>
-            <span class="text-[10px] text-[#9ca3af] font-medium">پنل مدیریت</span>
+            <span class="font-bold text-sm text-[#111827] dark:text-[#f3f4f6] tracking-tight">{{ t('layout.clinicName') }}</span>
+            <span class="text-[10px] text-[#9ca3af] font-medium">{{ t('layout.managementPanel') }}</span>
           </div>
         </div>
 
@@ -76,12 +76,12 @@
                 <span class="text-[#4F46E5] dark:text-[#818cf8] font-bold text-xs">{{ userInitial }}</span>
               </div>
               <div v-if="!rail || isMobile" class="flex-1 min-w-0 overflow-hidden">
-                <p class="text-xs font-semibold text-[#111827] dark:text-[#f3f4f6] truncate">{{ user?.fullName || 'کاربر مهمان' }}</p>
+                <p class="text-xs font-semibold text-[#111827] dark:text-[#f3f4f6] truncate">{{ user?.fullName || t('layout.guestUser') }}</p>
                 <p class="text-[10px] text-[#9ca3af]">{{ roleLabel }}</p>
               </div>
               <button v-if="!rail || isMobile" @click.stop="logout"
                 class="p-1.5 rounded-md hover:bg-[#fef2f2] dark:hover:bg-[#7f1d1d]/20 transition-colors group"
-                title="خروج">
+                :title="t('layout.logout')">
                 <TurnOffIcon class="w-4 h-4 fill-[#9ca3af] group-hover:fill-[#ef4444] transition-colors" />
               </button>
             </div>
@@ -110,6 +110,13 @@
         <v-spacer />
 
         <div class="flex items-center gap-1">
+          <v-btn icon variant="text" size="small" @click="showTutorial" class="!text-[#6b7280]" title="Help">
+            <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          </v-btn>
           <v-btn icon variant="text" size="small" @click="toggleTheme" class="!text-[#6b7280]">
             <Sun v-if="!isDark" class="w-[18px] h-[18px] stroke-[#6b7280] fill-none" />
             <Moon v-else class="w-[18px] h-[18px] fill-[#9ca3af]" />
@@ -178,6 +185,8 @@ import Users from '~/components/icons/Users.vue'
 import Settings from '~/components/icons/Settings.vue'
 import Bell from '~/components/icons/Bell.vue'
 import AddClipboard from '~/components/icons/AddClipboard.vue'
+import Box from '~/components/icons/Box.vue'
+import BookOpen from '~/components/icons/BookOpen.vue'
 
 const route = useRoute()
 const { user, logout } = useAuth()
@@ -186,9 +195,16 @@ const { smAndDown } = useDisplay()
 const { isDark, toggleTheme, initTheme } = useThemeMode()
 const { t, locale, setLocale } = useI18n()
 
+const tutorial = useTutorial()
+const showTutorial = async () => {
+  tutorial.resetTutorial()
+  await nextTick()
+  tutorial.startTutorial()
+}
+
 const languages = [
-  { code: 'fa' as const, label: 'فارسی', flag: '🇮🇷' },
-  { code: 'en' as const, label: 'English', flag: '🇬🇧' },
+  { code: 'fa' as const, label: t('layout.langFa'), flag: '🇮🇷' },
+  { code: 'en' as const, label: t('layout.langEn'), flag: '🇬🇧' },
 ]
 
 const switchLanguage = async (code: 'fa' | 'en') => {
@@ -214,6 +230,7 @@ onMounted(() => {
   updateDrawerState()
   window.addEventListener('resize', updateDrawerState)
   initTheme()
+  tutorial.fetchStatus()
 
   const savedLocale = localStorage.getItem('locale')
   if (savedLocale && (savedLocale === 'fa' || savedLocale === 'en')) {
@@ -221,21 +238,29 @@ onMounted(() => {
   }
 })
 
+watch(() => route.path, (path) => {
+  if (path === '/dashboard' && !tutorial.completed.value && !tutorial.loading.value) {
+    nextTick(() => {
+      setTimeout(() => tutorial.startTutorial(), 600)
+    })
+  }
+}, { immediate: true })
+
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateDrawerState)
 })
 
-const roleLabel = computed(() => {
-  const roles: Record<string, string> = {
-    admin_doctor: t('users.roles.admin_doctor'),
-    doctor: t('users.roles.doctor'),
-    pharmacy: t('users.roles.pharmacy'),
-    lab: t('users.roles.lab'),
-    patient: t('users.roles.patient'),
-  }
-  const currentRole = user?.value?.role || (user as any)?.role
-  return roles[currentRole] || 'کاربر سیستم'
-})
+  const roleLabel = computed(() => {
+    const roles: Record<string, string> = {
+      admin_doctor: t('users.roles.admin_doctor'),
+      doctor: t('users.roles.doctor'),
+      pharmacy: t('users.roles.pharmacy'),
+      lab: t('users.roles.lab'),
+      patient: t('users.roles.patient'),
+    }
+    const currentRole = user?.value?.role || (user as any)?.role
+    return roles[currentRole] || t('layout.systemUser')
+  })
 
 const userInitial = computed(() => {
   const name = user?.value?.fullName || (user as any)?.fullName
@@ -259,6 +284,8 @@ const ALL_MENUS = computed(() => [
   { title: t('screening.title'), to: '/screening', icon: ShieldCheck, roles: ['admin_doctor', 'doctor'], category: 'primary' },
   { title: t('labResults.title'), to: '/lab-results', icon: DocumentText, roles: ['admin_doctor', 'doctor', 'lab'], category: 'primary' },
   { title: t('prescriptions.title'), to: '/prescriptions', icon: MedicalKit, roles: ['admin_doctor', 'doctor', 'pharmacy'], category: 'primary' },
+  { title: t('accounting.title'), to: '/accounting', icon: BookOpen, roles: ['admin_doctor'], category: 'primary' },
+  { title: t('inventory.title'), to: '/inventory', icon: Box, roles: ['admin_doctor', 'pharmacy'], category: 'primary' },
   { title: t('auditLogs.title'), to: '/admin/audit', icon: AddClipboard, roles: ['admin_doctor'], category: 'primary' },
   { title: t('myProfile.title'), to: '/my-profile', icon: Profile, roles: ['all'], category: 'primary' },
   { title: t('patientMessaging.title'), to: '/patient/messaging', icon: ChatDots, roles: ['patient'], category: 'primary' },

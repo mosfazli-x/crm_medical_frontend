@@ -1938,3 +1938,121 @@
   opacity: 1 !important;
   transform: translateX(0) !important;
 }
+
+/* ─── Driver.js Tutorial Overrides ─── */
+.driver-popover.crm-tutorial-popover {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  padding: 0;
+  max-width: 420px;
+}
+
+.driver-popover.crm-tutorial-popover .driver-popover-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  padding: 20px 24px 8px;
+  font-family: inherit;
+}
+
+.driver-popover.crm-tutorial-popover .driver-popover-description {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #6b7280;
+  padding: 0 24px 16px;
+  font-family: inherit;
+}
+
+.driver-popover.crm-tutorial-popover .driver-popover-footer {
+  padding: 8px 24px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.driver-popover.crm-tutorial-popover .driver-popover-progress-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.driver-popover.crm-tutorial-popover .driver-popover-navigation-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.driver-popover.crm-tutorial-popover .driver-popover-btn {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.driver-popover.crm-tutorial-popover .driver-popover-btn.driver-popover-btn-next {
+  background: #4F46E5;
+  color: #fff;
+}
+
+.driver-popover.crm-tutorial-popover .driver-popover-btn.driver-popover-btn-next:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+.driver-popover.crm-tutorial-popover .driver-popover-btn.driver-popover-btn-prev {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.driver-popover.crm-tutorial-popover .driver-popover-btn.driver-popover-btn-prev:hover {
+  background: #e5e7eb;
+}
+
+.driver-popover.crm-tutorial-popover .driver-popover-btn.driver-popover-btn-close {
+  display: none;
+}
+
+.driver-popover.crm-tutorial-popover .driver-popover-arrow {
+  border-color: #fff;
+}
+
+.dark .driver-popover.crm-tutorial-popover {
+  background: #1e2028;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.dark .driver-popover.crm-tutorial-popover .driver-popover-title {
+  color: #f3f4f6;
+}
+
+.dark .driver-popover.crm-tutorial-popover .driver-popover-description {
+  color: #9ca3af;
+}
+
+.dark .driver-popover.crm-tutorial-popover .driver-popover-btn.driver-popover-btn-prev {
+  background: #2a2c36;
+  color: #d1d5db;
+}
+
+.dark .driver-popover.crm-tutorial-popover .driver-popover-btn.driver-popover-btn-prev:hover {
+  background: #373946;
+}
+
+.dark .driver-popover.crm-tutorial-popover .driver-popover-arrow {
+  border-color: #1e2028;
+}
+
+.driver-overlay {
+  backdrop-filter: blur(2px);
+}
+
+.driver-stage-no-interaction {
+  pointer-events: none;
+}

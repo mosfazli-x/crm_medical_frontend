@@ -86,6 +86,7 @@ export function useMouseParallax() {
   function onMouseMove(e: MouseEvent) {
     rawX = (e.clientX / window.innerWidth - 0.5)
     rawY = (e.clientY / window.innerHeight - 0.5)
+    if (!rafId) rafId = requestAnimationFrame(loop)
   }
 
   function onMouseLeave() {
@@ -104,7 +105,16 @@ export function useMouseParallax() {
     sx.value = springX
     sy.value = springY
 
-    rafId = requestAnimationFrame(loop)
+    const settled = Math.abs(rawX - mx.value) < 0.001
+      && Math.abs(rawY - my.value) < 0.001
+      && Math.abs(velX) < 0.001
+      && Math.abs(velY) < 0.001
+
+    if (settled) {
+      rafId = null
+    } else {
+      rafId = requestAnimationFrame(loop)
+    }
   }
 
   onMounted(() => {
@@ -113,7 +123,6 @@ export function useMouseParallax() {
 
     window.addEventListener('mousemove', onMouseMove, { passive: true })
     document.addEventListener('mouseleave', onMouseLeave)
-    rafId = requestAnimationFrame(loop)
   })
 
   onBeforeUnmount(() => {

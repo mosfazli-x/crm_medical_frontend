@@ -284,7 +284,7 @@
               <div class="md:!col-span-2 !mt-1">
                 <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.samplingDate') }}</label>
                 <PersianDatetimePicker v-model="form.performed_date" format="YYYY-MM-DD"
-                  placeholder="انتخاب تاریخ خورشیدی..." class="custom-picker-input" />
+                  :placeholder="t('labResults.solarDatePlaceholder')" class="custom-picker-input" />
                 <p v-if="formDateError" class="!text-red-500 !text-[10px] !font-semibold !mt-1">{{ formDateError }}</p>
               </div>
 

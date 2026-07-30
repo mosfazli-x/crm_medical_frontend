@@ -56,6 +56,7 @@ export const usePatientProfile = (options: UsePatientProfileOptions = {}): UsePa
   const { apiFetch } = useApi()
   const { $toast } = useNuxtApp()
   const config = useRuntimeConfig()
+  const { t } = useI18n()
 
   // ─────────────────────────────────────────────────────────────
   // Reactive State
@@ -142,7 +143,7 @@ export const usePatientProfile = (options: UsePatientProfileOptions = {}): UsePa
   
   const fetchProfile = async (): Promise<void> => {
     if (!patientId.value) {
-      error.value = 'شناسه بیمار یافت نشد'
+      error.value = t('patientProfile.patientIdNotFound')
       return
     }
 
@@ -194,7 +195,7 @@ export const usePatientProfile = (options: UsePatientProfileOptions = {}): UsePa
         syncStateFromProfile()
       }
     } catch (err: any) {
-      error.value = err.data?.error || 'خطا در دریافت اطلاعات بیمار'
+      error.value = err.data?.error || t('patientProfile.fetchError')
       $toast.error(error.value)
     } finally {
       loading.value = false
@@ -418,7 +419,7 @@ export const usePatientProfile = (options: UsePatientProfileOptions = {}): UsePa
       })
 
       if (response.success) {
-        $toast.success('سبک زندگی با موفقیت ذخیره شد')
+        $toast.success(t('patientProfile.lifestyleSaved'))
         // Update local state
         if (basicInfo.value) {
           basicInfo.value.smoking = lifestyleForm.smoking
@@ -428,11 +429,11 @@ export const usePatientProfile = (options: UsePatientProfileOptions = {}): UsePa
         }
         return true
       } else {
-        $toast.error(response.error || 'خطا در ذخیره اطلاعات')
+        $toast.error(response.error || t('patientProfile.saveError'))
         return false
       }
     } catch (err: any) {
-      $toast.error(err.data?.error || 'خطا در ارتباط با سرور')
+      $toast.error(err.data?.error || t('patientProfile.serverError'))
       return false
     } finally {
       saving.value = false
@@ -472,7 +473,7 @@ export const usePatientProfile = (options: UsePatientProfileOptions = {}): UsePa
         body = data
         break
       default:
-        $toast.error('بخش نامعتبر')
+        $toast.error(t('patientProfile.invalidSection'))
         return false
     }
 
@@ -484,16 +485,16 @@ export const usePatientProfile = (options: UsePatientProfileOptions = {}): UsePa
       })
 
       if (response.success) {
-        $toast.success('اطلاعات با موفقیت ذخیره شد')
+        $toast.success(t('patientProfile.dataSaved'))
         // If unified endpoint becomes available, invalidate cache and refetch
         cacheTimestamp = 0
         return true
       } else {
-        $toast.error(response.error || 'خطا در ذخیره اطلاعات')
+        $toast.error(response.error || t('patientProfile.saveError'))
         return false
       }
     } catch (err: any) {
-      $toast.error(err.data?.error || 'خطا در ارتباط با سرور')
+      $toast.error(err.data?.error || t('patientProfile.serverError'))
       return false
     } finally {
       saving.value = false

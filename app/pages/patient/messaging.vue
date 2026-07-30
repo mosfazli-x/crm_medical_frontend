@@ -406,7 +406,7 @@ function formatShortDate(dateStr: string) {
 
 function formatLongDate(dateStr: string) {
   if (!dateStr) return ''
-  return moment(dateStr).format('jDD jMMMM jYYYY - ساعت HH:mm')
+  return moment(dateStr).format(`jDD jMMMM jYYYY - ${t('patientMessaging.atTime')} HH:mm`)
 }
 
 watch(tab, () => {
@@ -424,6 +424,6 @@ onMounted(() => {
 })
 
 useSeoMeta({
-  title: 'پیام‌ها | پنل بیمار',
+  title: t('patientMessaging.seoTitle'),
 })
 </script>

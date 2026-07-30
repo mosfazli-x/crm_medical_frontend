@@ -151,7 +151,7 @@
                   <div class="px-2 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 items-center">
                     <v-text-field v-model="b.gender" :label="t('pregnancy.gender')" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
                     <v-text-field v-model.number="b.weight" :label="t('pregnancy.weightGrams')" type="number" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
-                    <v-text-field v-model.number="b.height" label="قد (cm)" type="number" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
+                    <v-text-field v-model.number="b.height" :label="t('pregnancy.heightCm')" type="number" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
                     <v-text-field v-model.number="b.head_circumference" :label="t('pregnancy.headCircumference')" type="number" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
                     <v-text-field v-model.number="b.apgar1" :label="t('pregnancy.apgar1')" type="number" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
                     <v-text-field v-model.number="b.apgar5" :label="t('pregnancy.apgar5')" type="number" variant="outlined" density="compact" hide-details="auto" bg-color="white" />

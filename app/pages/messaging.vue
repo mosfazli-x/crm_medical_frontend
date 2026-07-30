@@ -421,7 +421,8 @@ function cancelCompose() {
 
 function formatDate(dateStr: string) {
   if (!dateStr) return ''
-  return moment(dateStr).format('jDD jMMMM jYYYY ساعت HH:mm')
+  const d = moment(dateStr)
+  return `${d.format('jDD jMMMM jYYYY')} ${t('messaging.atTime')} ${d.format('HH:mm')}`
 }
 
 function refreshMessages() {

@@ -7,15 +7,16 @@ const isScrolled = computed(() => y.value > 24)
 const mobileOpen = ref(false)
 const activeSection = ref('#hero')
 const scrollProgress = ref(0)
+const { t } = useI18n()
 
-const links = [
-  { label: 'خانه', href: '#hero' },
-  { label: 'درباره ما', href: '#about' },
-  { label: 'خدمات', href: '#services' },
-  { label: 'پزشکان', href: '#doctors' },
-  { label: 'مقالات', href: '#blog' },
-  { label: 'تماس با ما', href: '#appointment' }
-]
+const links = computed(() => [
+  { label: t('header.home'), href: '#hero' },
+  { label: t('header.about'), href: '#about' },
+  { label: t('header.services'), href: '#services' },
+  { label: t('header.doctors'), href: '#doctors' },
+  { label: t('header.blog'), href: '#blog' },
+  { label: t('header.contact'), href: '#appointment' }
+])
 
 function updateScrollProgress() {
   const docHeight = document.documentElement.scrollHeight - window.innerHeight
@@ -70,7 +71,7 @@ onBeforeUnmount(() => {
         <!-- Logo -->
         <a href="#hero" class="!flex !items-center !gap-2 sm:!gap-2.5 !shrink-0 !group">
           <img src="../assets/images/logo.jpg" class="!flex !h-9 !w-9 sm:!h-10 sm:!w-10 !items-center !justify-center !rounded-xl sm:!rounded-2xl !bg-ink !transition-all !duration-300 group-hover:!shadow-[0_0_20px_rgba(62,232,168,0.3)] group-hover:!scale-105">
-          <span class="!font-display !text-sm sm:!text-base md:!text-lg !font-bold !tracking-tight !truncate">کلینیک تخصصی دکتر حسینی</span>
+          <span class="!font-display !text-sm sm:!text-base md:!text-lg !font-bold !tracking-tight !truncate">{{ t('header.clinicName') }}</span>
         </a>
 
         <!-- Desktop nav -->
@@ -96,12 +97,12 @@ onBeforeUnmount(() => {
 
         <div class="!flex !items-center !gap-2 sm:!gap-3">
           <MagneticButton as="a" href="#appointment" variant="solid" class="!hidden sm:!inline-flex !px-5 !py-2.5 md:!px-7 md:!py-3.5">
-            رزرو نوبت
+            {{ t('header.bookAppointment') }}
           </MagneticButton>
 
           <button
             class="!inline-flex !h-9 !w-9 sm:!h-10 sm:!w-10 !items-center !justify-center !rounded-xl !bg-ink/5 !transition-all !duration-300 hover:!bg-ink/10 lg:!hidden"
-            aria-label="باز کردن منو"
+            :aria-label="t('header.openMenu')"
             @click="mobileOpen = !mobileOpen"
           >
             <svg v-if="!mobileOpen" width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -138,7 +139,7 @@ onBeforeUnmount(() => {
             {{ link.label }}
           </a>
           <MagneticButton as="a" href="#appointment" variant="solid" class="!mt-1 sm:!mt-2 !justify-center !px-5 !py-3 md:!px-7 md:!py-3.5" @click="mobileOpen = false">
-            رزرو نوبت
+            {{ t('header.bookAppointment') }}
           </MagneticButton>
         </nav>
       </Transition>

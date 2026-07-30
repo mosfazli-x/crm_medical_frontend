@@ -1,27 +1,27 @@
 <template>
     <div class="p-6 rounded-xl">
-        <h3 class="text-base font-bold text-slate-800! dark:text-slate-300! mb-6 pb-3">هویت و اطلاعات تماس</h3>
+        <h3 class="text-base font-bold text-slate-800! dark:text-slate-300! mb-6 pb-3">{{ $t('basicInfo.title') }}</h3>
         <v-row dense class="mt-2">
             <v-col cols="12" md="6">
-                <v-text-field v-model="form.first_name" label="نام *" variant="outlined" density="comfortable"
+                <v-text-field v-model="form.first_name" :label="$t('basicInfo.firstName') + ' *'" variant="outlined" density="comfortable"
                     prepend-inner-icon="mdi-account-outline" />
             </v-col>
             <v-col cols="12" md="6">
-                <v-text-field v-model="form.last_name" label="نام خانوادگی *" variant="outlined"
+                <v-text-field v-model="form.last_name" :label="$t('basicInfo.lastName') + ' *'" variant="outlined"
                     density="comfortable" />
             </v-col>
             <v-col cols="12" md="6">
-                <v-text-field v-model="form.national_id" label="کد ملی *" variant="outlined" density="comfortable"
+                <v-text-field v-model="form.national_id" :label="$t('basicInfo.nationalId') + ' *'" variant="outlined" density="comfortable"
                     prepend-inner-icon="mdi-card-account-details-outline" maxlength="10" inputmode="numeric"
                     :rules="[nationalCodeRule]" />
             </v-col>
             <v-col cols="12" md="6">
-                <v-text-field v-model="form.insurance_code" label="کد بیمه" variant="outlined" density="comfortable"
+                <v-text-field v-model="form.insurance_code" :label="$t('basicInfo.insuranceCode')" variant="outlined" density="comfortable"
                     prepend-inner-icon="mdi-shield-check-outline" />
             </v-col>
             <v-col cols="12" md="6">
                 <v-select v-model="form.insurance_type" :items="insuranceOptions" item-title="title" item-value="value"
-                    label="نوع بیمه" variant="outlined" density="comfortable"
+                    :label="$t('basicInfo.insuranceType')" variant="outlined" density="comfortable"
                     prepend-inner-icon="mdi-shield-account-outline" clearable>
                     <template v-slot:selection="{ item }">
                         <div class="flex items-center gap-2">
@@ -42,22 +42,22 @@
                 </v-select>
             </v-col>
             <v-col cols="12" md="4">
-                <v-text-field v-model="form.phone" label="شماره تماس" variant="outlined" density="comfortable"
+                <v-text-field v-model="form.phone" :label="$t('basicInfo.phone')" variant="outlined" density="comfortable"
                     prepend-inner-icon="mdi-phone-outline" type="tel" dir="ltr" :rules="[iranMobileRule]" />
             </v-col>
             <v-col cols="12" md="4">
-                <v-select v-model="form.marital_status" :items="['مجرد', 'متاهل', 'مطلقه', 'بیوه']" label="وضعیت تأهل"
+                <v-select v-model="form.marital_status" :items="maritalStatusOptions" :label="$t('basicInfo.maritalStatus')"
                     variant="outlined" density="comfortable" prepend-inner-icon="mdi-ring" />
             </v-col>
             <v-col cols="12" md="4">
                 <div class="relative h-[48px] border rounded overflow-hidden">
-                    <PersianDatetimePicker v-model="form.birth_date" type="date" placeholder="تاریخ تولد"
+                    <PersianDatetimePicker v-model="form.birth_date" type="date" :placeholder="$t('basicInfo.birthDate')"
                         display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#000000" auto-submit clearable
                         custom-input class="w-full !h-[48px] rounded-md px-3 bg-white" />
                 </div>
             </v-col>
             <v-col cols="12">
-                <v-textarea v-model="form.address" label="آدرس سکونت" variant="outlined" rows="2" density="comfortable"
+                <v-textarea v-model="form.address" :label="$t('basicInfo.address')" variant="outlined" rows="2" density="comfortable"
                     prepend-inner-icon="mdi-map-marker-outline" hide-details />
             </v-col>
         </v-row>
@@ -65,7 +65,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { INSURANCE_TYPE_VALUES } from '~/types/insurance'
+const { t } = useI18n()
 
 const form = defineModel<any>({ required: true })
 const config = useRuntimeConfig()
@@ -76,6 +78,13 @@ const insuranceOptions = INSURANCE_TYPE_VALUES.map(item => ({
     logo: config.public.apiBase + item.logo,
 }))
 
+const maritalStatusOptions = computed(() => [
+    t('basicInfo.single'),
+    t('basicInfo.married'),
+    t('basicInfo.divorced'),
+    t('basicInfo.widowed'),
+])
+
 const iranMobileRule = (value: string) => {
     if (!value) return true
 
@@ -83,7 +92,7 @@ const iranMobileRule = (value: string) => {
 
     return mobileRegex.test(value)
         ? true
-        : 'شماره موبایل معتبر وارد کنید (مثال: 09123456789)'
+        : t('basicInfo.invalidPhone')
 }
 
 const nationalCodeRule = (value: string) => {
@@ -91,14 +100,12 @@ const nationalCodeRule = (value: string) => {
 
     const code = value.trim()
 
-    // فقط 10 رقم
     if (!/^\d{10}$/.test(code)) {
-        return 'کد ملی باید 10 رقم باشد'
+        return t('basicInfo.nationalIdMustBe10Digits')
     }
 
-    // جلوگیری از اعداد تکراری
     if (/^(\d)\1{9}$/.test(code)) {
-        return 'کد ملی معتبر نیست'
+        return t('basicInfo.invalidNationalId')
     }
 
     const check = Number(code[9])
@@ -117,7 +124,7 @@ const nationalCodeRule = (value: string) => {
 
     return isValid
         ? true
-        : 'کد ملی معتبر نیست'
+        : t('basicInfo.invalidNationalId')
 }
 </script>
 

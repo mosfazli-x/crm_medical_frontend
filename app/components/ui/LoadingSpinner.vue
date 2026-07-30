@@ -11,6 +11,6 @@
 
 <script setup lang="ts">
 withDefaults(defineProps<{ text?: string }>(), {
-  text: 'در حال دریافت اطلاعات...',
+  text: 'Loading...',
 })
 </script>

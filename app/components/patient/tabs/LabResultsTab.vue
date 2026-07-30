@@ -4,7 +4,7 @@
   </div>
   <div v-else-if="!results?.length" class="text-center py-10 bg-slate-50 border-2 border-dashed border-slate-200 rounded-lg">
     <v-icon icon="mdi-clipboard-text-off-outline" size="x-large" class="text-slate-300 mb-2" />
-    <p class="text-sm font-medium text-slate-500">هیچ نتیجه آزمایشی ثبت نشده است.</p>
+    <p class="text-sm font-medium text-slate-500">{{ t('labResultsTab.noResults') }}</p>
   </div>
   <div v-else class="space-y-3">
     <div v-for="lab in results" :key="lab.id" 
@@ -13,11 +13,11 @@
       <div class="flex-1">
         <p class="font-medium text-slate-800 text-sm">{{ lab.test_name || '---' }}</p>
         <p class="text-xs text-slate-500 mt-1">
-          نتیجه: {{ lab.result || '---' }} (محدوده مرجع: {{ lab.reference_range || '---' }}) — {{ formatDate(lab.performed_date) }}
+          {{ t('labResultsTab.resultLabel') }}: {{ lab.result || '---' }} ({{ t('labResultsTab.refRangeLabel') }}: {{ lab.reference_range || '---' }}) — {{ formatDate(lab.performed_date) }}
         </p>
       </div>
       <v-chip size="x-small" :color="lab.abnormal ? 'red' : 'green'" variant="tonal">
-        {{ lab.abnormal ? 'غیرنرمال' : 'نرمال' }}
+        {{ lab.abnormal ? t('labResultsTab.abnormal') : t('labResultsTab.normal') }}
       </v-chip>
     </div>
   </div>
@@ -25,12 +25,13 @@
   <!-- Quick Add Button (could be opened in dialog) -->
   <div class="mt-6 flex justify-end">
     <v-btn variant="tonal" color="black" size="small" prepend-icon="mdi-plus" class="rounded-lg" @click="emit('create')">
-      ثبت نتیجه جدید
+      {{ t('labResultsTab.addNewResult') }}
     </v-btn>
   </div>
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 const props = defineProps<{
   results?: any[]
   loading: boolean

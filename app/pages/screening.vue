@@ -77,7 +77,7 @@
               <input 
                 v-model="searchQuery" 
                 type="text" 
-                placeholder="جستجو..." 
+                :placeholder="t('screening.searchPlaceholder')" 
                 class="!w-full sm:!w-[240px] !bg-zinc-50 !border !border-zinc-200 !text-zinc-800 !text-sm !rounded-lg !py-1.5 !pr-9 !pl-3 focus:!outline-none focus:!ring-2 focus:!ring-zinc-900/10 focus:!border-zinc-900 !transition-all placeholder:!text-zinc-400" 
               />
               <button v-if="searchQuery" @click="searchQuery = ''" class="!absolute !left-3 !text-zinc-400 hover:!text-zinc-600">
@@ -296,14 +296,14 @@
               <PersianDatetimePicker 
                 v-model="scheduleForm.due_date" 
                 type="date" 
-                placeholder="انتخاب تاریخ"
-                display-format="jYYYY/jMM/jDD" 
-                format="YYYY-MM-DD" 
-                color="#000000" 
-                auto-submit 
+                :placeholder="t('screening.selectDatePlaceholder')"
+                display-format="jYYYY/jMM/jDD"
+                format="YYYY-MM-DD"
+                color="#000000"
+                auto-submit
                 clearable
-                custom-input 
-                class="!w-full !h-full !text-zinc-800 !outline-none !rounded-lg !bg-white !transition-all" 
+                custom-input
+                class="!w-full !h-full !text-zinc-800 !outline-none !rounded-lg !bg-white !transition-all"
               />
             </div>
           </div>
@@ -417,7 +417,7 @@
             <input 
               v-model="resultForm.result" 
               type="text" 
-              placeholder="مثال: Negative, High Risk..." 
+              :placeholder="t('screening.resultExamplePlaceholder')" 
               class="!w-full !px-3 !py-2 !bg-white !border !border-zinc-200 !rounded-lg !text-sm !text-zinc-800 focus:!outline-none focus:!ring-2 focus:!ring-zinc-900/10 focus:!border-zinc-900 !transition-all"
             />
           </div>
@@ -429,13 +429,13 @@
                 <PersianDatetimePicker 
                   v-model="resultForm.test_date" 
                   type="date" 
-                  placeholder="انتخاب تاریخ"
-                  display-format="jYYYY/jMM/jDD" 
-                  format="YYYY-MM-DD" 
-                  color="#000000" 
-                  auto-submit 
+                  :placeholder="t('screening.selectDatePlaceholder')"
+                  display-format="jYYYY/jMM/jDD"
+                  format="YYYY-MM-DD"
+                  color="#000000"
+                  auto-submit
                   clearable
-                  custom-input 
+                  custom-input
                   class="!w-full !h-[38px] !border !border-zinc-200 hover:!border-zinc-300 !text-sm !text-zinc-800 !outline-none focus:!ring-2 focus:!ring-zinc-900/10 focus:!border-zinc-900 !rounded-lg !px-3 !bg-white !transition-all" 
                 />
               </div>

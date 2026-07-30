@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useScrollReveal } from '../composables/Usescrollreveal'
 
 definePageMeta({
@@ -7,6 +7,8 @@ definePageMeta({
 })
 
 useClinicSeo()
+
+const { t } = useI18n()
 
 const aboutRoot = ref<HTMLElement | null>(null)
 const servicesRoot = ref<HTMLElement | null>(null)
@@ -22,98 +24,98 @@ useScrollReveal(doctorsRoot, { items: '.doctor-reveal', stagger: 0.1 })
 useScrollReveal(blogRoot, { items: '.blog-reveal', stagger: 0.1 })
 useScrollReveal(appointmentRoot, { items: '.appt-reveal', stagger: 0.12 })
 
-const services = [
+const services = computed(() => [
   {
     icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.57-3.25 3.92L12 22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.57 3.25 3.92" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
-    title: 'قلب و عروق',
-    desc: 'تشخیص و درمان بیماری‌های قلبی با پیشرفته‌ترین تجهیزات اکوکاردیوگرافی و نوار قلب.',
+    title: t('index2.services.01.title'),
+    desc: t('index2.services.01.desc'),
     color: 'from-rose-500/10 to-pink-500/10',
     iconBg: '!bg-rose-50 !text-rose-600',
-    number: '۰۱'
+    number: t('index2.services.01.number')
   },
   {
     icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="5" stroke="currentColor" stroke-width="1.6"/><path d="M3 21v-2a7 7 0 0 1 14 0v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
-    title: 'پوست و زیبایی',
-    desc: 'لیزر درمانی، میکرونیدلینگ، بوتاکس و جوانسازی پوست توسط متخصصان مجرب.',
+    title: t('index2.services.02.title'),
+    desc: t('index2.services.02.desc'),
     color: 'from-violet-500/10 to-purple-500/10',
     iconBg: '!bg-violet-50 !text-violet-600',
-    number: '۰۲'
+    number: t('index2.services.02.number')
   },
   {
     icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 12h6M12 9v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/></svg>`,
-    title: 'طب عمومی',
-    desc: 'ویزیت عمومی، چکاپ سالانه، واکسیناسیون و مراقبت‌های پیشگیرانه برای تمام سنین.',
+    title: t('index2.services.03.title'),
+    desc: t('index2.services.03.desc'),
     color: 'from-emerald-500/10 to-teal-500/10',
     iconBg: '!bg-emerald-50 !text-emerald-600',
-    number: '۰۳'
+    number: t('index2.services.03.number')
   },
   {
     icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4.5 12.5l3-3 3 3 5-5 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 21h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
-    title: 'آزمایشگاه',
-    desc: 'انجام کلیه آزمایش‌های خون، هورمونی و تخصصی با نتایج دقیق و سریع.',
+    title: t('index2.services.04.title'),
+    desc: t('index2.services.04.desc'),
     color: 'from-amber-500/10 to-orange-500/10',
     iconBg: '!bg-amber-50 !text-amber-600',
-    number: '۰۴'
+    number: t('index2.services.04.number')
   },
   {
     icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke="currentColor" stroke-width="1.6"/><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
-    title: 'اورژانس',
-    desc: 'بخش اورژانس ۲۴ ساعته با تیم پزشکی آماده و تجهیزات احیای پیشرفته.',
+    title: t('index2.services.05.title'),
+    desc: t('index2.services.05.desc'),
     color: 'from-red-500/10 to-rose-500/10',
     iconBg: '!bg-red-50 !text-red-600',
-    number: '۰۵'
+    number: t('index2.services.05.number')
   },
   {
     icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
-    title: 'مشاوره تخصصی',
-    desc: 'مشاوره آنلاین و حضوری با پزشکان متخصص بدون نیاز به مراجعه حضوری.',
+    title: t('index2.services.06.title'),
+    desc: t('index2.services.06.desc'),
     color: 'from-sky-500/10 to-blue-500/10',
     iconBg: '!bg-sky-50 !text-sky-600',
-    number: '۰۶'
+    number: t('index2.services.06.number')
   }
-]
+])
 
-const doctors = [
+const doctors = computed(() => [
   {
-    name: 'دکتر هستی حسینی',
-    specialty: 'متخصص زنان',
+    name: t('index2.doctors.01.name'),
+    specialty: t('index2.doctors.01.specialty'),
     img: '/images/dr_hosseini_2.webp'
   }
-]
+])
 
-const blogPosts = [
+const blogPosts = computed(() => [
   {
-    title: '۵ نکته طلایی برای سلامت قلب در زمستان',
-    excerpt: 'سرمای زمستان می‌تواند تأثیر مستقیمی بر سلامت قلب و عروق داشته باشد. در این مقاله با راهکارهای پیشگیرانه آشنا شوید.',
+    title: t('index2.blog.01.title'),
+    excerpt: t('index2.blog.01.excerpt'),
     img: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?q=80&w=600&auto=format&fit=crop',
-    date: '۱۵ دی ۱۴۰۴',
-    readTime: '۵ دقیقه',
-    category: 'سلامت قلب'
+    date: t('index2.blog.01.date'),
+    readTime: t('index2.blog.01.readTime'),
+    category: t('index2.blog.01.category')
   },
   {
-    title: 'مزایای چکاپ سالانه و پیشگیری از بیماری‌ها',
-    excerpt: 'انجام آزمایش‌های دوره‌ای بهترین روش برای شناسایی زودهنگام بیماری‌ها و حفظ سلامت عمومی است.',
+    title: t('index2.blog.02.title'),
+    excerpt: t('index2.blog.02.excerpt'),
     img: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=600&auto=format&fit=crop',
-    date: '۳ دی ۱۴۰۴',
-    readTime: '۴ دقیقه',
-    category: 'پیشگیری'
+    date: t('index2.blog.02.date'),
+    readTime: t('index2.blog.02.readTime'),
+    category: t('index2.blog.02.category')
   },
   {
-    title: 'جوانسازی پوست با روش‌های نوین غیرتهاجمی',
-    excerpt: 'با پیشرفت تکنولوژی، روش‌های جدیدی برای جوانسازی پوست بدون نیاز به جراحی ارائه شده است.',
+    title: t('index2.blog.03.title'),
+    excerpt: t('index2.blog.03.excerpt'),
     img: 'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80&w=600&auto=format&fit=crop',
-    date: '۲۵ آذر ۱۴۰۴',
-    readTime: '۶ دقیقه',
-    category: 'زیبایی'
+    date: t('index2.blog.03.date'),
+    readTime: t('index2.blog.03.readTime'),
+    category: t('index2.blog.03.category')
   }
-]
+])
 
-const features = [
-  { icon: '⏰', title: 'ساعات طولانی', desc: 'شنبه تا چهارشنبه از ۸ صبح تا ۸ شب' },
-  { icon: '📞', title: 'مشاوره تلفنی', desc: 'مشاوره رایگان با پزشکان متخصص' },
-  { icon: '🏥', title: 'تجهیزات مدرن', desc: 'پیشرفته‌ترین دستگاه‌های پزشکی' },
-  { icon: '💊', title: 'داروخانه اختصاصی', desc: 'داروخانه مجهز در محل کلینیک' },
-]
+const features = computed(() => [
+  { icon: '⏰', title: t('index2.features.01.title'), desc: t('index2.features.01.desc') },
+  { icon: '📞', title: t('index2.features.02.title'), desc: t('index2.features.02.desc') },
+  { icon: '🏥', title: t('index2.features.03.title'), desc: t('index2.features.03.desc') },
+  { icon: '💊', title: t('index2.features.04.title'), desc: t('index2.features.04.desc') },
+])
 </script>
 
 <template>
@@ -141,17 +143,17 @@ const features = [
         <div class="about-reveal">
           <span class="!inline-flex !items-center !gap-2 !rounded-full !border !border-emerald/20 !bg-emerald-mist/60 !px-4 sm:!px-5 !py-1.5 sm:!py-2 !text-xs !font-semibold !text-emerald-deep !tracking-wide">
             <span class="!h-1.5 !w-1.5 !rounded-full !bg-emerald-bright animate-pulseDot" />
-            درباره کلینیک دکتر حسینی
+            {{ t('index2.about.badge') }}
           </span>
           <h2 class="!mt-5 sm:!mt-6 !font-display !text-2xl sm:!text-3xl md:!text-display-lg !font-black !text-ink !tracking-tight">
-            تجربه‌ای متفاوت از
-            <span class="gradient-text">مراقبت پزشکی</span>
+            {{ t('index2.about.title1') }}
+            <span class="gradient-text">{{ t('index2.about.title2') }}</span>
           </h2>
           <p class="!mt-4 sm:!mt-6 !text-sm sm:!text-base md:!text-lg !leading-7 sm:!leading-8 !text-muted !max-w-lg">
-            کلینیک دکتر حسینی با هدف ارائه خدمات پزشکی در سطح بین‌المللی تأسیس شده است. ما باور داریم که هر بیمار حق دارد در محیطی آرام، مدرن و حرفه‌ای تحت درمان قرار گیرد.
+            {{ t('index2.about.desc1') }}
           </p>
           <p class="!mt-3 sm:!mt-4 !text-sm sm:!text-base !leading-7 !text-muted !max-w-lg">
-            تیم پزشکی ما متشکل از برترین متخصصان هر رشته است که با بهره‌گیری از جدیدترین پروتکل‌های درمانی، بهترین نتیجه ممکن را برای شما تضمین می‌کنند.
+            {{ t('index2.about.desc2') }}
           </p>
 
           <!-- Feature list -->
@@ -164,10 +166,10 @@ const features = [
 
           <div class="!mt-8 sm:!mt-10 !flex !flex-wrap !gap-3 sm:!gap-4 justify-center align-middle items-center">
             <MagneticButton as="a" href="#services" variant="outline" :icon="false">
-              مشاهده خدمات
+              {{ t('index2.about.cta.services') }}
             </MagneticButton>
             <MagneticButton as="a" href="#appointment" variant="solid" :icon="false">
-              رزرو مشاوره
+              {{ t('index2.about.cta.appointment') }}
             </MagneticButton>
           </div>
         </div>
@@ -176,7 +178,7 @@ const features = [
           <div class="!overflow-hidden !rounded-3xl sm:!rounded-4xl !shadow-floaty image-reveal image-professional">
             <NuxtImg
               src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800&auto=format&fit=crop"
-              alt="محیط داخلی کلینیک دکتر حسینی"
+              :alt="t('index2.about.imgAlt')"
               class="!h-full !w-full !object-cover !aspect-[4/3] !transition-transform !duration-700 hover:!scale-105"
               loading="lazy"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
@@ -189,8 +191,8 @@ const features = [
                 <span class="!font-display !text-lg sm:!text-xl !font-black !text-emerald-deep">+</span>
               </span>
               <div>
-                <p class="!font-display !text-xl sm:!text-2xl !font-black !text-emerald-deep tabular-nums">۱۰</p>
-                <p class="!text-[10px] sm:!text-xs !text-muted !font-medium">سال تجربه درخشان</p>
+                <p class="!font-display !text-xl sm:!text-2xl !font-black !text-emerald-deep tabular-nums">{{ t('index2.about.expYears') }}</p>
+                <p class="!text-[10px] sm:!text-xs !text-muted !font-medium">{{ t('index2.about.expLabel') }}</p>
               </div>
             </div>
           </div>
@@ -211,14 +213,14 @@ const features = [
         <div class="service-reveal !text-center !max-w-2xl !mx-auto !mb-10 sm:!mb-12 md:!mb-16">
           <span class="!inline-flex !items-center !gap-2 !rounded-full !border !border-ink/10 !bg-white/80 !px-4 sm:!px-5 !py-1.5 sm:!py-2 !text-xs !font-semibold !text-emerald-deep !tracking-wide">
             <span class="!h-1.5 !w-1.5 !rounded-full !bg-emerald-bright animate-pulseDot" />
-            خدمات ما
+            {{ t('index2.services.badge') }}
           </span>
           <h2 class="!mt-5 sm:!mt-6 !font-display !text-2xl sm:!text-3xl md:!text-display-lg !font-black !text-ink !tracking-tight">
-            طیف گسترده‌ای از خدمات
-            <span class="gradient-text">تخصصی</span>
+            {{ t('index2.services.title1') }}
+            <span class="gradient-text">{{ t('index2.services.title2') }}</span>
           </h2>
           <p class="!mt-4 sm:!mt-5 !text-sm sm:!text-base md:!text-lg !text-muted !leading-7 sm:!leading-8">
-            کلینیک دکتر حسینی مجموعه کاملی از خدمات پزشکی، تشخیصی و درمانی را در محیطی مدرن و آرام ارائه می‌دهد.
+            {{ t('index2.services.desc') }}
           </p>
         </div>
 
@@ -251,25 +253,25 @@ const features = [
       <div class="!container">
         <div class="stat-reveal !text-center !max-w-2xl !mx-auto !mb-10 sm:!mb-12 md:!mb-16">
           <span class="!inline-flex !items-center !gap-2 !rounded-full !border !border-emerald/20 !bg-emerald-mist/60 !px-4 sm:!px-5 !py-1.5 sm:!py-2 !text-xs !font-semibold !text-emerald-deep !tracking-wide">
-            اعداد و ارقام
+            {{ t('index2.stats.badge') }}
           </span>
           <h2 class="!mt-5 sm:!mt-6 !font-display !text-2xl sm:!text-3xl md:!text-display-lg !font-black !text-ink !tracking-tight">
-            آمار <span class="gradient-text">عملکرد</span> ما
+            {{ t('index2.stats.title1') }} <span class="gradient-text">{{ t('index2.stats.title2') }}</span>
           </h2>
         </div>
 
         <div class="!grid !grid-cols-2 md:!grid-cols-4 !gap-6 sm:!gap-8 md:!gap-10 lg:!gap-16">
           <div class="stat-reveal">
-            <AnimatedCounter :end="15" suffix="+" label="پزشک متخصص" />
+            <AnimatedCounter :end="15" suffix="+" :label="t('index2.stats.doctors')" />
           </div>
           <div class="stat-reveal">
-            <AnimatedCounter :end="10" suffix=" سال" label="تجربه بالینی" />
+            <AnimatedCounter :end="10" :suffix="t('index2.stats.experienceSuffix')" :label="t('index2.stats.experience')" />
           </div>
           <div class="stat-reveal">
-            <AnimatedCounter :end="98" suffix="٪" label="رضایت بیماران" />
+            <AnimatedCounter :end="98" :suffix="t('index2.stats.satisfactionSuffix')" :label="t('index2.stats.satisfaction')" />
           </div>
           <div class="stat-reveal">
-            <AnimatedCounter :end="12000" suffix="+" label="بیمار موفق" />
+            <AnimatedCounter :end="12000" suffix="+" :label="t('index2.stats.patients')" />
           </div>
         </div>
       </div>
@@ -284,14 +286,14 @@ const features = [
         <div class="doctor-reveal !text-center !max-w-2xl !mx-auto !mb-10 sm:!mb-12 md:!mb-16">
           <span class="!inline-flex !items-center !gap-2 !rounded-full !border !border-ink/10 !bg-white/80 !px-4 sm:!px-5 !py-1.5 sm:!py-2 !text-xs !font-semibold !text-emerald-deep !tracking-wide">
             <span class="!h-1.5 !w-1.5 !rounded-full !bg-emerald-bright animate-pulseDot" />
-            تیم پزشکی
+            {{ t('index2.doctors.badge') }}
           </span>
           <h2 class="!mt-5 sm:!mt-6 !font-display !text-2xl sm:!text-3xl md:!text-display-lg !font-black !text-ink !tracking-tight">
-            پزشکان
-            <span class="gradient-text">متخصص</span> ما
+            {{ t('index2.doctors.title1') }}
+            <span class="gradient-text">{{ t('index2.doctors.title2') }}</span>
           </h2>
           <p class="!mt-4 sm:!mt-5 !text-sm sm:!text-base md:!text-lg !text-muted !leading-7 sm:!leading-8">
-            تیم حرفه‌ای و مجرب کلینیک دکتر حسینی با سال‌ها تجربه در خدمت سلامت شما هستند.
+            {{ t('index2.doctors.desc') }}
           </p>
         </div>
 
@@ -313,7 +315,7 @@ const features = [
               />
               <!-- Overlay: always visible on touch, hover on desktop -->
               <div class="!absolute !inset-0 !bg-gradient-to-t !from-ink/60 !via-ink/10 !to-transparent !opacity-100 lg:!opacity-0 lg:group-hover:!opacity-100 !transition-opacity !duration-500 !flex !items-end !p-3 sm:!p-4 md:!p-5">
-                <span class="!text-xs sm:!text-sm !text-white !font-medium !transition-opacity !duration-500 !delay-100">مشاهده پروفایل</span>
+                <span class="!text-xs sm:!text-sm !text-white !font-medium !transition-opacity !duration-500 !delay-100">{{ t('index2.doctors.viewProfile') }}</span>
               </div>
             </div>
             <div class="!p-3 sm:!p-4 md:!p-5">
@@ -331,13 +333,13 @@ const features = [
         <div class="blog-reveal !text-center !max-w-2xl !mx-auto !mb-10 sm:!mb-12 md:!mb-16">
           <span class="!inline-flex !items-center !gap-2 !rounded-full !border !border-emerald/20 !bg-emerald-mist/60 !px-4 sm:!px-5 !py-1.5 sm:!py-2 !text-xs !font-semibold !text-emerald-deep !tracking-wide">
             <span class="!h-1.5 !w-1.5 !rounded-full !bg-emerald-bright animate-pulseDot" />
-            مقالات و اخبار
+            {{ t('index2.blog.badge') }}
           </span>
           <h2 class="!mt-5 sm:!mt-6 !font-display !text-2xl sm:!text-3xl md:!text-display-lg !font-black !text-ink !tracking-tight">
-            آخرین <span class="gradient-text">مقالات</span> پزشکی
+            {{ t('index2.blog.title1') }} <span class="gradient-text">{{ t('index2.blog.title2') }}</span>
           </h2>
           <p class="!mt-4 sm:!mt-5 !text-sm sm:!text-base md:!text-lg !text-muted !leading-7 sm:!leading-8">
-            مقالات آموزشی و بهداشتی توسط تیم پزشکی کلینیک دکتر حسینی برای افزایش آگاهی سلامت شما.
+            {{ t('index2.blog.desc') }}
           </p>
         </div>
 
@@ -370,7 +372,7 @@ const features = [
               <h3 class="!font-display !text-sm sm:!text-base !font-bold !text-ink !leading-6 sm:!leading-7">{{ post.title }}</h3>
               <p class="!mt-2 !text-xs sm:!text-sm !leading-6 sm:!leading-7 !text-muted">{{ post.excerpt }}</p>
               <MagneticButton as="a" href="#" variant="ghost" class="!mt-3 sm:!mt-5 !px-4 sm:!px-5 !py-2 sm:!py-2.5 !text-xs sm:!text-sm">
-                ادامه مطلب
+                {{ t('index2.blog.readMore') }}
               </MagneticButton>
             </div>
           </GlassCard>
@@ -394,14 +396,14 @@ const features = [
             <span class="!relative !h-2 !w-2 !rounded-full !bg-emerald-bright">
               <span class="!absolute !inset-0 !rounded-full !bg-emerald-bright animate-pulse-ring" />
             </span>
-            رزرو نوبت
+            {{ t('index2.appointment.badge') }}
           </span>
           <h2 class="!mt-5 sm:!mt-6 !font-display !text-2xl sm:!text-3xl md:!text-display-lg !font-black !text-white !leading-[1.05] sm:!leading-[1.02] !tracking-tight">
-            نوبت خود را
-            <span class="!text-emerald-bright">آنلاین</span> رزرو کنید
+            {{ t('index2.appointment.title1') }}
+            <span class="!text-emerald-bright">{{ t('index2.appointment.title2') }}</span>
           </h2>
           <p class="!mt-4 sm:!mt-6 !text-sm sm:!text-base md:!text-lg !leading-7 sm:!leading-8 !text-white/50 !max-w-lg">
-            در کمتر از ۶۰ ثانیه نوبت خود را رزرو کنید. تیم ما در اسرع وقت با شما تماس خواهد گرفت تا وقت مناسب را هماهنگ کند.
+            {{ t('index2.appointment.desc') }}
           </p>
 
           <div class="!mt-8 sm:!mt-10 !flex !flex-col !gap-4 sm:!gap-5">
@@ -410,8 +412,8 @@ const features = [
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="sm:!w-[18px] sm:!h-[18px]"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </span>
               <div>
-                <p class="!text-[10px] sm:!text-sm !text-white/40 !font-medium">تلفن تماس</p>
-                <p class="!text-sm sm:!text-base !font-semibold !text-white !transition-colors !duration-300 group-hover:!text-emerald-bright">۰۲۱-۱۲۳۴۵۶۷۸</p>
+                <p class="!text-[10px] sm:!text-sm !text-white/40 !font-medium">{{ t('index2.appointment.phoneLabel') }}</p>
+                <p class="!text-sm sm:!text-base !font-semibold !text-white !transition-colors !duration-300 group-hover:!text-emerald-bright">{{ t('index2.appointment.phoneValue') }}</p>
               </div>
             </div>
             <div class="!flex !items-center !gap-3 sm:!gap-4 !group">
@@ -419,8 +421,8 @@ const features = [
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="sm:!w-[18px] sm:!h-[18px]"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="1.6"/></svg>
               </span>
               <div>
-                <p class="!text-[10px] sm:!text-sm !text-white/40 !font-medium">آدرس</p>
-                <p class="!text-sm sm:!text-base !font-semibold !text-white !transition-colors !duration-300 group-hover:!text-emerald-bright">تهران، خیابان ولیعصر، بین چهارراه پارک‌وی و جردن</p>
+                <p class="!text-[10px] sm:!text-sm !text-white/40 !font-medium">{{ t('index2.appointment.addressLabel') }}</p>
+                <p class="!text-sm sm:!text-base !font-semibold !text-white !transition-colors !duration-300 group-hover:!text-emerald-bright">{{ t('index2.appointment.addressValue') }}</p>
               </div>
             </div>
             <div class="!flex !items-center !gap-3 sm:!gap-4 !group">
@@ -428,8 +430,8 @@ const features = [
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="sm:!w-[18px] sm:!h-[18px]"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.6"/><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
               </span>
               <div>
-                <p class="!text-[10px] sm:!text-sm !text-white/40 !font-medium">ساعات کاری</p>
-                <p class="!text-sm sm:!text-base !font-semibold !text-white !transition-colors !duration-300 group-hover:!text-emerald-bright">شنبه تا چهارشنبه ۸ صبح تا ۸ شب</p>
+                <p class="!text-[10px] sm:!text-sm !text-white/40 !font-medium">{{ t('index2.appointment.hoursLabel') }}</p>
+                <p class="!text-sm sm:!text-base !font-semibold !text-white !transition-colors !duration-300 group-hover:!text-emerald-bright">{{ t('index2.appointment.hoursValue') }}</p>
               </div>
             </div>
           </div>
@@ -439,43 +441,43 @@ const features = [
           <div class="form-glass !rounded-2xl sm:!rounded-3xl !p-5 sm:!p-6 md:!p-8">
             <form class="!flex !flex-col !gap-4 sm:!gap-5" @submit.prevent>
               <div>
-                <label class="!mb-1.5 sm:!mb-2 !block !text-xs sm:!text-sm !text-white/60 !font-medium">نام و نام خانوادگی</label>
+                <label class="!mb-1.5 sm:!mb-2 !block !text-xs sm:!text-sm !text-white/60 !font-medium">{{ t('index2.appointment.formName') }}</label>
                 <input
                   type="text"
-                  placeholder="نام خود را وارد کنید"
+                  :placeholder="t('index2.appointment.formNamePlaceholder')"
                   class="input-professional !w-full !rounded-xl !border !border-white/15 !bg-white/5 !px-3.5 sm:!px-4 !py-3 sm:!py-3.5 !text-sm !text-white !placeholder-white/30 !outline-none !transition-all !duration-300 focus:!border-emerald-bright focus:!bg-white/8"
                 />
               </div>
               <div>
-                <label class="!mb-1.5 sm:!mb-2 !block !text-xs sm:!text-sm !text-white/60 !font-medium">شماره تماس</label>
+                <label class="!mb-1.5 sm:!mb-2 !block !text-xs sm:!text-sm !text-white/60 !font-medium">{{ t('index2.appointment.formPhone') }}</label>
                 <input
                   type="tel"
-                  placeholder="۰۹۱۲XXXXXXX"
+                  :placeholder="t('index2.appointment.formPhonePlaceholder')"
                   class="input-professional !w-full !rounded-xl !border !border-white/15 !bg-white/5 !px-3.5 sm:!px-4 !py-3 sm:!py-3.5 !text-sm !text-white !placeholder-white/30 !outline-none !transition-all !duration-300 focus:!border-emerald-bright focus:!bg-white/8"
                 />
               </div>
               <div>
-                <label class="!mb-1.5 sm:!mb-2 !block !text-xs sm:!text-sm !text-white/60 !font-medium">خدمت مورد نظر</label>
+                <label class="!mb-1.5 sm:!mb-2 !block !text-xs sm:!text-sm !text-white/60 !font-medium">{{ t('index2.appointment.formService') }}</label>
                 <select class="input-professional !w-full !rounded-xl !border !border-white/15 !bg-white/5 !px-3.5 sm:!px-4 !py-3 sm:!py-3.5 !text-sm !text-white !outline-none !transition-all !duration-300 focus:!border-emerald-bright focus:!bg-white/8">
-                  <option value="" disabled selected class="!text-ink">انتخاب کنید</option>
-                  <option value="cardiology" class="!text-ink">قلب و عروق</option>
-                  <option value="dermatology" class="!text-ink">پوست و زیبایی</option>
-                  <option value="general" class="!text-ink">طب عمومی</option>
-                  <option value="lab" class="!text-ink">آزمایشگاه</option>
-                  <option value="emergency" class="!text-ink">اورژانس</option>
-                  <option value="consult" class="!text-ink">مشاوره تخصصی</option>
+                  <option value="" disabled selected class="!text-ink">{{ t('index2.appointment.formServiceSelect') }}</option>
+                  <option value="cardiology" class="!text-ink">{{ t('index2.services.01.title') }}</option>
+                  <option value="dermatology" class="!text-ink">{{ t('index2.services.02.title') }}</option>
+                  <option value="general" class="!text-ink">{{ t('index2.services.03.title') }}</option>
+                  <option value="lab" class="!text-ink">{{ t('index2.services.04.title') }}</option>
+                  <option value="emergency" class="!text-ink">{{ t('index2.services.05.title') }}</option>
+                  <option value="consult" class="!text-ink">{{ t('index2.services.06.title') }}</option>
                 </select>
               </div>
               <div>
-                <label class="!mb-1.5 sm:!mb-2 !block !text-xs sm:!text-sm !text-white/60 !font-medium">توضیحات (اختیاری)</label>
+                <label class="!mb-1.5 sm:!mb-2 !block !text-xs sm:!text-sm !text-white/60 !font-medium">{{ t('index2.appointment.formMessage') }}</label>
                 <textarea
                   rows="3"
-                  placeholder="توضیحات خود را بنویسید..."
+                  :placeholder="t('index2.appointment.formMessagePlaceholder')"
                   class="input-professional !w-full !rounded-xl !border !border-white/15 !bg-white/5 !px-3.5 sm:!px-4 !py-3 sm:!py-3.5 !text-sm !text-white !placeholder-white/30 !outline-none !transition-all !duration-300 focus:!border-emerald-bright focus:!bg-white/8 !resize-none"
                 />
               </div>
               <MagneticButton as="button" variant="solid" class="!justify-center !bg-emerald-deep hover:!bg-emerald !w-full !py-3.5 sm:!py-4 !text-sm sm:!text-base !font-bold !shadow-[0_8px_24px_-4px_rgba(15,92,67,0.4)] hover:!shadow-[0_12px_32px_-4px_rgba(15,92,67,0.5)]">
-                ارسال درخواست
+                {{ t('index2.appointment.formSubmit') }}
               </MagneticButton>
             </form>
           </div>

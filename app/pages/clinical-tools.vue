@@ -727,8 +727,10 @@ async function assessBreastCancer() {
       const d = res.data
       const risk = d.risk || d.risk_level || ''
       const riskNorm = risk?.toLowerCase() || ''
-      const isHigh = riskNorm.includes('high') || riskNorm.includes('بالا')
-      const isModerate = riskNorm.includes('moderate') || riskNorm.includes('متوسط')
+      const riskHigh = t('clinicalTools.breastCancer.high')
+      const riskModerate = t('clinicalTools.breastCancer.moderate')
+      const isHigh = riskNorm.includes('high') || riskNorm.includes(riskHigh)
+      const isModerate = riskNorm.includes('moderate') || riskNorm.includes(riskModerate)
       breastCancerResult.value = {
         risk: d.risk || t('clinicalTools.breastCancer.unknownRisk'),
         interpretation: d.interpretation || '',

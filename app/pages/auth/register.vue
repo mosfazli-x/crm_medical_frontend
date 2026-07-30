@@ -229,7 +229,7 @@ definePageMeta({ layout: false })
 .auth-input {
   width: 100%;
   height: 2.75rem;
-  padding: 0 2.5rem;
+  padding: 0 2.5rem 0 0.5rem;
   font-size: 0.875rem;
   font-weight: 500;
   font-family: var(--font-body);

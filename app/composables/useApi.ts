@@ -1,6 +1,7 @@
 export const useApi = () => {
   const { token, logout } = useAuth()
   const nuxtApp = useNuxtApp()
+  const { t } = useI18n()
 
   const apiLoadingCount = useState<number>('api-loading-count', () => 0)
 
@@ -25,14 +26,14 @@ export const useApi = () => {
       const status = err.response?.status || err.status || err.data?.status
 
       if (status === 401) {
-        nuxtApp.$toast.error('جلسه شما منقضی شده — لطفاً دوباره وارد شوید')
+        nuxtApp.$toast.error(t('auth.errors.sessionExpired'))
         logout()
         await navigateTo('/auth/login')
         return {} as T
       }
 
       if (status === 403) {
-        nuxtApp.$toast.error('دسترسی ممنوع — نقش کافی نیست')
+        nuxtApp.$toast.error(t('auth.errors.accessDenied'))
         await navigateTo('/dashboard')
         return {} as T
       }

@@ -108,7 +108,7 @@ interface MedicationItem {
 interface AllergyItem {
     id?: string
     substance: string
-    severity?: 'خفیف' | 'متوسط' | 'شدید'
+    severity?: string
 }
 
 const form = reactive({
@@ -177,7 +177,7 @@ const submitForm = async () => {
             payload.allergies = form.allergies.map((a) => ({
                 ...(a.id ? { id: a.id } : {}),
                 substance: a.substance,
-                severity: a.severity || 'متوسط',
+                severity: a.severity || t('patientForm.severity.moderate'),
             }))
             payload.pregnancies = pregnancyRecords.value.map((p) => ({
                 ...(p.id ? { id: p.id } : {}),
@@ -220,7 +220,7 @@ const submitForm = async () => {
             }))
             payload.allergies = form.allergies.map((a) => ({
                 substance: a.substance,
-                severity: a.severity || 'متوسط',
+                severity: a.severity || t('patientForm.severity.moderate'),
             }))
             payload.pregnancies = pregnancyRecords.value.map((p) => ({
                 gravida_index: p.gravida_index ?? null,
@@ -362,7 +362,7 @@ function fillForm(data: any) {
     form.allergies = (medHistory.allergies || []).map((a: any) => ({
         id: a.id,
         substance: a.substance,
-        severity: a.severity ?? 'متوسط',
+        severity: a.severity ?? t('patientForm.severity.moderate'),
     }))
 
     const rawPregnancies = Array.isArray(data.obstetricHistory)

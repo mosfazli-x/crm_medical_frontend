@@ -78,12 +78,24 @@ const emit = defineEmits<{
   'month-change': [payload: { year: number; month: number }]
 }>()
 
-const weekdays = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج']
+const { t, locale } = useI18n()
 
-const persianMonths = [
-  'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
-  'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند',
-]
+const weekdays = computed(() => [
+  t('calendar.weekday.sat'),
+  t('calendar.weekday.sun'),
+  t('calendar.weekday.mon'),
+  t('calendar.weekday.tue'),
+  t('calendar.weekday.wed'),
+  t('calendar.weekday.thu'),
+  t('calendar.weekday.fri'),
+])
+
+const persianMonths = computed(() => [
+  t('calendar.month.farvardin'), t('calendar.month.ordibehesht'), t('calendar.month.khordad'),
+  t('calendar.month.tir'), t('calendar.month.mordad'), t('calendar.month.shahrivar'),
+  t('calendar.month.mehr'), t('calendar.month.aban'), t('calendar.month.azar'),
+  t('calendar.month.dey'), t('calendar.month.bahman'), t('calendar.month.esfand'),
+])
 
 const now = moment()
 const todayJYear = now.jYear()
@@ -95,8 +107,8 @@ const currentMonth = ref(todayJMonth)
 
 const markedSet = computed(() => new Set(props.markedDates || []))
 
-const monthName = computed(() => persianMonths[currentMonth.value])
-const yearName = computed(() => currentYear.value.toLocaleString('fa-IR'))
+const monthName = computed(() => persianMonths.value[currentMonth.value])
+const yearName = computed(() => currentYear.value.toLocaleString(locale.value === 'fa' ? 'fa-IR' : 'en-US'))
 
 const calendarDays = computed(() => {
   const firstOfMonth = moment(`${currentYear.value}/${currentMonth.value + 1}/1`, 'jYYYY/jM/jD')

@@ -10,9 +10,9 @@ const servicesData = [
 ]
 
 const doctorsData = [
-  { name: 'دکتر سارا احمدی', nameEn: 'Dr. Sarah Mitchell', specialty: 'متخصص قلب', specialtyEn: 'Cardiologist', experience: '۱۵ سال', experienceEn: '15 years', patients: '۵,۰۰۰+', patientsEn: '5,000+', rating: '4.9', img: '/images/dr_hosseini_2.webp' },
-  { name: 'دکتر جیمز چن', nameEn: 'Dr. James Chen', specialty: 'متخصص پوست', specialtyEn: 'Dermatologist', experience: '۱۲ سال', experienceEn: '12 years', patients: '۳,۲۰۰+', patientsEn: '3,200+', rating: '4.8', img: '' },
-  { name: 'دکتر النا رودریگز', nameEn: 'Dr. Elena Rodriguez', specialty: 'طب عمومی', specialtyEn: 'General Practitioner', experience: '۱۰ سال', experienceEn: '10 years', patients: '۸,۵۰۰+', patientsEn: '8,500+', rating: '4.9', img: '' },
+  { nameKey: 'landing.doctors.doctor1Name', nameEn: 'Dr. Sarah Mitchell', specialtyKey: 'landing.doctors.doctor1Specialty', specialtyEn: 'Cardiologist', experienceKey: 'landing.doctors.doctor1Experience', experienceEn: '15 years', patientsKey: 'landing.doctors.doctor1Patients', patientsEn: '5,000+', rating: '4.9', img: '/images/dr_hosseini_2.webp' },
+  { nameKey: 'landing.doctors.doctor2Name', nameEn: 'Dr. James Chen', specialtyKey: 'landing.doctors.doctor2Specialty', specialtyEn: 'Dermatologist', experienceKey: 'landing.doctors.doctor2Experience', experienceEn: '12 years', patientsKey: 'landing.doctors.doctor2Patients', patientsEn: '3,200+', rating: '4.8', img: '' },
+  { nameKey: 'landing.doctors.doctor3Name', nameEn: 'Dr. Elena Rodriguez', specialtyKey: 'landing.doctors.doctor3Specialty', specialtyEn: 'General Practitioner', experienceKey: 'landing.doctors.doctor3Experience', experienceEn: '10 years', patientsKey: 'landing.doctors.doctor3Patients', patientsEn: '8,500+', rating: '4.9', img: '' },
 ]
 
 function toPersianNum(input: string | number): string {
@@ -55,6 +55,19 @@ export function useLang() {
     { icon: 'clock', labelKey: 'landing.contact.hours', value: i18nT('landing.contact.hoursValue').toString() },
   ])
 
+  const doctors = computed(() => doctorsData.map(d => ({
+    name: t(d.nameKey),
+    nameEn: d.nameEn,
+    specialty: t(d.specialtyKey),
+    specialtyEn: d.specialtyEn,
+    experience: t(d.experienceKey),
+    experienceEn: d.experienceEn,
+    patients: t(d.patientsKey),
+    patientsEn: d.patientsEn,
+    rating: d.rating,
+    img: d.img,
+  })))
+
   return {
     lang,
     t,
@@ -63,7 +76,7 @@ export function useLang() {
     pn,
     toPersianNum,
     services: servicesData,
-    doctors: doctorsData,
+    doctors,
     testimonials,
     contactItems,
   }

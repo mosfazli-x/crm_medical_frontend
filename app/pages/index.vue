@@ -7,14 +7,10 @@ definePageMeta({ layout: false })
 const { lang, t: langT, toggleLang, isRtl, pn, services, doctors, testimonials, contactItems } = useLang()
 const { t } = useI18n()
 
-/* ── Loading Screen State ── */
 const showLoadingScreen = ref(true)
 const isLoadingComplete = ref(false)
 
-const pageTitle = computed(() => lang.value === 'fa'
-  ? 'کلینیک دکتر حسینی — مراقبت پزشکی پیشرفته'
-  : 'MedVista — Advanced Healthcare for Modern Life'
-)
+const pageTitle = computed(() => t('index.pageTitle'))
 const pageDesc = computed(() => langT('landing.home.desc'))
 
 useSeoMeta({
@@ -30,15 +26,6 @@ function goToBooking() {
   router.push('/booking/')
 }
 
-/* ── Types ── */
-type Scene = 'home' | 'services' | 'doctors' | 'testimonials' | 'contact'
-
-/* ── State ── */
-const activeScene = ref<Scene>('home')
-const isTransitioning = ref(false)
-const prefersReducedMotion = ref(false)
-
-/* ── Mobile Menu ── */
 const mobileMenuOpen = ref(false)
 
 function toggleMobileMenu() {
@@ -49,37 +36,15 @@ function closeMobileMenu() {
   mobileMenuOpen.value = false
 }
 
-/* ── Interactions ── */
 const { x: glowX, y: glowY, visible: glowVisible } = useCursorGlow()
 const { mx: _pmx, my: _pmy, sx: psx, sy: psy } = useMouseParallax()
 
-/* ── Parallax Style Bindings ── */
 const parallaxLottie = computed(() => ({
   transform: `perspective(800px) rotateY(${-psx.value * 30}deg) rotateX(${psy.value * 30}deg)`,
 }))
 
-/* ── Theme ── */
 const { isLight, toggleTheme, initTheme: initLandingTheme } = useLandingTheme()
 
-/* ── Tab Indicator ── */
-const tabIndicatorStyle = ref<{ left: string; width: string }>({ left: '0px', width: '0px' })
-const tabsRef = ref<HTMLElement | null>(null)
-
-function updateTabIndicator() {
-  nextTick(() => {
-    if (!tabsRef.value) return
-    const activeTab = tabsRef.value.querySelector('.imm-nav-tab.active') as HTMLElement | null
-    if (!activeTab) return
-    const containerRect = tabsRef.value.getBoundingClientRect()
-    const tabRect = activeTab.getBoundingClientRect()
-    tabIndicatorStyle.value = {
-      left: `${tabRect.left - containerRect.left}px`,
-      width: `${tabRect.width}px`,
-    }
-  })
-}
-
-/* ── Stat Counters ── */
 const { value: statDoctors, animate: animateDoctors } = useCounter(15, 1600)
 const { value: statYears, animate: animateYears } = useCounter(10, 1400)
 const { value: statSatisfaction, animate: animateSatisfaction } = useCounter(98, 1800)
@@ -87,7 +52,7 @@ const { value: statPatients, animate: animatePatients } = useCounter(12, 1200)
 const statsAnimated = ref(false)
 
 function animateStats() {
-  if (statsAnimated.value || prefersReducedMotion.value) return
+  if (statsAnimated.value) return
   statsAnimated.value = true
   animateDoctors()
   animateYears()
@@ -95,25 +60,19 @@ function animateStats() {
   animatePatients()
 }
 
-/* ── Text Reveal ── */
 const titleWords = computed(() => t('landing.home.title1').split(' '))
 const titleAccentWords = computed(() => t('landing.home.title2').split(' '))
 const titleRevealed = ref(false)
 
 function revealTitle() {
-  if (titleRevealed.value || prefersReducedMotion.value) {
-    titleRevealed.value = true
-    return
-  }
-  setTimeout(() => { titleRevealed.value = true }, 200)
+  if (titleRevealed.value) return
+  titleRevealed.value = true
 }
 
-/* ── Testimonial Carousel ── */
 const activeTestimonial = ref(0)
 let testimonialInterval: ReturnType<typeof setInterval> | null = null
 
 function startTestimonialRotation() {
-  if (prefersReducedMotion.value) return
   testimonialInterval = setInterval(() => {
     activeTestimonial.value = (activeTestimonial.value + 1) % testimonials.value.length
   }, 5000)
@@ -127,101 +86,83 @@ function setTestimonial(i: number) {
   }
 }
 
-/* ── Form State ── */
 const formSubmitted = ref(false)
+const contactForm = ref({
+  name: '',
+  phone: '',
+  service: '',
+  message: '',
+})
+const submittingForm = ref(false)
+const { $toast } = useNuxtApp()
 
 function onSubmitForm() {
+  if (!contactForm.value.name || !contactForm.value.phone) return
+  submittingForm.value = true
+  $toast.success(t('landing.contact.successTitle'))
   formSubmitted.value = true
+  submittingForm.value = false
 }
 
 function resetForm() {
   formSubmitted.value = false
+  contactForm.value = { name: '', phone: '', service: '', message: '' }
 }
 
-/* ── Scene Data ── */
-const tabs = computed<{ id: Scene; label: string }[]>(() => [
-  { id: 'home', label: t('landing.nav.home') },
-  { id: 'services', label: t('landing.nav.services') },
-  { id: 'doctors', label: t('landing.nav.doctors') },
-  { id: 'testimonials', label: t('landing.nav.testimonials') },
-  { id: 'contact', label: t('landing.nav.contact') },
-])
+const activeSection = ref('home')
+const scrollProgress = ref(0)
+const sectionIds = ['home', 'services', 'doctors', 'contact']
+const navScrolled = ref(false)
 
-/* ── Scene Transition ── */
-async function transitionTo(scene: Scene) {
-  if (scene === activeScene.value || isTransitioning.value) return
+function updateScrollProgress() {
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight
+  scrollProgress.value = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0
+}
+
+function scrollToSection(id: string) {
   closeMobileMenu()
-  isTransitioning.value = true
-
-  const { $gsap } = useNuxtApp()
-  const gsap = $gsap as any
-  if (!gsap) {
-    activeScene.value = scene
-    isTransitioning.value = false
-    updateTabIndicator()
-    if (scene === 'home') { animateStats(); revealTitle() }
-    return
+  const el = document.getElementById(id)
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+}
 
-  const currentEl = document.querySelector<HTMLElement>(`[data-scene="${activeScene.value}"]`)
-  const nextEl = document.querySelector<HTMLElement>(`[data-scene="${scene}"]`)
-  if (!currentEl || !nextEl) {
-    activeScene.value = scene
-    isTransitioning.value = false
-    updateTabIndicator()
-    if (scene === 'home') { animateStats(); revealTitle() }
-    return
+function handleNavClick(id: string) {
+  if (sectionIds.includes(id)) {
+    scrollToSection(id)
+  } else {
+    router.push(`/${id}`)
   }
+}
 
-  const tl = gsap.timeline({
-    onComplete: () => {
-      isTransitioning.value = false
-      if (scene === 'home') { animateStats(); revealTitle() }
-    }
-  })
+let observer: IntersectionObserver | null = null
 
-  tl.to(currentEl, {
-    opacity: 0,
-    y: -25,
-    scale: 0.98,
-    duration: 0.35,
-    ease: 'power2.in',
-    onComplete: () => {
-      currentEl.classList.remove('active')
-      currentEl.style.visibility = 'hidden'
-      currentEl.style.pointerEvents = 'none'
-    }
-  })
-
-  tl.call(() => { activeScene.value = scene; updateTabIndicator() })
-
-  tl.set(nextEl, { visibility: 'visible', pointerEvents: 'auto' })
-  tl.call(() => { nextEl.classList.add('active') })
-
-  tl.fromTo(nextEl,
-    { opacity: 0, y: 35, scale: 0.98 },
-    { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'power2.out' }
+function setupObserver() {
+  observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          activeSection.value = entry.target.id
+        }
+      }
+    },
+    { threshold: 0.3, rootMargin: '-80px 0px 0px 0px' }
   )
 
-  const items = nextEl.querySelectorAll('.scene-stagger')
-  if (items.length) {
-    tl.fromTo(items,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, stagger: 0.05, duration: 0.45, ease: 'power2.out' },
-      '-=0.25'
-    )
+  for (const id of sectionIds) {
+    const el = document.getElementById(id)
+    if (el) observer.observe(el)
   }
 }
 
-/* ── Intro Animation ── */
+const prefersReducedMotion = ref(false)
+
 function playIntro() {
   const { $gsap } = useNuxtApp()
   const gsap = $gsap as any
   if (!gsap || prefersReducedMotion.value) {
-    if (prefersReducedMotion.value) {
-      titleRevealed.value = true
-      animateStats()
-    }
+    revealTitle()
+    animateStats()
     return
   }
 
@@ -229,7 +170,7 @@ function playIntro() {
 
   tl.fromTo('.imm-nav',
     { y: -72, opacity: 0 },
-    { y: 0, opacity: 1, duration: 0.55, ease: 'power2.out' }
+    { y: 0, opacity: 1, duration: 1.00, ease: 'power2.out' }
   )
 
   tl.fromTo('.imm-lottie-container',
@@ -247,32 +188,27 @@ function playIntro() {
   tl.call(() => { revealTitle(); animateStats() }, null, '-=0.3')
 }
 
-/* ── Keyboard Navigation ── */
-function onKeyDown(e: KeyboardEvent) {
-  const tabList = tabs.value
-  const idx = tabList.findIndex(t => t.id === activeScene.value)
-  if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-    e.preventDefault()
-    const dir = isRtl.value
-      ? (e.key === 'ArrowRight' ? -1 : 1)
-      : (e.key === 'ArrowRight' ? 1 : -1)
-    const next = (idx + dir + tabList.length) % tabList.length
-    transitionTo(tabList[next].id)
-  }
-}
-
-/* ── 3D Tilt on Cards ── */
 function initTiltCards() {
   if (prefersReducedMotion.value) return
-  const cards = document.querySelectorAll<HTMLElement>('.imm-tilt-card')
-  cards.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
+  let tiltRaf: number | null = null
+  const container = document.querySelector<HTMLElement>('.imm-scroll-container')
+  if (!container) return
+
+  container.addEventListener('mousemove', (e) => {
+    if (tiltRaf) cancelAnimationFrame(tiltRaf)
+    tiltRaf = requestAnimationFrame(() => {
+      const card = (e.target as HTMLElement).closest<HTMLElement>('.imm-tilt-card')
+      if (!card) return
       const r = card.getBoundingClientRect()
       const x = (e.clientX - r.left) / r.width - 0.5
       const y = (e.clientY - r.top) / r.height - 0.5
       card.style.transform = `perspective(600px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) scale(1.02)`
     })
-    card.addEventListener('mouseleave', () => {
+  })
+
+  container.addEventListener('mouseleave', () => {
+    const cards = container.querySelectorAll<HTMLElement>('.imm-tilt-card')
+    cards.forEach(card => {
       card.style.transform = 'perspective(600px) rotateY(0deg) rotateX(0deg) scale(1)'
       card.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
       setTimeout(() => { card.style.transition = '' }, 500)
@@ -280,56 +216,67 @@ function initTiltCards() {
   })
 }
 
-/* ── Lifecycle ── */
+const sectionInView = ref('home')
+
+function onScroll() {
+  updateScrollProgress()
+  navScrolled.value = window.scrollY > 60
+  const sections = sectionIds
+  const scrollPos = window.scrollY + 120
+  for (let i = sections.length - 1; i >= 0; i--) {
+    const el = document.getElementById(sections[i])
+    if (el && el.offsetTop <= scrollPos) {
+      sectionInView.value = sections[i]
+      break
+    }
+  }
+}
+
 onMounted(async () => {
   prefersReducedMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   document.documentElement.classList.add('imm-page')
   document.body.classList.add('imm-page')
   document.documentElement.dir = isRtl.value ? 'rtl' : 'ltr'
   document.documentElement.lang = lang.value
-
-  // Initialize theme immediately for loading screen
   initLandingTheme()
 
-  // Start loading screen timer
   setTimeout(() => {
     showLoadingScreen.value = false
   }, 2200)
 })
 
-// Watch for loading screen completion
 watch(isLoadingComplete, async (isComplete) => {
   if (isComplete) {
     await nextTick()
-
-    const homeEl = document.querySelector<HTMLElement>('[data-scene="home"]')
-    if (homeEl) {
-      homeEl.style.visibility = 'visible'
-      homeEl.style.pointerEvents = 'auto'
-      homeEl.classList.add('active')
-    }
-
+    updateScrollProgress()
+    setupObserver()
+    const homeEl = document.getElementById('home')
+    if (homeEl) homeEl.classList.add('active')
     playIntro()
-    updateTabIndicator()
     startTestimonialRotation()
     initTiltCards()
-
-    window.addEventListener('keydown', onKeyDown)
-    window.addEventListener('resize', updateTabIndicator)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', updateScrollProgress)
   }
 })
 
 onBeforeUnmount(() => {
   document.documentElement.classList.remove('imm-page')
   document.body.classList.remove('imm-page')
-  window.removeEventListener('keydown', onKeyDown)
-  window.removeEventListener('resize', updateTabIndicator)
+  window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('resize', updateScrollProgress)
+  if (observer) observer.disconnect()
   if (testimonialInterval) clearInterval(testimonialInterval)
 })
 
-watch(activeScene, () => { updateTabIndicator() })
+const navItems = computed(() => [
+  { id: 'home', label: t('landing.nav.home') },
+  { id: 'education', label: t('landing.nav.education') },
+  { id: 'blog', label: t('landing.nav.blog') },
+  { id: 'aboutUs', label: t('landing.nav.aboutUs') },
+  { id: 'contact', label: t('landing.nav.contact') },
+])
 
-/* ── SVG Icons (inline) ── */
 const icons: Record<string, string> = {
   heart: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>',
   shield: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>',
@@ -353,7 +300,6 @@ const icons: Record<string, string> = {
 </script>
 
 <template>
-  <!-- Loading Screen -->
   <LandingLoadingScreen
     :show="showLoadingScreen"
     @finished="isLoadingComplete = true"
@@ -361,10 +307,14 @@ const icons: Record<string, string> = {
 
   <div v-if="isLoadingComplete" class="imm-viewport">
 
-    <!-- ═══ Background ═══ -->
-    <ParticleBackground />
+    <!-- Scroll Progress Bar -->
+    <div class="imm-progress-bar" aria-hidden="true">
+      <div class="imm-progress-bar-inner" :style="{ width: scrollProgress + '%' }" />
+    </div>
 
-    <!-- ═══ Cursor Glow ═══ -->
+    <!-- Background -->
+
+    <!-- Cursor Glow -->
     <div
       class="imm-cursor-glow"
       :class="{ visible: glowVisible }"
@@ -372,28 +322,26 @@ const icons: Record<string, string> = {
       aria-hidden="true"
     />
 
-    <!-- ═══ Navigation ═══ -->
-    <nav class="imm-nav" role="navigation" aria-label="Main navigation">
-      <a href="/" class="imm-nav-logo" :aria-label="lang === 'fa' ? 'کلینیک دکتر حسینی خانه' : 'MedVista Home'">
+    <!-- Navigation -->
+    <nav class="imm-nav" :class="{ scrolled: navScrolled }" role="navigation" aria-label="Main navigation">
+      <a href="/" class="imm-nav-logo" :aria-label="t('landing.clinicName') + ' ' + t('landing.nav.home')">
         <div class="imm-nav-logo-icon bg-[#2563eb]" aria-hidden="true">
-          <img src="~/assets/images/hastihoseinilogo.png" alt="" class="imm-nav-logo-img" width="48" height="48" />
+          <img src="~/assets/images/hastihoseinilogo.png" :alt="t('landing.clinicName')" class="imm-nav-logo-img" width="40" height="40" />
         </div>
-        <span class="imm-nav-logo-text">کلینیک دکتر حسینی</span>
+        <span class="imm-nav-logo-text pt-2 hidden md:flex">{{ t('landing.clinicName') }}</span>
       </a>
 
-      <div ref="tabsRef" class="imm-nav-tabs" role="tablist" aria-label="Page sections">
-        <div class="imm-tab-indicator" :style="tabIndicatorStyle" />
+      <div class="imm-nav-tabs" role="tablist" aria-label="Page sections">
         <button
-          v-for="tab in tabs"
-          :key="tab.id"
+          v-for="item in navItems"
+          :key="item.id"
           role="tab"
-          :aria-selected="activeScene === tab.id"
-          :aria-controls="`scene-${tab.id}`"
+          :aria-selected="activeSection === item.id"
           class="imm-nav-tab"
-          :class="{ active: activeScene === tab.id }"
-          @click="transitionTo(tab.id)"
+          :class="{ active: activeSection === item.id && sectionIds.includes(item.id) }"
+          @click="handleNavClick(item.id)"
         >
-          {{ tab.label }}
+          {{ item.label }}
         </button>
       </div>
 
@@ -407,11 +355,11 @@ const icons: Record<string, string> = {
           <span v-if="isLight" v-html="icons.moon" aria-hidden="true" />
           <span v-else v-html="icons.sun" aria-hidden="true" />
         </button>
-        <button class="imm-nav-lang" :title="lang === 'fa' ? 'Switch to English' : 'تغییر به فارسی'" @click="toggleLang">
+        <button class="imm-nav-lang" :title="t('index.langToggleTitle')" @click="toggleLang">
           <span v-html="icons.lang" aria-hidden="true" />
           <span>{{ t('landing.lang.toggle') }}</span>
         </button>
-        <button class="imm-nav-cta imm-magnetic" @click="goToBooking">
+        <button v-dir class="imm-nav-cta imm-magnetic dir-ltr" @click="goToBooking">
           {{ t('landing.nav.book') }}
           <span v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" />
         </button>
@@ -439,13 +387,13 @@ const icons: Record<string, string> = {
       >
         <div class="imm-mobile-drawer-content">
           <button
-            v-for="tab in tabs"
-            :key="tab.id"
+            v-for="item in navItems"
+            :key="item.id"
             class="imm-mobile-drawer-tab"
-            :class="{ active: activeScene === tab.id }"
-            @click="transitionTo(tab.id)"
+            :class="{ active: activeSection === item.id && sectionIds.includes(item.id) }"
+            @click="handleNavClick(item.id)"
           >
-            {{ tab.label }}
+            {{ item.label }}
           </button>
           <div class="imm-mobile-drawer-divider" />
           <div class="imm-mobile-drawer-actions">
@@ -467,17 +415,23 @@ const icons: Record<string, string> = {
       </div>
     </Transition>
 
-    <!-- ═══ Scenes ═══ -->
-    <div class="imm-scenes">
+    <!-- Navigation Dots -->
+    <div class="imm-nav-dots" role="navigation" aria-label="Section navigation">
+      <button
+        v-for="id in sectionIds"
+        :key="id"
+        class="imm-nav-dot"
+        :class="{ active: sectionInView === id }"
+        :aria-label="`Go to ${id} section`"
+        @click="scrollToSection(id)"
+      />
+    </div>
+
+    <!-- ═══ Sections ═══ -->
+    <div class="imm-scroll-container">
 
       <!-- ── HOME ── -->
-      <section
-        data-scene="home"
-        class="imm-scene"
-        role="tabpanel"
-        aria-labelledby="tab-home"
-        id="scene-home"
-      >
+      <section id="home" class="imm-section imm-section--home" data-section="home">
         <div class="imm-home">
           <div v-dir class="imm-home-content">
             <div class="scene-stagger imm-home-badge">
@@ -518,8 +472,8 @@ const icons: Record<string, string> = {
                 {{ t('landing.home.cta.book') }}
                 <span v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" />
               </button>
-              <button class="imm-btn-secondary" @click="transitionTo('services')">
-                {{ t('landing.home.cta.explore') }}
+              <button class="imm-btn-secondary" @click="router.push('/auth/login')">
+                {{ t('landing.home.cta.login') }}
               </button>
             </div>
             <div v-dir class="scene-stagger imm-home-stats flex justify-center align-middle items-center">
@@ -528,7 +482,7 @@ const icons: Record<string, string> = {
                 <div class="imm-stat-label">{{ t('landing.home.stat.doctors') }}</div>
               </div>
               <div class="imm-stat">
-                <div class="imm-stat-value"><span>{{ pn(statYears) }}</span> {{ isRtl ? 'سال' : 'Yrs' }}</div>
+                <div class="imm-stat-value"><span>{{ pn(statYears) }}</span> {{ t('index.years') }}</div>
                 <div class="imm-stat-label">{{ t('landing.home.stat.experience') }}</div>
               </div>
               <div class="imm-stat">
@@ -549,14 +503,8 @@ const icons: Record<string, string> = {
         </div>
       </section>
 
-      <!-- ── SERVICES ── -->
-      <section
-        data-scene="services"
-        class="imm-scene"
-        role="tabpanel"
-        aria-labelledby="tab-services"
-        id="scene-services"
-      >
+      <!-- ── OUR SERVICES ── -->
+      <section id="services" class="imm-section imm-section--services" data-section="services">
         <div class="imm-services">
           <div class="scene-stagger imm-section-header">
             <div class="imm-section-badge">
@@ -584,13 +532,7 @@ const icons: Record<string, string> = {
       </section>
 
       <!-- ── DOCTORS ── -->
-      <section
-        data-scene="doctors"
-        class="imm-scene"
-        role="tabpanel"
-        aria-labelledby="tab-doctors"
-        id="scene-doctors"
-      >
+      <section id="doctors" class="imm-section imm-section--doctors" data-section="doctors">
         <div class="imm-doctors">
           <div class="scene-stagger imm-section-header">
             <div class="imm-section-badge">
@@ -648,71 +590,8 @@ const icons: Record<string, string> = {
         </div>
       </section>
 
-      <!-- ── TESTIMONIALS ── -->
-      <section
-        data-scene="testimonials"
-        class="imm-scene"
-        role="tabpanel"
-        aria-labelledby="tab-testimonials"
-        id="scene-testimonials"
-      >
-        <div class="imm-testimonials">
-          <div class="scene-stagger imm-section-header">
-            <div class="imm-section-badge">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              {{ t('landing.testimonials.badge') }}
-            </div>
-            <h2 class="imm-section-title">
-              {{ t('landing.testimonials.title1') }} <span class="imm-section-title-accent">{{ t('landing.testimonials.title2') }}</span>
-            </h2>
-          </div>
-
-          <!-- Carousel -->
-          <div class="scene-stagger imm-testimonials-carousel">
-            <TransitionGroup name="imm-form-fade">
-              <div
-                v-for="(tItem, i) in testimonials"
-                :key="i"
-                class="imm-testimonial-slide"
-                :class="{ active: activeTestimonial === i }"
-              >
-                <div class="imm-testimonial-card" style="animation: none; border: 1px solid var(--imm-glass-border);">
-                  <div class="imm-testimonial-stars" :aria-label="`${i + 1} of 5 stars`">
-                    <span v-for="s in 5" :key="s" v-html="icons.star" />
-                  </div>
-                  <p class="imm-testimonial-text">"{{ tItem.text }}"</p>
-                  <div class="imm-testimonial-author">
-                    <div class="imm-testimonial-avatar">{{ tItem.initials }}</div>
-                    <div>
-                      <div class="imm-testimonial-name">{{ tItem.name }}</div>
-                      <div class="imm-testimonial-role">{{ tItem.role }}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TransitionGroup>
-            <div class="imm-testimonial-dots">
-              <button
-                v-for="(_, i) in testimonials"
-                :key="i"
-                class="imm-testimonial-dot"
-                :class="{ active: activeTestimonial === i }"
-                :aria-label="`Show testimonial ${i + 1}`"
-                @click="setTestimonial(i)"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ── CONTACT ── -->
-      <section
-        data-scene="contact"
-        class="imm-scene"
-        role="tabpanel"
-        aria-labelledby="tab-contact"
-        id="scene-contact"
-      >
+      <!-- ── CONTACT US ── -->
+      <section id="contact" class="imm-section imm-section--contact" data-section="contact">
         <div class="imm-contact">
           <div class="imm-contact-info">
             <div class="scene-stagger imm-section-badge" style="width: fit-content;">
@@ -739,7 +618,6 @@ const icons: Record<string, string> = {
           </div>
           <div class="scene-stagger imm-contact-form-wrap">
             <Transition name="imm-form-fade" mode="out-in">
-              <!-- Success State -->
               <div v-if="formSubmitted" class="imm-form-success" key="success">
                 <div class="imm-success-check">
                   <span v-html="icons.check" />
@@ -754,23 +632,21 @@ const icons: Record<string, string> = {
                   {{ t('landing.contact.successBtn') }}
                 </button>
               </div>
-
-              <!-- Form -->
               <form v-else class="imm-form" key="form" @submit.prevent="onSubmitForm">
                 <div class="imm-form-row">
                   <div class="imm-form-group">
                     <label class="imm-form-label" for="contact-name">{{ t('landing.contact.formName') }}</label>
-                    <input id="contact-name" class="imm-form-input" type="text" :placeholder="t('landing.contact.formNamePlaceholder')" />
+                    <input id="contact-name" v-model="contactForm.name" class="imm-form-input" type="text" :placeholder="t('landing.contact.formNamePlaceholder')" required />
                   </div>
                   <div class="imm-form-group">
                     <label class="imm-form-label" for="contact-phone">{{ t('landing.contact.formPhone') }}</label>
-                    <input id="contact-phone" class="imm-form-input" type="tel" :placeholder="t('landing.contact.formPhonePlaceholder')" />
+                    <input id="contact-phone" v-model="contactForm.phone" class="imm-form-input" type="tel" :placeholder="t('landing.contact.formPhonePlaceholder')" required />
                   </div>
                 </div>
                 <div class="imm-form-group">
                   <label class="imm-form-label" for="contact-service">{{ t('landing.contact.formService') }}</label>
-                  <select id="contact-service" class="imm-form-select">
-                    <option value="" disabled selected>{{ t('landing.contact.formServiceSelect') }}</option>
+                  <select id="contact-service" v-model="contactForm.service" class="imm-form-select">
+                    <option value="" disabled>{{ t('landing.contact.formServiceSelect') }}</option>
                     <option value="cardiology">{{ t('landing.services.cardiologyTitle') }}</option>
                     <option value="dermatology">{{ t('landing.services.dermatologyTitle') }}</option>
                     <option value="general">{{ t('landing.services.generalTitle') }}</option>
@@ -781,10 +657,10 @@ const icons: Record<string, string> = {
                 </div>
                 <div class="imm-form-group">
                   <label class="imm-form-label" for="contact-msg">{{ t('landing.contact.formMessage') }}</label>
-                  <textarea id="contact-msg" class="imm-form-textarea" rows="3" :placeholder="t('landing.contact.formMessagePlaceholder')" />
+                  <textarea id="contact-msg" v-model="contactForm.message" class="imm-form-textarea" rows="3" :placeholder="t('landing.contact.formMessagePlaceholder')" />
                 </div>
-                <button type="submit" class="imm-form-submit imm-magnetic flex justify-center align-middle items-center gap-1">
-                  {{ t('landing.contact.formSubmit') }}
+                <button type="submit" :disabled="submittingForm" class="imm-form-submit imm-magnetic flex justify-center align-middle items-center gap-1">
+                  {{ submittingForm ? t('landing.contact.formSubmitting') || t('landing.contact.formSubmit') : t('landing.contact.formSubmit') }}
                   <span v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" style="display: inline-flex;" />
                 </button>
               </form>

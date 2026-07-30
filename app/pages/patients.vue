@@ -51,7 +51,7 @@
               <td>{{ formatJalaliDate(patient.birthDate) }}</td>
               <td>
                 <span :class="maritalBadgeClass(patient.maritalStatus)">
-                  {{ patient.maritalStatus || $t('patients.unknown') }}
+                  {{ getMaritalLabel(patient.maritalStatus) || $t('patients.unknown') }}
                 </span>
               </td>
               <td>{{ formatJalaliDate(patient.createdAt) }}</td>
@@ -190,14 +190,24 @@ const smsDialog = ref(false)
 const selectedSmsPatient = ref<any>(null)
 const smsText = ref('')
 
-const maritalMap: Record<string, string> = {
-  'متاهل': 'crm-badge crm-badge-emerald',
-  'مجرد': 'crm-badge crm-badge-blue',
-  'مطلقه': 'crm-badge crm-badge-amber',
-  'بیوه': 'crm-badge crm-badge-neutral',
-}
+const maritalLabelMap = computed<Record<string, string>>(() => ({
+  'متاهل': t('patients.married'),
+  'مجرد': t('patients.single'),
+  'مطلقه': t('patients.divorced'),
+  'بیوه': t('patients.widowed'),
+}))
 
-const maritalBadgeClass = (status: string) => maritalMap[status] || 'crm-badge crm-badge-neutral'
+const getMaritalLabel = (status: string) => status ? (maritalLabelMap.value[status] || status) : ''
+
+const maritalBadgeClass = (status: string) => {
+  const badgeMap: Record<string, string> = {
+    'متاهل': 'crm-badge crm-badge-emerald',
+    'مجرد': 'crm-badge crm-badge-blue',
+    'مطلقه': 'crm-badge crm-badge-amber',
+    'بیوه': 'crm-badge crm-badge-neutral',
+  }
+  return badgeMap[status] || 'crm-badge crm-badge-neutral'
+}
 
 const profileFields = computed(() => {
   if (!selectedProfile.value) return []
@@ -205,7 +215,7 @@ const profileFields = computed(() => {
   return [
     { label: t('patients.phoneLabel'), value: p.phone || t('patients.notRegistered'), ltr: true },
     { label: t('patients.birthDateLabel'), value: formatJalaliDate(p.birthDate) },
-    { label: t('patients.maritalStatusLabel'), value: p.maritalStatus || t('patients.unknown') },
+    { label: t('patients.maritalStatusLabel'), value: getMaritalLabel(p.maritalStatus) || t('patients.unknown') },
     { label: t('patients.registrationDateLabel'), value: formatJalaliDate(p.createdAt) },
   ]
 })

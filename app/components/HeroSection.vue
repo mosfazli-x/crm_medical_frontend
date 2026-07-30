@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useTilt } from '../composables/Usetilt'
 import { useScrollReveal } from '../composables/Usescrollreveal'
+
+const { t } = useI18n()
 
 const root = ref<HTMLElement | null>(null)
 const badgeCard = ref<HTMLElement | null>(null)
@@ -65,43 +67,43 @@ onBeforeUnmount(() => {
           <span class="!relative !h-2 !w-2 !rounded-full !bg-emerald-bright">
             <span class="!absolute !inset-0 !rounded-full !bg-emerald-bright animate-pulse-ring" />
           </span>
-          کلینیک خصوصی دکتر حسینی
+          {{ t('hero.badge') }}
         </div>
 
         <h1 class="hero-reveal !font-display !text-4xl sm:!text-5xl md:!text-display-xl !font-black !text-ink !tracking-tight" style="animation: hero-text 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;">
-          مراقبت پزشکی
+          {{ t('hero.titleLine1') }}
           <br />
-          <span class="gradient-text">تخصصی</span> با رویکردی مدرن
+          <span class="gradient-text">{{ t('hero.titleLine2Accent') }}</span>
+          {{ t('hero.titleLine2Rest') }}
         </h1>
 
         <p class="hero-reveal !mt-5 sm:!mt-7 !max-w-lg !text-sm sm:!text-base md:!text-lg !leading-7 sm:!leading-8 !text-muted !font-normal" style="animation: blur-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;">
-          ارائه خدمات تشخیص، درمان و مشاوره توسط پزشکان متخصص، با بهره‌گیری از
-          جدیدترین تجهیزات پزشکی و محیطی آرام و مطمئن برای شما و خانواده‌تان.
+          {{ t('hero.description') }}
         </p>
 
         <div class="hero-reveal !mt-6 sm:!mt-10 !flex !flex-wrap !items-center align-middle justify-center !gap-3 sm:!gap-4" style="animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;">
           <MagneticButton as="a" href="#appointment" variant="solid" class="!px-5 !py-3 sm:!px-7 sm:!py-3.5">
-            رزرو نوبت آنلاین
+            {{ t('hero.bookOnline') }}
           </MagneticButton>
           <MagneticButton as="a" href="#about" variant="outline" :icon="false" class="!px-5 !py-3 sm:!px-7 sm:!py-3.5">
-            مشاوره رایگان
+            {{ t('hero.freeConsult') }}
           </MagneticButton>
         </div>
 
         <div class="hero-reveal !mt-8 sm:!mt-12 md:!mt-14 !flex align-middle justify-center !flex-wrap !items-center !gap-x-6 sm:!gap-x-8 md:!gap-x-12 !gap-y-4 sm:!gap-y-5" style="animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1s both;">
           <div class="counter-underline cursor-default group">
             <p class="!font-display !text-3xl sm:!text-4xl !font-black !text-ink !tabular-nums group-hover:!text-emerald-deep !transition-colors !duration-300">۱۵+</p>
-            <p class="!text-xs sm:!text-sm !text-muted !mt-1">پزشک متخصص</p>
+            <p class="!text-xs sm:!text-sm !text-muted !mt-1">{{ t('hero.specialists') }}</p>
           </div>
           <div class="!h-8 sm:!h-10 !w-px !bg-gradient-to-b !from-transparent !via-ink/15 !to-transparent" />
           <div class="counter-underline cursor-default group">
             <p class="!font-display !text-3xl sm:!text-4xl !font-black !text-ink !tabular-nums group-hover:!text-emerald-deep !transition-colors !duration-300">۱۰ سال</p>
-            <p class="!text-xs sm:!text-sm !text-muted !mt-1">تجربه بالینی</p>
+            <p class="!text-xs sm:!text-sm !text-muted !mt-1">{{ t('hero.experience') }}</p>
           </div>
           <div class="!h-8 sm:!h-10 !w-px !bg-gradient-to-b !from-transparent !via-ink/15 !to-transparent !hidden sm:!block" />
           <div class="!hidden sm:!block counter-underline cursor-default group">
             <p class="!font-display !text-3xl sm:!text-4xl !font-black !text-ink !tabular-nums group-hover:!text-emerald-deep !transition-colors !duration-300">۹۸٪</p>
-            <p class="!text-xs sm:!text-sm !text-muted !mt-1">رضایت بیماران</p>
+            <p class="!text-xs sm:!text-sm !text-muted !mt-1">{{ t('hero.satisfaction') }}</p>
           </div>
         </div>
       </div>
@@ -112,7 +114,7 @@ onBeforeUnmount(() => {
         <div ref="heroImage" class="!absolute !inset-3 sm:!inset-4 !overflow-hidden !rounded-3xl sm:!rounded-4xl md:!rounded-5xl !shadow-floaty image-reveal">
           <NuxtImg
             src="/images/dr_hasti_hosseini.jpg"
-            alt="پزشک متخصص کلینیک دکتر حسینی در حال مشاوره با بیمار"
+            :alt="t('hero.doctorAlt')"
             class="!h-full !w-full !object-cover !transition-all !duration-700 hover:!scale-105"
             loading="eager"
             sizes="(max-width: 640px) 280px, (max-width: 768px) 384px, 480px"
@@ -127,20 +129,20 @@ onBeforeUnmount(() => {
           class="glass-surface !absolute !-bottom-4 sm:!-bottom-6 !right-0 sm:!-right-4 md:!-right-10 !z-10 !w-52 sm:!w-56 md:!w-64 !rounded-3xl sm:!rounded-4xl !p-4 sm:!p-5 !hidden sm:!block card-glow card-shimmer-border floating-badge"
         >
           <div class="!flex !items-center !justify-between">
-            <span class="!text-xs !font-semibold !text-muted !tracking-wide">نوبت بعدی</span>
+            <span class="!text-xs !font-semibold !text-muted !tracking-wide">{{ t('hero.nextAppointment') }}</span>
             <span class="!relative !flex !h-7 !w-7 !items-center !justify-center !rounded-full !bg-emerald-mist">
               <span class="!absolute !inset-0 !rounded-full !bg-emerald/20 animate-pulse-ring" />
               <LottiePlayer class="!h-4 !w-4 !relative !z-10" />
             </span>
           </div>
-          <p class="!mt-2 !font-display !text-lg sm:!text-xl !font-bold !text-ink">امروز، ساعت ۱۶:۰۰</p>
+          <p class="!mt-2 !font-display !text-lg sm:!text-xl !font-bold !text-ink">{{ t('hero.appointmentTime') }}</p>
           <div class="!mt-3 !flex !items-center -!space-x-2 rtl:!space-x-reverse">
             <span
               v-for="n in 3"
               :key="n"
               class="!h-7 !w-7 sm:!h-8 sm:!w-8 !rounded-full !border-2 !border-white !bg-emerald-mist !shadow-sm !transition-transform !duration-300 hover:!scale-110 hover:!z-10"
             />
-            <span class="!ms-2 sm:!ms-3 !text-xs !text-muted !font-medium">۳ پزشک آنلاین</span>
+            <span class="!ms-2 sm:!ms-3 !text-xs !text-muted !font-medium">{{ t('hero.onlineDoctors') }}</span>
           </div>
         </div>
 
@@ -151,7 +153,7 @@ onBeforeUnmount(() => {
           style="animation-delay: -2s;"
         >
           <span class="!font-display !text-2xl sm:!text-3xl !font-black !text-emerald-deep tabular-nums">۹۸٪</span>
-          <span class="!max-w-[5rem] sm:!max-w-[6rem] !text-[10px] sm:!text-xs !leading-4 sm:!leading-5 !text-muted !font-medium">رضایت بیماران از کیفیت درمان</span>
+          <span class="!max-w-[5rem] sm:!max-w-[6rem] !text-[10px] sm:!text-xs !leading-4 sm:!leading-5 !text-muted !font-medium">{{ t('hero.trustText') }}</span>
         </div>
 
         <!-- Decorative rings -->

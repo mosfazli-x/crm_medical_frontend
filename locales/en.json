@@ -36,7 +36,74 @@
     "retry": "Retry",
     "sending": "Sending...",
     "saving": "Saving...",
-    "submitting": "Submitting..."
+    "submitting": "Submitting...",
+    "add": "Add"
+  },
+  "header": {
+    "home": "Home",
+    "about": "About Us",
+    "services": "Services",
+    "doctors": "Doctors",
+    "blog": "Blog",
+    "contact": "Contact Us",
+    "clinicName": "Dr. Hosseini Specialist Clinic",
+    "bookAppointment": "Book Appointment",
+    "openMenu": "Open Menu"
+  },
+  "hero": {
+    "badge": "Dr. Hosseini Private Clinic",
+    "titleLine1": "Advanced",
+    "titleLine2Accent": "Specialized",
+    "titleLine2Rest": "Medical Care with a Modern Approach",
+    "description": "Providing diagnosis, treatment and consultation services by specialist doctors, using the latest medical equipment in a calm and safe environment for you and your family.",
+    "bookOnline": "Book Online Appointment",
+    "freeConsult": "Free Consultation",
+    "specialists": "Specialist Doctors",
+    "experience": "Clinical Experience",
+    "satisfaction": "Patient Satisfaction",
+    "doctorAlt": "Specialist doctor at Dr. Hosseini Clinic consulting with patient",
+    "nextAppointment": "Next Appointment",
+    "appointmentTime": "Today, at 16:00",
+    "onlineDoctors": "3 doctors online",
+    "trustText": "Patient satisfaction with quality of care"
+  },
+  "footer": {
+    "home": "Home",
+    "about": "About Us",
+    "services": "Services",
+    "doctors": "Doctors",
+    "blog": "Blog",
+    "contact": "Contact Us",
+    "clinicName": "Dr. Hosseini",
+    "description": "Dr. Hosseini Specialist Clinic — providing the best medical and aesthetic services with over ten years of excellent experience.",
+    "newsletterTitle": "Newsletter",
+    "newsletterDesc": "Get the latest medical news and articles.",
+    "newsletterPlaceholder": "Enter your email",
+    "subscribe": "Subscribe",
+    "subscribed": "✓ Sent!",
+    "quickLinks": "Quick Links",
+    "contactUs": "Contact Us",
+    "phone": "Phone",
+    "phoneValue": "+98 21 1234 5678",
+    "email": "Email",
+    "address": "Address",
+    "addressValue": "Tehran, Valiasr St.",
+    "workingHours": "Working Hours",
+    "satWed": "Sat - Wed",
+    "hoursSatWed": "8:00 - 20:00",
+    "thu": "Thursday",
+    "hoursThu": "8:00 - 14:00",
+    "fri": "Friday",
+    "closed": "Closed",
+    "emergency": "Emergency",
+    "hours24": "24 Hours",
+    "copyright": "© {year} Dr. Hosseini Clinic. All rights reserved.",
+    "privacy": "Privacy",
+    "terms": "Terms of Use",
+    "sitemap": "Sitemap",
+    "telegram": "Telegram",
+    "instagram": "Instagram",
+    "whatsapp": "WhatsApp"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -121,6 +188,10 @@
     "statusCompleted": "Completed"
   },
   "patients": {
+    "married": "Married",
+    "single": "Single",
+    "divorced": "Divorced",
+    "widowed": "Widowed",
     "title": "Patient List",
     "subtitle": "Manage and view clinic patient records",
     "fullName": "Full Name",
@@ -161,6 +232,28 @@
     "ogTitle": "Patient Management"
   },
   "patientProfile": {
+    "nationalId": "National ID",
+    "insurance": "Insurance",
+    "noInsurance": "None",
+    "editInfo": "Edit Info",
+    "personalInfo": "Personal Information",
+    "phone": "Phone",
+    "birthDate": "Birth Date",
+    "address": "Address",
+    "medicalHistory": "Medical History",
+    "allergies": "Allergies",
+    "none": "None",
+    "diseases": "Diseases",
+    "currentRecord": "Current Record",
+    "visitNotes": "Visit Notes",
+    "noNotes": "No notes",
+    "patientIdNotFound": "Patient ID not found",
+    "fetchError": "Error loading patient data",
+    "lifestyleSaved": "Lifestyle information saved",
+    "saveError": "Error saving data",
+    "serverError": "Server error occurred",
+    "invalidSection": "Invalid section",
+    "dataSaved": "Data saved successfully",
     "errorTitle": "Error fetching patient information",
     "refresh": "Refresh",
     "tabs": {
@@ -245,6 +338,29 @@
     "titleSeo": "Booking Schedule Settings | Management System"
   },
   "calendar": {
+    "weekday": {
+      "sat": "Sa",
+      "sun": "Su",
+      "mon": "Mo",
+      "tue": "Tu",
+      "wed": "We",
+      "thu": "Th",
+      "fri": "Fr"
+    },
+    "month": {
+      "farvardin": "Farvardin",
+      "ordibehesht": "Ordibehesht",
+      "khordad": "Khordad",
+      "tir": "Tir",
+      "mordad": "Mordad",
+      "shahrivar": "Shahrivar",
+      "mehr": "Mehr",
+      "aban": "Aban",
+      "azar": "Azar",
+      "dey": "Dey",
+      "bahman": "Bahman",
+      "esfand": "Esfand"
+    },
     "title": "Visit Calendar",
     "newVisit": "Register New Appointment",
     "editVisit": "Edit Appointment Information",
@@ -281,7 +397,11 @@
       "Routine Checkup",
       "Emergency"
     ],
-    "statusOptions": ["Confirmed", "Pending", "Cancelled"],
+    "statusOptions": [
+      "Confirmed",
+      "Pending",
+      "Cancelled"
+    ],
     "buttonText": {
       "today": "Today",
       "month": "Month",
@@ -379,6 +499,7 @@
     "titleSeo": "User Management | Integrated System"
   },
   "messaging": {
+    "atTime": "at",
     "title": "Messages",
     "subtitle": "Send and receive internal messages",
     "newMessage": "Compose New Message",
@@ -425,6 +546,8 @@
     "titleSeo": "Messages | Management System"
   },
   "clinicalTools": {
+    "high": "High",
+    "medium": "Medium",
     "title": "Clinical Decision Tools",
     "subtitle": "Diagnostic support tools and patient clinical assessments",
     "pcos": {
@@ -537,7 +660,9 @@
       },
       "unknownRisk": "Unknown",
       "fetchError": "Error fetching assessment result",
-      "serverError": "Server connection error"
+      "serverError": "Server connection error",
+      "high": "High Risk",
+      "moderate": "Moderate Risk"
     }
   },
   "billing": {
@@ -558,7 +683,7 @@
     "date": "Date",
     "amount": "Amount (Toman)",
     "insurance": "Insurance",
-    "patientPortion": "Patient",
+    "patientPortion": "Patient Share",
     "status": "Status",
     "actions": "Actions",
     "confirmPayment": "Confirm Payment",
@@ -581,7 +706,6 @@
     "amountPlaceholder": "Amount (Toman)",
     "selectStatus": "Select Status",
     "insurancePortion": "Insurance Share",
-    "patientPortion": "Patient Share",
     "billingDate": "Billing Date",
     "optionalNotes": "Additional Notes (Optional)",
     "saveRecord": "Save Invoice",
@@ -629,6 +753,11 @@
     "ogTitle": "Billing Management"
   },
   "screening": {
+    "selectPlaceholder": "Select...",
+    "patientName": "Patient Name",
+    "patientNamePlaceholder": "Enter patient name",
+    "screeningDate": "Screening Date",
+    "screeningDatePlaceholder": "Select date",
     "title": "Screening & Preventive Care",
     "subtitle": "Management of screening programs and patient test results",
     "addNew": "New Screening",
@@ -699,9 +828,12 @@
     "notesPlaceholder": "Additional details...",
     "normal": "Normal",
     "abnormal": "Abnormal",
-    "titleSeo": "Screening & Preventive Care | Clinic System"
+    "titleSeo": "Screening & Preventive Care | Clinic System",
+    "resultExamplePlaceholder": "e.g. Positive/Negative",
+    "selectDatePlaceholder": "Select date..."
   },
   "labResults": {
+    "selectPlaceholder": "Select...",
     "title": "Lab Results",
     "subtitle": "Management, deep review and chart tracking of laboratory and hormonal biomarkers",
     "searchPlaceholder": "Search patient record (name, national ID)...",
@@ -808,7 +940,8 @@
     "passwordChangeError": "An error occurred while changing password.",
     "notificationUpdated": "Notification settings updated successfully.",
     "notificationUpdateError": "Error updating notification settings.",
-    "actionsHeader": "Actions"
+    "actionsHeader": "Actions",
+    "solarDatePlaceholder": "Select date..."
   },
   "myProfile": {
     "title": "My Profile",
@@ -844,7 +977,41 @@
     "connectTelegramFirst": "Connect your Telegram account first",
     "telegramConnection": "Connect to Telegram Bot",
     "telegramConnectionDesc": "Manage account connection to clinic Telegram bot",
-    "titleSeo": "My Profile | Clinic System"
+    "titleSeo": "My Profile | Clinic System",
+    "codeExpired": "Code expired",
+    "codeValidStill": "Code still valid for {minutes} minutes",
+    "codeValidUntil": "Code valid until {time}",
+    "connectButton": "Connect to Telegram",
+    "connectDescription": "Connect your account to Telegram for notifications",
+    "connectedDesc": "You can receive notifications via Telegram",
+    "connectedSuccess": "Connected successfully",
+    "connectedToBot": "Connected to bot",
+    "connectionError": "Connection error",
+    "enterCodePrompt": "Enter the code sent to your Telegram",
+    "existingConnectionError": "An existing connection already exists",
+    "generateCodeError": "Error generating code",
+    "generateNewCode": "Generate new code",
+    "linkInstruction": "Open Telegram and send this code to the bot",
+    "linkedToFirst": "Account linked",
+    "linkedToUser": "Linked to user",
+    "noChanges": "No changes made",
+    "notConnected": "Not connected",
+    "notificationUpdateError": "Error updating notifications",
+    "notificationUpdated": "Notification settings updated",
+    "passwordChangeError": "Error changing password",
+    "passwordChanged": "Password changed successfully",
+    "profileUpdateError": "Error updating profile",
+    "profileUpdated": "Profile updated successfully",
+    "sendCodeInstruction": "A code has been sent to your Telegram",
+    "sendCommand": "Send the code",
+    "telegramDisconnectError": "Error disconnecting Telegram",
+    "telegramNotFound": "Telegram not found",
+    "unlinkButton": "Disconnect",
+    "unlinkConfirm": "Are you sure you want to disconnect Telegram?",
+    "unlinkSuccess": "Disconnected successfully",
+    "unlinkTitle": "Disconnect Telegram",
+    "waitConfirmation": "Waiting for confirmation...",
+    "wrongPassword": "Wrong password"
   },
   "staff": {
     "title": "Staff Management",
@@ -1016,6 +1183,8 @@
     "titleSeo": "Settings | Management System"
   },
   "patientMessaging": {
+    "atTime": "at",
+    "seoTitle": "Messaging | Patient Panel",
     "title": "Messages",
     "subtitle": "Send and receive medical messages",
     "newMessage": "New Message",
@@ -1057,6 +1226,13 @@
     "titleSeo": "Messages | Patient Panel"
   },
   "auth": {
+    "hero": {
+      "title": "Dr. Hosseini Clinic",
+      "tagline": "Advanced Medical Care",
+      "feature1": "Smart Patient Management",
+      "feature2": "Electronic Health Records",
+      "feature3": "Advanced Data Security"
+    },
     "login": {
       "title": "Login",
       "subtitle": "Sign in to continue",
@@ -1075,6 +1251,7 @@
       "loginError": "Login error",
       "hidePassword": "Hide password",
       "showPassword": "Show password",
+      "welcome": "Welcome!",
       "titleSeo": "Login | Clinic System"
     },
     "register": {
@@ -1106,6 +1283,8 @@
       "lab": "Laboratory",
       "pharmacy": "Pharmacy",
       "patient": "Patient",
+      "success": "User created successfully!",
+      "error": "Registration error",
       "titleSeo": "Register | Clinic System"
     },
     "forgotPassword": {
@@ -1150,7 +1329,22 @@
       "resendError": "Error sending code",
       "backToLogin": "Back to Login",
       "titleSeo": "Change Password | Clinic System"
-    }
+    },
+    "errors": {
+      "sessionExpired": "Your session has expired — please log in again",
+      "accessDenied": "Access denied — insufficient role",
+      "loginFailed": "Login failed",
+      "networkError": "Cannot connect to server. Check your internet connection",
+      "invalidCredentials": "Invalid phone or password",
+      "accountDisabled": "Your account has been disabled",
+      "invalidInput": "Invalid input data",
+      "rateLimited": "Too many requests. Please try again later",
+      "serverError": "Server error. Please try again in a few moments",
+      "timeoutError": "Server response timeout. Please try again",
+      "loginError": "Login error"
+    },
+    "backToHome": "Back to Home",
+    "loggedOut": "Logged out successfully"
   },
   "insurance": {
     "none": "No Insurance",
@@ -1160,7 +1354,19 @@
     "supplementary": "Supplementary",
     "private": "Private Insurance"
   },
+  "statuses": {
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "rejected": "Rejected",
+    "cancelled": "Cancelled",
+    "completed": "Completed",
+    "approved": "Approved",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
   "seo": {
+    "title": "Dr. Hosseini Clinic | Specialized Medical Care with a Modern Approach",
+    "description": "Providing diagnosis, treatment and consultation services by specialist doctors at Dr. Hosseini Clinic, using the latest medical equipment. Book an online appointment in under 60 seconds.",
     "systemManagement": "Management System",
     "homepage": "Homepage",
     "clinicSystem": "Clinic System"
@@ -1180,6 +1386,8 @@
     "female": "Female"
   },
   "clinicLoading": {
+    "defaultClinicName": "Dr. Hosseini Clinic",
+    "defaultTagline": "Loading clinic panel",
     "status1": "Establishing secure connection...",
     "status2": "Loading user data...",
     "status3": "Preparing clinic dashboard...",
@@ -1220,6 +1428,9 @@
     "serverError": "Server connection error."
   },
   "patientForm": {
+    "severity": {
+      "moderate": "Moderate"
+    },
     "medicalRecord": "Patient Medical Record",
     "newPatient": "Register New Patient",
     "editInfo": "Edit Information & Records",
@@ -1313,6 +1524,7 @@
     "phone": "Mobile Number",
     "phonePlaceholder": "09123456789",
     "phoneRequired": "Mobile number is required",
+    "phoneInvalid": "Phone number is not valid (e.g. 09123456789)",
     "confirmBooking": "Confirm & Book",
     "bookingSuccess": "Appointment Booked Successfully",
     "bookingSuccessDesc": "Your appointment request has been registered and will be confirmed after doctor approval.",
@@ -1326,7 +1538,12 @@
     "bookingSuccessDetail": "Appointment request registered successfully and sent for doctor approval",
     "bookingError": "Error registering appointment",
     "titleSeo": "Book Appointment | Management System",
-    "steps": ["Date", "Visit Type", "Time", "Information"],
+    "steps": [
+      "Date",
+      "Visit Type",
+      "Time",
+      "Information"
+    ],
     "selectService": "Select a Service",
     "selectServiceDesc": "Choose the type of medical service you need",
     "selectDoctor": "Select a Doctor",
@@ -1342,7 +1559,14 @@
   },
   "layout": {
     "mainMenu": "Main Menu",
-    "patientsMenu": "Patients"
+    "patientsMenu": "Patients",
+    "clinicName": "Dr. Hosseini Clinic",
+    "managementPanel": "Management Panel",
+    "guestUser": "Guest User",
+    "systemUser": "System User",
+    "logout": "Logout",
+    "langFa": "Persian",
+    "langEn": "English"
   },
   "medicalHistory": {
     "underlyingDiseases": "Underlying Diseases",
@@ -1408,6 +1632,7 @@
     "naturalDelivery": "Natural Delivery"
   },
   "pregnancy": {
+    "heightCm": "Height (cm)",
     "title": "Pregnancy & Delivery History",
     "addNew": "Register New Pregnancy",
     "noRecords": "No pregnancy records for this patient.",
@@ -1473,8 +1698,22 @@
     "upcomingDoses": "Upcoming Doses",
     "administeredDatePrefix": "Administered Date:",
     "daysRemaining": "days remaining",
-    "doseOptions": ["Dose 1", "Dose 2", "Dose 3", "Dose 4", "Booster", "Single Dose"],
-    "injectionSiteOptions": ["Left Arm (deltoid)", "Right Arm (deltoid)", "Left Thigh", "Right Thigh", "Subcutaneous", "Intravenous"],
+    "doseOptions": [
+      "Dose 1",
+      "Dose 2",
+      "Dose 3",
+      "Dose 4",
+      "Booster",
+      "Single Dose"
+    ],
+    "injectionSiteOptions": [
+      "Left Arm (deltoid)",
+      "Right Arm (deltoid)",
+      "Left Thigh",
+      "Right Thigh",
+      "Subcutaneous",
+      "Intravenous"
+    ],
     "statusLabels": {
       "completed": "Completed",
       "scheduled": "Scheduled",
@@ -1522,7 +1761,18 @@
     "cancel": "Cancel",
     "saveChanges": "Save Changes",
     "createStaff": "Create Staff",
-    "positionOptions": ["Receptionist", "Secretary", "Nurse Aide", "Nurse", "Lab Technician", "Insurance Specialist", "Accountant", "Guard", "Cleaner", "Other"],
+    "positionOptions": [
+      "Receptionist",
+      "Secretary",
+      "Nurse Aide",
+      "Nurse",
+      "Lab Technician",
+      "Insurance Specialist",
+      "Accountant",
+      "Guard",
+      "Cleaner",
+      "Other"
+    ],
     "editSuccess": "Staff edited successfully",
     "createSuccess": "Staff created successfully",
     "error": "Operation error"
@@ -1530,12 +1780,12 @@
   "landing": {
     "clinicName": "Dr. Hosseini's Clinic",
     "nav": {
-      "book": "Book Appointment",
+      "book": "Book",
       "home": "Home",
-      "services": "Services",
-      "doctors": "Doctors",
-      "testimonials": "Testimonials",
-      "contact": "Contact"
+      "education": "Education",
+      "blog": "Blog",
+      "aboutUs": "About Us",
+      "contact": "Contact Us"
     },
     "home": {
       "badge": "Premium Healthcare Experience",
@@ -1544,7 +1794,7 @@
       "desc": "Premium healthcare services delivered through cutting-edge medical expertise and personalized patient care.",
       "cta": {
         "book": "Book Appointment",
-        "explore": "Explore Services"
+        "login": "Sign Up / Log In"
       },
       "stat": {
         "doctors": "Specialist Doctors",
@@ -1585,16 +1835,43 @@
       "badge": "Medical Team",
       "title1": "Our Expert",
       "title2": "Doctors",
-      "book": "Book Appointment"
+      "book": "Book Appointment",
+      "doctor1Name": "Dr. Sarah Mitchell",
+      "doctor1Specialty": "Cardiologist",
+      "doctor1Experience": "15 years",
+      "doctor1Patients": "5,000+",
+      "doctor2Name": "Dr. James Chen",
+      "doctor2Specialty": "Dermatologist",
+      "doctor2Experience": "12 years",
+      "doctor2Patients": "3,200+",
+      "doctor3Name": "Dr. Elena Rodriguez",
+      "doctor3Specialty": "General Practitioner",
+      "doctor3Experience": "10 years",
+      "doctor3Patients": "8,500+"
     },
     "testimonials": {
       "badge": "Patient Reviews",
       "title1": "What Our",
       "title2": "Patients Say",
       "items": [
-        { "text": "Exceptional care and attention to detail. The entire experience felt premium from start to finish. Truly world-class healthcare.", "name": "Michael Torres", "role": "Patient", "initials": "MT" },
-        { "text": "The technology and expertise here are remarkable. I felt completely confident in the care I received. Highly recommended.", "name": "Aisha Patel", "role": "Patient", "initials": "AP" },
-        { "text": "A truly modern medical experience. The staff is incredibly professional and the facilities are state-of-the-art.", "name": "David Kim", "role": "Patient", "initials": "DK" }
+        {
+          "text": "Exceptional care and attention to detail. The entire experience felt premium from start to finish. Truly world-class healthcare.",
+          "name": "Michael Torres",
+          "role": "Patient",
+          "initials": "MT"
+        },
+        {
+          "text": "The technology and expertise here are remarkable. I felt completely confident in the care I received. Highly recommended.",
+          "name": "Aisha Patel",
+          "role": "Patient",
+          "initials": "AP"
+        },
+        {
+          "text": "A truly modern medical experience. The staff is incredibly professional and the facilities are state-of-the-art.",
+          "name": "David Kim",
+          "role": "Patient",
+          "initials": "DK"
+        }
       ]
     },
     "contact": {
@@ -1618,15 +1895,19 @@
       "formSubmit": "Send Request",
       "successTitle": "Request Sent Successfully!",
       "successDesc": "Our team will get back to you as soon as possible.",
-      "successBtn": "Send Another Request"
+      "successBtn": "Send Another Request",
+      "formSubmitting": "Submitting..."
     },
     "loading": {
+      "ariaLabel": "Loading Dr. Hosseini Clinic",
+      "clinicName": "Dr. Hosseini Specialist Clinic",
       "tagline": "Advanced Healthcare Platform",
-      "status1": "Initializing secure connection...",
-      "status2": "Loading medical interface...",
-      "status3": "Preparing your dashboard...",
-      "status4": "Almost ready...",
-      "status5": "Loading Clinic Panel..."
+      "status1": "Connecting to Medical Records",
+      "status2": "Loading Patient Database",
+      "status3": "Synchronizing Appointments",
+      "status4": "Preparing Dashboard",
+      "status5": "Initializing AI Assistant",
+      "status6": "Finalizing Workspace"
     },
     "music": {
       "on": "Play music",
@@ -1744,5 +2025,683 @@
     "from": "From",
     "to": "To",
     "filterPlaceholder": "Filter by entity type..."
-  }
+  },
+  "basicInfo": {
+    "title": "Basic Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "nationalId": "National ID",
+    "insuranceCode": "Insurance Code",
+    "insuranceType": "Insurance Type",
+    "phone": "Phone",
+    "maritalStatus": "Marital Status",
+    "birthDate": "Birth Date",
+    "address": "Address",
+    "invalidPhone": "Invalid phone number",
+    "nationalIdMustBe10Digits": "National ID must be 10 digits",
+    "invalidNationalId": "Invalid national ID",
+    "single": "Single",
+    "married": "Married",
+    "divorced": "Divorced",
+    "widowed": "Widowed"
+  },
+  "labResultsTab": {
+    "title": "Lab Results",
+    "noResults": "No lab results available",
+    "testName": "Test Name",
+    "testDate": "Test Date",
+    "abnormal": "Abnormal",
+    "addNewResult": "Add New Result",
+    "normal": "Normal",
+    "refRangeLabel": "Ref. Range",
+    "resultLabel": "Result"
+  },
+  "hpv": {
+    "required": "*",
+    "sectionIntro": "Introduction",
+    "patientName": "Patient Name",
+    "patientNamePlaceholder": "Enter patient name",
+    "recordNumber": "Record Number",
+    "recordNumberPlaceholder": "Enter record number",
+    "samplerName": "Sampler Name",
+    "samplerNamePlaceholder": "Enter sampler name",
+    "receiptDate": "Receipt Date",
+    "receiptDatePlaceholder": "Select date",
+    "sectionSample": "Sample Information",
+    "sampleCode": "Sample Code",
+    "sampleCodePlaceholder": "Enter sample code",
+    "sampleVolume": "Sample Volume",
+    "sampleVolumePlaceholder": "Enter volume",
+    "containerType": "Container Type",
+    "containerTypePlaceholder": "Select container",
+    "sampleCondition": "Sample Condition",
+    "fluidColor": "Fluid Color",
+    "sendTime": "Send Time",
+    "sendTimePlaceholder": "Select time",
+    "selectPlaceholder": "Select...",
+    "sectionClinical": "Clinical Information",
+    "patientAge": "Patient Age",
+    "patientAgePlaceholder": "Enter age",
+    "lastMenstruation": "Last Menstruation",
+    "lastMenstruationPlaceholder": "Select date",
+    "deliveryHistory": "Delivery History",
+    "deliveryHistoryPlaceholder": "Enter details",
+    "referralReason": "Referral Reason",
+    "referralReasonPlaceholder": "Enter reason",
+    "sectionHpvStatus": "HPV Status",
+    "hpvStatus": "HPV Status",
+    "viralLoad": "Viral Load",
+    "viralLoadPlaceholder": "Enter value",
+    "genotyping": "HR-HPV Genotyping",
+    "otherGenotypes": "Other Genotypes",
+    "otherGenotypesPlaceholder": "Specify",
+    "sectionAdditional": "Additional Information",
+    "p16Result": "p16 Result",
+    "sectionConclusion": "Conclusion",
+    "conclusion": "Conclusion",
+    "conclusionPlaceholder": "Enter conclusion",
+    "recommendations": "Recommendations",
+    "recommendationsPlaceholder": "Enter recommendations",
+    "followUp": "Follow-up",
+    "followUpPlaceholder": "Enter follow-up plan"
+  },
+  "papSmear": {
+    "required": "*",
+    "sectionIntro": "Introduction",
+    "patientName": "Patient Name",
+    "patientNamePlaceholder": "Enter patient name",
+    "recordNumber": "Record Number",
+    "recordNumberPlaceholder": "Enter record number",
+    "samplerName": "Sampler Name",
+    "samplerNamePlaceholder": "Enter sampler name",
+    "receiptDate": "Receipt Date",
+    "receiptDatePlaceholder": "Select date",
+    "sectionSample": "Sample Information",
+    "sampleCode": "Sample Code",
+    "sampleCodePlaceholder": "Enter sample code",
+    "sampleVolume": "Sample Volume",
+    "sampleVolumePlaceholder": "Enter volume",
+    "containerType": "Container Type",
+    "containerTypePlaceholder": "Select container",
+    "sampleCondition": "Sample Condition",
+    "fluidColor": "Fluid Color",
+    "sendTime": "Send Time",
+    "sendTimePlaceholder": "Select time",
+    "selectPlaceholder": "Select...",
+    "sectionClinical": "Clinical Information",
+    "patientAge": "Patient Age",
+    "patientAgePlaceholder": "Enter age",
+    "lastMenstruation": "Last Menstruation",
+    "lastMenstruationPlaceholder": "Select date",
+    "deliveryHistory": "Delivery History",
+    "deliveryHistoryPlaceholder": "Enter details",
+    "miscarriageHistory": "Miscarriage History",
+    "miscarriageHistoryPlaceholder": "Enter details",
+    "referralReason": "Referral Reason",
+    "referralReasonPlaceholder": "Enter reason",
+    "iudDuration": "IUD Duration",
+    "iudDurationPlaceholder": "Enter duration",
+    "sectionCyto": "Cytology",
+    "stainingTechnique": "Staining Technique",
+    "samplingSource": "Sampling Source",
+    "sampleQuality": "Sample Quality",
+    "squamousEval": "Squamous Evaluation",
+    "glandularEval": "Glandular Evaluation",
+    "sectionInflammatory": "Inflammatory Status",
+    "inflammatoryCells": "Inflammatory Cells",
+    "inflammatoryCellsPlaceholder": "Enter details",
+    "endocervicalCellsPresent": "Endocervical cells present",
+    "endometrialCellsPresent": "Endometrial cells present",
+    "sectionConclusion": "Conclusion",
+    "conclusion": "Conclusion",
+    "conclusionPlaceholder": "Enter conclusion",
+    "recommendations": "Recommendations",
+    "recommendationsPlaceholder": "Enter recommendations",
+    "followUp": "Follow-up",
+    "followUpPlaceholder": "Enter follow-up plan"
+  },
+  "index": {
+    "pageTitle": "Clinic Management System",
+    "langToggleTitle": "Change language",
+    "years": "Years"
+  },
+  "index2": {
+    "services": {
+      "badge": "Our Services",
+      "title1": "Professional",
+      "title2": "Medical Services",
+      "desc": "We provide a wide range of specialized medical services with the highest quality standards.",
+      "01": {
+        "title": "General Consultation",
+        "desc": "Diagnosis and treatment of common diseases by general practitioners.",
+        "number": "01"
+      },
+      "02": {
+        "title": "Specialized Visit",
+        "desc": "Advanced examination and treatment by specialist physicians.",
+        "number": "02"
+      },
+      "03": {
+        "title": "Laboratory Services",
+        "desc": "Comprehensive diagnostic tests with modern precision equipment.",
+        "number": "03"
+      },
+      "04": {
+        "title": "Imaging Center",
+        "desc": "Ultrasound, radiology and advanced imaging services.",
+        "number": "04"
+      },
+      "05": {
+        "title": "Health Consultation",
+        "desc": "Nutrition, psychology and lifestyle consultation services.",
+        "number": "05"
+      },
+      "06": {
+        "title": "Home Care",
+        "desc": "Nursing and medical care services at your home.",
+        "number": "06"
+      }
+    },
+    "doctors": {
+      "badge": "Our Team",
+      "title1": "Experienced",
+      "title2": "Specialists",
+      "desc": "Our medical team consists of the best and most experienced specialist doctors.",
+      "viewProfile": "View Profile",
+      "01": {
+        "name": "Dr. Maryam Ahmadi",
+        "specialty": "Cardiologist"
+      },
+      "02": {
+        "name": "Dr. Reza Mohammadi",
+        "specialty": "Internist"
+      },
+      "03": {
+        "name": "Dr. Sara Hosseini",
+        "specialty": "Dermatologist"
+      }
+    },
+    "blog": {
+      "badge": "Our Blog",
+      "title1": "Latest",
+      "title2": "Articles",
+      "desc": "Stay up-to-date with the latest medical news and health tips.",
+      "readMore": "Read More",
+      "01": {
+        "title": "10 Tips for a Healthy Heart",
+        "excerpt": "Learn about the most important factors for maintaining a healthy heart...",
+        "date": "May 15, 2026",
+        "readTime": "5 min read",
+        "category": "Cardiology"
+      },
+      "02": {
+        "title": "The Importance of Regular Checkups",
+        "excerpt": "Regular health screenings can detect diseases early and increase treatment success...",
+        "date": "May 10, 2026",
+        "readTime": "4 min read",
+        "category": "General Health"
+      },
+      "03": {
+        "title": "Healthy Diet in Daily Life",
+        "excerpt": "A balanced diet rich in nutrients can prevent many diseases and boost your immune system...",
+        "date": "May 5, 2026",
+        "readTime": "6 min read",
+        "category": "Nutrition"
+      }
+    },
+    "features": {
+      "01": {
+        "title": "Online Appointment Booking",
+        "desc": "Book your appointment quickly and easily online"
+      },
+      "02": {
+        "title": "Experienced Medical Team",
+        "desc": "The best and most experienced specialist doctors"
+      },
+      "03": {
+        "title": "Modern Equipment",
+        "desc": "Latest diagnostic and treatment equipment"
+      },
+      "04": {
+        "title": "24/7 Support",
+        "desc": "Our support team is available around the clock"
+      }
+    },
+    "about": {
+      "badge": "About Us",
+      "title1": "Dr. Hosseini",
+      "title2": "Clinic",
+      "desc1": "Dr. Hosseini Clinic started its professional activity over 10 years ago with the aim of providing quality medical services.",
+      "desc2": "Today, with a team of over 15 specialist doctors and advanced equipment, we serve thousands of patients annually.",
+      "cta": {
+        "services": "View Services",
+        "appointment": "Book Appointment"
+      },
+      "imgAlt": "Dr. Hosseini Clinic interior",
+      "expYears": "10+",
+      "expLabel": "Years of Experience"
+    },
+    "stats": {
+      "badge": "Our Achievements",
+      "title1": "Clinic",
+      "title2": "Statistics",
+      "doctors": "Specialist Doctors",
+      "experience": "Experience",
+      "experienceSuffix": "Years",
+      "satisfaction": "Satisfaction",
+      "satisfactionSuffix": "%",
+      "patients": "Satisfied Patients"
+    },
+    "appointment": {
+      "badge": "Book Appointment",
+      "title1": "Schedule Your",
+      "title2": "Visit",
+      "desc": "Fill out the form below and we will contact you to confirm your appointment.",
+      "phoneLabel": "Phone",
+      "phoneValue": "021-12345678",
+      "addressLabel": "Address",
+      "addressValue": "Tehran, Valiasr St.",
+      "hoursLabel": "Working Hours",
+      "hoursValue": "Sat-Wed 8:00-20:00 / Thu 8:00-14:00",
+      "formName": "Full Name",
+      "formNamePlaceholder": "Enter your full name",
+      "formPhone": "Phone Number",
+      "formPhonePlaceholder": "Enter your phone number",
+      "formService": "Desired Service",
+      "formServiceSelect": "Select a service...",
+      "formMessage": "Additional Notes",
+      "formMessagePlaceholder": "Enter your message...",
+      "formSubmit": "Submit Request"
+    }
+  },
+  "index3": {
+    "seo": {
+      "title": "Dr. Hosseini Clinic | Modern Healthcare",
+      "ogTitle": "Dr. Hosseini Clinic - Specialized Medical Center",
+      "description": "Providing advanced medical services with a team of specialists and modern equipment"
+    },
+    "nav": {
+      "brand": "Dr. Hosseini",
+      "login": "Login",
+      "register": "Register",
+      "services": "Services",
+      "doctors": "Doctors",
+      "about": "About Us",
+      "contact": "Contact"
+    },
+    "hero": {
+      "badge": "Dr. Hosseini Clinic",
+      "title1": "Modern",
+      "title2": "Healthcare",
+      "desc": "Advanced medical services with a team of specialists and the latest equipment — your health, our priority.",
+      "cta": {
+        "booking": "Book Appointment",
+        "services": "Our Services"
+      },
+      "sidebar": {
+        "appointmentCount": "10,000+",
+        "successfulAppointments": "Successful Appointments",
+        "feature1": "Online booking in under 60 seconds",
+        "feature2": "Experienced doctors 24/7",
+        "feature3": "Advanced medical equipment"
+      }
+    },
+    "services": {
+      "badge": "Our Services",
+      "title": "Professional Medical Services",
+      "desc": "We offer a wide range of specialized services for the health of you and your loved ones.",
+      "learnMore": "Learn More",
+      "01": {
+        "title": "General Medicine",
+        "desc": "Diagnosis and treatment of common diseases by experienced general practitioners."
+      },
+      "02": {
+        "title": "Specialized Tests",
+        "desc": "Comprehensive laboratory tests with the most accurate diagnostic equipment."
+      },
+      "03": {
+        "title": "Cosmetic Medicine",
+        "desc": "Aesthetic and cosmetic services under the supervision of specialist doctors."
+      },
+      "04": {
+        "title": "Health Consultation",
+        "desc": "Specialized nutrition, mental health and lifestyle advisory services."
+      }
+    },
+    "doctors": {
+      "badge": "Medical Team",
+      "title": "Meet Our Doctors",
+      "desc": "Our team of the best and most experienced doctors is ready to serve you.",
+      "yearsExperience": "Years of experience",
+      "book": "Book Appointment",
+      "01": {
+        "name": "Dr. Maryam Hosseini",
+        "specialty": "Cardiologist",
+        "bio": "Over 15 years of experience in cardiology and heart disease treatment."
+      },
+      "02": {
+        "name": "Dr. Ahmad Rezaei",
+        "specialty": "Internist",
+        "bio": "Specialist in internal medicine with over 12 years of clinical experience."
+      },
+      "03": {
+        "name": "Dr. Leila Mohammadi",
+        "specialty": "Dermatologist",
+        "bio": "Expert in skin, hair and aesthetic medicine with over 10 years of experience."
+      }
+    },
+    "about": {
+      "badge": "About Us",
+      "title1": "Dr. Hosseini",
+      "title2": "Specialized Clinic",
+      "desc1": "Dr. Hosseini Clinic started working over 15 years ago with the mission of providing quality and accessible medical services for all.",
+      "desc2": "Equipped with the latest medical technology and staffed by a team of experienced specialists, we are committed to delivering the best possible care.",
+      "card": {
+        "years": "15+",
+        "label": "Years of Activity",
+        "staffValue": "50+",
+        "staffLabel": "Staff Members",
+        "patientsValue": "10,000+",
+        "patientsLabel": "Satisfied Patients"
+      }
+    },
+    "stats": {
+      "01": {
+        "value": "500+",
+        "label": "Daily Patients"
+      },
+      "02": {
+        "value": "50+",
+        "label": "Specialist Doctors"
+      },
+      "03": {
+        "value": "20+",
+        "label": "Medical Equipments"
+      },
+      "04": {
+        "value": "98%",
+        "label": "Patient Satisfaction"
+      }
+    },
+    "contact": {
+      "badge": "Contact Us",
+      "title": "Get in Touch",
+      "desc": "We are here to answer your questions and provide the best service.",
+      "formTitle": "Send a Message",
+      "formDesc": "Fill in the information below to contact us.",
+      "formName": "Full Name",
+      "formNamePlaceholder": "Enter your name",
+      "formPhone": "Phone Number",
+      "formPhonePlaceholder": "Enter your phone",
+      "formSubject": "Subject",
+      "formSubjectPlaceholder": "Enter subject",
+      "formMessage": "Message",
+      "formMessagePlaceholder": "Enter your message",
+      "formSubmit": "Send Message",
+      "01": {
+        "label": "Phone",
+        "value": "+98 21 1234 5678"
+      },
+      "02": {
+        "label": "Email",
+        "value": "info{'@'}drhosseini-clinic.ir"
+      },
+      "03": {
+        "label": "Address",
+        "value": "Tehran, Valiasr St."
+      },
+      "04": {
+        "label": "Working Hours",
+        "value": "Sat-Wed 8AM-8PM / Thu 8AM-2PM"
+      }
+    },
+    "social": {
+      "instagram": "Instagram",
+      "whatsapp": "WhatsApp"
+    },
+    "footer": {
+      "brand": "Dr. Hosseini Clinic",
+      "desc": "Providing advanced medical services with a team of specialists and modern equipment since 2010.",
+      "quickAccess": "Quick Access",
+      "hours": "Working Hours",
+      "weekdays": "Saturday - Wednesday",
+      "weekdaysHours": "8:00 AM - 8:00 PM",
+      "friday": "Friday",
+      "fridayHours": "Closed",
+      "saturday": "Thursday",
+      "saturdayHours": "8:00 AM - 2:00 PM",
+      "contactInfo": "Contact Information",
+      "address": "Tehran, Valiasr Ave., Corner of Street 12, No. 45",
+      "copyright": "© {year} Dr. Hosseini Clinic. All rights reserved."
+    },
+    "form": {
+      "error": "Submission error. Please try again.",
+      "success": "Your message has been sent successfully."
+    }
+  },
+  "tutorial": {
+    "steps": {
+      "welcome": {
+        "title": "Welcome to the Medical CRM!",
+        "desc": "Let us take you on a quick tour of the system. Click Next to continue."
+      },
+      "dashboardOverview": {
+        "title": "Dashboard Overview",
+        "desc": "This is your main dashboard. Here you can see an overview of your appointments, recent activities, and key metrics at a glance."
+      },
+      "sidebar": {
+        "title": "Sidebar Navigation",
+        "desc": "Use the sidebar to navigate between different sections of the system."
+      },
+      "calendar": {
+        "title": "Calendar",
+        "desc": "View and manage your schedule. See appointments, set availability, and organize your day."
+      },
+      "appointments": {
+        "title": "Appointments",
+        "desc": "Manage patient appointments — create, reschedule, or cancel as needed."
+      },
+      "patients": {
+        "title": "Patients",
+        "desc": "Access patient records, medical history, and personal information."
+      },
+      "users": {
+        "title": "Users",
+        "desc": "Manage system users, their roles, and permissions."
+      },
+      "messaging": {
+        "title": "Messaging",
+        "desc": "Communicate with patients and staff through the internal messaging system."
+      },
+      "clinicalTools": {
+        "title": "Clinical Tools",
+        "desc": "Access clinical decision support tools, calculators, and references."
+      },
+      "billing": {
+        "title": "Billing",
+        "desc": "Manage invoices, payments, and financial records."
+      },
+      "staff": {
+        "title": "Staff Management",
+        "desc": "Manage clinic staff, schedules, and performance tracking."
+      },
+      "prescriptions": {
+        "title": "Prescriptions",
+        "desc": "Create, manage, and track patient prescriptions electronically."
+      },
+      "labResults": {
+        "title": "Lab Results",
+        "desc": "View and manage laboratory test results for patients."
+      },
+      "profile": {
+        "title": "My Profile",
+        "desc": "View and edit your profile, change password, and manage settings."
+      },
+      "topBar": {
+        "title": "Top Bar",
+        "desc": "Quick access to notifications, language settings, theme toggle, and account menu."
+      },
+      "welcomePatient": {
+        "title": "Welcome to Your Patient Portal!",
+        "desc": "This is your personal health management area. Let us show you around."
+      },
+      "patientDashboard": {
+        "title": "Patient Dashboard",
+        "desc": "View your appointments, messages, prescriptions, and lab results."
+      },
+      "patientMessages": {
+        "title": "Messages",
+        "desc": "Communicate with your doctor and clinic staff through the messaging system."
+      }
+    },
+    "progressText": "Step {current} of {total}",
+    "nextBtn": "Next",
+    "prevBtn": "Previous",
+    "doneBtn": "Finish"
+  },
+  "accounting": {
+    "title": "Accounting",
+    "subtitle": "Chart of accounts, journal entries, and financial reports",
+    "seedAccounts": "Initialize Default Accounts",
+    "tabs": {
+      "accounts": "Chart of Accounts",
+      "journal": "Journal Entries",
+      "reports": "Reports"
+    },
+    "addAccount": "Add Account",
+    "editAccount": "Edit Account",
+    "code": "Code",
+    "accountName": "Account Name",
+    "type": "Type",
+    "noAccounts": "No accounts found. Initialize default accounts or create one.",
+    "noEntries": "No journal entries found.",
+    "entryNumber": "Entry No.",
+    "date": "Date",
+    "description": "Description",
+    "debit": "Debit",
+    "credit": "Credit",
+    "account": "Account",
+    "accountCode": "Account Code",
+    "accountType": "Account Type",
+    "period": "Period",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "reference": "Reference",
+    "referencePlaceholder": "e.g. Invoice #123",
+    "journalLines": "Journal Lines",
+    "addLine": "Add Line",
+    "balance": "Balance",
+    "totalRevenue": "Total Revenue",
+    "totalExpense": "Total Expenses",
+    "netIncome": "Net Income",
+    "transactionCount": "Transactions",
+    "incomeStatement": "Income Statement",
+    "revenues": "Revenues",
+    "expenses": "Expenses",
+    "recentTransactions": "Recent Transactions",
+    "newJournalEntry": "New Journal Entry",
+    "journalEntryDetails": "Journal Entry Details",
+    "codePlaceholder": "e.g. 1010",
+    "namePlaceholder": "Account title",
+    "fillRequired": "Please fill in the required fields.",
+    "fillJournalRequired": "Please enter description and at least 2 journal lines.",
+    "balanceError": "Journal entry must be balanced (debits = credits).",
+    "accountCreated": "Account created successfully.",
+    "accountUpdated": "Account updated successfully.",
+    "journalCreated": "Journal entry created successfully.",
+    "saveError": "Error saving data.",
+    "saveJournalError": "Error creating journal entry.",
+    "fetchError": "Error fetching data.",
+    "reportError": "Error generating report.",
+    "seeded": "Default accounts initialized successfully.",
+    "seedError": "Error initializing accounts.",
+    "selectPeriod": "Select a period to generate report.",
+    "types": {
+      "asset": "Asset",
+      "liability": "Liability",
+      "equity": "Equity",
+      "revenue": "Revenue",
+      "expense": "Expense"
+    },
+    "periods": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "annual": "Annual"
+    }
+  },
+  "inventory": {
+    "title": "Inventory Management",
+    "subtitle": "Manage products, categories, and stock levels",
+    "tabs": {
+      "products": "Products",
+      "categories": "Categories",
+      "movements": "Stock Movements"
+    },
+    "totalProducts": "Total Products",
+    "totalStockValue": "Stock Value",
+    "lowStockCount": "Low Stock Items",
+    "outOfStockCount": "Out of Stock",
+    "productName": "Product Name",
+    "sku": "SKU",
+    "barcode": "Barcode",
+    "category": "Category",
+    "unit": "Unit",
+    "purchasePrice": "Purchase Price",
+    "sellingPrice": "Selling Price",
+    "currentStock": "Current Stock",
+    "minStockLevel": "Min. Stock Level",
+    "stockValue": "Stock Value",
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "addCategory": "Add Category",
+    "editCategory": "Edit Category",
+    "categoryName": "Category Name",
+    "productCount": "Products",
+    "noProducts": "No products found.",
+    "noCategories": "No categories found.",
+    "noMovements": "No stock movements found.",
+    "allCategories": "All Categories",
+    "movementType": "Type",
+    "movementTypes": {
+      "in": "Stock In",
+      "out": "Stock Out",
+      "adjustment": "Adjustment"
+    },
+    "addStock": "Record Stock Movement",
+    "quantity": "Quantity",
+    "unitPrice": "Unit Price",
+    "totalPrice": "Total Price",
+    "date": "Date",
+    "performedBy": "By",
+    "description": "Description",
+    "reference": "Reference",
+    "lowStock": "Low Stock",
+    "fillRequired": "Please fill in the required fields.",
+    "productCreated": "Product created successfully.",
+    "productUpdated": "Product updated successfully.",
+    "categoryCreated": "Category created successfully.",
+    "categoryUpdated": "Category updated successfully.",
+    "stockUpdated": "Stock movement recorded successfully.",
+    "saveError": "Error saving data."
+  },
+  "create": "Create",
+  "delete": "Delete",
+  "edit": "Edit",
+  "finished": "Finished",
+  "next": "Next",
+  "prev": "Previous",
+  "revoke": "Revoke",
+  "save": "Save",
+  "saved": "Saved",
+  "select": "Select",
+  "showTrend": "Show Trend",
+  "status": "Status",
+  "end_date": "End Date",
+  "movement_type": "Movement Type",
+  "staffId": "Staff ID",
+  "start_date": "Start Date",
+  "jDD jMMMM": "jDD jMMMM",
+  "jDD jMMMM jYYYY": "jDD jMMMM jYYYY",
+  "jYYYY-jMM-jDD": "jYYYY-jMM-jDD"
 }

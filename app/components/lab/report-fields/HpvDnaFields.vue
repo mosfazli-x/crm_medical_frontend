@@ -6,7 +6,7 @@
         <div class="!flex !items-center !gap-2.5">
           <Icon :name="section.icon" class="!w-4 !h-4 !text-zinc-500" />
           <span class="!text-xs !font-bold !text-zinc-800">{{ section.title }}</span>
-          <span v-if="section.required" class="!text-red-400 !text-[10px]">*الزامی</span>
+          <span v-if="section.required" class="!text-red-400 !text-[10px]">*{{ t('hpv.required') }}</span>
         </div>
         <Icon name="lucide:chevron-down" class="!w-3.5 !h-3.5 !text-zinc-400 !transition-transform !duration-200"
           :class="{ '!rotate-180': open.includes(si) }" />
@@ -20,6 +20,9 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const model = defineModel<Record<string, any>>({ required: true })
 const open = ref<number[]>([0, 1])
@@ -133,113 +136,113 @@ import { h } from 'vue'
 
 const sections = [
   {
-    title: 'مقدمه و اطلاعات بیمار',
+    title: t('hpv.sectionIntro'),
     icon: 'lucide:user',
     required: true,
     content: {
       render: () => h('div', { class: 'grid grid-cols-1 md:grid-cols-2 gap-4' }, [
         h('div', {}, [
-          h('label', { class: labelClass }, 'نام و نام خانوادگی بیمار'),
-          h('input', { modelValue: f.patient_name, 'onUpdate:modelValue': (v: string) => f.patient_name = v, class: inputClass, placeholder: 'نام کامل' }),
+          h('label', { class: labelClass }, t('hpv.patientName')),
+          h('input', { modelValue: f.patient_name, 'onUpdate:modelValue': (v: string) => f.patient_name = v, class: inputClass, placeholder: t('hpv.patientNamePlaceholder') }),
         ]),
         h('div', {}, [
-          h('label', { class: labelClass }, 'شماره پرونده'),
-          h('input', { modelValue: f.record_number, 'onUpdate:modelValue': (v: string) => f.record_number = v, class: inputClass, placeholder: 'شماره پرونده' }),
+          h('label', { class: labelClass }, t('hpv.recordNumber')),
+          h('input', { modelValue: f.record_number, 'onUpdate:modelValue': (v: string) => f.record_number = v, class: inputClass, placeholder: t('hpv.recordNumberPlaceholder') }),
         ]),
         h('div', {}, [
-          h('label', { class: labelClass }, 'نام نمونه‌گیر'),
-          h('input', { modelValue: f.sampler_name, 'onUpdate:modelValue': (v: string) => f.sampler_name = v, class: inputClass, placeholder: 'نام فرد نمونه‌گیر' }),
+          h('label', { class: labelClass }, t('hpv.samplerName')),
+          h('input', { modelValue: f.sampler_name, 'onUpdate:modelValue': (v: string) => f.sampler_name = v, class: inputClass, placeholder: t('hpv.samplerNamePlaceholder') }),
         ]),
         h('div', {}, [
-          h('label', { class: labelClass }, 'تاریخ دریافت نمونه'),
-          h('input', { modelValue: f.receipt_date, 'onUpdate:modelValue': (v: string) => f.receipt_date = v, class: inputClass, placeholder: '1404-05-01' }),
+          h('label', { class: labelClass }, t('hpv.receiptDate')),
+          h('input', { modelValue: f.receipt_date, 'onUpdate:modelValue': (v: string) => f.receipt_date = v, class: inputClass, placeholder: t('hpv.receiptDatePlaceholder') }),
         ]),
       ]),
     },
   },
   {
-    title: 'اطلاعات نمونه',
+    title: t('hpv.sectionSample'),
     icon: 'lucide:flask-conical',
     required: true,
     content: {
       render: () => h('div', { class: 'grid grid-cols-1 md:grid-cols-2 gap-4' }, [
         h('div', {}, [
-          h('label', { class: labelClass }, 'کد نمونه'),
-          h('input', { modelValue: f.sample_code, 'onUpdate:modelValue': (v: string) => f.sample_code = v, class: inputClass, placeholder: 'کد اختصاصی نمونه' }),
+          h('label', { class: labelClass }, t('hpv.sampleCode')),
+          h('input', { modelValue: f.sample_code, 'onUpdate:modelValue': (v: string) => f.sample_code = v, class: inputClass, placeholder: t('hpv.sampleCodePlaceholder') }),
         ]),
         h('div', {}, [
-          h('label', { class: labelClass }, 'حجم نمونه (ml)'),
-          h('input', { modelValue: f.sample_volume, 'onUpdate:modelValue': (v: string) => f.sample_volume = v, class: inputClass, placeholder: 'مثلاً 10' }),
+          h('label', { class: labelClass }, t('hpv.sampleVolume')),
+          h('input', { modelValue: f.sample_volume, 'onUpdate:modelValue': (v: string) => f.sample_volume = v, class: inputClass, placeholder: t('hpv.sampleVolumePlaceholder') }),
         ]),
         h('div', {}, [
-          h('label', { class: labelClass }, 'نوع ظرف نمونه‌گیری'),
-          h('input', { modelValue: f.container_type, 'onUpdate:modelValue': (v: string) => f.container_type = v, class: inputClass, placeholder: 'مثلاً Specimen transport vial' }),
+          h('label', { class: labelClass }, t('hpv.containerType')),
+          h('input', { modelValue: f.container_type, 'onUpdate:modelValue': (v: string) => f.container_type = v, class: inputClass, placeholder: t('hpv.containerTypePlaceholder') }),
         ]),
         h('div', {}, [
-          h('label', { class: labelClass }, 'شرایط نمونه'),
+          h('label', { class: labelClass }, t('hpv.sampleCondition')),
           h('select', { modelValue: f.sample_condition, 'onUpdate:modelValue': (v: string) => f.sample_condition = v, class: inputClass },
-            ['-', ...qualityOptions].map(opt => h('option', { value: opt === '-' ? '' : opt }, opt === '-' ? 'انتخاب کنید...' : opt))
+            ['-', ...qualityOptions].map(opt => h('option', { value: opt === '-' ? '' : opt }, opt === '-' ? t('hpv.selectPlaceholder') : opt))
           ),
         ]),
         h('div', {}, [
-          h('label', { class: labelClass }, 'رنگ مایع'),
+          h('label', { class: labelClass }, t('hpv.fluidColor')),
           h('select', { modelValue: f.fluid_color, 'onUpdate:modelValue': (v: string) => f.fluid_color = v, class: inputClass },
-            ['-', ...fluidOptions].map(opt => h('option', { value: opt === '-' ? '' : opt }, opt === '-' ? 'انتخاب کنید...' : opt))
+            ['-', ...fluidOptions].map(opt => h('option', { value: opt === '-' ? '' : opt }, opt === '-' ? t('hpv.selectPlaceholder') : opt))
           ),
         ]),
         h('div', {}, [
-          h('label', { class: labelClass }, 'زمان ارسال نمونه'),
-          h('input', { modelValue: f.send_time, 'onUpdate:modelValue': (v: string) => f.send_time = v, class: inputClass, placeholder: 'ساعت و تاریخ ارسال' }),
+          h('label', { class: labelClass }, t('hpv.sendTime')),
+          h('input', { modelValue: f.send_time, 'onUpdate:modelValue': (v: string) => f.send_time = v, class: inputClass, placeholder: t('hpv.sendTimePlaceholder') }),
         ]),
       ]),
     },
   },
   {
-    title: 'اطلاعات بالینی',
+    title: t('hpv.sectionClinical'),
     icon: 'lucide:stethoscope',
     required: false,
     content: {
       render: () => h('div', { class: 'grid grid-cols-1 md:grid-cols-2 gap-4' }, [
         h('div', {}, [
-          h('label', { class: labelClass }, 'سن بیمار'),
-          h('input', { modelValue: f.patient_age, 'onUpdate:modelValue': (v: string) => f.patient_age = v, class: inputClass, type: 'number', placeholder: 'سال' }),
+          h('label', { class: labelClass }, t('hpv.patientAge')),
+          h('input', { modelValue: f.patient_age, 'onUpdate:modelValue': (v: string) => f.patient_age = v, class: inputClass, type: 'number', placeholder: t('hpv.patientAgePlaceholder') }),
         ]),
         h('div', {}, [
-          h('label', { class: labelClass }, 'تاریخ آخرین قاعدگی'),
-          h('input', { modelValue: f.last_menstruation, 'onUpdate:modelValue': (v: string) => f.last_menstruation = v, class: inputClass, placeholder: '1404-04-15' }),
+          h('label', { class: labelClass }, t('hpv.lastMenstruation')),
+          h('input', { modelValue: f.last_menstruation, 'onUpdate:modelValue': (v: string) => f.last_menstruation = v, class: inputClass, placeholder: t('hpv.lastMenstruationPlaceholder') }),
         ]),
         h('div', {}, [
-          h('label', { class: labelClass }, 'سابقه زایمان'),
-          h('input', { modelValue: f.delivery_history, 'onUpdate:modelValue': (v: string) => f.delivery_history = v, class: inputClass, placeholder: 'مثلاً 2 بار زایمان طبیعی' }),
+          h('label', { class: labelClass }, t('hpv.deliveryHistory')),
+          h('input', { modelValue: f.delivery_history, 'onUpdate:modelValue': (v: string) => f.delivery_history = v, class: inputClass, placeholder: t('hpv.deliveryHistoryPlaceholder') }),
         ]),
         h('div', {}, [
-          h('label', { class: labelClass }, 'علت مراجعه'),
-          h('input', { modelValue: f.referral_reason, 'onUpdate:modelValue': (v: string) => f.referral_reason = v, class: inputClass, placeholder: 'غربالگری روتین / پیگیری' }),
+          h('label', { class: labelClass }, t('hpv.referralReason')),
+          h('input', { modelValue: f.referral_reason, 'onUpdate:modelValue': (v: string) => f.referral_reason = v, class: inputClass, placeholder: t('hpv.referralReasonPlaceholder') }),
         ]),
       ]),
     },
   },
   {
-    title: 'وضعیت HPV DNA',
+    title: t('hpv.sectionHpvStatus'),
     icon: 'lucide:shield-check',
     required: true,
     content: {
       render: () => h('div', { class: 'space-y-5' }, [
         h('div', { class: 'grid grid-cols-1 md:grid-cols-2 gap-4' }, [
           h('div', {}, [
-            h('label', { class: labelClass }, 'وضعیت کلی HPV'),
-            h('select', { modelValue: f.hpv_status, 'onUpdate:modelValue': (v: string) => f.hpv_status = v, class: inputClass },
-              ['-', ...hpvStatusOptions].map(opt => h('option', { value: opt === '-' ? '' : opt }, opt === '-' ? 'انتخاب کنید...' : opt))
-            ),
-          ]),
-          h('div', {}, [
-            h('label', { class: labelClass }, 'بار ویروسی (Viral Load)'),
-            h('input', { modelValue: f.viral_load, 'onUpdate:modelValue': (v: string) => f.viral_load = v, class: inputClass, placeholder: 'مثلاً 1.5 x 10^4 copies/ml' }),
-          ]),
+          h('label', { class: labelClass }, t('hpv.hpvStatus')),
+          h('select', { modelValue: f.hpv_status, 'onUpdate:modelValue': (v: string) => f.hpv_status = v, class: inputClass },
+            ['-', ...hpvStatusOptions].map(opt => h('option', { value: opt === '-' ? '' : opt }, opt === '-' ? t('hpv.selectPlaceholder') : opt))
+          ),
         ]),
+        h('div', {}, [
+          h('label', { class: labelClass }, t('hpv.viralLoad')),
+          h('input', { modelValue: f.viral_load, 'onUpdate:modelValue': (v: string) => f.viral_load = v, class: inputClass, placeholder: t('hpv.viralLoadPlaceholder') }),
+        ]),
+      ]),
 
         h('div', {}, [
-          h('p', { class: '!text-[10px] !font-bold !text-zinc-500 !mb-2.5 !uppercase !tracking-wider' }, 'نوع‌یابی ژنوتیپی HPV - خطر بالا (High-Risk)'),
+          h('p', { class: '!text-[10px] !font-bold !text-zinc-500 !mb-2.5 !uppercase !tracking-wider' }, t('hpv.genotyping')),
           h('div', { class: 'grid grid-cols-3 md:grid-cols-7 gap-2' },
             highRiskTypes.map(item => h('button', {
               key: item.key,
@@ -253,61 +256,61 @@ const sections = [
             }, item.label))
           ),
           h('div', { class: 'mt-3' }, [
-            h('label', { class: labelClass }, 'ژنوتیپ‌های سایر'),
-            h('input', { modelValue: f.other_genotypes, 'onUpdate:modelValue': (v: string) => f.other_genotypes = v, class: inputClass, placeholder: 'مثلاً HPV 6, 11 (خطر پایین)' }),
+            h('label', { class: labelClass }, t('hpv.otherGenotypes')),
+            h('input', { modelValue: f.other_genotypes, 'onUpdate:modelValue': (v: string) => f.other_genotypes = v, class: inputClass, placeholder: t('hpv.otherGenotypesPlaceholder') }),
           ]),
         ]),
       ]),
     },
   },
   {
-    title: 'تست‌های تکمیلی',
+    title: t('hpv.sectionAdditional'),
     icon: 'lucide:flask-conical',
     required: false,
     content: {
       render: () => h('div', { class: 'grid grid-cols-1 md:grid-cols-2 gap-4' }, [
         h('div', {}, [
-          h('label', { class: labelClass }, 'نتیجه p16/Ki-67'),
+          h('label', { class: labelClass }, t('hpv.p16Result')),
           h('select', { modelValue: f.p16_ki67_result, 'onUpdate:modelValue': (v: string) => f.p16_ki67_result = v, class: inputClass },
-            ['-', ...p16Options].map(opt => h('option', { value: opt === '-' ? '' : opt }, opt === '-' ? 'انتخاب کنید...' : opt))
+            ['-', ...p16Options].map(opt => h('option', { value: opt === '-' ? '' : opt }, opt === '-' ? t('hpv.selectPlaceholder') : opt))
           ),
         ]),
       ]),
     },
   },
   {
-    title: 'نتیجه‌گیری و پیشنهادات',
+    title: t('hpv.sectionConclusion'),
     icon: 'lucide:clipboard-check',
     required: true,
     content: {
       render: () => h('div', { class: 'space-y-4' }, [
         h('div', {}, [
-          h('label', { class: labelClass }, 'خلاصه یافته‌ها و نتیجه‌گیری'),
+          h('label', { class: labelClass }, t('hpv.conclusion')),
           h('textarea', {
             modelValue: f.conclusion,
             'onUpdate:modelValue': (v: string) => f.conclusion = v,
             class: inputClass + ' !min-h-[80px]',
             rows: 4,
-            placeholder: 'HPV 16 Positive / High-Risk HPV detected / ...',
+            placeholder: t('hpv.conclusionPlaceholder'),
           }),
         ]),
         h('div', {}, [
-          h('label', { class: labelClass }, 'پیشنهادات'),
+          h('label', { class: labelClass }, t('hpv.recommendations')),
           h('textarea', {
             modelValue: f.recommendations,
             'onUpdate:modelValue': (v: string) => f.recommendations = v,
             class: inputClass + ' !min-h-[60px]',
             rows: 3,
-            placeholder: 'Colposcopy recommended / Repeat HPV in 12 months / ...',
+            placeholder: t('hpv.recommendationsPlaceholder'),
           }),
         ]),
         h('div', {}, [
-          h('label', { class: labelClass }, 'زمان‌بندی پیگیری'),
+          h('label', { class: labelClass }, t('hpv.followUp')),
           h('input', {
             modelValue: f.follow_up,
             'onUpdate:modelValue': (v: string) => f.follow_up = v,
             class: inputClass,
-            placeholder: 'مثلاً 6 ماه / 1 سال / فوری',
+            placeholder: t('hpv.followUpPlaceholder'),
           }),
         ]),
       ]),
