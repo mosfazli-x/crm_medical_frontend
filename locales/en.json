@@ -508,6 +508,8 @@
     "rating": "Rating (0 to 5)",
     "sortOrder": "Display order",
     "sortOrderHint": "Lower number ranks higher on the landing page",
+    "showOnLanding": "Show on landing page",
+    "showOnLandingHint": "When off, this doctor's card is hidden from the landing page but they remain bookable.",
     "uploadPhoto": "Upload doctor photo",
     "saveProfile": "Save Profile",
     "profileSaved": "Profile saved successfully.",
@@ -1557,11 +1559,14 @@
     "bookingError": "Error registering appointment",
     "titleSeo": "Book Appointment | Management System",
     "steps": [
+      "Service",
+      "Doctor",
       "Date",
-      "Visit Type",
-      "Time"
+      "Time",
+      "Info"
     ],
     "selectService": "Select a Service",
+    "fetchServicesError": "Error fetching services",
     "selectServiceDesc": "Choose the type of medical service you need",
     "selectDoctor": "Select a Doctor",
     "selectDoctorDesc": "Choose a doctor who offers this service",

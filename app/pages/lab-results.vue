@@ -73,7 +73,8 @@
             <div class="!flex !items-center !gap-2">
               <h2 class="!text-sm !font-bold !text-zinc-900 !tracking-tight">{{ selectedPatient.firstName }} {{
                 selectedPatient.lastName }}</h2>
-              <span class="!px-2 !py-0.5 !bg-zinc-100 !text-zinc-700 !rounded-md !text-[9px] !font-bold">{{ t('labResults.activeFile') }}</span>
+              <span class="!px-2 !py-0.5 !bg-zinc-100 !text-zinc-700 !rounded-md !text-[9px] !font-bold">{{
+                t('labResults.activeFile') }}</span>
             </div>
             <div class="!flex !items-center !gap-1.5 !mt-1 !text-[11px] !text-zinc-400">
               <span>{{ t('labResults.nationalIdLabel') }}</span>
@@ -143,7 +144,8 @@
                   {{ t('labResults.registrationDate') }}</th>
                 <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">
                   {{ t('labResults.reportedValue') }}</th>
-                <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">{{ t('labResults.referenceRange') }}</th>
+                <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">{{
+                  t('labResults.referenceRange') }}</th>
                 <th class="!px-6 !py-3.5 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">
                   {{ t('labResults.clinicalStatus') }}</th>
                 <th
@@ -238,35 +240,39 @@
             <div class="!grid !grid-cols-1 md:!grid-cols-2 !gap-4">
 
               <div class="md:!col-span-2">
-                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.testName') }}</label>
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{
+                  t('labResults.testName') }}</label>
                 <v-combobox v-model="form.test_name" variant="outlined" density="compact" :items="commonTestNames"
                   :rules="[v => !!v || t('labResults.testNameRequired')]" hide-details="auto" class="custom-v-input"
                   color="#18181b" base-color="#e4e4e7" />
               </div>
 
               <div>
-                <label
-                  class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.category') }}</label>
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{
+                  t('labResults.category') }}</label>
                 <v-select v-model="form.category" :items="categoryOptions" item-title="label" item-value="value"
                   variant="outlined" density="compact" :rules="[v => !!v || t('labResults.categoryRequired')]"
                   hide-details="auto" class="custom-v-input" color="#18181b" base-color="#e4e4e7" />
               </div>
 
               <div>
-                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.value') }}</label>
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{
+                  t('labResults.value') }}</label>
                 <v-text-field v-model="form.value" variant="outlined" density="compact" type="number" step="any"
-                  :rules="[v => !!v || t('labResults.valueRequired')]" hide-details="auto" class="custom-v-input !font-mono"
-                  color="#18181b" base-color="#e4e4e7" />
+                  :rules="[v => !!v || t('labResults.valueRequired')]" hide-details="auto"
+                  class="custom-v-input !font-mono" color="#18181b" base-color="#e4e4e7" />
               </div>
 
               <div>
-                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.unit') }}</label>
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{
+                  t('labResults.unit') }}</label>
                 <v-text-field v-model="form.unit" variant="outlined" density="compact" hide-details="auto"
                   placeholder="e.g. mIU/L" class="custom-v-input !font-mono" color="#18181b" base-color="#e4e4e7" />
               </div>
 
               <div>
-                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.refRange') }}</label>
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{
+                  t('labResults.refRange') }}</label>
                 <v-text-field v-model="form.reference_range" variant="outlined" density="compact" hide-details="auto"
                   placeholder="e.g. 0.5 - 4.5" class="custom-v-input !font-mono" color="#18181b" base-color="#e4e4e7" />
               </div>
@@ -274,7 +280,8 @@
               <div
                 class="md:!col-span-2 !bg-white !border !border-zinc-200/80 !rounded-xl !p-3.5 !flex !items-center !justify-between !mt-1">
                 <div>
-                  <label class="!text-xs !font-semibold !text-zinc-900 !block">{{ t('labResults.abnormalFlag') }}</label>
+                  <label class="!text-xs !font-semibold !text-zinc-900 !block">{{ t('labResults.abnormalFlag')
+                    }}</label>
                   <span class="!text-[10px] !text-zinc-400 !block !mt-0.5">{{ t('labResults.abnormalDesc') }}</span>
                 </div>
                 <v-switch v-model="form.abnormal_flag" color="error" inset hide-details
@@ -282,15 +289,18 @@
               </div>
 
               <div class="md:!col-span-2 !mt-1">
-                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.samplingDate') }}</label>
-                <PersianDatetimePicker v-model="form.performed_date" format="YYYY-MM-DD"
-                  :placeholder="t('labResults.solarDatePlaceholder')" class="custom-picker-input" />
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{
+                  t('labResults.samplingDate') }}</label>
+                <div class="relative h-[40px] border rounded overflow-hidden lg:w-[200px] w-full">
+                  <PersianDatetimePicker v-model="form.performed_date" format="YYYY-MM-DD"
+                    :placeholder="t('labResults.solarDatePlaceholder')" class="custom-picker-input" />
+                </div>
                 <p v-if="formDateError" class="!text-red-500 !text-[10px] !font-semibold !mt-1">{{ formDateError }}</p>
               </div>
 
               <div class="md:!col-span-2">
-                <label
-                  class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{ t('labResults.clinicalNotes') }}</label>
+                <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{
+                  t('labResults.clinicalNotes') }}</label>
                 <v-textarea v-model="form.notes" variant="outlined" density="compact" rows="2" hide-details
                   class="custom-v-input" color="#18181b" base-color="#e4e4e7" />
               </div>
@@ -336,15 +346,15 @@
               class="!bg-white !border !border-zinc-200/60 !rounded-xl !p-4 !mb-5 !shadow-sm !overflow-hidden !relative">
               <span v-if="trendUnit"
                 class="!absolute !top-4 !left-4 !text-[9px] !font-mono !text-zinc-400 !border !border-zinc-100 !px-2 !py-0.5 !rounded !bg-zinc-50/50">{{
-                trendUnit }}</span>
+                  trendUnit }}</span>
 
               <svg :viewBox="`0 0 ${svgWidth} ${svgHeight}`" class="!w-full !max-h-64"
                 xmlns="http://www.w3.org/2000/svg">
                 <line v-for="(g, gi) in yGridLines" :key="'yg' + gi" :x1="margin.left" :y1="g.y"
                   :x2="svgWidth - margin.right" :y2="g.y" stroke="#f4f4f5" stroke-width="1" stroke-dasharray="4,4" />
 
-                <text v-for="(g, gi) in yGridLines" :key="'yl' + gi" :x="margin.left - 12" :y="g.y + 3" text-anchor="end"
-                  class="!fill-zinc-400 !font-mono" font-size="9">
+                <text v-for="(g, gi) in yGridLines" :key="'yl' + gi" :x="margin.left - 12" :y="g.y + 3"
+                  text-anchor="end" class="!fill-zinc-400 !font-mono" font-size="9">
                   {{ g.label }}
                 </text>
 

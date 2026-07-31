@@ -175,6 +175,9 @@
                                 type="number" variant="outlined" density="comfortable"
                                 :hint="$t('users.sortOrderHint')" persistent-hint />
                         </div>
+                        <v-switch v-model="profileForm.showOnLanding" color="#4F46E5"
+                            :label="$t('users.showOnLanding')" :hint="$t('users.showOnLandingHint')"
+                            persistent-hint inset />
                         <div class="flex items-center gap-4">
                             <div
                                 class="w-20 h-20 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700 flex items-center justify-center shrink-0">
@@ -233,6 +236,7 @@ const profileForm = ref({
     patientsCount: null as number | null,
     rating: null as number | null,
     sortOrder: null as number | null,
+    showOnLanding: true,
     photoUrl: null as string | null,
 })
 const profilePhotoPreview = ref<string | null>(null)
@@ -338,6 +342,7 @@ const openDoctorProfileDialog = async (user: any) => {
         patientsCount: null,
         rating: null,
         sortOrder: null,
+        showOnLanding: true,
         photoUrl: null,
     }
     profilePhotoPreview.value = null
@@ -355,6 +360,7 @@ const openDoctorProfileDialog = async (user: any) => {
                 patientsCount: p.patientsCount ?? null,
                 rating: p.rating != null ? Number(p.rating) : null,
                 sortOrder: p.sortOrder ?? null,
+                showOnLanding: p.showOnLanding ?? true,
                 photoUrl: p.photoUrl || null,
             }
         }
@@ -381,13 +387,14 @@ const saveDoctorProfile = async () => {
 
     profileSaving.value = true
     try {
-        const payload: Record<string, string | number | null> = {}
+        const payload: Record<string, string | number | boolean | null> = {}
         if (profileForm.value.specialty) payload.specialty = profileForm.value.specialty
         if (profileForm.value.bio) payload.bio = profileForm.value.bio
         if (profileForm.value.experienceYears != null) payload.experienceYears = profileForm.value.experienceYears
         if (profileForm.value.patientsCount != null) payload.patientsCount = profileForm.value.patientsCount
         if (profileForm.value.rating != null) payload.rating = profileForm.value.rating
         if (profileForm.value.sortOrder != null) payload.sortOrder = profileForm.value.sortOrder
+        payload.showOnLanding = profileForm.value.showOnLanding
 
         const response = await apiFetch(`/api/doctor-profiles/${user.id}`, {
             method: 'PUT',
