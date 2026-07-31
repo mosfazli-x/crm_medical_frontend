@@ -299,13 +299,16 @@ import HijriCalendar from '~/components/HijriCalendar.vue'
 import AltArrowLeft from '~/components/icons/AltArrowLeft.vue'
 import MedicalKit from '~/components/icons/MedicalKit.vue'
 
-const { t } = useI18n()
+const { t, tm } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const { $toast } = useNuxtApp()
 const { apiFetch } = useApi()
 
-const steps = computed(() => t('booking.steps') as string[])
+const steps = computed(() => {
+  const raw = tm('booking.steps') as unknown[]
+  return raw.map((_, i) => t(`booking.steps.${i}`))
+})
 
 const doctorId = computed(() => route.params.doctorId as string)
 const visitTypeIdParam = computed(() => route.query.visitTypeId as string | undefined)

@@ -50,9 +50,10 @@ export function useLang() {
   })
 
   const contactItems = computed(() => [
-    { icon: 'phone', labelKey: 'landing.contact.phone', value: i18nT('landing.contact.phoneValue').toString() },
-    { icon: 'pin', labelKey: 'landing.contact.address', value: i18nT('landing.contact.addressValue').toString() },
-    { icon: 'clock', labelKey: 'landing.contact.hours', value: i18nT('landing.contact.hoursValue').toString() },
+    { icon: 'phone', labelKey: 'landing.contact.phone', value: i18nT('landing.contact.phoneValue').toString(), href: 'tel:09379412491' },
+    { icon: 'mail', labelKey: 'landing.contact.email', value: i18nT('landing.contact.emailValue').toString(), href: 'mailto:info@ladiesneeds.com' },
+    { icon: 'pin', labelKey: 'landing.contact.address', value: i18nT('landing.contact.addressValue').toString(), href: 'https://maps.app.goo.gl/PWP2be3t8YWw4YMJ8', external: true },
+    { icon: 'clock', labelKey: 'landing.contact.hours', value: i18nT('landing.contact.hoursValue').toString(), href: '' },
   ])
 
   const doctors = computed(() => doctorsData.map(d => ({

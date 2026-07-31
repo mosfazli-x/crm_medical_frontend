@@ -4,8 +4,81 @@ import { useRouter } from 'vue-router'
 
 definePageMeta({ layout: false })
 
-const { lang, t: langT, toggleLang, isRtl, pn, services, doctors, testimonials, contactItems } = useLang()
+const { lang, t: langT, toggleLang, isRtl, pn, services, testimonials, contactItems } = useLang()
 const { t } = useI18n()
+
+interface LandingDoctor {
+  id: string
+  fullName: string | null
+  specialty?: string | null
+  bio?: string | null
+  photoUrl?: string | null
+  experienceYears?: number | null
+  patientsCount?: number | null
+  rating?: string | number | null
+  sortOrder?: number | null
+}
+
+const MAX_DOCTORS = 4
+
+const { data: doctorsResponse, pending: doctorsPending, error: doctorsError } = await useFetch<{ success: boolean; data: LandingDoctor[] }>('/api/booking/doctors')
+
+const doctors = computed<LandingDoctor[]>(() =>
+  (doctorsResponse.value?.data ?? []).slice(0, MAX_DOCTORS)
+)
+
+const showDoctorsSection = computed(() =>
+  !doctorsError.value && (doctorsPending.value || doctors.value.length > 0)
+)
+
+const featuredDoctor = computed<LandingDoctor | undefined>(() => doctors.value[0])
+const sideDoctors = computed<LandingDoctor[]>(() => doctors.value.slice(1))
+const sideDoctorAccents = ['imm-doctor-card--cyan', 'imm-doctor-card--indigo']
+
+function doctorInitials(name: string): string {
+  return name
+    .replace(/^دکتر\s*/i, '')
+    .replace(/^Dr\.?\s*/i, '')
+    .trim()
+    .split(/\s+/)
+    .map(w => w[0])
+    .join('')
+    .slice(0, 2)
+}
+
+function doctorName(doc: LandingDoctor | undefined): string {
+  return doc?.fullName || '—'
+}
+
+function doctorSpecialty(doc: LandingDoctor | undefined): string {
+  return doc?.specialty || ''
+}
+
+function doctorExperience(doc: LandingDoctor | undefined): string {
+  if (doc?.experienceYears == null) return '—'
+  const value = `${doc.experienceYears} ${t('landing.doctors.years')}`
+  return lang.value === 'fa' ? pn(value) : value
+}
+
+function doctorPatients(doc: LandingDoctor | undefined): string {
+  return doc?.patientsCount != null ? pn(doc.patientsCount) : '—'
+}
+
+function doctorRating(doc: LandingDoctor | undefined): string {
+  return doc?.rating != null ? String(doc.rating) : '—'
+}
+
+function doctorBio(doc: LandingDoctor | undefined): string {
+  return doc?.bio || t('landing.doctors.featuredBio')
+}
+
+function goToDoctorBooking(doctorId: string | undefined) {
+  if (doctorId) {
+    router.push(`/booking/${doctorId}`)
+  } else {
+    goToBooking()
+  }
+}
 
 const showLoadingScreen = ref(true)
 const isLoadingComplete = ref(false)
@@ -40,7 +113,7 @@ const { x: glowX, y: glowY, visible: glowVisible } = useCursorGlow()
 const { mx: _pmx, my: _pmy, sx: psx, sy: psy } = useMouseParallax()
 
 const parallaxLottie = computed(() => ({
-  transform: `perspective(800px) rotateY(${-psx.value * 30}deg) rotateX(${psy.value * 30}deg)`,
+  transform: `perspective(900px) rotateY(${-psx.value * 26}deg) rotateX(${psy.value * 20}deg) translateY(${psy.value * 14}px)`,
 }))
 
 const { isLight, toggleTheme, initTheme: initLandingTheme } = useLandingTheme()
@@ -109,6 +182,13 @@ function resetForm() {
   contactForm.value = { name: '', phone: '', service: '', message: '' }
 }
 
+const serviceOptions = computed(() =>
+  services.map(s => ({
+    value: s.titleKey.split('.').pop()!.replace(/Title$/, ''),
+    label: t(s.titleKey),
+  }))
+)
+
 const activeSection = ref('home')
 const scrollProgress = ref(0)
 const sectionIds = ['home', 'services', 'doctors', 'contact']
@@ -136,6 +216,8 @@ function handleNavClick(id: string) {
 }
 
 let observer: IntersectionObserver | null = null
+let heroScrollTl: any = null
+let doctorsRevealTl: any = null
 
 function setupObserver() {
   observer = new IntersectionObserver(
@@ -173,9 +255,9 @@ function playIntro() {
     { y: 0, opacity: 1, duration: 1.00, ease: 'power2.out' }
   )
 
-  tl.fromTo('.imm-lottie-container',
-    { scale: 1.04, filter: 'blur(4px)' },
-    { scale: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' },
+  tl.fromTo('.imm-hero-visual-stage',
+    { opacity: 0, scale: 0.86, y: 28, filter: 'blur(8px)' },
+    { opacity: 1, scale: 1, y: 0, filter: 'blur(0px)', duration: 0.9, ease: 'power2.out' },
     '-=0.35'
   )
 
@@ -185,7 +267,48 @@ function playIntro() {
     '-=0.5'
   )
 
-  tl.call(() => { revealTitle(); animateStats() }, null, '-=0.3')
+  tl.fromTo('.imm-hero-chip-wrap',
+    { opacity: 0, y: 26, scale: 0.7 },
+    { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'back.out(1.7)', stagger: 0.12 },
+    '-=0.45'
+  )
+
+  tl.fromTo('.imm-scroll-cue',
+    { opacity: 0, y: 12 },
+    { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
+    '-=0.3'
+  )
+
+  tl.call(() => { revealTitle(); animateStats() }, null, '-=0.2')
+
+  heroScrollTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: '#home',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true,
+    },
+  })
+  heroScrollTl
+    .to('.imm-home-content', { yPercent: -14, opacity: 0.25, ease: 'none' }, 0)
+    .to('.imm-hero-visual-stage', { yPercent: 12, ease: 'none' }, 0)
+    .to('.imm-scroll-cue', { opacity: 0, ease: 'none' }, 0)
+
+  doctorsRevealTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: '.imm-section--doctors',
+      start: 'top 78%',
+      once: true,
+    },
+  })
+  doctorsRevealTl
+    .fromTo('.imm-section--doctors .imm-section-header',
+      { y: 28, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' })
+    .fromTo('.imm-section--doctors .imm-doctor-card',
+      { y: 48, opacity: 0, scale: 0.98 },
+      { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'power2.out', stagger: 0.12 },
+      '-=0.35')
 }
 
 function initTiltCards() {
@@ -267,6 +390,8 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', updateScrollProgress)
   if (observer) observer.disconnect()
   if (testimonialInterval) clearInterval(testimonialInterval)
+  if (heroScrollTl) heroScrollTl.kill()
+  if (doctorsRevealTl) doctorsRevealTl.kill()
 })
 
 const navItems = computed(() => [
@@ -286,6 +411,7 @@ const icons: Record<string, string> = {
   users: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
   phone: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
   pin: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+  mail: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>',
   star: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
   arrow: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>',
   arrowFa: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>',
@@ -300,10 +426,7 @@ const icons: Record<string, string> = {
 </script>
 
 <template>
-  <LandingLoadingScreen
-    :show="showLoadingScreen"
-    @finished="isLoadingComplete = true"
-  />
+  <LandingLoadingScreen :show="showLoadingScreen" @finished="isLoadingComplete = true" />
 
   <div v-if="isLoadingComplete" class="imm-viewport">
 
@@ -315,43 +438,31 @@ const icons: Record<string, string> = {
     <!-- Background -->
 
     <!-- Cursor Glow -->
-    <div
-      class="imm-cursor-glow"
-      :class="{ visible: glowVisible }"
-      :style="{ '--glow-x': glowX + '%', '--glow-y': glowY + '%' }"
-      aria-hidden="true"
-    />
+    <div class="imm-cursor-glow" :class="{ visible: glowVisible }"
+      :style="{ '--glow-x': glowX + '%', '--glow-y': glowY + '%' }" aria-hidden="true" />
 
     <!-- Navigation -->
     <nav class="imm-nav" :class="{ scrolled: navScrolled }" role="navigation" aria-label="Main navigation">
       <a href="/" class="imm-nav-logo" :aria-label="t('landing.clinicName') + ' ' + t('landing.nav.home')">
         <div class="imm-nav-logo-icon bg-[#2563eb]" aria-hidden="true">
-          <img src="~/assets/images/hastihoseinilogo.png" :alt="t('landing.clinicName')" class="imm-nav-logo-img" width="40" height="40" />
+          <img src="~/assets/images/hastihoseinilogo.png" :alt="t('landing.clinicName')" class="imm-nav-logo-img"
+            width="40" height="40" />
         </div>
         <span class="imm-nav-logo-text pt-2 hidden md:flex">{{ t('landing.clinicName') }}</span>
       </a>
 
       <div class="imm-nav-tabs" role="tablist" aria-label="Page sections">
-        <button
-          v-for="item in navItems"
-          :key="item.id"
-          role="tab"
-          :aria-selected="activeSection === item.id"
-          class="imm-nav-tab"
-          :class="{ active: activeSection === item.id && sectionIds.includes(item.id) }"
-          @click="handleNavClick(item.id)"
-        >
+        <button v-for="item in navItems" :key="item.id" role="tab" :aria-selected="activeSection === item.id"
+          class="imm-nav-tab" :class="{ active: activeSection === item.id && sectionIds.includes(item.id) }"
+          @click="handleNavClick(item.id)">
           {{ item.label }}
         </button>
       </div>
 
       <div class="imm-nav-actions">
         <BackgroundMusic />
-        <button
-          class="imm-theme-toggle"
-          :title="isLight ? t('landing.theme.dark') : t('landing.theme.light')"
-          @click="toggleTheme"
-        >
+        <button class="imm-theme-toggle" :title="isLight ? t('landing.theme.dark') : t('landing.theme.light')"
+          @click="toggleTheme">
           <span v-if="isLight" v-html="icons.moon" aria-hidden="true" />
           <span v-else v-html="icons.sun" aria-hidden="true" />
         </button>
@@ -366,12 +477,8 @@ const icons: Record<string, string> = {
       </div>
 
       <!-- Mobile Hamburger -->
-      <button
-        class="imm-nav-hamburger"
-        :aria-label="mobileMenuOpen ? 'Close menu' : 'Open menu'"
-        :aria-expanded="mobileMenuOpen"
-        @click="toggleMobileMenu"
-      >
+      <button class="imm-nav-hamburger" :aria-label="mobileMenuOpen ? 'Close menu' : 'Open menu'"
+        :aria-expanded="mobileMenuOpen" @click="toggleMobileMenu">
         <span v-if="!mobileMenuOpen" v-html="icons.hamburger" aria-hidden="true" />
         <span v-else v-html="icons.close" aria-hidden="true" />
       </button>
@@ -379,20 +486,11 @@ const icons: Record<string, string> = {
 
     <!-- Mobile Menu Drawer -->
     <Transition name="imm-mobile-menu">
-      <div
-        v-if="mobileMenuOpen"
-        class="imm-mobile-drawer"
-        role="dialog"
-        aria-label="Mobile navigation"
-      >
+      <div v-if="mobileMenuOpen" class="imm-mobile-drawer" role="dialog" aria-label="Mobile navigation">
         <div class="imm-mobile-drawer-content">
-          <button
-            v-for="item in navItems"
-            :key="item.id"
-            class="imm-mobile-drawer-tab"
+          <button v-for="item in navItems" :key="item.id" class="imm-mobile-drawer-tab"
             :class="{ active: activeSection === item.id && sectionIds.includes(item.id) }"
-            @click="handleNavClick(item.id)"
-          >
+            @click="handleNavClick(item.id)">
             {{ item.label }}
           </button>
           <div class="imm-mobile-drawer-divider" />
@@ -417,14 +515,8 @@ const icons: Record<string, string> = {
 
     <!-- Navigation Dots -->
     <div class="imm-nav-dots" role="navigation" aria-label="Section navigation">
-      <button
-        v-for="id in sectionIds"
-        :key="id"
-        class="imm-nav-dot"
-        :class="{ active: sectionInView === id }"
-        :aria-label="`Go to ${id} section`"
-        @click="scrollToSection(id)"
-      />
+      <button v-for="id in sectionIds" :key="id" class="imm-nav-dot" :class="{ active: sectionInView === id }"
+        :aria-label="`Go to ${id} section`" @click="scrollToSection(id)" />
     </div>
 
     <!-- ═══ Sections ═══ -->
@@ -432,31 +524,31 @@ const icons: Record<string, string> = {
 
       <!-- ── HOME ── -->
       <section id="home" class="imm-section imm-section--home" data-section="home">
+        <div class="imm-hero-bg" aria-hidden="true">
+          <div class="imm-hero-aurora imm-hero-aurora--1"></div>
+          <div class="imm-hero-aurora imm-hero-aurora--2"></div>
+          <div class="imm-hero-aurora imm-hero-aurora--3"></div>
+          <div class="imm-hero-grid"></div>
+        </div>
+
         <div class="imm-home">
           <div v-dir class="imm-home-content">
             <div class="scene-stagger imm-home-badge">
               <span class="imm-home-badge-dot" />
               {{ t('landing.home.badge') }}
+              <span class="imm-home-badge-shine" aria-hidden="true" />
             </div>
             <h1 class="scene-stagger imm-home-title text-center">
               <span class="imm-reveal-text">
-                <span
-                  v-for="(word, i) in titleWords"
-                  :key="'tw-' + i"
-                  class="imm-reveal-word"
-                  :class="{ revealed: titleRevealed }"
-                  :style="{ transitionDelay: (i * 80) + 'ms' }"
-                >{{ word }}&nbsp;</span>
+                <span v-for="(word, i) in titleWords" :key="'tw-' + i" class="imm-reveal-word"
+                  :class="{ revealed: titleRevealed }" :style="{ transitionDelay: (i * 80) + 'ms' }">{{ word
+                  }}&nbsp;</span>
               </span>
               <br />
               <span class="imm-reveal-text imm-home-title-accent">
-                <span
-                  v-for="(word, i) in titleAccentWords"
-                  :key="'taw-' + i"
-                  class="imm-reveal-word"
+                <span v-for="(word, i) in titleAccentWords" :key="'taw-' + i" class="imm-reveal-word"
                   :class="{ revealed: titleRevealed }"
-                  :style="{ transitionDelay: ((titleWords.length + i) * 80 + 100) + 'ms' }"
-                >{{ word }}&nbsp;</span>
+                  :style="{ transitionDelay: ((titleWords.length + i) * 80 + 100) + 'ms' }">{{ word }}&nbsp;</span>
               </span>
             </h1>
             <div class="scene-stagger imm-title-rule w-full! justify-center align-middle" aria-hidden="true">
@@ -469,11 +561,13 @@ const icons: Record<string, string> = {
             </p>
             <div class="scene-stagger imm-home-actions flex justify-center align-middle items-center">
               <button v-dir class="imm-btn-primary imm-magnetic dir-ltr" @click="goToBooking">
-                {{ t('landing.home.cta.book') }}
-                <span v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" />
+                <span class="imm-btn-label">{{ t('landing.home.cta.book') }}</span>
+                <span class="imm-btn-icon" v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" />
+                <span class="imm-btn-shine" aria-hidden="true" />
               </button>
               <button class="imm-btn-secondary" @click="router.push('/auth/login')">
                 {{ t('landing.home.cta.login') }}
+                <span class="imm-btn-shine" aria-hidden="true" />
               </button>
             </div>
             <div v-dir class="scene-stagger imm-home-stats flex justify-center align-middle items-center">
@@ -495,44 +589,90 @@ const icons: Record<string, string> = {
               </div>
             </div>
           </div>
+
           <div class="imm-home-visual scene-stagger" aria-hidden="true">
-            <div class="imm-lottie-container" :style="parallaxLottie">
-              <LottiePlayer src="/lottie/health_insurance.json" />
+            <div class="imm-hero-visual-stage">
+              <div class="imm-hero-pulse-ring"></div>
+              <div class="imm-hero-pulse-ring imm-hero-pulse-ring--2"></div>
+              <div class="imm-hero-orb imm-hero-orb--blue"></div>
+              <div class="imm-hero-orb imm-hero-orb--cyan"></div>
+
+              <div class="imm-lottie-panel" :style="parallaxLottie">
+                <LottiePlayer src="/lottie/health_insurance.json" />
+              </div>
+
+              <div class="imm-hero-chip-wrap imm-hero-chip-wrap--appt">
+                <div class="imm-hero-chip">
+                  <span class="imm-hero-chip-icon" v-html="icons.clock" />
+                  <span class="imm-hero-chip-text">
+                    <span class="imm-hero-chip-label">{{ t('landing.home.nextAppointment') }}</span>
+                    <span class="imm-hero-chip-value">{{ t('landing.home.appointmentTime') }}</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="imm-hero-chip-wrap imm-hero-chip-wrap--online">
+                <div class="imm-hero-chip">
+                  <span class="imm-hero-chip-dot" />
+                  {{ t('landing.home.onlineDoctors') }}
+                </div>
+              </div>
+
+              <div class="imm-hero-chip-wrap imm-hero-chip-wrap--satisfaction">
+                <div class="imm-hero-chip">
+                  <span class="imm-hero-chip-icon" v-html="icons.shield" />
+                  <span class="imm-hero-chip-value">{{ pn(statSatisfaction) }}% {{ t('landing.home.satisfaction')
+                  }}</span>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+
+        <div class="imm-scroll-cue" aria-hidden="true">
+          <span class="imm-scroll-cue-mouse"><span class="imm-scroll-cue-wheel" /></span>
+          <span class="imm-scroll-cue-label">{{ t('landing.home.scroll') }}</span>
         </div>
       </section>
 
       <!-- ── OUR SERVICES ── -->
       <section id="services" class="imm-section imm-section--services" data-section="services">
         <div class="imm-services">
+          <div class="imm-services-bg" aria-hidden="true">
+            <div class="imm-services-bg-orbe imm-services-bg-orbe--1"></div>
+            <div class="imm-services-bg-orbe imm-services-bg-orbe--2"></div>
+            <div class="imm-services-bg-orbe imm-services-bg-orbe--3"></div>
+          </div>
+
           <div class="scene-stagger imm-section-header">
             <div class="imm-section-badge">
               <span v-html="icons.medical" aria-hidden="true" />
               {{ t('landing.services.badge') }}
             </div>
             <h2 class="imm-section-title">
-              {{ t('landing.services.title1') }} <span class="imm-section-title-accent">{{ t('landing.services.title2') }}</span>
+              {{ t('landing.services.title1') }} <span class="imm-section-title-accent">{{ t('landing.services.title2')
+              }}</span>
             </h2>
           </div>
+
           <div class="imm-services-grid">
-            <div
-              v-for="(service, i) in services"
-              :key="i"
-              class="scene-stagger imm-service-card imm-tilt-card"
-            >
+            <div v-for="(service, i) in services" :key="i" v-dir
+              class="scene-stagger imm-service-card imm-tilt-card dir-ltr">
+              <div class="imm-service-num" aria-hidden="true">{{ String(i + 1).padStart(2, '0') }}</div>
+              <div class="imm-service-card-bg" aria-hidden="true"></div>
               <div class="imm-service-icon" :class="`imm-service-icon--${service.colorClass}`">
                 <span v-html="icons[service.icon]" />
               </div>
               <h3 class="imm-service-title">{{ t(service.titleKey) }}</h3>
-              <p class="imm-service-desc">{{ t(service.descKey) }}</p>
+              <p v-dir class="imm-service-desc">{{ t(service.descKey) }}</p>
+              <div class="imm-service-bar mt-4" :class="`imm-service-bar--${service.colorClass}`"></div>
             </div>
           </div>
         </div>
       </section>
 
       <!-- ── DOCTORS ── -->
-      <section id="doctors" class="imm-section imm-section--doctors" data-section="doctors">
+      <section v-if="showDoctorsSection" id="doctors" class="imm-section imm-section--doctors" data-section="doctors">
         <div class="imm-doctors">
           <div class="scene-stagger imm-section-header">
             <div class="imm-section-badge">
@@ -540,52 +680,124 @@ const icons: Record<string, string> = {
               {{ t('landing.doctors.badge') }}
             </div>
             <h2 class="imm-section-title">
-              {{ t('landing.doctors.title1') }} <span class="imm-section-title-accent">{{ t('landing.doctors.title2') }}</span>
+              {{ t('landing.doctors.title1') }} <span class="imm-section-title-accent">{{ t('landing.doctors.title2')
+              }}</span>
             </h2>
+            <p class="imm-doctors-desc">{{ t('landing.doctors.desc') }}</p>
+            <div class="imm-doctors-divider" aria-hidden="true">
+              <span class="imm-doctors-divider-line" />
+              <span class="imm-doctors-divider-pulse" />
+              <span class="imm-doctors-divider-line" />
+            </div>
           </div>
-          <div class="imm-doctors-grid">
-            <div
-              v-for="(doc, i) in doctors"
-              :key="i"
-              class="scene-stagger imm-doctor-card imm-tilt-card"
-            >
-              <div class="imm-doctor-img-wrap">
-                <img
-                  v-if="doc.img"
-                  :src="doc.img"
-                  :alt="lang === 'fa' ? doc.name : doc.nameEn"
-                  class="imm-doctor-img"
-                  loading="lazy"
-                />
-                <div v-else class="imm-doctor-img-placeholder" aria-hidden="true">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                  </svg>
-                </div>
+
+          <div v-if="doctorsPending" class="imm-doctors-grid imm-doctors-grid--skeleton" aria-hidden="true">
+            <div class="imm-doctor-card imm-doctor-card--featured imm-doctor-card--blue imm-skeleton-card">
+              <div class="imm-doctor-media">
+                <div class="imm-skeleton imm-skeleton--media"></div>
               </div>
-              <div class="imm-doctor-info">
-                <h3 class="imm-doctor-name">{{ lang === 'fa' ? doc.name : doc.nameEn }}</h3>
-                <p class="imm-doctor-specialty">{{ lang === 'fa' ? doc.specialty : doc.specialtyEn }}</p>
-                <div class="imm-doctor-stats">
-                  <span class="imm-doctor-stat">
-                    <span v-html="icons.clock" />
-                    {{ lang === 'fa' ? doc.experience : doc.experienceEn }}
-                  </span>
-                  <span class="imm-doctor-stat">
-                    <span v-html="icons.users" />
-                    {{ lang === 'fa' ? doc.patients : doc.patientsEn }}
-                  </span>
-                  <span class="imm-doctor-stat" style="color: #fbbf24;">
-                    <span v-html="icons.star" />
-                    {{ doc.rating }}
-                  </span>
-                </div>
-                <button class="imm-doctor-book-btn" @click="goToBooking">
-                  {{ t('landing.doctors.book') }}
-                </button>
+              <div class="imm-doctor-body">
+                <div class="imm-skeleton imm-skeleton--pill"></div>
+                <div class="imm-skeleton imm-skeleton--line imm-skeleton--name"></div>
+                <div class="imm-skeleton imm-skeleton--line"></div>
+                <div class="imm-skeleton imm-skeleton--line imm-skeleton--short"></div>
               </div>
             </div>
+            <div v-for="n in 3" :key="n" class="imm-doctor-card imm-doctor-card--side imm-skeleton-card">
+              <div class="imm-doctor-thumb">
+                <div class="imm-skeleton imm-skeleton--thumb"></div>
+              </div>
+              <div class="imm-doctor-side-info">
+                <div class="imm-skeleton imm-skeleton--line imm-skeleton--name"></div>
+                <div class="imm-skeleton imm-skeleton--line imm-skeleton--short"></div>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="imm-doctors-grid">
+            <!-- Featured doctor -->
+            <article
+              class="scene-stagger imm-doctor-card imm-doctor-card--featured imm-tilt-card imm-doctor-card--blue">
+              <div class="imm-doctor-media">
+                <img v-if="featuredDoctor?.photoUrl" :src="featuredDoctor.photoUrl" :alt="doctorName(featuredDoctor)"
+                  class="imm-doctor-img" loading="lazy" />
+                <div v-else class="imm-doctor-monogram imm-doctor-monogram--lg" aria-hidden="true">
+                  {{ doctorInitials(doctorName(featuredDoctor)) }}
+                </div>
+                <span class="imm-doctor-status">
+                  <span class="imm-doctor-status-dot" aria-hidden="true" />
+                  {{ t('landing.doctors.available') }}
+                </span>
+                <svg class="imm-ecg" viewBox="0 0 600 60" preserveAspectRatio="none" aria-hidden="true">
+                  <polyline
+                    points="0,30 80,30 100,30 118,14 138,46 158,30 290,30 310,30 328,8 348,52 368,30 510,30 532,30 550,21 568,39 590,30 600,30" />
+                </svg>
+                <span class="imm-doctor-num" aria-hidden="true">01</span>
+                <span class="imm-doctor-media-glow" aria-hidden="true" />
+              </div>
+              <div class="imm-doctor-body">
+                <span class="imm-doctor-specialty-pill">{{ doctorSpecialty(featuredDoctor) }}</span>
+                <h3 class="imm-doctor-name">{{ doctorName(featuredDoctor) }}</h3>
+                <p class="imm-doctor-about">{{ doctorBio(featuredDoctor) }}</p>
+                <div class="imm-doctor-credentials">
+                  <span class="imm-doctor-metric">
+                    <span class="imm-doctor-metric-ico" v-html="icons.clock" aria-hidden="true" />
+                    <span class="imm-doctor-metric-val">{{ doctorExperience(featuredDoctor) }}</span>
+                  </span>
+                  <span class="imm-doctor-metric">
+                    <span class="imm-doctor-metric-ico" v-html="icons.users" aria-hidden="true" />
+                    <span class="imm-doctor-metric-val">{{ doctorPatients(featuredDoctor) }}</span>
+                  </span>
+                </div>
+                <div class="imm-doctor-body-actions">
+                  <span class="imm-doctor-rating"
+                    :aria-label="`${t('landing.doctors.rating')} ${doctorRating(featuredDoctor)} / 5`">
+                    <span v-html="icons.star" aria-hidden="true" />
+                    {{ doctorRating(featuredDoctor) }}<span class="imm-doctor-rating-max">/5</span>
+                  </span>
+                  <button class="imm-doctor-book-btn" @click="goToDoctorBooking(featuredDoctor?.id)">
+                    <span>{{ t('landing.doctors.book') }}</span>
+                    <span class="imm-doctor-book-arrow" v-html="isRtl ? icons.arrowFa : icons.arrow"
+                      aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <!-- Side doctors -->
+            <article v-for="(doc, i) in sideDoctors" :key="doc.id"
+              :class="['scene-stagger', 'imm-doctor-card', 'imm-doctor-card--side', 'imm-tilt-card', sideDoctorAccents[i % sideDoctorAccents.length]]">
+              <div class="imm-doctor-thumb">
+                <img v-if="doc.photoUrl" :src="doc.photoUrl" :alt="doctorName(doc)" class="imm-doctor-img"
+                  loading="lazy" />
+                <div v-else class="imm-doctor-monogram" aria-hidden="true">{{ doctorInitials(doctorName(doc)) }}</div>
+                <span class="imm-doctor-num" aria-hidden="true">{{ String(i + 2).padStart(2, '0') }}</span>
+              </div>
+              <div class="imm-doctor-side-info">
+                <h3 class="imm-doctor-name">{{ doctorName(doc) }}</h3>
+                <p class="imm-doctor-specialty">{{ doctorSpecialty(doc) }}</p>
+                <div class="imm-doctor-side-meta">
+                  <span class="imm-doctor-metric">
+                    <span class="imm-doctor-metric-ico" v-html="icons.clock" aria-hidden="true" />
+                    <span class="imm-doctor-metric-val">{{ doctorExperience(doc) }}</span>
+                  </span>
+                  <span class="imm-doctor-metric">
+                    <span class="imm-doctor-metric-ico" v-html="icons.users" aria-hidden="true" />
+                    <span class="imm-doctor-metric-val">{{ doctorPatients(doc) }}</span>
+                  </span>
+                </div>
+              </div>
+              <div class="imm-doctor-side-actions">
+                <span class="imm-doctor-rating" :aria-label="`${t('landing.doctors.rating')} ${doctorRating(doc)} / 5`">
+                  <span v-html="icons.star" aria-hidden="true" />
+                  {{ doctorRating(doc) }}
+                </span>
+                <button class="imm-doctor-book-btn" @click="goToDoctorBooking(doc.id)"
+                  :aria-label="`${t('landing.doctors.book')} — ${doctorName(doc)}`">
+                  <span class="imm-doctor-book-arrow" v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" />
+                </button>
+              </div>
+            </article>
           </div>
         </div>
       </section>
@@ -605,18 +817,35 @@ const icons: Record<string, string> = {
               {{ t('landing.contact.desc') }}
             </p>
             <div v-dir class="scene-stagger imm-contact-items dir-ltr">
-              <div v-for="(item, i) in contactItems" :key="i" class="imm-contact-item">
+              <component :is="item.href ? 'a' : 'div'" v-for="(item, i) in contactItems" :key="i"
+                class="imm-contact-item" :class="{ 'imm-contact-item--static': !item.href }"
+                :href="item.href || undefined" :target="item.external ? '_blank' : undefined"
+                :rel="item.external ? 'noopener noreferrer' : undefined">
                 <div class="imm-contact-item-icon">
                   <span v-html="icons[item.icon]" />
                 </div>
-                <div>
+                <div class="imm-contact-item-body">
                   <div class="imm-contact-item-label">{{ t(item.labelKey) }}</div>
                   <div class="imm-contact-item-value">{{ item.value }}</div>
                 </div>
-              </div>
+              </component>
+            </div>
+            <div class="scene-stagger imm-contact-status">
+              <span class="imm-contact-status-dot" aria-hidden="true" />
+              {{ t('landing.contact.online') }}
             </div>
           </div>
-          <div class="scene-stagger imm-contact-form-wrap">
+          <div class="scene-stagger imm-contact-form-shell">
+            <div class="imm-contact-ring imm-contact-ring--a" aria-hidden="true" />
+            <div class="imm-contact-ring imm-contact-ring--b" aria-hidden="true" />
+            <div class="imm-contact-form-head">
+              <img class="imm-contact-avatar" :aria-label="t('landing.contact.formTitle')"
+                src="../assets/images/support.png" />
+              <div class="imm-contact-form-head-text">
+                <div class="imm-contact-form-title">{{ t('landing.contact.formTitle') }}</div>
+                <div class="imm-contact-form-desc">{{ t('landing.contact.formDesc') }}</div>
+              </div>
+            </div>
             <Transition name="imm-form-fade" mode="out-in">
               <div v-if="formSubmitted" class="imm-form-success" key="success">
                 <div class="imm-success-check">
@@ -629,42 +858,56 @@ const icons: Record<string, string> = {
                   {{ t('landing.contact.successDesc') }}
                 </div>
                 <button class="imm-btn-secondary" style="margin-top: 0.5rem;" @click="resetForm">
-                  {{ t('landing.contact.successBtn') }}
+                  {{ t('landing.contact.reset') }}
+                  <span class="imm-btn-shine" aria-hidden="true" />
                 </button>
               </div>
               <form v-else class="imm-form" key="form" @submit.prevent="onSubmitForm">
                 <div class="imm-form-row">
                   <div class="imm-form-group">
                     <label class="imm-form-label" for="contact-name">{{ t('landing.contact.formName') }}</label>
-                    <input id="contact-name" v-model="contactForm.name" class="imm-form-input" type="text" :placeholder="t('landing.contact.formNamePlaceholder')" required />
+                    <input id="contact-name" v-model="contactForm.name" class="imm-form-input" type="text"
+                      :placeholder="t('landing.contact.formNamePlaceholder')" required />
                   </div>
                   <div class="imm-form-group">
                     <label class="imm-form-label" for="contact-phone">{{ t('landing.contact.formPhone') }}</label>
-                    <input id="contact-phone" v-model="contactForm.phone" class="imm-form-input" type="tel" :placeholder="t('landing.contact.formPhonePlaceholder')" required />
+                    <input id="contact-phone" v-model="contactForm.phone" class="imm-form-input" type="tel"
+                      :placeholder="t('landing.contact.formPhonePlaceholder')" required />
                   </div>
                 </div>
                 <div class="imm-form-group">
                   <label class="imm-form-label" for="contact-service">{{ t('landing.contact.formService') }}</label>
-                  <select id="contact-service" v-model="contactForm.service" class="imm-form-select">
-                    <option value="" disabled>{{ t('landing.contact.formServiceSelect') }}</option>
-                    <option value="cardiology">{{ t('landing.services.cardiologyTitle') }}</option>
-                    <option value="dermatology">{{ t('landing.services.dermatologyTitle') }}</option>
-                    <option value="general">{{ t('landing.services.generalTitle') }}</option>
-                    <option value="lab">{{ t('landing.services.labTitle') }}</option>
-                    <option value="emergency">{{ t('landing.services.emergencyTitle') }}</option>
-                    <option value="consult">{{ t('landing.services.consultTitle') }}</option>
-                  </select>
+                  <div class="imm-form-select-wrap">
+                    <select id="contact-service" v-model="contactForm.service" class="imm-form-select w-full">
+                      <option value="" disabled>{{ t('landing.contact.formServiceSelect') }}</option>
+                      <option v-for="opt in serviceOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                    </select>
+                  </div>
                 </div>
                 <div class="imm-form-group">
                   <label class="imm-form-label" for="contact-msg">{{ t('landing.contact.formMessage') }}</label>
-                  <textarea id="contact-msg" v-model="contactForm.message" class="imm-form-textarea" rows="3" :placeholder="t('landing.contact.formMessagePlaceholder')" />
+                  <textarea id="contact-msg" v-model="contactForm.message" class="imm-form-textarea" rows="3"
+                    :placeholder="t('landing.contact.formMessagePlaceholder')" />
                 </div>
-                <button type="submit" :disabled="submittingForm" class="imm-form-submit imm-magnetic flex justify-center align-middle items-center gap-1">
-                  {{ submittingForm ? t('landing.contact.formSubmitting') || t('landing.contact.formSubmit') : t('landing.contact.formSubmit') }}
+                <button type="submit" :disabled="submittingForm"
+                  class="imm-form-submit imm-magnetic flex justify-center align-middle items-center gap-1 text-white!">
+                  <span class="imm-btn-shine" aria-hidden="true" />
+                  {{ submittingForm ? t('landing.contact.formSubmitting') || t('landing.contact.formSubmit') :
+                    t('landing.contact.formSubmit') }}
                   <span v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" style="display: inline-flex;" />
                 </button>
               </form>
             </Transition>
+            <div class="imm-contact-chips">
+              <span class="imm-contact-chip">
+                <span class="imm-contact-chip-icon" v-html="icons.check" aria-hidden="true" />
+                {{ t('landing.contact.instantReply') }}
+              </span>
+              <span class="imm-contact-chip">
+                <span class="imm-contact-chip-icon" v-html="icons.shield" aria-hidden="true" />
+                {{ t('landing.contact.secure') }}
+              </span>
+            </div>
           </div>
         </div>
       </section>

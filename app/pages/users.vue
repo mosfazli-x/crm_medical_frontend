@@ -74,6 +74,16 @@
                             </td>
                             <td class="px-6 py-4 text-center whitespace-nowrap">
                                 <div class="flex justify-center items-center gap-1">
+                                    <template v-if="user.role === 'doctor'">
+                                        <v-tooltip :text="$t('users.editDoctorProfile')" location="top">
+                                            <template v-slot:activator="{ props }">
+                                                <v-btn v-bind="props" icon variant="text" size="small" class="text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50" @click.stop="openDoctorProfileDialog(user)">
+                                                    <v-icon size="20">mdi-doctor</v-icon>
+                                                </v-btn>
+                                            </template>
+                                        </v-tooltip>
+                                    </template>
+
                                     <template v-if="user.status === 'pending'">
                                         <v-tooltip v-if="user.role !== 'patient'" :text="$t('users.approveUser')" location="top">
                                             <template v-slot:activator="{ props }">
@@ -131,6 +141,68 @@
         </UiContentCard>
 
         <ApprovePatientDialog v-model="approvePatientDialog" :user="selectedUser" @approved="onUserApproved" />
+
+        <v-dialog v-model="doctorProfileDialog" max-width="640" @update:model-value="onDoctorDialogClose">
+            <v-card class="rounded-2xl">
+                <v-card-title class="text-lg font-bold flex items-center justify-between px-6 pt-6">
+                    <span>{{ $t('users.editDoctorProfile') }} — {{ doctorProfileUser?.fullName || '' }}</span>
+                    <v-btn icon variant="text" size="small" @click="doctorProfileDialog = false">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                </v-card-title>
+                <v-card-text class="px-6 pb-2 pt-2">
+                    <p class="text-sm text-slate-500 dark:text-slate-300 mb-4">{{ $t('users.doctorProfileHint') }}</p>
+
+                    <div class="space-y-4">
+                        <v-text-field v-model="profileForm.specialty" :label="$t('users.specialty')"
+                            :placeholder="$t('users.specialtyPlaceholder')" variant="outlined" density="comfortable" />
+                        <v-textarea v-model="profileForm.bio" :label="$t('users.bio')"
+                            :placeholder="$t('users.bioPlaceholder')" variant="outlined" density="comfortable"
+                            rows="3" auto-grow />
+                        <div class="grid grid-cols-2 gap-4">
+                            <v-text-field v-model.number="profileForm.experienceYears"
+                                :label="$t('users.experienceYears')" type="number" min="0" variant="outlined"
+                                density="comfortable" />
+                            <v-text-field v-model.number="profileForm.patientsCount"
+                                :label="$t('users.patientsCount')" type="number" min="0" variant="outlined"
+                                density="comfortable" />
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <v-text-field v-model.number="profileForm.rating" :label="$t('users.rating')"
+                                type="number" min="0" max="5" step="0.1" variant="outlined"
+                                density="comfortable" />
+                            <v-text-field v-model.number="profileForm.sortOrder" :label="$t('users.sortOrder')"
+                                type="number" variant="outlined" density="comfortable"
+                                :hint="$t('users.sortOrderHint')" persistent-hint />
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-20 h-20 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700 flex items-center justify-center shrink-0">
+                                <img v-if="profilePhotoPreview" :src="profilePhotoPreview"
+                                    alt="" class="w-full h-full object-cover" />
+                                <img v-else-if="profileForm.photoUrl" :src="profileForm.photoUrl"
+                                    alt="" class="w-full h-full object-cover" />
+                                <v-icon v-else color="slate-400" size="32">mdi-account-circle-outline</v-icon>
+                            </div>
+                            <v-file-input :label="$t('users.uploadPhoto')"
+                                accept="image/png,image/jpeg,image/webp,image/gif"
+                                prepend-icon="mdi-camera-outline" variant="outlined" density="comfortable"
+                                :loading="photoUploading" @update:model-value="onDoctorPhotoSelected" />
+                        </div>
+                    </div>
+                </v-card-text>
+                <v-card-actions class="px-6 pb-6 pt-2">
+                    <v-btn variant="tonal" color="slate" @click="doctorProfileDialog = false">
+                        {{ $t('common.cancel') }}
+                    </v-btn>
+                    <v-spacer />
+                    <v-btn :loading="profileSaving" color="#4F46E5" @click="saveDoctorProfile">
+                        <v-icon start>mdi-content-save-outline</v-icon>
+                        {{ $t('users.saveProfile') }}
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </UiPageContainer>
 </template>
 
@@ -149,6 +221,22 @@ const loading = ref(true)
 const statusTab = ref<'all' | 'pending' | 'approved' | 'rejected'>('pending')
 const selectedUser = ref<any>(null)
 const approvePatientDialog = ref(false)
+
+const doctorProfileDialog = ref(false)
+const doctorProfileUser = ref<any>(null)
+const profileSaving = ref(false)
+const photoUploading = ref(false)
+const profileForm = ref({
+    specialty: '',
+    bio: '',
+    experienceYears: null as number | null,
+    patientsCount: null as number | null,
+    rating: null as number | null,
+    sortOrder: null as number | null,
+    photoUrl: null as string | null,
+})
+const profilePhotoPreview = ref<string | null>(null)
+const profilePhotoFile = ref<File | null>(null)
 
 // نگاشت تنظیمات نقش‌ها برای خوانایی بهتر کد
 const roleConfig: Record<string, { label: string, bg: string, text: string, ring: string }> = {
@@ -239,6 +327,99 @@ const toggleStatus = async (user: any) => {
 const openApprovePatientDialog = (user: any) => {
     selectedUser.value = user
     approvePatientDialog.value = true
+}
+
+const openDoctorProfileDialog = async (user: any) => {
+    doctorProfileUser.value = user
+    profileForm.value = {
+        specialty: '',
+        bio: '',
+        experienceYears: null,
+        patientsCount: null,
+        rating: null,
+        sortOrder: null,
+        photoUrl: null,
+    }
+    profilePhotoPreview.value = null
+    profilePhotoFile.value = null
+    doctorProfileDialog.value = true
+
+    try {
+        const response = await apiFetch(`/api/doctor-profiles/${user.id}`)
+        if (response.success && response.data) {
+            const p = response.data
+            profileForm.value = {
+                specialty: p.specialty || '',
+                bio: p.bio || '',
+                experienceYears: p.experienceYears ?? null,
+                patientsCount: p.patientsCount ?? null,
+                rating: p.rating != null ? Number(p.rating) : null,
+                sortOrder: p.sortOrder ?? null,
+                photoUrl: p.photoUrl || null,
+            }
+        }
+    } catch {
+        $toast.error(t('users.profileFetchError'))
+    }
+}
+
+const onDoctorDialogClose = (open: boolean) => {
+    if (!open) {
+        profilePhotoFile.value = null
+        profilePhotoPreview.value = null
+    }
+}
+
+const onDoctorPhotoSelected = (file: File | null) => {
+    profilePhotoFile.value = file ?? null
+    profilePhotoPreview.value = file ? URL.createObjectURL(file) : null
+}
+
+const saveDoctorProfile = async () => {
+    const user = doctorProfileUser.value
+    if (!user) return
+
+    profileSaving.value = true
+    try {
+        const payload: Record<string, string | number | null> = {}
+        if (profileForm.value.specialty) payload.specialty = profileForm.value.specialty
+        if (profileForm.value.bio) payload.bio = profileForm.value.bio
+        if (profileForm.value.experienceYears != null) payload.experienceYears = profileForm.value.experienceYears
+        if (profileForm.value.patientsCount != null) payload.patientsCount = profileForm.value.patientsCount
+        if (profileForm.value.rating != null) payload.rating = profileForm.value.rating
+        if (profileForm.value.sortOrder != null) payload.sortOrder = profileForm.value.sortOrder
+
+        const response = await apiFetch(`/api/doctor-profiles/${user.id}`, {
+            method: 'PUT',
+            body: payload,
+        })
+        if (!response.success) {
+            $toast.error(t('users.profileSaveError'))
+            return
+        }
+
+        if (profilePhotoFile.value) {
+            const formData = new FormData()
+            formData.append('photo', profilePhotoFile.value)
+            const photoResponse = await apiFetch(`/api/doctor-profiles/${user.id}/photo`, {
+                method: 'POST',
+                body: formData,
+            })
+            if (!photoResponse.success) {
+                $toast.error(t('users.photoUploadError'))
+            } else {
+                $toast.success(t('users.photoUploaded'))
+            }
+        }
+
+        $toast.success(t('users.profileSaved'))
+        doctorProfileDialog.value = false
+        emit('user:changed')
+    } catch {
+        $toast.error(t('users.profileSaveError'))
+    } finally {
+        profileSaving.value = false
+    }
 }
 
 const onUserApproved = () => {

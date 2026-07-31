@@ -13,7 +13,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     routeRules: {
-      '/api/**': { proxy: 'http://localhost:3101/api/**' },
+      '/api/**': { proxy: 'http://localhost:3001/api/**' },
     },
   },
 
@@ -69,6 +69,9 @@ export default defineNuxtConfig({
     lazy: true,
     langDir: '../locales',
     strategy: 'no_prefix',
+    experimental: {
+      localeDetector: 'localeDetector.ts',
+    },
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: 'i18n_lang',

@@ -496,7 +496,25 @@
     "patientApproved": "Patient record created and account activated.",
     "fetchError": "Error fetching user list.",
     "serverError": "Server connection error.",
-    "titleSeo": "User Management | Integrated System"
+    "titleSeo": "User Management | Integrated System",
+    "editDoctorProfile": "Edit Doctor Profile",
+    "doctorProfileHint": "This information is shown in the \"Doctors\" section of the landing page.",
+    "specialty": "Specialty",
+    "specialtyPlaceholder": "e.g. Cardiologist",
+    "bio": "Short bio",
+    "bioPlaceholder": "A short description about the doctor...",
+    "experienceYears": "Years of experience",
+    "patientsCount": "Patients count",
+    "rating": "Rating (0 to 5)",
+    "sortOrder": "Display order",
+    "sortOrderHint": "Lower number ranks higher on the landing page",
+    "uploadPhoto": "Upload doctor photo",
+    "saveProfile": "Save Profile",
+    "profileSaved": "Profile saved successfully.",
+    "profileSaveError": "Error saving profile.",
+    "photoUploaded": "Photo uploaded successfully.",
+    "photoUploadError": "Error uploading photo.",
+    "profileFetchError": "Error fetching doctor profile."
   },
   "messaging": {
     "atTime": "at",
@@ -1541,8 +1559,7 @@
     "steps": [
       "Date",
       "Visit Type",
-      "Time",
-      "Information"
+      "Time"
     ],
     "selectService": "Select a Service",
     "selectServiceDesc": "Choose the type of medical service you need",
@@ -1805,8 +1822,10 @@
       "nextAppointment": "Next Appointment",
       "appointmentTime": "Today, 4:00 PM",
       "onlineDoctors": "3 Online",
+      "satisfaction": "Satisfaction",
       "yearsLabel": "Yrs",
-      "yearsLabelEn": "Yrs"
+      "yearsLabelEn": "Yrs",
+      "scroll": "Scroll"
     },
     "ourStats": {
       "badge": "By the Numbers",
@@ -1836,6 +1855,11 @@
       "title1": "Our Expert",
       "title2": "Doctors",
       "book": "Book Appointment",
+      "desc": "A team of board-certified specialists devoted to precise, personal care.",
+      "available": "Available today",
+      "featuredBio": "Board-certified specialist with a decade of clinical excellence and a patient-first approach.",
+      "rating": "Rating",
+      "years": "yrs",
       "doctor1Name": "Dr. Sarah Mitchell",
       "doctor1Specialty": "Cardiologist",
       "doctor1Experience": "15 years",
@@ -1878,8 +1902,13 @@
       "badge": "Contact Us",
       "title": "Get in Touch",
       "desc": "Ready to experience premium healthcare? Reach out to us and we'll schedule your appointment at your convenience.",
+      "formTitle": "Send a Message",
+      "formDesc": "Fill in the form and our care team will reach out shortly.",
+      "online": "Online · usually replies within the hour",
       "phone": "Phone",
       "phoneValue": "+1 (555) 123-4567",
+      "email": "Email",
+      "emailValue": "info{'@'}ladiesneeds.com",
       "address": "Address",
       "addressValue": "123 Medical Center Dr, Suite 400",
       "hours": "Hours",
@@ -1893,9 +1922,13 @@
       "formMessage": "Message",
       "formMessagePlaceholder": "Tell us about your needs...",
       "formSubmit": "Send Request",
+      "instantReply": "Instant reply",
+      "secure": "Private & secure",
+      "avatarLetter": "DH",
       "successTitle": "Request Sent Successfully!",
       "successDesc": "Our team will get back to you as soon as possible.",
       "successBtn": "Send Another Request",
+      "reset": "Send Another Request",
       "formSubmitting": "Submitting..."
     },
     "loading": {
@@ -2298,7 +2331,7 @@
       "title2": "Visit",
       "desc": "Fill out the form below and we will contact you to confirm your appointment.",
       "phoneLabel": "Phone",
-      "phoneValue": "021-12345678",
+      "phoneValue": "09379412491",
       "addressLabel": "Address",
       "addressValue": "Tehran, Valiasr St.",
       "hoursLabel": "Working Hours",
@@ -2444,7 +2477,7 @@
       },
       "02": {
         "label": "Email",
-        "value": "info{'@'}drhosseini-clinic.ir"
+        "value": "info{'@'}ladiesneeds.com"
       },
       "03": {
         "label": "Address",

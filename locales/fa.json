@@ -84,7 +84,7 @@
     "quickLinks": "لینک‌های سریع",
     "contactUs": "تماس با ما",
     "phone": "تلفن",
-    "phoneValue": "۰۲۱-۱۲۳۴۵۶۷۸",
+    "phoneValue": "09379412491",
     "email": "ایمیل",
     "address": "آدرس",
     "addressValue": "تهران، خیابان ولیعصر",
@@ -496,7 +496,25 @@
     "patientApproved": "پرونده بیمار ایجاد و حساب کاربری فعال شد.",
     "fetchError": "خطا در دریافت لیست کاربران.",
     "serverError": "خطا در ارتباط با سرور.",
-    "titleSeo": "مدیریت کاربران | سیستم یکپارچه"
+    "titleSeo": "مدیریت کاربران | سیستم یکپارچه",
+    "editDoctorProfile": "ویرایش پروفایل پزشک",
+    "doctorProfileHint": "این اطلاعات در بخش «پزشکان» صفحه اصلی سایت نمایش داده می‌شود.",
+    "specialty": "تخصص",
+    "specialtyPlaceholder": "مثلاً: متخصص قلب",
+    "bio": "بیوگرافی کوتاه",
+    "bioPlaceholder": "توضیح کوتاهی درباره پزشک...",
+    "experienceYears": "سال سابقه",
+    "patientsCount": "تعداد بیماران",
+    "rating": "امتیاز (۰ تا ۵)",
+    "sortOrder": "اولویت نمایش",
+    "sortOrderHint": "عدد کمتر یعنی نمایش بالاتر در صفحه اصلی",
+    "uploadPhoto": "آپلود عکس پزشک",
+    "saveProfile": "ذخیره پروفایل",
+    "profileSaved": "پروفایل با موفقیت ذخیره شد.",
+    "profileSaveError": "خطا در ذخیره پروفایل.",
+    "photoUploaded": "عکس با موفقیت بارگذاری شد.",
+    "photoUploadError": "خطا در بارگذاری عکس.",
+    "profileFetchError": "خطا در دریافت پروفایل پزشک."
   },
   "messaging": {
     "atTime": "ساعت",
@@ -1541,8 +1559,7 @@
     "steps": [
       "تاریخ",
       "نوع نوبت",
-      "زمان",
-      "اطلاعات"
+      "زمان"
     ],
     "selectService": "انتخاب خدمت",
     "selectServiceDesc": "نوع خدمت پزشکی مورد نیاز خود را انتخاب کنید",
@@ -1805,8 +1822,10 @@
       "nextAppointment": "نوبت بعدی",
       "appointmentTime": "امروز، ساعت ۱۶:۰۰",
       "onlineDoctors": "۳ پزشک آنلاین",
+      "satisfaction": "رضایت بیمار",
       "yearsLabel": "سال",
-      "yearsLabelEn": "Yrs"
+      "yearsLabelEn": "Yrs",
+      "scroll": "اسکرول"
     },
     "ourStats": {
       "badge": "آمار عملکرد",
@@ -1836,6 +1855,11 @@
       "title1": "پزشکان",
       "title2": "متخصص ما",
       "book": "رزرو نوبت",
+      "desc": "تیمی از متخصصان حرفه‌ای که مراقبتی دقیق و شخصی به شما ارائه می‌دهند.",
+      "available": "امروز در دسترس",
+      "featuredBio": "متخصص دارای بورد تخصصی با سال‌ها تجربه بالینی درخشان و رویکردی بیمارمحور.",
+      "rating": "امتیاز",
+      "years": "سال",
       "doctor1Name": "دکتر هستی حسینی",
       "doctor1Specialty": "متخصص زنان",
       "doctor1Experience": "10 سال",
@@ -1878,10 +1902,15 @@
       "badge": "تماس با ما",
       "title": "ارتباط با ما",
       "desc": "آماده تجربه مراقبت درمانی ویژه هستید؟ با ما در تماس باشید و نوبت خود را رزرو کنید.",
+      "formTitle": "ارسال پیام",
+      "formDesc": "فرم را تکمیل کنید؛ تیم مراقبت ما به‌زودی با شما تماس می‌گیرد.",
+      "online": "آنلاین · معمولاً در کمتر از یک ساعت پاسخ می‌دهیم",
       "phone": "تلفن",
-      "phoneValue": "۰۲۱-۱۲۳۴۵۶۷۸",
+      "phoneValue": "09379412491",
+      "email": "ایمیل",
+      "emailValue": "info{'@'}ladiesneeds.com",
       "address": "آدرس",
-      "addressValue": "خیابان ولیعصر، مرکز پزشکی، طبقه ۴",
+      "addressValue": "تهران، پاسداران، بوستان هشتم، پلاک 146 ساختمان مهرا، طبقه 5 واحد 10",
       "hours": "ساعات کاری",
       "hoursValue": "شنبه تا پنجشنبه ۸ صبح تا ۸ شب",
       "formName": "نام کامل",
@@ -1893,9 +1922,13 @@
       "formMessage": "پیام",
       "formMessagePlaceholder": "نیاز خود را شرح دهید...",
       "formSubmit": "ارسال درخواست",
+      "instantReply": "پاسخ فوری",
+      "secure": "خصوصی و امن",
+      "avatarLetter": "دح",
       "successTitle": "درخواست شما ارسال شد!",
       "successDesc": "تیم ما در اسرع وقت با شما تماس خواهد گرفت.",
       "successBtn": "ارسال درخواست جدید",
+      "reset": "ارسال درخواست جدید",
       "formSubmitting": "در حال ارسال..."
     },
     "loading": {
@@ -2298,7 +2331,7 @@
       "title2": "خود را رزرو کنید",
       "desc": "فرم زیر را پر کنید تا در اسرع وقت با شما تماس بگیریم.",
       "phoneLabel": "تلفن",
-      "phoneValue": "۰۲۱-۱۲۳۴۵۶۷۸",
+      "phoneValue": "09379412491",
       "addressLabel": "آدرس",
       "addressValue": "تهران، خیابان ولیعصر",
       "hoursLabel": "ساعات کاری",
@@ -2440,11 +2473,11 @@
       "formSubmit": "ارسال پیام",
       "01": {
         "label": "تلفن",
-        "value": "۰۲۱-۱۲۳۴۵۶۷۸"
+        "value": "09379412491"
       },
       "02": {
         "label": "ایمیل",
-        "value": "info{'@'}drhosseini-clinic.ir"
+        "value": "info{'@'}ladiesneeds.com"
       },
       "03": {
         "label": "آدرس",
