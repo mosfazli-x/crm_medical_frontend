@@ -50,6 +50,11 @@ function doctorName(doc: LandingDoctor | undefined): string {
   return doc?.fullName || '—'
 }
 
+function doctorPhoto(doc: LandingDoctor | undefined): string | null {
+  if (!doc?.photoUrl || !doc.id) return null
+  return `/api/doctor-profiles/${doc.id}/photo`
+}
+
 function doctorSpecialty(doc: LandingDoctor | undefined): string {
   return doc?.specialty || ''
 }
@@ -719,7 +724,7 @@ const icons: Record<string, string> = {
             <article
               class="scene-stagger imm-doctor-card imm-doctor-card--featured imm-tilt-card imm-doctor-card--blue">
               <div class="imm-doctor-media">
-                <img v-if="featuredDoctor?.photoUrl" :src="featuredDoctor.photoUrl" :alt="doctorName(featuredDoctor)"
+                <img v-if="featuredDoctor?.photoUrl" :src="doctorPhoto(featuredDoctor)" :alt="doctorName(featuredDoctor)"
                   class="imm-doctor-img" loading="lazy" />
                 <div v-else class="imm-doctor-monogram imm-doctor-monogram--lg" aria-hidden="true">
                   {{ doctorInitials(doctorName(featuredDoctor)) }}
@@ -768,7 +773,7 @@ const icons: Record<string, string> = {
             <article v-for="(doc, i) in sideDoctors" :key="doc.id"
               :class="['scene-stagger', 'imm-doctor-card', 'imm-doctor-card--side', 'imm-tilt-card', sideDoctorAccents[i % sideDoctorAccents.length]]">
               <div class="imm-doctor-thumb">
-                <img v-if="doc.photoUrl" :src="doc.photoUrl" :alt="doctorName(doc)" class="imm-doctor-img"
+                <img v-if="doc.photoUrl" :src="doctorPhoto(doc)" :alt="doctorName(doc)" class="imm-doctor-img"
                   loading="lazy" />
                 <div v-else class="imm-doctor-monogram" aria-hidden="true">{{ doctorInitials(doctorName(doc)) }}</div>
                 <span class="imm-doctor-num" aria-hidden="true">{{ String(i + 2).padStart(2, '0') }}</span>

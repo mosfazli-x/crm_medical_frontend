@@ -181,9 +181,7 @@
                         <div class="flex items-center gap-4">
                             <div
                                 class="w-20 h-20 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700 flex items-center justify-center shrink-0">
-                                <img v-if="profilePhotoPreview" :src="profilePhotoPreview"
-                                    alt="" class="w-full h-full object-cover" />
-                                <img v-else-if="profileForm.photoUrl" :src="profileForm.photoUrl"
+                                <img v-if="profilePhotoSrc" :src="profilePhotoSrc"
                                     alt="" class="w-full h-full object-cover" />
                                 <v-icon v-else color="slate-400" size="32">mdi-account-circle-outline</v-icon>
                             </div>
@@ -241,6 +239,14 @@ const profileForm = ref({
 })
 const profilePhotoPreview = ref<string | null>(null)
 const profilePhotoFile = ref<File | null>(null)
+
+const profilePhotoSrc = computed(() => {
+  if (profilePhotoPreview.value) return profilePhotoPreview.value
+  if (profileForm.value.photoUrl && doctorProfileUser.value?.id) {
+    return `/api/doctor-profiles/${doctorProfileUser.value.id}/photo`
+  }
+  return null
+})
 
 // نگاشت تنظیمات نقش‌ها برای خوانایی بهتر کد
 const roleConfig: Record<string, { label: string, bg: string, text: string, ring: string }> = {
@@ -415,6 +421,9 @@ const saveDoctorProfile = async () => {
             if (!photoResponse.success) {
                 $toast.error(t('users.photoUploadError'))
             } else {
+                if (photoResponse.data?.photoUrl) {
+                    profileForm.value.photoUrl = photoResponse.data.photoUrl
+                }
                 $toast.success(t('users.photoUploaded'))
             }
         }
