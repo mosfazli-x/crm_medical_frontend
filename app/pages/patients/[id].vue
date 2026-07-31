@@ -150,12 +150,7 @@
 
             <!-- Lab Results Tab -->
             <v-window-item value="lab">
-              <LabResultsTab
-                :results="labResults?.results"
-                :loading="labLoading"
-                @create="createLabResult"
-                @show-trend="showLabTrend"
-              />
+              <LabResultsSection :patient-id="patientId" />
             </v-window-item>
 
             <!-- Consent Tab -->
@@ -179,37 +174,6 @@
           </v-window>
         </div>
       </div>
-
-      <!-- Lab Trend Dialog -->
-      <v-dialog v-model="labTrendDialog" max-width="700" v-if="selectedLabTest">
-        <v-card class="rounded-2xl">
-          <v-card-title class="text-lg font-bold text-slate-800 px-6 pt-6 pb-4 flex items-center gap-3">
-            <span>روند {{ selectedLabTest.test_name }}</span>
-            <v-btn icon variant="text" size="small" class="text-slate-400" @click="labTrendDialog = false">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-card-title>
-          <v-card-text class="px-6 pb-6">
-            <div v-if="labTrendLoading" class="text-center py-8">
-              <v-progress-circular indeterminate color="black" size="40" />
-            </div>
-            <div v-else-if="labTrendData.length === 0" class="text-center py-8 text-sm text-slate-500">
-              داده کافی برای نمایش روند وجود ندارد.
-            </div>
-            <div v-else class="space-y-3">
-              <div v-for="t in labTrendData" :key="t.id" class="bg-slate-50 border border-slate-200 rounded-lg p-3 flex justify-between items-center">
-                <div>
-                  <span class="font-medium text-slate-800 text-sm">{{ t.result }}</span>
-                  <span class="text-xs text-slate-500 mr-2">{{ formatDate(t.performed_date) }}</span>
-                </div>
-                <v-chip size="x-small" :color="t.abnormal ? 'red' : 'green'" variant="tonal">
-                  {{ t.abnormal ? 'غیرنرمال' : 'نرمال' }}
-                </v-chip>
-              </div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
     </template>
   </div>
 </template>
@@ -232,7 +196,6 @@ const {
   reproductiveHealth,
   obstetricHistory,
   screenings,
-  labResults,
   consents,
   attachments,
   loading: profileLoading,
@@ -287,13 +250,6 @@ const pregnancySaving = ref(false)
 
 // Screening tab
 const screeningsLoading = ref(false)
-
-// Lab tab
-const labLoading = ref(false)
-const labTrendDialog = ref(false)
-const labTrendLoading = ref(false)
-const labTrendData = ref<any[]>([])
-const selectedLabTest = ref<any>(null)
 
 // Consent tab
 const consentsLoading = ref(false)
@@ -468,85 +424,6 @@ const createScreening = async (formData: any) => {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Lab Results Functions
-// ─────────────────────────────────────────────────────────────
-const fetchLabResults = async () => {
-  if (!patientId.value) return
-  labLoading.value = true
-  try {
-    const { apiFetch } = useApi()
-    const config = useRuntimeConfig()
-
-    const res = await apiFetch<any>(`/api/lab-results/patient/${patientId.value}`, {
-      baseURL: config.public.apiBase
-    })
-
-    if (labResults.value) {
-      labResults.value.results = res.success ? res.data : []
-    }
-  } catch (err: any) {
-    useNuxtApp().$toast.error('خطا در دریافت نتایج آزمایشات')
-  } finally {
-    labLoading.value = false
-  }
-}
-
-const createLabResult = async (formData: any) => {
-  if (!patientId.value) return
-  try {
-    const { apiFetch } = useApi()
-    const config = useRuntimeConfig()
-    const { $toast } = useNuxtApp()
-
-    const res = await apiFetch<any>('/api/lab-results', {
-      method: 'POST',
-      body: {
-        patientId: patientId.value,
-        test_name: formData.test_name,
-        result: formData.result,
-        reference_range: formData.reference_range,
-        abnormal: formData.abnormal,
-        performed_date: formData.performed_date,
-        notes: formData.notes
-      },
-      baseURL: config.public.apiBase
-    })
-
-    if (res.success) {
-      $toast.success('نتیجه آزمایش با موفقیت ثبت شد')
-      fetchLabResults()
-    } else {
-      $toast.error(res.error || 'خطا در ثبت نتیجه آزمایش')
-    }
-  } catch (err: any) {
-    useNuxtApp().$toast.error(err.data?.error || 'خطا در ثبت نتیجه آزمایش')
-  }
-}
-
-const showLabTrend = async (lab: any) => {
-  if (!patientId.value) return
-  selectedLabTest.value = lab
-  labTrendDialog.value = true
-  labTrendLoading.value = true
-  labTrendData.value = []
-
-  try {
-    const { apiFetch } = useApi()
-    const config = useRuntimeConfig()
-
-    const res = await apiFetch<any>(`/api/lab-results/patient/${patientId.value}/trend?testName=${encodeURIComponent(lab.test_name || lab.testName)}`, {
-      baseURL: config.public.apiBase
-    })
-
-    if (res.success) labTrendData.value = res.data ?? []
-  } catch {
-    labTrendData.value = []
-  } finally {
-    labTrendLoading.value = false
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
 // Consent Functions
 // ─────────────────────────────────────────────────────────────
 const fetchConsents = async () => {
@@ -625,9 +502,6 @@ watch(activeTab, (tab) => {
   if (tab === 'screening' && !screenings.value?.schedules?.length && !screeningsLoading.value) {
     fetchScreenings()
   }
-  if (tab === 'lab' && !labResults.value?.results?.length && !labLoading.value) {
-    fetchLabResults()
-  }
   if (tab === 'consent' && !consents.value?.records?.length && !consentsLoading.value) {
     fetchConsents()
   }
@@ -640,7 +514,6 @@ onMounted(() => {
   // Primary data already fetched by composable
   // Lazy-load secondary data based on initial tab
   if (activeTab.value === 'screening') fetchScreenings()
-  if (activeTab.value === 'lab') fetchLabResults()
   if (activeTab.value === 'consent') fetchConsents()
 })
 
