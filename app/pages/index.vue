@@ -370,7 +370,7 @@ onMounted(async () => {
 
   setTimeout(() => {
     showLoadingScreen.value = false
-  }, 2200)
+  }, 1000)
 })
 
 watch(isLoadingComplete, async (isComplete) => {
@@ -525,7 +525,7 @@ const icons: Record<string, string> = {
     </div>
 
     <!-- ═══ Sections ═══ -->
-    <div class="imm-scroll-container">
+    <main class="imm-scroll-container">
 
       <!-- ── HOME ── -->
       <section id="home" class="imm-section imm-section--home" data-section="home">
@@ -917,6 +917,6 @@ const icons: Record<string, string> = {
         </div>
       </section>
 
-    </div>
+    </main>
   </div>
 </template>

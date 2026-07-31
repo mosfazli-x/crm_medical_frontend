@@ -9,7 +9,7 @@
       <button
         class="!inline-flex !items-center !justify-center !gap-1.5 !px-4 !py-2.5 !bg-zinc-900 hover:!bg-zinc-800 !text-white !text-xs !font-semibold !rounded-xl !transition-all !shadow-sm !w-full sm:!w-auto"
         @click="openAddDialog">
-        <Icon name="lucide:plus" class="!w-3.5 !h-3.5" />
+        <Plus class="!w-3.5 !h-3.5" />
         {{ t('labResults.addLabResult') }}
       </button>
     </div>
@@ -20,7 +20,7 @@
 
       <div class="!flex !items-center !justify-between !px-5 !py-3.5 !border-b !border-zinc-100">
         <h3 class="!text-xs !font-bold !text-zinc-900 !flex !items-center !gap-2">
-          <Icon name="lucide:microscope" class="!w-4 !h-4 !text-zinc-400" />
+          <Microscope class="!w-4 !h-4 !text-zinc-400" />
           {{ t('labResults.resultsTitle') }}
         </h3>
         <span class="!px-2 !py-0.5 !bg-zinc-100 !text-zinc-500 !rounded-md !text-[10px] !font-mono !font-bold">
@@ -54,7 +54,7 @@
         <div class="!flex !flex-col !items-center !max-w-sm !mx-auto">
           <div
             class="!w-10 !h-10 !rounded-xl !bg-zinc-50 !border !border-zinc-100 !flex !items-center !justify-center !mb-3.5">
-            <Icon name="lucide:clipboard-x" class="!w-4 !h-4 !text-zinc-400" />
+            <ClipboardX class="!w-4 !h-4 !text-zinc-400" />
           </div>
           <p class="!text-zinc-900 !font-semibold !text-xs">{{ t('labResults.noRecords') }}</p>
           <p class="!text-[11px] !text-zinc-400 !mt-1">{{ t('labResults.noResultsInCategory') }}</p>
@@ -126,12 +126,12 @@
                   <button
                     class="!p-1.5 !text-zinc-400 hover:!text-zinc-900 hover:!bg-zinc-100 !rounded-lg !transition-colors"
                     :title="t('labResults.trendAnalysis')" @click="showTrend(result)">
-                    <Icon name="lucide:line-chart" class="!w-4 !h-4" />
+                    <LineChart class="!w-4 !h-4" />
                   </button>
                   <button
                     class="!p-1.5 !text-zinc-400 hover:!text-red-600 hover:!bg-red-50 !rounded-lg !transition-colors"
                     :title="t('labResults.deleteRecord')" @click="confirmDeleteResult(result)">
-                    <Icon name="lucide:trash-2" class="!w-4 !h-4" />
+                    <Trash2 class="!w-4 !h-4" />
                   </button>
                 </div>
               </td>
@@ -147,7 +147,7 @@
 
       <div class="!flex !items-center !justify-between !px-5 !py-3.5 !border-b !border-zinc-100">
         <h3 class="!text-xs !font-bold !text-zinc-900 !flex !items-center !gap-2">
-          <Icon name="lucide:folder-open" class="!w-4 !h-4 !text-zinc-400" />
+          <FolderOpen class="!w-4 !h-4 !text-zinc-400" />
           {{ t('labResults.documentsTitle') }}
         </h3>
         <span class="!px-2 !py-0.5 !bg-zinc-100 !text-zinc-500 !rounded-md !text-[10px] !font-mono !font-bold">
@@ -163,7 +163,7 @@
         <div class="!flex !flex-col !items-center !max-w-sm !mx-auto">
           <div
             class="!w-10 !h-10 !rounded-xl !bg-zinc-50 !border !border-zinc-100 !flex !items-center !justify-center !mb-3.5">
-            <Icon name="lucide:file-up" class="!w-4 !h-4 !text-zinc-400" />
+            <FileUp class="!w-4 !h-4 !text-zinc-400" />
           </div>
           <p class="!text-zinc-900 !font-semibold !text-xs">{{ t('labResults.documentsEmpty') }}</p>
           <p class="!text-[11px] !text-zinc-400 !mt-1">{{ t('labResults.documentsEmptyDesc') }}</p>
@@ -176,7 +176,7 @@
           <div class="!flex !items-start !gap-2.5 !min-w-0">
             <div
               class="!w-9 !h-9 !rounded-lg !bg-white !border !border-zinc-200/60 !flex !items-center !justify-center !shrink-0">
-              <Icon name="lucide:file-text" class="!w-4 !h-4 !text-zinc-400" />
+              <FileText class="!w-4 !h-4 !text-zinc-400" />
             </div>
             <div class="!flex-1 !min-w-0">
               <p class="!text-xs !font-semibold !text-zinc-900 !truncate" :title="doc.fileName">{{ doc.fileName }}</p>
@@ -193,19 +193,19 @@
             <button
               class="!inline-flex !items-center !gap-1 !px-2 !py-1 !text-[10px] !font-semibold !text-zinc-500 hover:!text-zinc-900 hover:!bg-zinc-100 !rounded-lg !transition-colors"
               :loading="loadingView.has(doc.id)" @click="viewFile(doc)">
-              <Icon name="lucide:eye" class="!w-3 !h-3" />
+              <Eye class="!w-3 !h-3" />
               {{ t('labResults.viewDoc') }}
             </button>
             <button
               class="!inline-flex !items-center !gap-1 !px-2 !py-1 !text-[10px] !font-semibold !text-zinc-500 hover:!text-zinc-900 hover:!bg-zinc-100 !rounded-lg !transition-colors"
               :loading="loadingDownload.has(doc.id)" @click="downloadFile(doc)">
-              <Icon name="lucide:download" class="!w-3 !h-3" />
+              <Download class="!w-3 !h-3" />
               {{ t('labResults.downloadDoc') }}
             </button>
             <button
               class="!inline-flex !items-center !gap-1 !px-2 !py-1 !text-[10px] !font-semibold !text-red-500 hover:!text-red-600 hover:!bg-red-50 !rounded-lg !transition-colors"
               @click="confirmDeleteDocument(doc)">
-              <Icon name="lucide:trash-2" class="!w-3 !h-3" />
+              <Trash2 class="!w-3 !h-3" />
             </button>
           </div>
         </div>
@@ -218,7 +218,7 @@
         <div class="!flex !items-center justify-between !px-6 !py-4 !border-b !border-zinc-100">
           <h3 class="!text-xs !font-bold !text-zinc-900">{{ t('labResults.addResultTitle') }}</h3>
           <button class="!text-zinc-400 hover:!text-zinc-900 !transition-colors" @click="addDialog = false">
-            <Icon name="lucide:x" class="!w-4 !h-4" />
+            <X class="!w-4 !h-4" />
           </button>
         </div>
 
@@ -231,7 +231,7 @@
                 entryMode === 'manual' ? '!bg-white !text-zinc-900 !shadow-sm' : '!text-zinc-500 hover:!text-zinc-700'
               ]"
               @click="entryMode = 'manual'">
-              <Icon name="lucide:keyboard" class="!w-3.5 !h-3.5" />
+              <Keyboard class="!w-3.5 !h-3.5" />
               {{ t('labResults.manualEntry') }}
             </button>
             <button
@@ -240,7 +240,7 @@
                 entryMode === 'document' ? '!bg-white !text-zinc-900 !shadow-sm' : '!text-zinc-500 hover:!text-zinc-700'
               ]"
               @click="entryMode = 'document'">
-              <Icon name="lucide:upload" class="!w-3.5 !h-3.5" />
+              <Upload class="!w-3.5 !h-3.5" />
               {{ t('labResults.documentUpload') }}
             </button>
           </div>
@@ -336,7 +336,7 @@
                   t('labResults.docFiles') }}</label>
                 <label
                   class="!cursor-pointer !flex !flex-col !items-center !justify-center !gap-1.5 !py-7 !bg-white !border-2 !border-dashed !border-zinc-300 hover:!border-zinc-900/40 !rounded-xl !transition-all">
-                  <Icon name="lucide:upload-cloud" class="!w-5 !h-5 !text-zinc-400" />
+                  <UploadCloud class="!w-5 !h-5 !text-zinc-400" />
                   <span class="!text-xs !font-semibold !text-zinc-600">{{ t('labResults.chooseFile') }}</span>
                   <span class="!text-[10px] !text-zinc-400">{{ t('labResults.chooseFileDesc') }}</span>
                   <input type="file" class="!hidden" accept=".pdf,.jpg,.jpeg,.png,.webp" multiple
@@ -349,13 +349,13 @@
                 <div v-for="(file, idx) in docForm.files" :key="idx"
                   class="!flex !items-center !justify-between !gap-2 !px-3 !py-2 !bg-white !border !border-zinc-200 !rounded-lg">
                   <div class="!flex !items-center !gap-2 !min-w-0">
-                    <Icon name="lucide:file" class="!w-3.5 !h-3.5 !text-zinc-400 !shrink-0" />
+                    <File class="!w-3.5 !h-3.5 !text-zinc-400 !shrink-0" />
                     <span class="!text-[11px] !text-zinc-700 !font-medium !truncate">{{ file.name }}</span>
                     <span class="!text-[10px] !text-zinc-400 !font-mono !shrink-0">{{ formatSize(file.size) }}</span>
                   </div>
                   <button class="!text-zinc-400 hover:!text-red-600 !transition-colors !shrink-0"
                     @click="docForm.files.splice(idx, 1)">
-                    <Icon name="lucide:x" class="!w-3.5 !h-3.5" />
+                    <X class="!w-3.5 !h-3.5" />
                   </button>
                 </div>
               </div>
@@ -384,12 +384,12 @@
         <div class="!flex !items-center justify-between !px-6 !py-4 !border-b !border-zinc-100">
           <div>
             <h3 class="!text-xs !font-bold !text-zinc-900 !flex !items-center !gap-2">
-              <Icon name="lucide:activity" class="!text-zinc-900 !w-4 !h-4" />
+              <Activity class="!text-zinc-900 !w-4 !h-4" />
               {{ t('labResults.trendTitle', { name: trendTestName }) }}
             </h3>
           </div>
           <button class="!text-zinc-400 hover:!text-zinc-900 !transition-colors" @click="trendDialog = false">
-            <Icon name="lucide:x" class="!w-4 !h-4" />
+            <X class="!w-4 !h-4" />
           </button>
         </div>
 
@@ -467,7 +467,7 @@
       <div class="!bg-white !rounded-2xl !border !border-zinc-200/80 !shadow-2xl !p-6 !text-center">
         <div
           class="!w-11 !h-11 !rounded-xl !bg-red-50 !flex !items-center !justify-center !mx-auto !mb-3.5 !border !border-red-100">
-          <Icon name="lucide:trash-2" class="!w-4 !h-4 !text-red-600" />
+          <Trash2 class="!w-4 !h-4 !text-red-600" />
         </div>
         <h3 class="!text-xs !font-bold !text-zinc-900 !mb-1.5">{{ t('labResults.deleteLabTitle') }}</h3>
         <p class="!text-zinc-400 !text-[11px] !leading-relaxed">{{ t('labResults.deleteLabConfirm') }}</p>
@@ -491,7 +491,7 @@
       <div class="!bg-white !rounded-2xl !border !border-zinc-200/80 !shadow-2xl !p-6 !text-center">
         <div
           class="!w-11 !h-11 !rounded-xl !bg-red-50 !flex !items-center !justify-center !mx-auto !mb-3.5 !border !border-red-100">
-          <Icon name="lucide:trash-2" class="!w-4 !h-4 !text-red-600" />
+          <Trash2 class="!w-4 !h-4 !text-red-600" />
         </div>
         <h3 class="!text-xs !font-bold !text-zinc-900 !mb-1.5">{{ t('labResults.documentDeleteTitle') }}</h3>
         <p class="!text-zinc-400 !text-[11px] !leading-relaxed">{{ t('labResults.documentDeleteConfirm') }}</p>
@@ -514,6 +514,22 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, reactive } from 'vue'
+import Plus from '~/components/icons/Plus.vue'
+import Microscope from '~/components/icons/Microscope.vue'
+import ClipboardX from '~/components/icons/ClipboardX.vue'
+import LineChart from '~/components/icons/LineChart.vue'
+import Trash2 from '~/components/icons/Trash2.vue'
+import FolderOpen from '~/components/icons/FolderOpen.vue'
+import FileUp from '~/components/icons/FileUp.vue'
+import FileText from '~/components/icons/FileText.vue'
+import Eye from '~/components/icons/Eye.vue'
+import Download from '~/components/icons/Download.vue'
+import X from '~/components/icons/X.vue'
+import Keyboard from '~/components/icons/Keyboard.vue'
+import Upload from '~/components/icons/Upload.vue'
+import UploadCloud from '~/components/icons/UploadCloud.vue'
+import File from '~/components/icons/File.vue'
+import Activity from '~/components/icons/Activity.vue'
 
 const props = defineProps<{ patientId: string }>()
 

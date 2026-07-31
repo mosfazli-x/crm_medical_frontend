@@ -41,7 +41,7 @@
               <v-tooltip v-for="item in section.items" :key="item.to" location="left" :disabled="!rail || isMobile">
                 <template #activator="{ props }">
                   <v-list-item v-bind="props" :to="item.to" nuxt
-                    class="rounded-lg! mb-0.5 transition-all duration-200 gap-1"
+                    class="rounded-lg! mb-0.5 transition-all duration-200 gap-1 flex"
                     :class="[
                       rail && !isMobile ? 'px-0! justify-center' : 'px-3!',
                       isActive(item.to)
@@ -187,6 +187,8 @@ import Bell from '~/components/icons/Bell.vue'
 import AddClipboard from '~/components/icons/AddClipboard.vue'
 import Box from '~/components/icons/Box.vue'
 import BookOpen from '~/components/icons/BookOpen.vue'
+import Activity from '~/components/icons/Activity.vue'
+import FolderHeart from '~/components/icons/FolderHeart.vue'
 
 const route = useRoute()
 const { user, logout } = useAuth()
@@ -290,6 +292,8 @@ const ALL_MENUS = computed(() => [
   { title: t('myProfile.title'), to: '/my-profile', icon: Profile, roles: ['all'], category: 'primary' },
   { title: t('patientMessaging.title'), to: '/patient/messaging', icon: ChatDots, roles: ['patient'], category: 'primary' },
   { title: t('patients.title'), to: '/patients', icon: UsersGroup, roles: ['admin_doctor', 'doctor'], category: 'patient' },
+  { title: t('leads.title'), to: '/leads', icon: Activity, roles: ['admin_doctor', 'doctor'], category: 'patient' },
+  { title: t('leadSources.title'), to: '/lead-sources', icon: FolderHeart, roles: ['admin_doctor'], category: 'patient' },
 ])
 
 const hasAccess = (itemRoles: string[]) => {

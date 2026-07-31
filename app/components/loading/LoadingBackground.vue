@@ -1,7 +1,7 @@
 <template>
   <div ref="holderRef" class="absolute inset-0 pointer-events-none bg-zinc-200 dark:bg-black">
     <canvas ref="canvasRef" class="fixed block w-full h-full" />
-        <slot lass="block w-full h-full z-99 h-screen w-screen flex justify-center align-middle items-center" />
+    <slot lass="block w-full h-full z-99 h-screen w-screen flex justify-center align-middle items-center" />
   </div>
 </template>
 

@@ -1791,6 +1791,10 @@
   }
 }
 
+.v-list-item {
+  display: flex !important;
+}
+
 .v-list-item__content {
   min-width: 0 !important;
 }

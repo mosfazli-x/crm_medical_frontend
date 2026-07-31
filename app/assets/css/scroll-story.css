@@ -43,8 +43,8 @@
 }
 
 .imm-nav-dot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.3);
   background: transparent;
