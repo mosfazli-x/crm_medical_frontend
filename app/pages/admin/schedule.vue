@@ -247,7 +247,7 @@ const jalaliDates = computed(() => {
   const saturday = new Date(today)
   saturday.setDate(today.getDate() - daysSinceSaturday)
   const result: Record<number, string> = {}
-  dayHeaders.forEach((day, index) => {
+  dayHeaders.value.forEach((day, index) => {
     const d = new Date(saturday)
     d.setDate(saturday.getDate() + index)
     result[day.dayOfWeek] = d.toLocaleDateString('fa-IR', { day: 'numeric', month: 'long' })
@@ -286,13 +286,13 @@ const editRangeStart = ref<string | null>(null)
 const editRangeEnd = ref<string | null>(null)
 
 const selectedDayName = computed(() => {
-  const day = dayHeaders.find(d => d.dayOfWeek === selectedDayForAdd.value)
+  const day = dayHeaders.value.find(d => d.dayOfWeek === selectedDayForAdd.value)
   return day?.name || ''
 })
 
 const editDayName = computed(() => {
   if (!editingAvailability.value) return ''
-  const day = dayHeaders.find(d => d.dayOfWeek === editingAvailability.value!.dayOfWeek)
+  const day = dayHeaders.value.find(d => d.dayOfWeek === editingAvailability.value!.dayOfWeek)
   return day?.name || ''
 })
 

@@ -73,7 +73,7 @@
                 </td>
               </tr>
               <tr v-else v-for="product in filteredProducts" :key="product.id"
-                class="hover:!bg-slate-50/50 dark:hover:!bg-slate-800/30">
+                :class="[productRowClass(product), 'hover:!bg-slate-50/50 dark:hover:!bg-slate-800/30']">
                 <td class="!font-bold">{{ product.name }}</td>
                 <td class="!font-mono !text-xs">{{ product.sku || '---' }}</td>
                 <td class="!text-sm">{{ product.categoryName || '---' }}</td>
@@ -216,7 +216,75 @@
                 <td class="!font-mono" dir="ltr">{{ formatPrice(m.unitPrice) }}</td>
                 <td class="!font-mono !font-bold" dir="ltr">{{ formatPrice(m.totalPrice) }}</td>
                 <td class="!text-sm">{{ m.performedByName || '---' }}</td>
-                <td class="!text-xs !text-slate-500">{{ m.reference || '---' }}</td>
+                <td class="!text-xs !text-slate-500">
+                  <template v-if="m.referenceType === 'patient_usage'">
+                    <span class="!px-2 !py-0.5 !rounded-full !text-xs !font-semibold !bg-indigo-50 dark:!bg-indigo-900/10 !text-indigo-600 !border !border-indigo-200">
+                      {{ $t('inventory.tabs.patientUsage') }}
+                    </span>
+                  </template>
+                  <template v-else>{{ m.reference || '---' }}</template>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </UiContentCard>
+    </template>
+
+    <!-- Patient Usage Tab -->
+    <template v-if="activeTab === 'patientUsage'">
+      <div class="!flex !justify-end !pb-4">
+        <button v-if="canManageUsage" @click="openUsageDialog" class="crm-btn crm-btn-primary">
+          <Icon name="lucide:plus" class="!w-4 !h-4" />
+          {{ $t('inventory.recordUsage') }}
+        </button>
+      </div>
+      <UiContentCard>
+        <div class="!overflow-x-auto">
+          <table class="crm-table">
+            <thead>
+              <tr>
+                <th>{{ $t('inventory.date') }}</th>
+                <th>{{ $t('inventory.usagePatient') }}</th>
+                <th>{{ $t('inventory.productName') }}</th>
+                <th>{{ $t('inventory.quantity') }}</th>
+                <th>{{ $t('inventory.unitPrice') }}</th>
+                <th>{{ $t('inventory.totalPrice') }}</th>
+                <th>{{ $t('inventory.performedBy') }}</th>
+                <th v-if="role === 'admin_doctor'" class="!text-center">{{ $t('common.actions') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="usagesLoading">
+                <td colspan="8"><v-skeleton-loader type="list-item" class="!bg-transparent" /></td>
+              </tr>
+              <tr v-else-if="usages.length === 0">
+                <td colspan="8" class="!py-16 !text-center">
+                  <div class="!flex !flex-col !items-center !gap-3">
+                    <Icon name="lucide:syringe" class="!w-10 !h-10 !text-slate-300" />
+                    <p class="!text-slate-500 !font-semibold">{{ $t('inventory.noUsages') }}</p>
+                  </div>
+                </td>
+              </tr>
+              <tr v-else v-for="u in usages" :key="u.id"
+                class="hover:!bg-slate-50/50 dark:hover:!bg-slate-800/30">
+                <td class="!text-sm !whitespace-nowrap">{{ formatJalaliDate(u.usedAt) }}</td>
+                <td class="!font-semibold !whitespace-nowrap">{{ u.patientName }} {{ u.patientLastName }}</td>
+                <td class="!text-sm">
+                  {{ u.productName }}
+                  <span v-if="u.visitId" class="!text-xs !text-slate-400">• {{ u.visitType || '' }}</span>
+                </td>
+                <td class="!font-mono !font-bold">{{ u.quantity }}</td>
+                <td class="!font-mono" dir="ltr">{{ formatPrice(u.unitPrice) }}</td>
+                <td class="!font-mono !font-bold" dir="ltr">{{ formatPrice(u.totalPrice) }}</td>
+                <td class="!text-sm">{{ u.performedByName || '---' }}</td>
+                <td v-if="role === 'admin_doctor'" class="!text-center">
+                  <button @click="deleteUsage(u)"
+                    class="!p-1.5 !text-slate-400 hover:!text-red-500 hover:!bg-red-50 dark:hover:!bg-red-900/20 !rounded-lg"
+                    :title="$t('common.delete')">
+                    <Icon name="lucide:trash-2" class="!w-4 !h-4" />
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -333,26 +401,102 @@
         </div>
       </div>
     </v-dialog>
+
+    <!-- Record Usage Dialog -->
+    <v-dialog v-model="usageDialog" max-width="600">
+      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden">
+        <div class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
+          <h2 class="!text-xl !font-black">{{ $t('inventory.recordUsage') }}</h2>
+          <button @click="usageDialog = false" class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+            <Icon name="lucide:x" class="!w-4 !h-4" />
+          </button>
+        </div>
+        <div class="!p-8 !space-y-5">
+          <!-- Patient typeahead -->
+          <div class="!relative">
+            <div v-if="selectedUsagePatient"
+              class="!flex !items-center !justify-between !gap-3 !p-3 !bg-slate-50 dark:!bg-slate-800/50 !rounded-xl">
+              <div class="!flex !flex-col !items-start !gap-0.5 !min-w-0">
+                <div class="!text-sm !font-bold">{{ selectedUsagePatient.firstName }} {{ selectedUsagePatient.lastName }}</div>
+                <div class="!text-xs !text-slate-500 dark:!text-slate-400">{{ selectedUsagePatient.nationalId || selectedUsagePatient.phone || '' }}</div>
+              </div>
+              <button @click="clearUsagePatient()"
+                class="!p-1 !text-slate-400 hover:!text-red-500 !rounded-lg hover:!bg-red-50 dark:hover:!bg-red-900/20 !transition-colors">
+                <Icon name="lucide:x" class="!w-4 !h-4" />
+              </button>
+            </div>
+            <v-text-field v-else v-model="usagePatientSearchQuery" @input="onUsagePatientSearchInput"
+              @blur="hideUsagePatientResults"
+              @focus="usagePatientSearchQuery?.trim()?.length >= 2 && usagePatientSearchResults.length && (showUsagePatientResults = true)"
+              variant="outlined" density="comfortable" :label="$t('inventory.usagePatient')"
+              :placeholder="$t('inventory.searchPatientPlaceholder')" hide-details="auto" :loading="usagePatientSearching">
+              <template #prepend-inner>
+                <Icon name="lucide:search" class="!w-5 !h-5 !text-slate-400 !mr-2" />
+              </template>
+            </v-text-field>
+            <div v-if="showUsagePatientResults && usagePatientSearchResults.length"
+              class="!absolute !z-50 !mt-1 !w-full !bg-white dark:!bg-slate-800 !rounded-xl !shadow-xl !border !border-slate-200 dark:!border-slate-700 !overflow-hidden">
+              <button v-for="p in usagePatientSearchResults" :key="p.id" @mousedown.prevent="selectUsagePatient(p)"
+                class="!w-full !px-4 !py-3 !flex !flex-col !items-start !gap-0.5 hover:!bg-slate-50 dark:hover:!bg-slate-700/50 !transition-colors !text-right !border-b !border-slate-100 dark:!border-slate-700/50 last:!border-b-0">
+                <span class="!text-sm !font-bold !text-slate-900 dark:!text-white">{{ p.firstName }} {{ p.lastName }}</span>
+                <span class="!text-xs !text-slate-500 dark:!text-slate-400">{{ p.nationalId || p.phone || '' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <v-select v-model="usageForm.product_id" :items="productUsageOptions" item-title="title" item-value="value"
+            variant="outlined" density="comfortable" :label="$t('inventory.selectProduct')" hide-details="auto" />
+
+          <div class="!grid !grid-cols-2 !gap-4">
+            <v-text-field v-model="usageForm.quantity" variant="outlined" density="comfortable"
+              :label="$t('inventory.quantity')" type="number" min="0" hide-details="auto" />
+            <v-text-field v-model="usageForm.unit_price" variant="outlined" density="comfortable"
+              :label="$t('inventory.unitPrice')" type="number" min="0" hide-details="auto" />
+          </div>
+
+          <v-select v-model="usageForm.visit_id" :items="usageVisitOptions" item-title="title" item-value="value"
+            variant="outlined" density="comfortable" :label="$t('inventory.visitOptional')" hide-details="auto" clearable />
+
+          <v-textarea v-model="usageForm.notes" variant="outlined" density="comfortable"
+            :label="$t('common.notes')" rows="2" hide-details="auto" />
+        </div>
+        <div class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
+          <button @click="usageDialog = false" class="crm-btn crm-btn-ghost">{{ $t('common.cancel') }}</button>
+          <button :disabled="savingUsage" @click="saveUsage" class="crm-btn crm-btn-primary">
+            <Icon v-if="savingUsage" name="lucide:loader-2" class="!w-4 !h-4 !animate-spin" />
+            {{ $t('common.save') }}
+          </button>
+        </div>
+      </div>
+    </v-dialog>
   </UiPageContainer>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useFormatting } from '~/composables/useFormatting'
 
 const { t } = useI18n()
 const { apiFetch } = useApi()
+const { user } = useAuth()
 const { $toast } = useNuxtApp()
 const { formatJalaliDate, formatPrice } = useFormatting()
 
-const activeTab = ref<'products' | 'categories' | 'movements'>('products')
+const role = computed(() => user?.value?.role || (user as any)?.role)
+const canManageUsage = computed(() => ['admin_doctor', 'pharmacy'].includes(role.value))
 
-const tabs = [
-  { key: 'products', label: t('inventory.tabs.products') },
-  { key: 'categories', label: t('inventory.tabs.categories') },
-  { key: 'movements', label: t('inventory.tabs.movements') },
-]
+const activeTab = ref<'products' | 'categories' | 'movements' | 'patientUsage'>('products')
+
+const tabs = computed(() => {
+  const all = [
+    { key: 'products', label: t('inventory.tabs.products') },
+    { key: 'categories', label: t('inventory.tabs.categories') },
+    { key: 'movements', label: t('inventory.tabs.movements') },
+  ]
+  if (canManageUsage.value) all.push({ key: 'patientUsage', label: t('inventory.tabs.patientUsage') })
+  return all
+})
 
 const movementTypeLabel = (type: string) => {
   const map: Record<string, string> = {
@@ -388,6 +532,14 @@ const filteredProducts = computed(() => {
   if (!productCategoryFilter.value) return products.value
   return products.value.filter((p) => p.categoryId === productCategoryFilter.value)
 })
+
+function productRowClass(product: any) {
+  const stock = Number(product.currentStock)
+  const min = Number(product.minStockLevel)
+  if (stock <= 0) return '!bg-red-50/50 dark:!bg-red-950/20'
+  if (stock <= min && min > 0) return '!bg-amber-50/60 dark:!bg-amber-950/15'
+  return ''
+}
 
 async function fetchProducts() {
   productsLoading.value = true
@@ -432,7 +584,18 @@ async function saveProduct() {
   try {
     const url = editingProduct.value ? `/api/inventory/products/${editingProduct.value.id}` : '/api/inventory/products'
     const method = editingProduct.value ? 'PUT' : 'POST'
-    const res = await apiFetch<any>(url, { method, body: productForm.value })
+    const body = {
+      name: productForm.value.name,
+      sku: productForm.value.sku || null,
+      barcode: productForm.value.barcode || null,
+      category_id: productForm.value.category_id || null,
+      unit: productForm.value.unit || 'عدد',
+      purchase_price: productForm.value.purchase_price !== '' ? Number(productForm.value.purchase_price) : null,
+      selling_price: productForm.value.selling_price !== '' ? Number(productForm.value.selling_price) : null,
+      min_stock_level: productForm.value.min_stock_level !== '' ? Number(productForm.value.min_stock_level) : null,
+      description: productForm.value.description || null,
+    }
+    const res = await apiFetch<any>(url, { method, body })
     if (res.success) {
       $toast.success(editingProduct.value ? t('inventory.productUpdated') : t('inventory.productCreated'))
       productDialog.value = false
@@ -542,10 +705,150 @@ async function saveStockMovement() {
   } finally { savingStock.value = false }
 }
 
+// ─── Patient Usage ───
+const usages = ref<any[]>([])
+const usagesLoading = ref(false)
+
+async function fetchUsages() {
+  if (!canManageUsage.value) return
+  usagesLoading.value = true
+  try {
+    const res = await apiFetch<any>('/api/patient-usage')
+    if (res.success) usages.value = res.data
+  } catch { /* */ } finally { usagesLoading.value = false }
+}
+
+function deleteUsage(usage: any) {
+  if (!confirm(t('inventory.deleteUsageConfirm'))) return
+  apiFetch<any>(`/api/patient-usage/${usage.id}`, { method: 'DELETE' })
+    .then(async (res: any) => {
+      if (res.success) {
+        $toast.success(t('inventory.usageDeleted'))
+        await Promise.all([fetchUsages(), fetchProducts(), fetchSummary()])
+      }
+    })
+    .catch((err: any) => $toast.error(err.data?.error || t('inventory.saveError')))
+}
+
+// ─── Record Usage Dialog ───
+const usageDialog = ref(false)
+const savingUsage = ref(false)
+const usageForm = ref({ product_id: null, quantity: '', unit_price: '', visit_id: null, notes: '' })
+
+const productUsageOptions = computed(() =>
+  products.value.map((p: any) => ({
+    title: `${p.name} — ${p.currentStock} ${p.unit}`,
+    value: p.id,
+  }))
+)
+
+const usagePatientSearchQuery = ref('')
+const usagePatientSearchResults = ref<any[]>([])
+const showUsagePatientResults = ref(false)
+const usagePatientSearching = ref(false)
+let usagePatientSearchTimer: ReturnType<typeof setTimeout> | null = null
+const selectedUsagePatient = ref<any>(null)
+
+const usageVisits = ref<any[]>([])
+const usageVisitOptions = computed(() => [
+  { title: t('inventory.withoutVisit'), value: null },
+  ...usageVisits.value.map((v: any) => ({
+    title: `${v.visitType || '—'} • ${formatJalaliDate(v.visitDate)}`,
+    value: v.id,
+  })),
+])
+
+function onUsagePatientSearchInput() {
+  if (usagePatientSearchTimer) clearTimeout(usagePatientSearchTimer)
+  showUsagePatientResults.value = false
+  if (!usagePatientSearchQuery.value?.trim()) {
+    usagePatientSearchResults.value = []
+    return
+  }
+  usagePatientSearchTimer = setTimeout(() => searchUsagePatients(), 400)
+}
+
+async function searchUsagePatients() {
+  const q = usagePatientSearchQuery.value.trim()
+  if (q.length < 2) return
+  usagePatientSearching.value = true
+  try {
+    const res = await apiFetch<any>(`/api/patient-usage/patients/search?q=${encodeURIComponent(q)}`)
+    if (res.success) {
+      usagePatientSearchResults.value = res.data
+      showUsagePatientResults.value = true
+    }
+  } catch { /* */ } finally { usagePatientSearching.value = false }
+}
+
+function selectUsagePatient(patient: any) {
+  selectedUsagePatient.value = patient
+  usagePatientSearchQuery.value = `${patient.firstName} ${patient.lastName}`
+  showUsagePatientResults.value = false
+  usagePatientSearchResults.value = []
+  fetchUsageVisits(patient.id)
+}
+
+function clearUsagePatient() {
+  selectedUsagePatient.value = null
+  usagePatientSearchQuery.value = ''
+  usagePatientSearchResults.value = []
+  showUsagePatientResults.value = false
+  usageVisits.value = []
+  usageForm.value.visit_id = null
+}
+
+function hideUsagePatientResults() {
+  nextTick(() => { showUsagePatientResults.value = false })
+}
+
+async function fetchUsageVisits(patientId: string) {
+  if (!patientId) { usageVisits.value = []; return }
+  try {
+    const res = await apiFetch<any>(`/api/patient-usage/visits/search?patient_id=${patientId}`)
+    if (res.success) usageVisits.value = res.data
+  } catch { /* */ }
+}
+
+function openUsageDialog() {
+  clearUsagePatient()
+  usageForm.value = { product_id: null, quantity: '', unit_price: '', visit_id: null, notes: '' }
+  usageDialog.value = true
+}
+
+async function saveUsage() {
+  if (!selectedUsagePatient.value || !usageForm.value.product_id || !usageForm.value.quantity) {
+    $toast.error(t('inventory.fillUsageRequired'))
+    return
+  }
+  savingUsage.value = true
+  try {
+    const res = await apiFetch<any>('/api/patient-usage', {
+      method: 'POST',
+      body: {
+        patient_id: selectedUsagePatient.value.id,
+        product_id: usageForm.value.product_id,
+        quantity: Number(usageForm.value.quantity),
+        unit_price: Number(usageForm.value.unit_price) || 0,
+        visit_id: usageForm.value.visit_id || null,
+        notes: usageForm.value.notes || null,
+      },
+    })
+    if (res.success) {
+      $toast.success(t('inventory.usageCreated'))
+      usageDialog.value = false
+      await Promise.all([fetchUsages(), fetchProducts(), fetchSummary()])
+    }
+  } catch (err: any) {
+    $toast.error(err.data?.error || t('inventory.saveError'))
+  } finally { savingUsage.value = false }
+}
+
 onMounted(() => {
   fetchSummary()
   fetchProducts()
   fetchCategories()
   fetchStockMovements()
+  fetchUsages()
 })
 </script>

@@ -199,7 +199,7 @@
               </div>
               <div>
                 <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">{{ $t('dashboard.birthDate') }}</p>
-                <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">{{ formatJalaliDate(patientData.patient.birth_date) }}</p>
+                <p class="!text-sm !font-semibold !text-slate-800 dark:!text-zinc-200">{{ formatGregorianDate(patientData.patient.birth_date) }}</p>
               </div>
               <div>
                 <p class="!text-[11px] !font-medium !text-slate-400 dark:!text-zinc-500 !mb-1">{{ $t('dashboard.insurance') }}</p>
@@ -333,6 +333,37 @@
           class="!shrink-0 !px-4 !py-2 !bg-amber-600 hover:!bg-amber-700 active:!bg-amber-800 !text-white !text-xs !font-medium !rounded-xl !transition-all !duration-200"
         >
           {{ $t('common.viewMessages') }}
+        </NuxtLink>
+      </div>
+
+      <!-- Low Stock Alert Banner -->
+      <div
+        v-if="data.low_stock && data.low_stock.count > 0"
+        class="!relative !overflow-hidden !rounded-2xl !border !border-rose-200/60 dark:!border-rose-900/30 !bg-rose-50/40 dark:!bg-rose-950/10 !p-5 !flex !items-center !justify-between !gap-4"
+      >
+        <div class="!flex !items-center !gap-4">
+          <div class="!relative !shrink-0">
+            <div class="!w-10 !h-10 !flex !items-center !justify-center !rounded-xl !bg-rose-500/10 !text-rose-600 dark:!text-rose-400">
+              <Box class="!w-5 !h-5 !fill-current" />
+            </div>
+            <span class="!absolute -!top-1 -!end-1 !w-4 !h-4 !bg-rose-500 !border-2 !border-white dark:!border-zinc-900 !rounded-full !flex !items-center !justify-center !text-[10px] !font-bold !text-white">
+              {{ data.low_stock.count }}
+            </span>
+          </div>
+          <div class="!flex-1 !min-w-0">
+            <p class="!text-sm !font-semibold !text-rose-900 dark:!text-rose-300">
+              {{ $t('dashboard.lowStockTitle') }}
+            </p>
+            <p class="!text-xs !text-rose-700/80 dark:!text-rose-400/60 !mt-0.5">
+              {{ $t('dashboard.lowStockDesc', { count: data.low_stock.count }) }}
+            </p>
+          </div>
+        </div>
+        <NuxtLink
+          to="/inventory"
+          class="!shrink-0 !px-4 !py-2 !bg-rose-600 hover:!bg-rose-700 active:!bg-rose-800 !text-white !text-xs !font-medium !rounded-xl !transition-all !duration-200"
+        >
+          {{ $t('dashboard.lowStockView') }}
         </NuxtLink>
       </div>
 
@@ -713,6 +744,7 @@ import ChatDots from '~/components/icons/ChatDots.vue'
 import HeartPulse from '~/components/icons/HeartPulse.vue'
 import DocumentText from '~/components/icons/DocumentText.vue'
 import Bell from '~/components/icons/Bell.vue'
+import Box from '~/components/icons/Box.vue'
 import ShieldCheck from '~/components/icons/ShieldCheck.vue'
 import Profile from '~/components/icons/Profile.vue'
 import CloseCircle from '~/components/icons/CloseCircle.vue'
@@ -755,6 +787,15 @@ interface DashboardBilling {
   pending_revenue: number
 }
 
+interface DashboardLowStockItem {
+  id: string
+  name: string
+  sku: string | null
+  currentStock: string | null
+  minStockLevel: string | null
+  unit: string
+}
+
 interface DashboardData {
   sms_credit: DashboardSmsCredit | null
   storage: DashboardStorage
@@ -763,6 +804,10 @@ interface DashboardData {
   messages: DashboardMessages
   visits: DashboardVisits
   billing: DashboardBilling
+  low_stock?: {
+    count: number
+    items: DashboardLowStockItem[]
+  }
 }
 
 // ─── Patient Dashboard Types ───
@@ -799,7 +844,7 @@ interface PatientDashboardData {
 
 const { apiFetch } = useApi()
 const { user } = useAuth()
-const { formatJalaliLong, formatJalaliDate, toDateStr } = useFormatting()
+const { formatJalaliLong, formatJalaliDate, formatGregorianDate, toDateStr } = useFormatting()
 
 const data = ref<DashboardData | null>(null)
 const loading = ref(true)

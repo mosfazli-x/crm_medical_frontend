@@ -14,6 +14,14 @@ export const useFormatting = () => {
     return moment(date).format('jDD jMMMM jYYYY')
   }
 
+  const formatGregorianDate = (date: string | null | undefined) => {
+    if (!date) return '---'
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return moment(date, 'YYYY-MM-DD').format('jDD jMMMM jYYYY')
+    }
+    return moment(date).format('jDD jMMMM jYYYY')
+  }
+
   const formatJalaliDateShort = (date: string | null | undefined) => {
     if (!date) return '---'
     if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
@@ -54,5 +62,5 @@ export const useFormatting = () => {
     return moment().format('jYYYY-jMM-jDD')
   }
 
-  return { formatJalaliDate, formatJalaliDateShort, formatJalaliLong, formatPrice, toDateStr, toJalaliStr, todayJalali }
+  return { formatJalaliDate, formatGregorianDate, formatJalaliDateShort, formatJalaliLong, formatPrice, toDateStr, toJalaliStr, todayJalali }
 }

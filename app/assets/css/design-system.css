@@ -228,6 +228,38 @@
     color: #cbd5e1 !important;
   }
 
+  .crm-th-sort {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.25rem !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    font: inherit !important;
+    letter-spacing: inherit !important;
+    text-transform: inherit !important;
+    color: inherit !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+  }
+
+  .crm-th-sort:hover {
+    color: #0f172a !important;
+  }
+
+  .dark .crm-th-sort:hover {
+    color: #ffffff !important;
+  }
+
+  .crm-th-sort-icon {
+    opacity: 0.35;
+    transition: opacity 0.15s;
+  }
+
+  .crm-th-sort:hover .crm-th-sort-icon {
+    opacity: 1;
+  }
+
   .crm-table tbody tr {
     border-bottom: 1px solid #f3f4f6 !important;
   }

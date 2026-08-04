@@ -196,7 +196,10 @@
     "statusConfirmed": "Confirmed",
     "statusRejected": "Rejected",
     "statusCancelled": "Cancelled",
-    "statusCompleted": "Completed"
+    "statusCompleted": "Completed",
+    "lowStockTitle": "Low stock alert",
+    "lowStockDesc": "{count} items are below their minimum stock level. Restock soon.",
+    "lowStockView": "View inventory"
   },
   "patients": {
     "married": "Married",
@@ -239,6 +242,15 @@
     "deleteError": "Error performing delete operation.",
     "fetchFullRecordError": "Error fetching full patient record",
     "fetchForEditError": "Error fetching patient information for editing.",
+    "searchPlaceholder": "Search by name, phone or national ID...",
+    "filterMaritalStatus": "Marital Status",
+    "filterAllMaritalStatus": "All statuses",
+    "refresh": "Refresh",
+    "resultsCount": "{count} patients",
+    "noFilterResults": "No patients match your search or filters.",
+    "clearFilters": "Clear filters",
+    "sortAsc": "Sort ascending",
+    "sortDesc": "Sort descending",
     "titleSeo": "Patient List | Clinic System",
     "ogTitle": "Patient Management"
   },
@@ -3051,7 +3063,8 @@
     "tabs": {
       "products": "Products",
       "categories": "Categories",
-      "movements": "Stock Movements"
+      "movements": "Stock Movements",
+      "patientUsage": "Patient Usage"
     },
     "totalProducts": "Total Products",
     "totalStockValue": "Stock Value",
@@ -3098,7 +3111,20 @@
     "categoryCreated": "Category created successfully.",
     "categoryUpdated": "Category updated successfully.",
     "stockUpdated": "Stock movement recorded successfully.",
-    "saveError": "Error saving data."
+    "saveError": "Error saving data.",
+    "recordUsage": "Record Usage",
+    "usagePatient": "Patient",
+    "searchPatientPlaceholder": "Search by name, national ID, or phone…",
+    "noUsages": "No patient usages recorded.",
+    "selectPatient": "Select a patient",
+    "selectProduct": "Select a product",
+    "productCurrentStock": "In stock",
+    "visitOptional": "Visit (optional)",
+    "withoutVisit": "No visit",
+    "usageCreated": "Usage recorded and stock deducted.",
+    "usageDeleted": "Usage deleted and stock restored.",
+    "deleteUsageConfirm": "Delete this usage? Stock will be restored.",
+    "fillUsageRequired": "Select a patient, a product, and enter a quantity."
   },
   "create": "Create",
   "delete": "Delete",

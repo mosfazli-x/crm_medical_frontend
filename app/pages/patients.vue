@@ -8,16 +8,92 @@
     </UiPageHeader>
 
     <UiContentCard>
+      <!-- Toolbar: search / filter / refresh -->
+      <div class="flex flex-wrap items-center gap-3 mb-4 px-3 py-3">
+        <v-text-field
+          v-model="searchQuery"
+          variant="outlined"
+          density="compact"
+          :placeholder="$t('patients.searchPlaceholder')"
+          prepend-inner-icon="mdi-magnify"
+          hide-details
+          clearable
+          class="max-w-xs"
+        />
+        <v-select
+          v-model="maritalFilter"
+          :items="maritalFilterOptions"
+          item-title="title"
+          item-value="value"
+          variant="outlined"
+          density="compact"
+          hide-details
+          class="max-w-[180px]"
+          :label="$t('patients.filterMaritalStatus')"
+        />
+        <div class="flex-1 min-w-[8rem]" />
+        <span class="text-sm font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap">
+          {{ t('patients.resultsCount', { count: filteredPatients.length }) }}
+        </span>
+        <button
+          v-if="hasActiveFilters"
+          type="button"
+          class="crm-btn crm-btn-ghost !px-3 !py-1.5 !text-xs"
+          @click="clearFilters"
+        >
+          <v-icon start size="14">mdi-filter-remove-outline</v-icon>
+          {{ $t('patients.clearFilters') }}
+        </button>
+        <v-tooltip :text="$t('patients.refresh')" location="top">
+          <template #activator="{ props }">
+            <v-btn v-bind="props" icon variant="text" size="small" class="crm-icon-btn"
+              :loading="loading" @click="fetchPatients">
+              <v-icon size="20">mdi-refresh</v-icon>
+            </v-btn>
+          </template>
+        </v-tooltip>
+      </div>
+
       <div class="crm-table-wrap">
         <table class="crm-table">
           <thead>
             <tr>
-              <th>{{ $t('patients.fullName') }}</th>
-              <th>{{ $t('patients.nationalId') }}</th>
-              <th>{{ $t('patients.phone') }}</th>
-              <th>{{ $t('patients.birthDate') }}</th>
-              <th>{{ $t('patients.maritalStatus') }}</th>
-              <th>{{ $t('patients.registrationDate') }}</th>
+              <th>
+                <button type="button" class="crm-th-sort" @click="toggleSort('fullName')">
+                  {{ $t('patients.fullName') }}
+                  <v-icon size="14" class="crm-th-sort-icon">{{ sortIcon('fullName') }}</v-icon>
+                </button>
+              </th>
+              <th>
+                <button type="button" class="crm-th-sort" @click="toggleSort('nationalId')">
+                  {{ $t('patients.nationalId') }}
+                  <v-icon size="14" class="crm-th-sort-icon">{{ sortIcon('nationalId') }}</v-icon>
+                </button>
+              </th>
+              <th>
+                <button type="button" class="crm-th-sort" @click="toggleSort('phone')">
+                  {{ $t('patients.phone') }}
+                  <v-icon size="14" class="crm-th-sort-icon">{{ sortIcon('phone') }}</v-icon>
+                </button>
+              </th>
+              <th>
+                <button type="button" class="crm-th-sort" @click="toggleSort('birthDate')">
+                  {{ $t('patients.birthDate') }}
+                  <v-icon size="14" class="crm-th-sort-icon">{{ sortIcon('birthDate') }}</v-icon>
+                </button>
+              </th>
+              <th>
+                <button type="button" class="crm-th-sort" @click="toggleSort('maritalStatus')">
+                  {{ $t('patients.maritalStatus') }}
+                  <v-icon size="14" class="crm-th-sort-icon">{{ sortIcon('maritalStatus') }}</v-icon>
+                </button>
+              </th>
+              <th>
+                <button type="button" class="crm-th-sort" @click="toggleSort('createdAt')">
+                  {{ $t('patients.registrationDate') }}
+                  <v-icon size="14" class="crm-th-sort-icon">{{ sortIcon('createdAt') }}</v-icon>
+                </button>
+              </th>
               <th class="text-center!">{{ $t('common.actions') }}</th>
             </tr>
           </thead>
@@ -38,9 +114,22 @@
               </td>
             </tr>
 
+            <tr v-else-if="!filteredPatients.length">
+              <td colspan="7">
+                <UiEmptyState :title="$t('patients.noFilterResults')">
+                  <template #icon>
+                    <v-icon icon="mdi-filter-off-outline" size="32" color="slate-400" />
+                  </template>
+                  <template #action>
+                    <button class="crm-btn crm-btn-ghost" @click="clearFilters">{{ $t('patients.clearFilters') }}</button>
+                  </template>
+                </UiEmptyState>
+              </td>
+            </tr>
+
             <tr
               v-else
-              v-for="patient in patients"
+              v-for="patient in filteredPatients"
               :key="patient.id"
               class="cursor-pointer group"
               @click="openPatientProfile(patient)"
@@ -48,7 +137,7 @@
               <td class="crm-table-primary">{{ patient.firstName }} {{ patient.lastName }}</td>
               <td class="font-mono tracking-wider">{{ patient.nationalId }}</td>
               <td class="font-mono tracking-wider crm-ltr">{{ patient.phone || '-' }}</td>
-              <td>{{ formatJalaliDate(patient.birthDate) }}</td>
+              <td>{{ formatGregorianDate(patient.birthDate) }}</td>
               <td>
                 <span :class="maritalBadgeClass(patient.maritalStatus)">
                   {{ getMaritalLabel(patient.maritalStatus) || $t('patients.unknown') }}
@@ -180,7 +269,7 @@ const { openEdit } = usePatientFormDialog()
 const { apiFetch } = useApi()
 const { on, off, emit } = useEventBus()
 const { $toast } = useNuxtApp()
-const { formatJalaliDate } = useFormatting()
+const { formatJalaliDate, formatGregorianDate } = useFormatting()
 
 const patients = ref<any[]>([])
 const loading = ref(true)
@@ -189,6 +278,77 @@ const selectedProfile = ref<any>(null)
 const smsDialog = ref(false)
 const selectedSmsPatient = ref<any>(null)
 const smsText = ref('')
+
+// ─── Search / Filter / Sort ───
+const searchQuery = ref('')
+const maritalFilter = ref('all')
+const sortKey = ref('createdAt')
+const sortDir = ref<'asc' | 'desc'>('desc')
+
+const maritalFilterOptions = computed(() => [
+  { title: t('patients.filterAllMaritalStatus'), value: 'all' },
+  { title: t('patients.married'), value: 'متاهل' },
+  { title: t('patients.single'), value: 'مجرد' },
+  { title: t('patients.divorced'), value: 'مطلقه' },
+  { title: t('patients.widowed'), value: 'بیوه' },
+])
+
+const hasActiveFilters = computed(() =>
+  searchQuery.value.trim() !== '' || maritalFilter.value !== 'all'
+)
+
+const clearFilters = () => {
+  searchQuery.value = ''
+  maritalFilter.value = 'all'
+}
+
+const toggleSort = (key: string) => {
+  if (sortKey.value === key) {
+    sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortKey.value = key
+    sortDir.value = key === 'createdAt' ? 'desc' : 'asc'
+  }
+}
+
+const sortIcon = (key: string) => {
+  if (sortKey.value !== key) return 'mdi-sort'
+  return sortDir.value === 'asc' ? 'mdi-arrow-up' : 'mdi-arrow-down'
+}
+
+const sortValue = (p: any, key: string) => {
+  switch (key) {
+    case 'fullName': return `${p.firstName || ''} ${p.lastName || ''}`
+    case 'maritalStatus': return getMaritalLabel(p.maritalStatus) || ''
+    default: return p[key] || ''
+  }
+}
+
+const filteredPatients = computed(() => {
+  let result = patients.value
+  const q = searchQuery.value.trim().toLowerCase()
+  if (q) {
+    result = result.filter((p) => {
+      const fullName = `${p.firstName || ''} ${p.lastName || ''}`
+      const reversed = `${p.lastName || ''} ${p.firstName || ''}`
+      return (
+        fullName.toLowerCase().includes(q) ||
+        reversed.toLowerCase().includes(q) ||
+        (p.nationalId || '').toLowerCase().includes(q) ||
+        (p.phone || '').toLowerCase().includes(q)
+      )
+    })
+  }
+  if (maritalFilter.value !== 'all') {
+    result = result.filter((p) => p.maritalStatus === maritalFilter.value)
+  }
+  const dir = sortDir.value === 'asc' ? 1 : -1
+  return [...result].sort((a, b) => {
+    const va = sortValue(a, sortKey.value)
+    const vb = sortValue(b, sortKey.value)
+    return String(va).localeCompare(String(vb), 'fa', { numeric: true }) * dir
+  })
+})
 
 const maritalLabelMap = computed<Record<string, string>>(() => ({
   'متاهل': t('patients.married'),
@@ -214,7 +374,7 @@ const profileFields = computed(() => {
   const p = selectedProfile.value
   return [
     { label: t('patients.phoneLabel'), value: p.phone || t('patients.notRegistered'), ltr: true },
-    { label: t('patients.birthDateLabel'), value: formatJalaliDate(p.birthDate) },
+    { label: t('patients.birthDateLabel'), value: formatGregorianDate(p.birthDate) },
     { label: t('patients.maritalStatusLabel'), value: getMaritalLabel(p.maritalStatus) || t('patients.unknown') },
     { label: t('patients.registrationDateLabel'), value: formatJalaliDate(p.createdAt) },
   ]

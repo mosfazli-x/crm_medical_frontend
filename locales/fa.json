@@ -196,7 +196,10 @@
     "statusConfirmed": "تایید شده",
     "statusRejected": "رد شده",
     "statusCancelled": "لغو شده",
-    "statusCompleted": "انجام شده"
+    "statusCompleted": "انجام شده",
+    "lowStockTitle": "هشدار کمبود موجودی",
+    "lowStockDesc": "{count} قلم کالا از حداقل موجودی کمتر است. لطفاً هرچه سریع‌تر موجودی را تامین کنید.",
+    "lowStockView": "مشاهده انبار"
   },
   "patients": {
     "married": "متاهل",
@@ -239,6 +242,15 @@
     "deleteError": "خطا در انجام عملیات حذف.",
     "fetchFullRecordError": "خطا در دریافت پرونده کامل بیمار",
     "fetchForEditError": "خطا در دریافت اطلاعات بیمار برای ویرایش.",
+    "searchPlaceholder": "جستجو با نام، شماره یا کد ملی...",
+    "filterMaritalStatus": "وضعیت تأهل",
+    "filterAllMaritalStatus": "همه وضعیت‌ها",
+    "refresh": "بروزرسانی",
+    "resultsCount": "{count} بیمار",
+    "noFilterResults": "بیماری مطابق جستجو یا فیلترها یافت نشد.",
+    "clearFilters": "حذف فیلترها",
+    "sortAsc": "مرتب‌سازی صعودی",
+    "sortDesc": "مرتب‌سازی نزولی",
     "titleSeo": "لیست بیماران | سیستم کلینیک",
     "ogTitle": "مدیریت بیماران"
   },
@@ -3051,7 +3063,8 @@
     "tabs": {
       "products": "محصولات",
       "categories": "دسته‌بندی‌ها",
-      "movements": "حرکات انبار"
+      "movements": "حرکات انبار",
+      "patientUsage": "مصرف بیمار"
     },
     "totalProducts": "کل محصولات",
     "totalStockValue": "ارزش موجودی",
@@ -3098,7 +3111,20 @@
     "categoryCreated": "دسته‌بندی با موفقیت ایجاد شد.",
     "categoryUpdated": "دسته‌بندی با موفقیت به‌روزرسانی شد.",
     "stockUpdated": "حرکت انبار با موفقیت ثبت شد.",
-    "saveError": "خطا در ذخیره اطلاعات."
+    "saveError": "خطا در ذخیره اطلاعات.",
+    "recordUsage": "ثبت مصرف",
+    "usagePatient": "بیمار",
+    "searchPatientPlaceholder": "جستجو بر اساس نام، کد ملی یا تلفن…",
+    "noUsages": "هیچ مصرفی برای بیمار ثبت نشده است.",
+    "selectPatient": "انتخاب بیمار",
+    "selectProduct": "انتخاب محصول",
+    "productCurrentStock": "موجودی",
+    "visitOptional": "ویزیت (اختیاری)",
+    "withoutVisit": "بدون ویزیت",
+    "usageCreated": "مصرف ثبت شد و از موجودی کسر گردید.",
+    "usageDeleted": "مصرف حذف شد و موجودی به انبار برگشت.",
+    "deleteUsageConfirm": "این مصرف حذف شود؟ موجودی برگشت داده خواهد شد.",
+    "fillUsageRequired": "بیمار، محصول و تعداد را وارد کنید."
   },
   "create": "ایجاد",
   "delete": "حذف",
@@ -3137,7 +3163,7 @@
       "line2": "پیشرفته برای",
       "line3": "زندگی مدرن"
     },
-    "intro": "پزشکی زیبایی بانوان با دقت بالینی و محرمانگی کامل؛ هر بار فقط یک بیمار، در فضایی که طوری طراحی شده که انگار هیچ جای دیگری نیست.",
+    "intro": "تجربه‌ای متفاوت از پزشکی زیبایی بانوان؛ جایی که دقت پزشکی، آرامش، حریم خصوصی و توجه کامل به شما در فضایی کاملاً اختصاصی و منحصربه‌فرد معنا پیدا می‌کند..",
     "badges": {
       "certified": "دارای بورد تخصصی",
       "privacy": "محرمانگی مطلق",
