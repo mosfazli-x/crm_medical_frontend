@@ -1084,7 +1084,11 @@
     "unlinkSuccess": "Disconnected successfully",
     "unlinkTitle": "Disconnect Telegram",
     "waitConfirmation": "Waiting for confirmation...",
-    "wrongPassword": "Wrong password"
+    "wrongPassword": "Wrong password",
+    "oneClickConnect": "1-Click Direct Connect in Telegram",
+    "oneClickDesc": "Click the button below to open Telegram and instantly connect your account in 1 click.",
+    "openTelegramBot": "Open Telegram & Connect",
+    "advancedManualCode": "Advanced: Connect using manual code"
   },
   "staff": {
     "title": "Staff Management",
@@ -3111,5 +3115,60 @@
   "start_date": "Start Date",
   "jDD jMMMM": "jDD jMMMM",
   "jDD jMMMM jYYYY": "jDD jMMMM jYYYY",
-  "jYYYY-jMM-jDD": "jYYYY-jMM-jDD"
+  "jYYYY-jMM-jDD": "jYYYY-jMM-jDD",
+  "aestheticLanding": {
+    "metaTitle": "Hasti Hosseini Clinic — Women's Aesthetic Medicine",
+    "metaDescription": "Women's aesthetic medicine practised with clinical precision and complete discretion. Est. private practice by appointment — board certified, absolute privacy, bespoke protocols.",
+    "ogTitle": "Hasti Hosseini Clinic — Women's Aesthetic Medicine",
+    "ogDescription": "The quiet art of looking like yourself. Women's aesthetic medicine practised with clinical precision and complete discretion, one patient at a time.",
+    "navLabel": "Primary",
+    "langToggle": "فارسی",
+    "brand": {
+      "name": "HASTI HOSSEINI",
+      "tagline": "Aesthetic Medicine · By Appointment",
+      "subtitle": "Beauty, scaled to you"
+    },
+    "eyebrow": "Est. Private Practice",
+    "headline": {
+      "line1": "Healthcare",
+      "line2": "for",
+      "line3": "Modern Life"
+    },
+    "intro": "Women's aesthetic medicine practised with clinical precision and complete discretion. One patient at a time, in a room designed to feel like nowhere else.",
+    "badges": {
+      "certified": "Board Certified",
+      "privacy": "Absolute Privacy",
+      "protocols": "Bespoke Protocols"
+    },
+    "rail": {
+      "booking": {
+        "num": "01",
+        "title": "Appointment Booking",
+        "sub": "Private consultation"
+      },
+      "login": {
+        "num": "02",
+        "title": "Account Login",
+        "sub": "Patient portal"
+      },
+      "tutorials": {
+        "num": "03",
+        "title": "Tutorials",
+        "sub": "Aftercare guidance"
+      },
+      "blog": {
+        "num": "04",
+        "title": "Blog",
+        "sub": "Journal & research"
+      },
+      "about": {
+        "num": "05",
+        "title": "About Us",
+        "sub": "The practice"
+      }
+    },
+    "footer": {
+      "consultations": "Consultations by appointment"
+    }
+  }
 }

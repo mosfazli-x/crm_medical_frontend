@@ -1,708 +1,490 @@
-<template>
-  <v-locale-provider rtl>
-    <div dir="rtl" class="min-h-screen bg-white">
-      <!-- ============ NAVBAR ============ -->
-      <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
-        :class="scrolled ? 'bg-white/95! backdrop-blur-xl! shadow-lg! shadow-slate-900/10!' : 'bg-transparent!'">
-        <div class="max-w-7xl mx-auto px-6! sm:px-8! lg:px-12!">
-          <div class="flex items-center justify-between h-24!">
-            <NuxtLink to="/" class="flex items-center gap-3! group">
-              <div
-                class="w-12! h-12! rounded-2xl! bg-gradient-to-br! from-electric-sapphire! to-cornflower-blue! flex items-center justify-center shadow-lg! shadow-electric-sapphire/20! group-hover:shadow-electric-sapphire/40! transition-shadow duration-300">
-                <span class="mdi mdi-heart-pulse text-white text-2xl!"></span>
-              </div>
-              <span class="font-black! text-xl! tracking-tight transition-colors duration-500"
-                :class="scrolled ? 'text-slate-800!' : 'text-white!'">{{ t('index3.nav.brand') }}</span>
-            </NuxtLink>
-
-            <div class="hidden lg:flex items-center gap-12!">
-              <a v-for="link in navLinks" :key="link.href" :href="link.href"
-                class="text-base! font-bold! transition-all duration-300 relative after:absolute after:bottom-0 after:right-0 after:h-0.5! after:w-0 after:bg-electric-sapphire! after:transition-all hover:after:w-full! tracking-wide"
-                :class="scrolled ? 'text-slate-700! hover:text-electric-sapphire!' : 'text-white/90! hover:text-white!'">{{
-                  link.label }}</a>
-            </div>
-
-            <div class="flex items-center gap-4!">
-              <NuxtLink to="/auth/login"
-                class="hidden sm:inline-flex text-sm font-bold! px-5! py-3! rounded-2xl! transition-all duration-300"
-                :class="scrolled ? 'text-electric-sapphire! hover:bg-electric-sapphire/5!' : 'text-white! hover:bg-white/10!'">
-                {{ t('index3.nav.login') }}</NuxtLink>
-              <NuxtLink to="/auth/register"
-                class="text-sm font-extrabold! px-6! py-3! rounded-2xl! transition-all duration-300 shadow-lg!"
-                :class="scrolled
-                  ? 'bg-electric-sapphire! text-white! shadow-electric-sapphire/30! hover:shadow-electric-sapphire/50! hover:-translate-y-0.5!'
-                  : 'bg-white! text-electric-sapphire! shadow-white/30! hover:shadow-white/50! hover:-translate-y-0.5!'">
-                {{ t('index3.nav.register') }}</NuxtLink>
-              <button class="lg:hidden p-2.5! rounded-xl! transition-colors"
-                :class="scrolled ? 'text-slate-700! hover:bg-slate-100!' : 'text-white! hover:bg-white/10!'"
-                @click="mobileMenu = !mobileMenu">
-                <span class="mdi text-2xl!" :class="mobileMenu ? 'mdi-close' : 'mdi-menu'"></span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <transition name="slide-down">
-          <div v-if="mobileMenu" class="lg:hidden bg-white! border-t border-slate-100! shadow-2xl!">
-            <div class="px-6! py-8! space-y-2!">
-              <a v-for="link in navLinks" :key="link.href" :href="link.href"
-                class="block px-5! py-3.5! rounded-2xl! text-slate-700! font-bold! hover:bg-electric-sapphire/5! hover:text-electric-sapphire! transition-colors text-base!"
-                @click="mobileMenu = false">{{ link.label }}</a>
-              <hr class="my-4! border-slate-100!">
-              <NuxtLink to="/auth/login"
-                class="block px-5! py-3.5! rounded-2xl! text-slate-700! font-bold! hover:bg-electric-sapphire/5! hover:text-electric-sapphire! transition-colors text-base!"
-                @click="mobileMenu = false">{{ t('index3.nav.login') }}</NuxtLink>
-              <NuxtLink to="/auth/register"
-                class="block px-5! py-3.5! rounded-2xl! text-white! font-extrabold! bg-electric-sapphire! hover:bg-electric-sapphire/90! transition-colors text-center text-base!"
-                @click="mobileMenu = false">{{ t('index3.nav.register') }}</NuxtLink>
-            </div>
-          </div>
-        </transition>
-      </nav>
-
-      <!-- ============ HERO ============ -->
-      <section
-        class="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br! from-electric-sapphire! via-cornflower-blue! to-electric-sapphire!">
-        <div class="absolute inset-0">
-          <div class="absolute top-20! left-10! w-80! h-80! bg-white/10! rounded-full blur-3xl"></div>
-          <div class="absolute bottom-20! right-10! w-96! h-96! bg-white/5! rounded-full blur-3xl"></div>
-          <div
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px]! h-[900px]! bg-white/5! rounded-full blur-3xl">
-          </div>
-          <div class="absolute top-40! right-[20%] w-24! h-24! border-2! border-white/20! rounded-full animate-float">
-          </div>
-          <div
-            class="absolute bottom-40! left-[15%] w-16! h-16! border-2! border-white/20! rounded-full animate-float-delayed">
-          </div>
-          <div class="absolute top-1/3 left-[10%] w-8! h-8! bg-white/20! rounded-full"></div>
-          <div class="absolute bottom-1/3 right-[10%] w-12! h-12! bg-white/10! rounded-full blur-sm"></div>
-        </div>
-
-        <div class="relative z-10 max-w-7xl mx-auto px-6! sm:px-8! lg:px-12! py-14! md:py-44!">
-          <div class="grid lg:grid-cols-2 gap-16! items-center">
-            <div class="text-center lg:text-right">
-              <div
-                class="inline-flex items-center gap-2.5! px-5! py-2.5! rounded-full bg-white/15! backdrop-blur-sm! text-white/90! text-sm font-bold! mb-10! border border-white/10!">
-                <span class="w-2.5! h-2.5! rounded-full bg-green-400! animate-pulse"></span>
-                {{ t('index3.hero.badge') }}
-              </div>
-              <h1
-                class="text-5xl! sm:text-6xl! lg:text-7xl! xl:text-8xl! font-black! text-white! leading-tight! tracking-tight">
-                {{ t('index3.hero.title1') }}
-                <br>
-                <span class="text-transparent! bg-clip-text! bg-gradient-to-r! from-yellow-300! to-orange-300!">{{ t('index3.hero.title2') }}</span>
-              </h1>
-              <p class="text-xl! sm:text-2xl! text-white/80! mt-8! max-w-2xl! mx-auto lg:mx-0! leading-relaxed!">
-                {{ t('index3.hero.desc') }}
-              </p>
-              <div class="flex flex-wrap gap-6! mt-12! justify-center lg:justify-start">
-                <a href="#doctors"
-                  class="group px-10! py-5! rounded-2xl! bg-white! text-electric-sapphire! font-extrabold! text-base! shadow-2xl! shadow-black/20! hover:shadow-white/40! hover:-translate-y-1! transition-all duration-300 flex items-center gap-3!">
-                  <span>{{ t('index3.hero.cta.booking') }}</span>
-                  <span class="mdi mdi-arrow-left text-xl! group-hover:translate-x-1! transition-transform"></span>
-                </a>
-                <a href="#services"
-                  class="group px-10! py-5! rounded-2xl! border-2! border-white/30! text-white! font-extrabold! text-base! hover:bg-white/15! hover:border-white/60! transition-all duration-300 flex items-center gap-3!">
-                  <span>{{ t('index3.hero.cta.services') }}</span>
-                  <span class="mdi mdi-chevron-left text-xl! group-hover:translate-x-1! transition-transform"></span>
-                </a>
-              </div>
-            </div>
-
-            <div class="hidden lg:flex justify-center">
-              <div class="relative">
-                <div
-                  class="w-[380px]! h-[420px]! rounded-[32px]! bg-white/10! backdrop-blur-md! border border-white/20! p-10! flex flex-col items-center justify-center shadow-2xl!">
-                  <div
-                    class="w-28! h-28! rounded-2xl! bg-gradient-to-br! from-yellow-300! to-orange-400! flex items-center justify-center mb-8! shadow-xl!">
-                    <span class="mdi mdi-hospital text-5xl! text-white!"></span>
-                  </div>
-                  <div class="text-white text-center">
-                    <div class="text-4xl! font-black!">{{ t('index3.hero.sidebar.appointmentCount') }}</div>
-                    <div class="text-white/70! text-sm mt-2! font-bold">{{ t('index3.hero.sidebar.successfulAppointments') }}</div>
-                  </div>
-                  <div class="mt-8! w-full space-y-4!">
-                    <div class="flex items-center gap-3! text-white/80! text-base! font-medium">
-                      <span class="mdi mdi-check-circle text-green-300! text-xl!"></span>
-                      <span>{{ t('index3.hero.sidebar.feature1') }}</span>
-                    </div>
-                    <div class="flex items-center gap-3! text-white/80! text-base! font-medium">
-                      <span class="mdi mdi-check-circle text-green-300! text-xl!"></span>
-                      <span>{{ t('index3.hero.sidebar.feature2') }}</span>
-                    </div>
-                    <div class="flex items-center gap-3! text-white/80! text-base! font-medium">
-                      <span class="mdi mdi-check-circle text-green-300! text-xl!"></span>
-                      <span>{{ t('index3.hero.sidebar.feature3') }}</span>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="absolute -bottom-6! -right-6! w-32! h-32! rounded-2xl! bg-gradient-to-br! from-pink-400! to-rose-400! flex items-center justify-center shadow-2xl! -z-10!">
-                  <span class="mdi mdi-heart text-4xl! text-white!"></span>
-                </div>
-                <div
-                  class="absolute -top-6! -left-6! w-28! h-28! rounded-2xl! bg-gradient-to-br! from-sky-300! to-cyan-400! flex items-center justify-center shadow-2xl! -z-10!">
-                  <span class="mdi mdi-stethoscope text-4xl! text-white!"></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="absolute bottom-0 left-0 right-0 h-40! bg-gradient-to-t! from-white! to-transparent!"></div>
-      </section>
-
-      <!-- ============ SERVICES ============ -->
-      <section id="services" class="py-14! md:py-14! px-6! sm:px-8! lg:px-12! bg-white! relative overflow-hidden">
-        <div
-          class="absolute top-0 left-0 w-96! h-96! bg-periwinkle/20! rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2">
-        </div>
-        <div
-          class="absolute bottom-0 right-0 w-80! h-80! bg-light-cyan/50! rounded-full blur-3xl translate-x-1/3 translate-y-1/3">
-        </div>
-
-        <div class="max-w-7xl mx-auto relative z-10">
-          <div class="text-center mb-20!">
-            <span
-              class="inline-flex items-center gap-2! px-5! py-2! rounded-full bg-electric-sapphire/10! text-electric-sapphire! text-sm font-extrabold! mb-6!">
-              <span class="mdi mdi-medical-bag text-base!"></span>
-              {{ t('index3.services.badge') }}
-            </span>
-            <h2 class="text-4xl! md:text-5xl! lg:text-6xl! font-black! text-slate-900! leading-tight!">{{ t('index3.services.title') }}</h2>
-            <p class="text-slate-500! mt-6! max-w-3xl! mx-auto text-xl! leading-relaxed!">{{ t('index3.services.desc') }}</p>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8! md:gap-10!">
-            <div v-for="(service, i) in services" :key="service.title"
-              class="group relative bg-white! rounded-[32px]! p-10! border border-slate-100! shadow-sm hover:shadow-2xl! hover:-translate-y-3! transition-all duration-500"
-              :style="{ transitionDelay: `${i * 100}ms` }">
-              <div
-                class="absolute inset-0 rounded-[32px]! bg-gradient-to-br! from-electric-sapphire/0! via-electric-sapphire/0! to-electric-sapphire/0! group-hover:from-electric-sapphire/5! group-hover:via-cornflower-blue/5! group-hover:to-baby-blue-ice/10! transition-all duration-500">
-              </div>
-              <div class="relative z-10">
-                <div
-                  class="w-20! h-20! rounded-2xl! bg-gradient-to-br! from-electric-sapphire! to-cornflower-blue! flex items-center justify-center mb-8! shadow-lg! shadow-electric-sapphire/20! group-hover:shadow-electric-sapphire/40! group-hover:scale-110! transition-all duration-500">
-                  <span :class="['mdi', service.icon, 'text-3xl! text-white!']"></span>
-                </div>
-                <h3
-                  class="text-2xl! font-bold! text-slate-800! mb-4! group-hover:text-electric-sapphire! transition-colors">
-                  {{ service.title }}</h3>
-                <p class="text-slate-500! leading-relaxed! text-base!">{{ service.description }}</p>
-                <div
-                  class="mt-8! flex items-center gap-2! text-electric-sapphire! text-base! font-bold! opacity-0! group-hover:opacity-100! transition-all duration-500 translate-y-3! group-hover:translate-y-0!">
-                  <span>{{ t('index3.services.learnMore') }}</span>
-                  <span class="mdi mdi-arrow-left text-lg!"></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============ DOCTORS & BOOKING ============ -->
-      <section id="doctors"
-        class="py-14! md:py-14! px-6! sm:px-8! lg:px-12! bg-gradient-to-b! from-slate-50/80! to-white! relative overflow-hidden">
-        <div class="absolute top-1/2 right-0 w-72! h-72! bg-baby-blue-ice/30! rounded-full blur-3xl"></div>
-
-        <div class="max-w-7xl mx-auto relative z-10">
-          <div class="text-center mb-20!">
-            <span
-              class="inline-flex items-center gap-2! px-5! py-2! rounded-full bg-electric-sapphire/10! text-electric-sapphire! text-sm font-extrabold! mb-6!">
-              <span class="mdi mdi-doctor text-base!"></span>
-              {{ t('index3.doctors.badge') }}
-            </span>
-            <h2 class="text-4xl! md:text-5xl! lg:text-6xl! font-black! text-slate-900! leading-tight!">{{ t('index3.doctors.title') }}</h2>
-            <p class="text-slate-500! mt-6! max-w-3xl! mx-auto text-xl! leading-relaxed!">{{ t('index3.doctors.desc') }}</p>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10!">
-            <div v-for="doctor in doctors" :key="doctor.name"
-              class="group bg-white! rounded-[32px]! border border-slate-100! shadow-sm hover:shadow-2xl! transition-all duration-500 hover:-translate-y-3! overflow-hidden">
-              <div
-                class="h-52! bg-gradient-to-br! from-electric-sapphire! to-cornflower-blue! relative overflow-hidden">
-                <div class="absolute inset-0 bg-white/10!"></div>
-                <div class="absolute -bottom-12! -left-12! w-36! h-36! bg-white/10! rounded-full"></div>
-                <div class="absolute -top-8! -right-8! w-28! h-28! bg-white/10! rounded-full"></div>
-                <div
-                  class="absolute bottom-6! right-6! flex items-center gap-2! bg-white/20! backdrop-blur-sm! rounded-xl! px-4! py-2! border border-white/20!">
-                  <span class="mdi mdi-star text-yellow-300! text-base!"></span>
-                  <span class="text-white! font-extrabold! text-base!">{{ doctor.rating }}</span>
-                </div>
-              </div>
-              <div class="p-8! -mt-16! relative z-10">
-                <img src="../assets/images/dr_hosseini.jpg"
-                  class="w-24! h-24! rounded-2xl! bg-gradient-to-br! from-electric-sapphire! to-cornflower-blue! flex items-center justify-center mx-auto shadow-2xl! shadow-electric-sapphire/30! border-[5px]! border-white! mb-6!">
-                </img>
-                <div class="text-center">
-                  <h3 class="text-2xl! font-bold! text-slate-800! mb-1!">{{ doctor.name }}</h3>
-                  <span
-                    class="inline-block px-4! py-1.5! rounded-full bg-electric-sapphire/10! text-electric-sapphire! text-xs! font-bold! mt-2!">{{
-                      doctor.specialty }}</span>
-                  <p class="text-slate-500! text-sm mt-4! leading-relaxed!">{{ doctor.bio }}</p>
-                  <div class="flex items-center justify-center gap-4! mt-5! text-slate-400! text-sm font-bold">
-                    <span class="flex items-center gap-1.5!">
-                      <span class="mdi mdi-clock-outline text-electric-sapphire!"></span>
-                      {{ doctor.experience }} {{ t('index3.doctors.yearsExperience') }}
-                    </span>
-                  </div>
-                  <NuxtLink :to="`/booking/${doctor.id}`"
-                    class="mt-8! w-full px-8! py-4! rounded-2xl! bg-gradient-to-r! from-electric-sapphire! to-cornflower-blue! text-white! font-extrabold! text-sm hover:shadow-2xl! hover:shadow-electric-sapphire/40! hover:-translate-y-1! transition-all duration-300 inline-flex items-center justify-center">
-                    {{ t('index3.doctors.book') }}
-                  </NuxtLink>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!--
-                    <div class="text-center mt-16!">
-            <a href="#contact"
-              class="inline-flex items-center gap-3! px-10! py-5! rounded-2xl! border-2! border-electric-sapphire/20! text-electric-sapphire! font-extrabold! hover:bg-electric-sapphire/5! hover:border-electric-sapphire/50! transition-all duration-300 text-base!">
-              <span>مشاهده همه پزشکان</span>
-              <span class="mdi mdi-arrow-left text-lg!"></span>
-            </a>
-          </div>-->
-        </div>
-      </section>
-
-      <!-- ============ ABOUT US ============ -->
-      <section id="about" class="py-14! md:py-14! px-6! sm:px-8! lg:px-12! bg-white! relative overflow-hidden">
-        <div class="absolute top-1/2 left-0 w-96! h-96! bg-light-cyan/60! rounded-full blur-3xl -translate-x-1/2"></div>
-
-        <div class="max-w-7xl mx-auto relative z-10">
-          <div class="grid lg:grid-cols-2 gap-20! items-center">
-            <div class="order-2 lg:order-1">
-              <span
-                class="inline-flex items-center gap-2! px-5! py-2! rounded-full bg-electric-sapphire/10! text-electric-sapphire! text-sm font-extrabold! mb-6!">
-                <span class="mdi mdi-information-outline text-base!"></span>
-                {{ t('index3.about.badge') }}
-              </span>
-              <h2 class="text-4xl! md:text-5xl! lg:text-6xl! font-black! text-slate-900! leading-tight!">
-                {{ t('index3.about.title1') }}
-                <br>
-                <span class="text-electric-sapphire!">{{ t('index3.about.title2') }}</span>
-              </h2>
-              <p class="text-slate-600! mt-8! leading-relaxed! text-xl!">
-                {{ t('index3.about.desc1') }}
-              </p>
-              <p class="text-slate-500! mt-6! leading-relaxed! text-lg!">
-                {{ t('index3.about.desc2') }}
-              </p>
-
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-8! mt-16!">
-                <div v-for="stat in stats" :key="stat.label"
-                  class="text-center p-6! rounded-2xl! bg-slate-50! border border-slate-100! hover:border-electric-sapphire/20! hover:shadow-md! transition-all duration-300">
-                  <div class="text-3xl! md:text-4xl! font-black! text-electric-sapphire!">{{ stat.value }}</div>
-                  <div class="text-xs! text-slate-500! mt-2! font-bold! tracking-wide">{{ stat.label }}</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="order-1 lg:order-2 flex justify-center">
-              <div class="relative">
-                <div
-                  class="w-[400px]! h-[420px]! rounded-[32px]! bg-gradient-to-br! from-electric-sapphire! to-cornflower-blue! p-10! flex flex-col items-center justify-center shadow-2xl! shadow-electric-sapphire/20!">
-                  <span class="mdi mdi-shield-check text-7xl! text-white/20! mb-6!"></span>
-                  <div class="text-white text-center">
-                    <div class="text-3xl! font-black! mb-3!">{{ t('index3.about.card.years') }}</div>
-                    <div class="text-white/70! text-base! font-bold">{{ t('index3.about.card.label') }}</div>
-                  </div>
-                  <div class="mt-10! grid grid-cols-2 gap-6! w-full">
-                    <div class="text-center p-4! rounded-2xl! bg-white/10! backdrop-blur-sm! border border-white/10!">
-                      <div class="text-white! font-black! text-2xl!">{{ t('index3.about.card.staffValue') }}</div>
-                      <div class="text-white/60! text-xs! font-bold mt-1!">{{ t('index3.about.card.staffLabel') }}</div>
-                    </div>
-                    <div class="text-center p-4! rounded-2xl! bg-white/10! backdrop-blur-sm! border border-white/10!">
-                      <div class="text-white! font-black! text-2xl!">{{ t('index3.about.card.patientsValue') }}</div>
-                      <div class="text-white/60! text-xs! font-bold mt-1!">{{ t('index3.about.card.patientsLabel') }}</div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="absolute -bottom-8! -left-8! w-32! h-32! rounded-2xl! bg-gradient-to-br! from-yellow-300! to-orange-400! flex items-center justify-center shadow-2xl! -z-10!">
-                  <span class="mdi mdi-star text-5xl! text-white!"></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============ CONTACT US ============ -->
-      <section id="contact"
-        class="py-14! md:py-14! px-6! sm:px-8! lg:px-12! bg-gradient-to-b! from-slate-50! to-white! relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-96! h-96! bg-periwinkle/20! rounded-full blur-3xl"></div>
-
-        <div class="max-w-7xl mx-auto relative z-10">
-          <div class="text-center mb-20!">
-            <span
-              class="inline-flex items-center gap-2! px-5! py-2! rounded-full bg-electric-sapphire/10! text-electric-sapphire! text-sm font-extrabold! mb-6!">
-              <span class="mdi mdi-phone text-base!"></span>
-              {{ t('index3.contact.badge') }}
-            </span>
-            <h2 class="text-4xl! md:text-5xl! lg:text-6xl! font-black! text-slate-900! leading-tight!">{{ t('index3.contact.title') }}</h2>
-            <p class="text-slate-500! mt-6! max-w-3xl! mx-auto text-xl! leading-relaxed!">{{ t('index3.contact.desc') }}</p>
-          </div>
-
-          <div class="grid lg:grid-cols-2 gap-16!">
-            <div class="space-y-10!">
-              <div v-for="item in contactInfo" :key="item.label" class="flex items-start gap-6! group">
-                <div
-                  class="w-16! h-16! rounded-2xl! bg-gradient-to-br! from-electric-sapphire! to-cornflower-blue! flex items-center justify-center shrink-0 shadow-xl! shadow-electric-sapphire/20! group-hover:scale-110! transition-transform duration-300">
-                  <span :class="['mdi', item.icon, 'text-2xl! text-white!']"></span>
-                </div>
-                <div>
-                  <h4 class="font-extrabold! text-lg! text-slate-800! mb-2!">{{ item.label }}</h4>
-                  <p class="text-slate-500! text-base! leading-relaxed!" v-html="item.value"></p>
-                </div>
-              </div>
-
-              <div class="flex gap-5! pt-6!">
-                <a v-for="social in socialLinks" :key="social.name" :href="social.href"
-                  class="w-14! h-14! rounded-2xl! bg-slate-100! hover:bg-electric-sapphire! hover:text-white! flex items-center justify-center transition-all duration-300 text-slate-500! hover:shadow-xl! hover:shadow-electric-sapphire/30!">
-                  <span :class="['mdi', social.icon, 'text-2xl!']"></span>
-                </a>
-              </div>
-            </div>
-
-            <div class="bg-white! rounded-[32px]! p-10! shadow-2xl! shadow-slate-200/50! border border-slate-100!">
-              <h3 class="text-3xl! font-extrabold! text-slate-800! mb-3!">{{ t('index3.contact.formTitle') }}</h3>
-              <p class="text-slate-500! text-base! mb-10!">{{ t('index3.contact.formDesc') }}</p>
-              <form @submit.prevent="handleSubmit" class="space-y-7!">
-                <div class="grid sm:grid-cols-2 gap-6!">
-                  <div>
-                    <label class="block text-sm font-extrabold! text-slate-700! mb-3!">{{ t('index3.contact.formName') }}</label>
-                    <input v-model="form.name" type="text"
-                      class="w-full px-6! py-4! rounded-2xl! border border-slate-200! bg-slate-50/50! text-slate-800! text-sm outline-none! focus:border-electric-sapphire! focus:ring-4! focus:ring-electric-sapphire/20! transition-all"
-                      :placeholder="t('index3.contact.formNamePlaceholder')">
-                  </div>
-                  <div>
-                    <label class="block text-sm font-extrabold! text-slate-700! mb-3!">{{ t('index3.contact.formPhone') }}</label>
-                    <input v-model="form.phone" type="tel"
-                      class="w-full px-6! py-4! rounded-2xl! border border-slate-200! bg-slate-50/50! text-slate-800! text-sm outline-none! focus:border-electric-sapphire! focus:ring-4! focus:ring-electric-sapphire/20! transition-all ltr-field!"
-                      :placeholder="t('index3.contact.formPhonePlaceholder')">
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-sm font-extrabold! text-slate-700! mb-3!">{{ t('index3.contact.formSubject') }}</label>
-                  <input v-model="form.subject" type="text"
-                    class="w-full px-6! py-4! rounded-2xl! border border-slate-200! bg-slate-50/50! text-slate-800! text-sm outline-none! focus:border-electric-sapphire! focus:ring-4! focus:ring-electric-sapphire/20! transition-all"
-                    :placeholder="t('index3.contact.formSubjectPlaceholder')">
-                </div>
-                <div>
-                  <label class="block text-sm font-extrabold! text-slate-700! mb-3!">{{ t('index3.contact.formMessage') }}</label>
-                  <textarea v-model="form.message" rows="5"
-                    class="w-full px-6! py-4! rounded-2xl! border border-slate-200! bg-slate-50/50! text-slate-800! text-sm outline-none! focus:border-electric-sapphire! focus:ring-4! focus:ring-electric-sapphire/20! transition-all resize-none!"
-                    :placeholder="t('index3.contact.formMessagePlaceholder')"></textarea>
-                </div>
-                <button type="submit"
-                  class="w-full px-10! py-5! rounded-2xl! bg-gradient-to-r! from-electric-sapphire! to-cornflower-blue! text-white! font-extrabold! text-base! hover:shadow-2xl! hover:shadow-electric-sapphire/40! hover:-translate-y-1! transition-all duration-300 flex items-center justify-center gap-3!">
-                  <span>{{ t('index3.contact.formSubmit') }}</span>
-                  <span class="mdi mdi-send text-lg!"></span>
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============ FOOTER ============ -->
-      <footer class="bg-slate-900! text-white!">
-        <div class="max-w-7xl mx-auto px-6! sm:px-8! lg:px-12! py-14!">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16!">
-            <div class="lg:col-span-1">
-              <div class="flex items-center gap-3! mb-8!">
-                <div
-                  class="w-12! h-12! rounded-2xl! bg-gradient-to-br! from-electric-sapphire! to-cornflower-blue! flex items-center justify-center shadow-lg!">
-                  <span class="mdi mdi-heart-pulse text-white text-2xl!"></span>
-                </div>
-                <span class="font-black! text-2xl!">{{ t('index3.footer.brand') }}</span>
-              </div>
-              <p class="text-slate-400! text-base! leading-relaxed!">{{ t('index3.footer.desc') }}</p>
-              <div class="flex gap-4! mt-8!">
-                <a v-for="social in socialLinks" :key="social.name" :href="social.href"
-                  class="w-12! h-12! rounded-2xl! bg-slate-800! hover:bg-electric-sapphire! flex items-center justify-center transition-all duration-300 text-slate-400! hover:text-white! hover:shadow-lg! hover:shadow-electric-sapphire/30!">
-                  <span :class="['mdi', social.icon, 'text-xl!']"></span>
-                </a>
-              </div>
-            </div>
-
-            <div>
-              <h4 class="font-black! text-xl! mb-8! text-white!">{{ t('index3.footer.quickAccess') }}</h4>
-              <ul class="space-y-5!">
-                <li v-for="link in footerLinks" :key="link.label">
-                  <a :href="link.href"
-                    class="text-slate-400! hover:text-electric-sapphire! transition-colors text-base! flex items-center gap-2! font-medium">
-                    <span class="mdi mdi-chevron-left text-electric-sapphire! text-lg!"></span>
-                    {{ link.label }}
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 class="font-black! text-xl! mb-8! text-white!">{{ t('index3.footer.hours') }}</h4>
-              <ul class="space-y-5! text-base!">
-                <li class="flex justify-between text-slate-400!">
-                  <span>{{ t('index3.footer.weekdays') }}</span>
-                  <span class="text-white! font-extrabold!">{{ t('index3.footer.weekdaysHours') }}</span>
-                </li>
-                <li class="flex justify-between text-slate-400!">
-                  <span>{{ t('index3.footer.friday') }}</span>
-                  <span class="text-white! font-extrabold!">{{ t('index3.footer.fridayHours') }}</span>
-                </li>
-                <li class="flex justify-between text-slate-400!">
-                  <span>{{ t('index3.footer.saturday') }}</span>
-                  <span class="text-red-400! font-extrabold!">{{ t('index3.footer.saturdayHours') }}</span>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 class="font-black! text-xl! mb-8! text-white!">{{ t('index3.footer.contactInfo') }}</h4>
-              <ul class="space-y-5! text-base!">
-                <li class="flex items-center gap-3! text-slate-400!">
-                  <span class="mdi mdi-map-marker text-electric-sapphire! text-xl! shrink-0!"></span>
-                  {{ t('index3.footer.address') }}
-                </li>
-                <li class="flex items-center gap-3! text-slate-400!">
-                  <span class="mdi mdi-phone text-electric-sapphire! text-xl! shrink-0!"></span>
-                  09907789182
-                </li>
-                <li class="flex items-center gap-3! text-slate-400!">
-                  <span class="mdi mdi-email text-electric-sapphire! text-xl! shrink-0!"></span>
-                  info@ladiesneeds.com
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="border-t! border-slate-800! mt-16! pt-10! text-center">
-            <p class="text-slate-500! text-sm font-medium">{{ t('index3.footer.copyright') }}</p>
-          </div>
-        </div>
-      </footer>
-    </div>
-  </v-locale-provider>
-</template>
-
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-
-useSeoMeta({
-  title: t('index3.seo.title'),
-  ogTitle: t('index3.seo.ogTitle'),
-  description: t('index3.seo.description'),
-})
+import { ref, computed } from 'vue'
+import { useScrollReveal } from '../composables/Usescrollreveal'
 
 definePageMeta({
   layout: false,
 })
 
+useClinicSeo()
+
 const { t } = useI18n()
 
-const scrolled = ref(false)
-const mobileMenu = ref(false)
-const visibleSections = ref<Record<string, boolean>>({})
-const observers: IntersectionObserver[] = []
+const aboutRoot = ref<HTMLElement | null>(null)
+const servicesRoot = ref<HTMLElement | null>(null)
+const statsRoot = ref<HTMLElement | null>(null)
+const doctorsRoot = ref<HTMLElement | null>(null)
+const blogRoot = ref<HTMLElement | null>(null)
+const appointmentRoot = ref<HTMLElement | null>(null)
 
-const form = ref({
-  name: '',
-  phone: '',
-  subject: '',
-  message: '',
-})
-
-const navLinks = computed(() => [
-  { href: '#services', label: t('index3.nav.services') },
-  { href: '#doctors', label: t('index3.nav.doctors') },
-  { href: '#about', label: t('index3.nav.about') },
-  { href: '#contact', label: t('index3.nav.contact') },
-])
+useScrollReveal(aboutRoot, { items: '.about-reveal', stagger: 0.12 })
+useScrollReveal(servicesRoot, { items: '.service-reveal', stagger: 0.08 })
+useScrollReveal(statsRoot, { items: '.stat-reveal', stagger: 0.12 })
+useScrollReveal(doctorsRoot, { items: '.doctor-reveal', stagger: 0.1 })
+useScrollReveal(blogRoot, { items: '.blog-reveal', stagger: 0.1 })
+useScrollReveal(appointmentRoot, { items: '.appt-reveal', stagger: 0.12 })
 
 const services = computed(() => [
   {
-    icon: 'mdi-calendar-check',
-    title: t('index3.services.01.title'),
-    description: t('index3.services.01.desc'),
+    icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.57-3.25 3.92L12 22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.57 3.25 3.92" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+    title: t('index2.services.01.title'),
+    desc: t('index2.services.01.desc'),
+    color: 'from-rose-500/10 to-pink-500/10',
+    iconBg: '!bg-rose-50 !text-rose-600',
+    number: t('index2.services.01.number')
   },
   {
-    icon: 'mdi-doctor',
-    title: t('index3.services.02.title'),
-    description: t('index3.services.02.desc'),
+    icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="5" stroke="currentColor" stroke-width="1.6"/><path d="M3 21v-2a7 7 0 0 1 14 0v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+    title: t('index2.services.02.title'),
+    desc: t('index2.services.02.desc'),
+    color: 'from-violet-500/10 to-purple-500/10',
+    iconBg: '!bg-violet-50 !text-violet-600',
+    number: t('index2.services.02.number')
   },
   {
-    icon: 'mdi-file-document',
-    title: t('index3.services.03.title'),
-    description: t('index3.services.03.desc'),
+    icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 12h6M12 9v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/></svg>`,
+    title: t('index2.services.03.title'),
+    desc: t('index2.services.03.desc'),
+    color: 'from-emerald-500/10 to-teal-500/10',
+    iconBg: '!bg-emerald-50 !text-emerald-600',
+    number: t('index2.services.03.number')
   },
   {
-    icon: 'mdi-flask',
-    title: t('index3.services.04.title'),
-    description: t('index3.services.04.desc'),
+    icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4.5 12.5l3-3 3 3 5-5 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 21h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+    title: t('index2.services.04.title'),
+    desc: t('index2.services.04.desc'),
+    color: 'from-amber-500/10 to-orange-500/10',
+    iconBg: '!bg-amber-50 !text-amber-600',
+    number: t('index2.services.04.number')
   },
+  {
+    icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke="currentColor" stroke-width="1.6"/><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+    title: t('index2.services.05.title'),
+    desc: t('index2.services.05.desc'),
+    color: 'from-red-500/10 to-rose-500/10',
+    iconBg: '!bg-red-50 !text-red-600',
+    number: t('index2.services.05.number')
+  },
+  {
+    icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+    title: t('index2.services.06.title'),
+    desc: t('index2.services.06.desc'),
+    color: 'from-sky-500/10 to-blue-500/10',
+    iconBg: '!bg-sky-50 !text-sky-600',
+    number: t('index2.services.06.number')
+  }
 ])
 
 const doctors = computed(() => [
   {
-    id: '514280f3-789b-4388-9654-ad134fe2085e',
-    name: t('index3.doctors.01.name'),
-    specialty: t('index3.doctors.01.specialty'),
-    rating: '5',
-    experience: '7',
-    bio: t('index3.doctors.01.bio'),
-  },
-
-])
-
-const stats = computed(() => [
-  { value: t('index3.stats.01.value'), label: t('index3.stats.01.label') },
-  { value: t('index3.stats.02.value'), label: t('index3.stats.02.label') },
-  { value: t('index3.stats.03.value'), label: t('index3.stats.03.label') },
-  { value: t('index3.stats.04.value'), label: t('index3.stats.04.label') },
-])
-
-const contactInfo = computed(() => [
-  {
-    icon: 'mdi-map-marker',
-    label: t('index3.contact.01.label'),
-    value: t('index3.contact.01.value'),
-  },
-  {
-    icon: 'mdi-phone',
-    label: t('index3.contact.02.label'),
-    value: '09907789182',
-  },
-  {
-    icon: 'mdi-email',
-    label: t('index3.contact.03.label'),
-    value: 'info@ladiesneeds.com',
-  },
-  {
-    icon: 'mdi-clock-outline',
-    label: t('index3.contact.04.label'),
-    value: t('index3.contact.04.value'),
-  },
-])
-
-const socialLinks = computed(() => [
-  { name: t('index3.social.instagram'), icon: 'mdi-instagram', href: 'https://www.instagram.com/hastihoseiniclinic/' },
-  { name: t('index3.social.whatsapp'), icon: 'mdi-whatsapp', href: 'https:/wa.me/09119478965' },
-])
-
-const footerLinks = computed(() => [
-  { href: '#services', label: t('index3.nav.services') },
-  { href: '#doctors', label: t('index3.nav.doctors') },
-  { href: '#about', label: t('index3.nav.about') },
-  { href: '#contact', label: t('index3.nav.contact') },
-])
-
-function visible(key: string): string {
-  return visibleSections.value[key] ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'
-}
-
-function handleScroll() {
-  scrolled.value = window.scrollY > 80
-}
-
-function handleSubmit() {
-  const toast = useNuxtApp().$toast
-  if (!form.value.name || !form.value.phone || !form.value.message) {
-    toast?.error(t('index3.form.error'))
-    return
+    name: t('index2.doctors.01.name'),
+    specialty: t('index2.doctors.01.specialty'),
+    img: '/images/dr_hosseini_2.webp'
   }
-  toast?.success(t('index3.form.success'))
-  form.value = { name: '', phone: '', subject: '', message: '' }
-}
+])
 
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll, { passive: true })
-  document.documentElement.style.setProperty('scroll-behavior', 'smooth')
-})
+const blogPosts = computed(() => [
+  {
+    title: t('index2.blog.01.title'),
+    excerpt: t('index2.blog.01.excerpt'),
+    img: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?q=80&w=600&auto=format&fit=crop',
+    date: t('index2.blog.01.date'),
+    readTime: t('index2.blog.01.readTime'),
+    category: t('index2.blog.01.category')
+  },
+  {
+    title: t('index2.blog.02.title'),
+    excerpt: t('index2.blog.02.excerpt'),
+    img: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=600&auto=format&fit=crop',
+    date: t('index2.blog.02.date'),
+    readTime: t('index2.blog.02.readTime'),
+    category: t('index2.blog.02.category')
+  },
+  {
+    title: t('index2.blog.03.title'),
+    excerpt: t('index2.blog.03.excerpt'),
+    img: 'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80&w=600&auto=format&fit=crop',
+    date: t('index2.blog.03.date'),
+    readTime: t('index2.blog.03.readTime'),
+    category: t('index2.blog.03.category')
+  }
+])
 
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', handleScroll)
-  observers.forEach(o => o.disconnect())
-})
+const features = computed(() => [
+  { icon: '⏰', title: t('index2.features.01.title'), desc: t('index2.features.01.desc') },
+  { icon: '📞', title: t('index2.features.02.title'), desc: t('index2.features.02.desc') },
+  { icon: '🏥', title: t('index2.features.03.title'), desc: t('index2.features.03.desc') },
+  { icon: '💊', title: t('index2.features.04.title'), desc: t('index2.features.04.desc') },
+])
 </script>
 
-<style scoped>
-@keyframes float {
+<template>
+  <div>
+    <TheHeader />
 
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
+    <!-- ════════════════ HERO ════════════════ -->
+    <HeroSection />
 
-  50% {
-    transform: translateY(-25px);
-  }
-}
+    <!-- ════════════════ FEATURES MARQUEE ════════════════ -->
+    <section class="!relative !py-2 sm:!py-4 !overflow-hidden !bg-sand-100/80 !border-y !border-ink/5">
+      <div class="marquee-track !py-2 sm:!py-3">
+        <div v-for="(f, i) in [...features, ...features]" :key="i" class="!flex !items-center !gap-2 sm:!gap-3 !shrink-0 !px-4 sm:!px-6">
+          <span class="!text-base sm:!text-lg">{{ f.icon }}</span>
+          <span class="!text-xs sm:!text-sm !font-semibold !text-ink/70">{{ f.title }}</span>
+          <span class="!text-xs !text-muted hidden sm:inline">—</span>
+          <span class="!text-xs sm:!text-sm !text-muted">{{ f.desc }}</span>
+        </div>
+      </div>
+    </section>
 
-@keyframes float-delayed {
+    <!-- ════════════════ ABOUT ════════════════ -->
+    <section id="about" ref="aboutRoot" class="!py-16 sm:!py-20 md:!py-24 lg:!py-32 flex justify-center align-middle items-center px-6!">
+      <div class="!container !grid !grid-cols-1 lg:!grid-cols-2 !items-center !gap-10 sm:!gap-14 md:!gap-16 lg:!gap-20">
+        <div class="about-reveal">
+          <span class="!inline-flex !items-center !gap-2 !rounded-full !border !border-emerald/20 !bg-emerald-mist/60 !px-4 sm:!px-5 !py-1.5 sm:!py-2 !text-xs !font-semibold !text-emerald-deep !tracking-wide">
+            <span class="!h-1.5 !w-1.5 !rounded-full !bg-emerald-bright animate-pulseDot" />
+            {{ t('index2.about.badge') }}
+          </span>
+          <h2 class="!mt-5 sm:!mt-6 !font-display !text-2xl sm:!text-3xl md:!text-display-lg !font-black !text-ink !tracking-tight">
+            {{ t('index2.about.title1') }}
+            <span class="gradient-text">{{ t('index2.about.title2') }}</span>
+          </h2>
+          <p class="!mt-4 sm:!mt-6 !text-sm sm:!text-base md:!text-lg !leading-7 sm:!leading-8 !text-muted !max-w-lg">
+            {{ t('index2.about.desc1') }}
+          </p>
+          <p class="!mt-3 sm:!mt-4 !text-sm sm:!text-base !leading-7 !text-muted !max-w-lg">
+            {{ t('index2.about.desc2') }}
+          </p>
 
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
+          <!-- Feature list -->
+          <div class="!mt-6 sm:!mt-8 !grid !grid-cols-1 sm:!grid-cols-2 !gap-3 sm:!gap-4">
+            <div v-for="(f, i) in features.slice(0, 4)" :key="i" class="!flex !items-center !gap-3 !rounded-2xl !bg-sand-100/80 !px-3 sm:!px-4 !py-2.5 sm:!py-3">
+              <span class!text-base sm:!text-lg>{{ f.icon }}</span>
+              <span class="!text-xs sm:!text-sm !font-medium !text-ink/80">{{ f.title }}</span>
+            </div>
+          </div>
 
-  50% {
-    transform: translateY(-18px);
-  }
-}
+          <div class="!mt-8 sm:!mt-10 !flex !flex-wrap !gap-3 sm:!gap-4 justify-center align-middle items-center">
+            <MagneticButton as="a" href="#services" variant="outline" :icon="false">
+              {{ t('index2.about.cta.services') }}
+            </MagneticButton>
+            <MagneticButton as="a" href="#appointment" variant="solid" :icon="false">
+              {{ t('index2.about.cta.appointment') }}
+            </MagneticButton>
+          </div>
+        </div>
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
+        <div class="about-reveal !relative">
+          <div class="!overflow-hidden !rounded-3xl sm:!rounded-4xl !shadow-floaty image-reveal image-professional">
+            <NuxtImg
+              src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800&auto=format&fit=crop"
+              :alt="t('index2.about.imgAlt')"
+              class="!h-full !w-full !object-cover !aspect-[4/3] !transition-transform !duration-700 hover:!scale-105"
+              loading="lazy"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
+            />
+          </div>
+          <!-- Floating experience badge -->
+          <div class="glass-surface !absolute !-bottom-6 sm:!-bottom-8 !left-4 sm:!left-auto sm:!right-[-1rem] md:!right-[-2rem] lg:!right-[-2rem] !z-10 !rounded-2xl sm:!rounded-3xl !p-4 sm:!p-6 !card-glow card-shimmer-border floating-badge">
+            <div class="!flex !items-center !gap-2 sm:!gap-3">
+              <span class="!flex !h-10 !w-10 sm:!h-12 sm:!w-12 !items-center !justify-center !rounded-xl sm:!rounded-2xl !bg-emerald-mist">
+                <span class="!font-display !text-lg sm:!text-xl !font-black !text-emerald-deep">+</span>
+              </span>
+              <div>
+                <p class="!font-display !text-xl sm:!text-2xl !font-black !text-emerald-deep tabular-nums">{{ t('index2.about.expYears') }}</p>
+                <p class="!text-[10px] sm:!text-xs !text-muted !font-medium">{{ t('index2.about.expLabel') }}</p>
+              </div>
+            </div>
+          </div>
+          <!-- Decorative dots -->
+          <div class="!absolute !-top-6 !-left-6 !hidden lg:!grid !grid-cols-3 !gap-2">
+            <span v-for="n in 9" :key="n" class="!h-2 !w-2 !rounded-full !bg-emerald/10" />
+          </div>
+        </div>
+      </div>
+    </section>
 
-.animate-float-delayed {
-  animation: float-delayed 8s ease-in-out infinite;
-}
+    <!-- ════════════════ SECTION DIVIDER ════════════════ -->
+    <div class="!container"><div class="section-divider-animated" /></div>
 
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
+    <!-- ════════════════ SERVICES ════════════════ -->
+    <section id="services" ref="servicesRoot" class="!py-16 sm:!py-20 md:!py-24 lg:!py-32 flex justify-center align-middle items-center !bg-sand-100">
+      <div class="!container">
+        <div class="service-reveal !text-center !max-w-2xl !mx-auto !mb-10 sm:!mb-12 md:!mb-16">
+          <span class="!inline-flex !items-center !gap-2 !rounded-full !border !border-ink/10 !bg-white/80 !px-4 sm:!px-5 !py-1.5 sm:!py-2 !text-xs !font-semibold !text-emerald-deep !tracking-wide">
+            <span class="!h-1.5 !w-1.5 !rounded-full !bg-emerald-bright animate-pulseDot" />
+            {{ t('index2.services.badge') }}
+          </span>
+          <h2 class="!mt-5 sm:!mt-6 !font-display !text-2xl sm:!text-3xl md:!text-display-lg !font-black !text-ink !tracking-tight">
+            {{ t('index2.services.title1') }}
+            <span class="gradient-text">{{ t('index2.services.title2') }}</span>
+          </h2>
+          <p class="!mt-4 sm:!mt-5 !text-sm sm:!text-base md:!text-lg !text-muted !leading-7 sm:!leading-8">
+            {{ t('index2.services.desc') }}
+          </p>
+        </div>
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+        <div class="!grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-3 !gap-4 sm:!gap-5 md:!gap-6 px-6!">
+          <GlassCard
+            v-for="(service, i) in services"
+            :key="i"
+            tilt
+            padding="!p-0"
+            class="service-reveal !overflow-hidden card-shimmer-border"
+          >
+            <div class="!p-5 sm:!p-6 md:!p-7">
+              <div class="!flex !items-center !justify-between !mb-4 sm:!mb-5">
+                <div class="!flex !h-11 !w-11 sm:!h-12 sm:!w-12 md:!h-14 md:!w-14 !items-center !justify-center !rounded-xl sm:!rounded-2xl !transition-all !duration-300 hover:!scale-110 hover:!shadow-lg" :class="service.iconBg">
+                  <span v-html="service.icon" />
+                </div>
+                <span class="!font-display !text-xs !font-bold !text-ink/15 !tracking-wider">{{ service.number }}</span>
+              </div>
+              <h3 class="!font-display !text-base sm:!text-lg !font-bold !text-ink">{{ service.title }}</h3>
+              <p class="!mt-2 sm:!mt-2.5 !text-xs sm:!text-sm !leading-6 sm:!leading-7 !text-muted">{{ service.desc }}</p>
+            </div>
+            <div class="!h-1 !w-full !bg-gradient-to-r !to-transparent !transition-all !duration-500" :class="service.color" />
+          </GlassCard>
+        </div>
+      </div>
+    </section>
 
-.animate-fade-in-up {
-  animation: fade-in-up 0.8s ease-out forwards;
-}
+    <!-- ════════════════ STATS ════════════════ -->
+    <section id="stats" ref="statsRoot" class="!py-16 sm:!py-20 md:!py-24 lg:!py-32 flex justify-center align-middle items-center !overflow-hidden">
+      <div class="!container">
+        <div class="stat-reveal !text-center !max-w-2xl !mx-auto !mb-10 sm:!mb-12 md:!mb-16">
+          <span class="!inline-flex !items-center !gap-2 !rounded-full !border !border-emerald/20 !bg-emerald-mist/60 !px-4 sm:!px-5 !py-1.5 sm:!py-2 !text-xs !font-semibold !text-emerald-deep !tracking-wide">
+            {{ t('index2.stats.badge') }}
+          </span>
+          <h2 class="!mt-5 sm:!mt-6 !font-display !text-2xl sm:!text-3xl md:!text-display-lg !font-black !text-ink !tracking-tight">
+            {{ t('index2.stats.title1') }} <span class="gradient-text">{{ t('index2.stats.title2') }}</span>
+          </h2>
+        </div>
 
-.slide-down-enter-active,
-.slide-down-leave-active {
-  transition: all 0.3s ease;
-}
+        <div class="!grid !grid-cols-2 md:!grid-cols-4 !gap-6 sm:!gap-8 md:!gap-10 lg:!gap-16">
+          <div class="stat-reveal">
+            <AnimatedCounter :end="15" suffix="+" :label="t('index2.stats.doctors')" />
+          </div>
+          <div class="stat-reveal">
+            <AnimatedCounter :end="10" :suffix="t('index2.stats.experienceSuffix')" :label="t('index2.stats.experience')" />
+          </div>
+          <div class="stat-reveal">
+            <AnimatedCounter :end="98" :suffix="t('index2.stats.satisfactionSuffix')" :label="t('index2.stats.satisfaction')" />
+          </div>
+          <div class="stat-reveal">
+            <AnimatedCounter :end="12000" suffix="+" :label="t('index2.stats.patients')" />
+          </div>
+        </div>
+      </div>
+    </section>
 
-.slide-down-enter-from,
-.slide-down-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
+    <!-- ════════════════ SECTION DIVIDER ════════════════ -->
+    <div class="!container"><div class="section-divider-animated" /></div>
 
-.ltr-field {
-  direction: ltr !important;
-  text-align: left !important;
-}
+    <!-- ════════════════ DOCTORS ════════════════ -->
+    <section id="doctors" ref="doctorsRoot" class="!py-16 sm:!py-20 md:!py-24 lg:!py-32 flex justify-center align-middle items-center !bg-sand-100 px-6!">
+      <div class="!container">
+        <div class="doctor-reveal !text-center !max-w-2xl !mx-auto !mb-10 sm:!mb-12 md:!mb-16">
+          <span class="!inline-flex !items-center !gap-2 !rounded-full !border !border-ink/10 !bg-white/80 !px-4 sm:!px-5 !py-1.5 sm:!py-2 !text-xs !font-semibold !text-emerald-deep !tracking-wide">
+            <span class="!h-1.5 !w-1.5 !rounded-full !bg-emerald-bright animate-pulseDot" />
+            {{ t('index2.doctors.badge') }}
+          </span>
+          <h2 class="!mt-5 sm:!mt-6 !font-display !text-2xl sm:!text-3xl md:!text-display-lg !font-black !text-ink !tracking-tight">
+            {{ t('index2.doctors.title1') }}
+            <span class="gradient-text">{{ t('index2.doctors.title2') }}</span>
+          </h2>
+          <p class="!mt-4 sm:!mt-5 !text-sm sm:!text-base md:!text-lg !text-muted !leading-7 sm:!leading-8">
+            {{ t('index2.doctors.desc') }}
+          </p>
+        </div>
 
-input,
-textarea {
-  font-family: 'yekan-bakh', sans-serif !important;
-}
+        <div class="!grid !grid-cols-2 sm:!grid-cols-2 lg:!grid-cols-4 !gap-3 sm:!gap-4 md:!gap-6">
+          <GlassCard
+            v-for="(doc, i) in doctors"
+            :key="i"
+            tilt
+            padding="!p-0"
+            class="doctor-reveal !overflow-hidden card-shimmer-border"
+          >
+            <div class="!aspect-[3/4] !overflow-hidden !relative">
+              <NuxtImg
+                :src="doc.img"
+                :alt="doc.name"
+                class="!h-full !w-full !object-cover !transition-all !duration-700 hover:!scale-110"
+                loading="lazy"
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 300px"
+              />
+              <!-- Overlay: always visible on touch, hover on desktop -->
+              <div class="!absolute !inset-0 !bg-gradient-to-t !from-ink/60 !via-ink/10 !to-transparent !opacity-100 lg:!opacity-0 lg:group-hover:!opacity-100 !transition-opacity !duration-500 !flex !items-end !p-3 sm:!p-4 md:!p-5">
+                <span class="!text-xs sm:!text-sm !text-white !font-medium !transition-opacity !duration-500 !delay-100">{{ t('index2.doctors.viewProfile') }}</span>
+              </div>
+            </div>
+            <div class="!p-3 sm:!p-4 md:!p-5">
+              <h3 class="!font-display !text-xs sm:!text-sm md:!text-base !font-bold !text-ink">{{ doc.name }}</h3>
+              <p class="!mt-1 !text-[10px] sm:!text-xs md:!text-sm !text-emerald-deep !font-medium">{{ doc.specialty }}</p>
+            </div>
+          </GlassCard>
+        </div>
+      </div>
+    </section>
 
-@media (prefers-reduced-motion: reduce) {
+    <!-- ════════════════ BLOG ════════════════ -->
+    <section id="blog" ref="blogRoot" class="!py-16 sm:!py-20 md:!py-24 lg:!py-32 flex justify-center align-middle items-center px-6!">
+      <div class="!container">
+        <div class="blog-reveal !text-center !max-w-2xl !mx-auto !mb-10 sm:!mb-12 md:!mb-16">
+          <span class="!inline-flex !items-center !gap-2 !rounded-full !border !border-emerald/20 !bg-emerald-mist/60 !px-4 sm:!px-5 !py-1.5 sm:!py-2 !text-xs !font-semibold !text-emerald-deep !tracking-wide">
+            <span class="!h-1.5 !w-1.5 !rounded-full !bg-emerald-bright animate-pulseDot" />
+            {{ t('index2.blog.badge') }}
+          </span>
+          <h2 class="!mt-5 sm:!mt-6 !font-display !text-2xl sm:!text-3xl md:!text-display-lg !font-black !text-ink !tracking-tight">
+            {{ t('index2.blog.title1') }} <span class="gradient-text">{{ t('index2.blog.title2') }}</span>
+          </h2>
+          <p class="!mt-4 sm:!mt-5 !text-sm sm:!text-base md:!text-lg !text-muted !leading-7 sm:!leading-8">
+            {{ t('index2.blog.desc') }}
+          </p>
+        </div>
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-</style>
+        <div class="!grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-3 !gap-4 sm:!gap-5 md:!gap-6">
+          <GlassCard
+            v-for="(post, i) in blogPosts"
+            :key="i"
+            tilt
+            padding="!p-0"
+            class="blog-reveal !overflow-hidden card-shimmer-border"
+          >
+            <div class="!aspect-[16/10] !overflow-hidden !relative">
+              <NuxtImg
+                :src="post.img"
+                :alt="post.title"
+                class="!h-full !w-full !object-cover !transition-all !duration-700 hover:!scale-110"
+                loading="lazy"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+              />
+              <span class="!absolute !top-3 sm:!top-4 !right-3 sm:!right-4 !rounded-full !bg-white/90 !backdrop-blur-sm !px-2.5 sm:!px-3 !py-0.5 sm:!py-1 !text-[10px] sm:!text-xs !font-semibold !text-emerald-deep !shadow-soft">
+                {{ post.category }}
+              </span>
+            </div>
+            <div class="!p-4 sm:!p-5 md:!p-6">
+              <div class="!flex !items-center !gap-2 sm:!gap-3 !mb-2 sm:!mb-3">
+                <span class="!text-[10px] sm:!text-xs !text-muted !font-medium">{{ post.date }}</span>
+                <span class="!h-1 !w-1 !rounded-full !bg-emerald-bright" />
+                <span class="!text-[10px] sm:!text-xs !text-emerald-deep !font-medium">{{ post.readTime }}</span>
+              </div>
+              <h3 class="!font-display !text-sm sm:!text-base !font-bold !text-ink !leading-6 sm:!leading-7">{{ post.title }}</h3>
+              <p class="!mt-2 !text-xs sm:!text-sm !leading-6 sm:!leading-7 !text-muted">{{ post.excerpt }}</p>
+              <MagneticButton as="a" href="#" variant="ghost" class="!mt-3 sm:!mt-5 !px-4 sm:!px-5 !py-2 sm:!py-2.5 !text-xs sm:!text-sm">
+                {{ t('index2.blog.readMore') }}
+              </MagneticButton>
+            </div>
+          </GlassCard>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════ APPOINTMENT ════════════════ -->
+    <section id="appointment" ref="appointmentRoot" class="!relative !py-16 sm:!py-20 md:!py-24 lg:!py-32 flex justify-center align-middle items-center !bg-ink !text-white !overflow-hidden px-6!">
+      <!-- Animated gradient background -->
+      <div class="!pointer-events-none !absolute !inset-0">
+        <div class="!absolute !top-0 !right-0 !h-48 !w-48 sm:!h-64 sm:!w-64 md:!h-96 md:!w-96 !rounded-full !bg-emerald/5 !blur-3xl animate-floaty-slow" />
+        <div class="!absolute !bottom-0 !left-0 !h-40 !w-40 sm:!h-52 sm:!w-52 md:!h-64 md:!w-64 !rounded-full !bg-emerald-bright/5 !blur-3xl animate-floaty" />
+        <div class="!absolute !top-1/2 !left-1/2 !-translate-x-1/2 !-translate-y-1/2 !h-[250px] !w-[250px] sm:!h-[350px] sm:!w-[350px] md:!h-[500px] md:!w-[500px] !rounded-full !bg-emerald/3 !blur-3xl animate-float-gentle" />
+        <div class="!absolute !inset-0 !opacity-[0.03]" style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.5) 1px, transparent 0); background-size: 40px 40px;" />
+      </div>
+
+      <div class="!container !grid !grid-cols-1 lg:!grid-cols-2 !items-center !gap-10 sm:!gap-12 md:!gap-16 !relative !z-10">
+        <div class="appt-reveal">
+          <span class="!inline-flex !items-center !gap-2 !rounded-full !border !border-white/15 !bg-white/5 !px-4 sm:!px-5 !py-1.5 sm:!py-2 !text-xs !font-semibold !text-emerald-bright !tracking-wide !backdrop-blur">
+            <span class="!relative !h-2 !w-2 !rounded-full !bg-emerald-bright">
+              <span class="!absolute !inset-0 !rounded-full !bg-emerald-bright animate-pulse-ring" />
+            </span>
+            {{ t('index2.appointment.badge') }}
+          </span>
+          <h2 class="!mt-5 sm:!mt-6 !font-display !text-2xl sm:!text-3xl md:!text-display-lg !font-black !text-white !leading-[1.05] sm:!leading-[1.02] !tracking-tight">
+            {{ t('index2.appointment.title1') }}
+            <span class="!text-emerald-bright">{{ t('index2.appointment.title2') }}</span>
+          </h2>
+          <p class="!mt-4 sm:!mt-6 !text-sm sm:!text-base md:!text-lg !leading-7 sm:!leading-8 !text-white/50 !max-w-lg">
+            {{ t('index2.appointment.desc') }}
+          </p>
+
+          <div class="!mt-8 sm:!mt-10 !flex !flex-col !gap-4 sm:!gap-5">
+            <div class="!flex !items-center !gap-3 sm:!gap-4 !group">
+              <span class="!flex !h-10 !w-10 sm:!h-12 sm:!w-12 !items-center !justify-center !rounded-xl sm:!rounded-2xl !bg-white/5 !border !border-white/10 !shrink-0 !transition-all !duration-300 group-hover:!bg-emerald/10 group-hover:!border-emerald/20 group-hover:!shadow-[0_0_20px_rgba(62,232,168,0.15)]">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="sm:!w-[18px] sm:!h-[18px]"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <div>
+                <p class="!text-[10px] sm:!text-sm !text-white/40 !font-medium">{{ t('index2.appointment.phoneLabel') }}</p>
+                <p class="!text-sm sm:!text-base !font-semibold !text-white !transition-colors !duration-300 group-hover:!text-emerald-bright">{{ t('index2.appointment.phoneValue') }}</p>
+              </div>
+            </div>
+            <div class="!flex !items-center !gap-3 sm:!gap-4 !group">
+              <span class="!flex !h-10 !w-10 sm:!h-12 sm:!w-12 !items-center !justify-center !rounded-xl sm:!rounded-2xl !bg-white/5 !border !border-white/10 !shrink-0 !transition-all !duration-300 group-hover:!bg-emerald/10 group-hover:!border-emerald/20 group-hover:!shadow-[0_0_20px_rgba(62,232,168,0.15)]">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="sm:!w-[18px] sm:!h-[18px]"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="1.6"/></svg>
+              </span>
+              <div>
+                <p class="!text-[10px] sm:!text-sm !text-white/40 !font-medium">{{ t('index2.appointment.addressLabel') }}</p>
+                <p class="!text-sm sm:!text-base !font-semibold !text-white !transition-colors !duration-300 group-hover:!text-emerald-bright">{{ t('index2.appointment.addressValue') }}</p>
+              </div>
+            </div>
+            <div class="!flex !items-center !gap-3 sm:!gap-4 !group">
+              <span class="!flex !h-10 !w-10 sm:!h-12 sm:!w-12 !items-center !justify-center !rounded-xl sm:!rounded-2xl !bg-white/5 !border !border-white/10 !shrink-0 !transition-all !duration-300 group-hover:!bg-emerald/10 group-hover:!border-emerald/20 group-hover:!shadow-[0_0_20px_rgba(62,232,168,0.15)]">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="sm:!w-[18px] sm:!h-[18px]"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.6"/><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              </span>
+              <div>
+                <p class="!text-[10px] sm:!text-sm !text-white/40 !font-medium">{{ t('index2.appointment.hoursLabel') }}</p>
+                <p class="!text-sm sm:!text-base !font-semibold !text-white !transition-colors !duration-300 group-hover:!text-emerald-bright">{{ t('index2.appointment.hoursValue') }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="appt-reveal">
+          <div class="form-glass !rounded-2xl sm:!rounded-3xl !p-5 sm:!p-6 md:!p-8">
+            <form class="!flex !flex-col !gap-4 sm:!gap-5" @submit.prevent>
+              <div>
+                <label class="!mb-1.5 sm:!mb-2 !block !text-xs sm:!text-sm !text-white/60 !font-medium">{{ t('index2.appointment.formName') }}</label>
+                <input
+                  type="text"
+                  :placeholder="t('index2.appointment.formNamePlaceholder')"
+                  class="input-professional !w-full !rounded-xl !border !border-white/15 !bg-white/5 !px-3.5 sm:!px-4 !py-3 sm:!py-3.5 !text-sm !text-white !placeholder-white/30 !outline-none !transition-all !duration-300 focus:!border-emerald-bright focus:!bg-white/8"
+                />
+              </div>
+              <div>
+                <label class="!mb-1.5 sm:!mb-2 !block !text-xs sm:!text-sm !text-white/60 !font-medium">{{ t('index2.appointment.formPhone') }}</label>
+                <input
+                  type="tel"
+                  :placeholder="t('index2.appointment.formPhonePlaceholder')"
+                  class="input-professional !w-full !rounded-xl !border !border-white/15 !bg-white/5 !px-3.5 sm:!px-4 !py-3 sm:!py-3.5 !text-sm !text-white !placeholder-white/30 !outline-none !transition-all !duration-300 focus:!border-emerald-bright focus:!bg-white/8"
+                />
+              </div>
+              <div>
+                <label class="!mb-1.5 sm:!mb-2 !block !text-xs sm:!text-sm !text-white/60 !font-medium">{{ t('index2.appointment.formService') }}</label>
+                <select class="input-professional !w-full !rounded-xl !border !border-white/15 !bg-white/5 !px-3.5 sm:!px-4 !py-3 sm:!py-3.5 !text-sm !text-white !outline-none !transition-all !duration-300 focus:!border-emerald-bright focus:!bg-white/8">
+                  <option value="" disabled selected class="!text-ink">{{ t('index2.appointment.formServiceSelect') }}</option>
+                  <option value="cardiology" class="!text-ink">{{ t('index2.services.01.title') }}</option>
+                  <option value="dermatology" class="!text-ink">{{ t('index2.services.02.title') }}</option>
+                  <option value="general" class="!text-ink">{{ t('index2.services.03.title') }}</option>
+                  <option value="lab" class="!text-ink">{{ t('index2.services.04.title') }}</option>
+                  <option value="emergency" class="!text-ink">{{ t('index2.services.05.title') }}</option>
+                  <option value="consult" class="!text-ink">{{ t('index2.services.06.title') }}</option>
+                </select>
+              </div>
+              <div>
+                <label class="!mb-1.5 sm:!mb-2 !block !text-xs sm:!text-sm !text-white/60 !font-medium">{{ t('index2.appointment.formMessage') }}</label>
+                <textarea
+                  rows="3"
+                  :placeholder="t('index2.appointment.formMessagePlaceholder')"
+                  class="input-professional !w-full !rounded-xl !border !border-white/15 !bg-white/5 !px-3.5 sm:!px-4 !py-3 sm:!py-3.5 !text-sm !text-white !placeholder-white/30 !outline-none !transition-all !duration-300 focus:!border-emerald-bright focus:!bg-white/8 !resize-none"
+                />
+              </div>
+              <MagneticButton as="button" variant="solid" class="!justify-center !bg-emerald-deep hover:!bg-emerald !w-full !py-3.5 sm:!py-4 !text-sm sm:!text-base !font-bold !shadow-[0_8px_24px_-4px_rgba(15,92,67,0.4)] hover:!shadow-[0_12px_32px_-4px_rgba(15,92,67,0.5)]">
+                {{ t('index2.appointment.formSubmit') }}
+              </MagneticButton>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <TheFooter />
+  </div>
+</template>

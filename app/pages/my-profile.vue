@@ -257,56 +257,69 @@
         </div>
 
         <div v-else-if="telegramState === 'code' || telegramState === 'polling'">
-          <div class="!text-center !mb-6">
-            <div v-if="telegramState === 'code'" class="!mb-6">
-              <p class="!text-sm !font-semibold !text-slate-500 dark:!text-slate-400 !mb-3">{{ t('myProfile.enterCodePrompt') }}</p>
-              <div class="!flex !items-center !justify-center !gap-3">
-                <div class="!relative !inline-block">
-                  <div
-                    class="!bg-slate-100 dark:!bg-slate-900 !border-2 !border-dashed !border-blue-400 dark:!border-blue-500 !rounded-2xl !px-10 !py-6 !tracking-[0.3em] !font-mono !text-4xl !font-black !text-blue-600 dark:!text-blue-400 !select-all">
+          <div class="!text-center !py-4">
+            <div class="!w-16 !h-16 !rounded-full !bg-sky-50 dark:!bg-sky-900/30 !flex !items-center !justify-center !mx-auto !mb-4">
+              <v-icon color="info" size="32">mdi-telegram</v-icon>
+            </div>
+            
+            <h3 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100 !mb-2">
+              {{ t('myProfile.oneClickConnect') }}
+            </h3>
+            <p class="!text-sm !text-slate-500 dark:!text-slate-400 !max-w-md !mx-auto !mb-6">
+              {{ t('myProfile.oneClickDesc') }}
+            </p>
+
+            <!-- 1-Click Telegram Button -->
+            <div class="!mb-6">
+              <v-btn
+                :href="telegramDeepLink"
+                target="_blank"
+                color="info"
+                size="x-large"
+                elevation="3"
+                class="!font-bold !rounded-2xl !px-8 !py-4 !h-auto !text-base"
+                @click="telegramState = 'polling'"
+              >
+                <v-icon start size="28">mdi-telegram</v-icon>
+                {{ t('myProfile.openTelegramBot') }}
+              </v-btn>
+            </div>
+
+            <!-- Polling Indicator -->
+            <div v-if="telegramState === 'polling'" class="!flex !items-center !justify-center !gap-3 !mb-6 !bg-blue-50 dark:!bg-blue-900/20 !border !border-blue-200 dark:!border-blue-700/50 !rounded-xl !p-4 !max-w-md !mx-auto">
+              <v-progress-circular indeterminate color="primary" size="24" width="3" />
+              <span class="!text-sm !font-semibold !text-blue-700 dark:!text-blue-300">{{ t('myProfile.waitConfirmation') }}</span>
+            </div>
+
+            <!-- Alternative Manual Code Details -->
+            <div class="!mt-8 !pt-6 !border-t !border-slate-100 dark:!border-slate-700/80 !text-left" dir="rtl">
+              <details class="!group">
+                <summary class="!cursor-pointer !text-xs !font-semibold !text-slate-500 dark:!text-slate-400 hover:!text-blue-600 dark:hover:!text-blue-400 !flex !items-center !gap-1 !justify-center">
+                  <v-icon size="small">mdi-code-braces</v-icon>
+                  {{ t('myProfile.advancedManualCode') }}
+                </summary>
+                <div class="!mt-4 !bg-slate-50 dark:!bg-slate-900/50 !rounded-xl !p-4 !text-center">
+                  <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mb-2">{{ t('myProfile.enterCodePrompt') }}</p>
+                  <div class="!inline-block !bg-white dark:!bg-slate-950 !border !border-slate-200 dark:!border-slate-700 !rounded-xl !px-6 !py-3 !tracking-[0.2em] !font-mono !text-2xl !font-bold !text-blue-600 dark:!text-blue-400 !select-all !mb-3">
                     {{ linkCode }}
                   </div>
-                  <v-btn icon size="x-small" color="primary" variant="tonal" @click="copyCode"
-                    class="!absolute !-top-2 !-end-2 !shadow-md">
-                    <v-icon size="small">{{ codeCopied ? 'mdi-check' : 'mdi-content-copy' }}</v-icon>
-                  </v-btn>
+                  <div>
+                    <v-btn size="small" variant="text" color="primary" @click="copyCode">
+                      <v-icon start size="small">{{ codeCopied ? 'mdi-check' : 'mdi-content-copy' }}</v-icon>
+                      {{ codeCopied ? t('common.copied') : t('common.copy') }}
+                    </v-btn>
+                  </div>
+                  <p class="!text-xs !text-orange-500 dark:!text-orange-400 !mt-2">
+                    {{ t('myProfile.codeValidStill', { minutes: countdownDisplay }) }}
+                  </p>
                 </div>
-              </div>
-              <div class="!mt-4">
-                <span class="!text-sm !text-slate-500 dark:!text-slate-400">
-                  {{ t('myProfile.codeValidUntil') }}
-                  <span class="!font-bold !text-orange-500 dark:!text-orange-400">{{ countdownDisplay }}</span>
-                  {{ t('myProfile.codeValidStill') }}
-                </span>
-              </div>
-            </div>
-
-            <div v-if="telegramState === 'polling'" class="!mb-6">
-              <div class="!flex !items-center !justify-center !gap-3 !mb-4">
-                <v-progress-circular indeterminate color="primary" size="32" width="3" />
-                <span class="!font-bold !text-slate-600 dark:!text-slate-300">{{ t('myProfile.waitConfirmation') }}</span>
-              </div>
-              <p class="!text-sm !text-slate-500 dark:!text-slate-400">
-                {{ $t('common.pending') }}
-                <span class="!font-bold !font-mono !tracking-wider !text-blue-600 dark:!text-blue-400">{{ linkCode }}</span>
-                {{ t('myProfile.sendCodeInstruction') }}
-              </p>
-            </div>
-
-            <div
-              class="!inline-flex !items-center !gap-3 !bg-amber-50 dark:!bg-amber-900/20 !border !border-amber-200 dark:!border-amber-700/50 !rounded-xl !px-5 !py-3 !text-sm !text-amber-700 dark:!text-amber-300">
-              <v-icon size="20" color="warning">mdi-send-variant-outline</v-icon>
-              <span>{{ t('myProfile.linkInstruction') }} <span class="!font-bold !font-mono" dir="ltr">/link {{ linkCode }}</span>{{ t('myProfile.sendCommand') }}</span>
+              </details>
             </div>
 
             <div class="!mt-6">
-              <v-btn variant="text" color="grey" size="small" :disabled="telegramState === 'polling'" @click="resetTelegram">
+              <v-btn variant="text" color="grey" size="small" @click="resetTelegram">
                 <v-icon start size="small">mdi-close</v-icon>
                 {{ $t('common.cancel') }}
-              </v-btn>
-              <v-btn v-if="telegramState === 'code'" variant="text" color="primary" size="small" class="!mr-2" @click="handleGenerateCode">
-                <v-icon start size="small">mdi-refresh</v-icon>
-                {{ t('myProfile.generateNewCode') }}
               </v-btn>
             </div>
           </div>
@@ -591,6 +604,7 @@ const telegramData = ref<{ username: string | null; firstName: string | null } |
 const telegramState = ref<'idle' | 'code' | 'polling'>('idle')
 const telegramError = ref<string | null>(null)
 const linkCode = ref('')
+const botUsername = ref<string | null>(null)
 const codeLoading = ref(false)
 const unlinkLoading = ref(false)
 const codeExpiresAt = ref<number>(0)
@@ -599,6 +613,11 @@ const unlinkDialog = ref(false)
 let countdownTimer: ReturnType<typeof setInterval> | null = null
 let pollingTimer: ReturnType<typeof setInterval> | null = null
 const codeCopied = ref(false)
+
+const telegramDeepLink = computed(() => {
+  const username = botUsername.value || 'doctor_hosseini_bot'
+  return `https://t.me/${username}?start=${linkCode.value}`
+})
 
 onBeforeUnmount(() => {
   clearTimers()
@@ -629,6 +648,7 @@ async function handleGenerateCode() {
   try {
     const res = await generateLinkCode()
     linkCode.value = res.code
+    botUsername.value = res.botUsername || 'doctor_hosseini_bot'
     codeExpiresAt.value = Date.now() + res.expires_in_minutes * 60 * 1000
     codeCopied.value = false
     telegramState.value = 'code'
@@ -722,6 +742,7 @@ function resetTelegram() {
   telegramState.value = 'idle'
   telegramError.value = null
   linkCode.value = ''
+  botUsername.value = null
   codeCopied.value = false
 }
 

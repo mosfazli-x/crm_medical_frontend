@@ -9,6 +9,7 @@ export const useTelegram = () => {
 
   interface LinkCodeResponse {
     code: string
+    botUsername: string | null
     expires_in_minutes: number
   }
 

@@ -1,931 +1,784 @@
+<template>
+  <main class="stage">
+
+    <!-- ==================== HERO BACKDROP ==================== -->
+    <div class="backdrop">
+      <video
+        class="backdrop__video"
+        src="/images/hero-clinic.mp4"
+        poster="/images/hero-poster.jpg"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+      />
+      <div class="backdrop__veil"/>
+      <div class="backdrop__glow"/>
+      <div class="backdrop__orb"/>
+      <div class="backdrop__orb backdrop__orb--champagne"/>
+      <div class="backdrop__grain"/>
+      <div class="backdrop__vignette"/>
+    </div>
+
+    <!-- ==================== HEADER ==================== -->
+    <header class="masthead">
+      <span class="masthead__brand anim-soft" style="animation-delay: 2400ms">
+        <span class="masthead__name">{{ t('aestheticLanding.brand.name') }}</span>
+        <span class="masthead__subtitle">{{ t('aestheticLanding.brand.subtitle') }}</span>
+      </span>
+      <span class="masthead__actions anim-soft" style="animation-delay: 2500ms">
+        <span class="masthead__tagline">{{ t('aestheticLanding.brand.tagline') }}</span>
+        <button
+          type="button"
+          class="masthead__lang"
+          :aria-label="t('aestheticLanding.langToggle')"
+          @click="toggleLang"
+        >
+          {{ t('aestheticLanding.langToggle') }}
+        </button>
+      </span>
+    </header>
+
+    <!-- ==================== CONTENT ==================== -->
+    <div class="layout">
+
+      <section class="lead">
+
+        <h1 class="headline">
+          <span class="headline__line"><span class="headline__line-inner anim-line" style="animation-delay: 2550ms">{{ t('aestheticLanding.headline.line1') }}</span></span>
+          <span class="headline__line"><span class="headline__line-inner anim-line" :class="{ 'headline__line-inner--italic headline__line-inner--accent': !isRtl }" style="animation-delay: 2700ms">{{ t('aestheticLanding.headline.line2') }}</span></span>
+          <span class="headline__line"><span class="headline__line-inner anim-line" style="animation-delay: 2850ms">{{ t('aestheticLanding.headline.line3') }}</span></span>
+        </h1>
+
+        <p class="lead__text anim-soft" style="animation-delay: 3100ms">{{ t('aestheticLanding.intro') }}</p>
+
+        <div class="tags anim-soft" style="animation-delay: 3300ms">
+          <span>{{ t('aestheticLanding.badges.certified') }}</span>
+          <span class="tags__sep"/>
+          <span>{{ t('aestheticLanding.badges.privacy') }}</span>
+          <span class="tags__sep"/>
+          <span>{{ t('aestheticLanding.badges.protocols') }}</span>
+        </div>
+      </section>
+
+      <aside class="rail-wrap">
+        <nav :aria-label="t('aestheticLanding.navLabel')" class="rail-nav">
+          <ul class="rail">
+            <li v-for="item in railItems" :key="item.key" class="rail__item">
+              <a
+                :href="item.href"
+                class="rail__link anim-soft"
+                :style="{ animationDelay: item.delay }"
+                @click="onRailClick($event, item.href)"
+              >
+                <span class="rail__num">{{ item.num }}</span>
+                <span class="rail__body">
+                  <span class="rail__title">{{ item.title }}</span>
+                  <span class="rail__sub">{{ item.sub }}</span>
+                </span>
+                <span aria-hidden="true" class="rail__line"/>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer anim-soft" style="animation-delay: 3600ms">
+      <span>{{ t('aestheticLanding.footer.consultations') }}</span>
+      <span class="footer__year">© 2026</span>
+    </footer>
+
+  </main>
+</template>
+
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, nextTick, computed, watch } from 'vue'
-import { useRouter } from 'vue-router'
-
-definePageMeta({ layout: false })
-
-const { lang, t: langT, toggleLang, isRtl, pn, services, testimonials, contactItems } = useLang()
-const { t } = useI18n()
-
-interface LandingDoctor {
-  id: string
-  fullName: string | null
-  specialty?: string | null
-  bio?: string | null
-  photoUrl?: string | null
-  experienceYears?: number | null
-  patientsCount?: number | null
-  rating?: string | number | null
-  sortOrder?: number | null
-}
-
-const MAX_DOCTORS = 4
-
-const { data: doctorsResponse, pending: doctorsPending, error: doctorsError } = await useFetch<{ success: boolean; data: LandingDoctor[] }>('/api/booking/doctors')
-
-const doctors = computed<LandingDoctor[]>(() =>
-  (doctorsResponse.value?.data ?? []).slice(0, MAX_DOCTORS)
-)
-
-const showDoctorsSection = computed(() =>
-  !doctorsError.value && (doctorsPending.value || doctors.value.length > 0)
-)
-
-const featuredDoctor = computed<LandingDoctor | undefined>(() => doctors.value[0])
-const sideDoctors = computed<LandingDoctor[]>(() => doctors.value.slice(1))
-const sideDoctorAccents = ['imm-doctor-card--cyan', 'imm-doctor-card--indigo']
-
-function doctorInitials(name: string): string {
-  return name
-    .replace(/^دکتر\s*/i, '')
-    .replace(/^Dr\.?\s*/i, '')
-    .trim()
-    .split(/\s+/)
-    .map(w => w[0])
-    .join('')
-    .slice(0, 2)
-}
-
-function doctorName(doc: LandingDoctor | undefined): string {
-  return doc?.fullName || '—'
-}
-
-function doctorPhoto(doc: LandingDoctor | undefined): string | null {
-  if (!doc?.photoUrl || !doc.id) return null
-  return `/api/doctor-profiles/${doc.id}/photo`
-}
-
-function doctorSpecialty(doc: LandingDoctor | undefined): string {
-  return doc?.specialty || ''
-}
-
-function doctorExperience(doc: LandingDoctor | undefined): string {
-  if (doc?.experienceYears == null) return '—'
-  const value = `${doc.experienceYears} ${t('landing.doctors.years')}`
-  return lang.value === 'fa' ? pn(value) : value
-}
-
-function doctorPatients(doc: LandingDoctor | undefined): string {
-  return doc?.patientsCount != null ? pn(doc.patientsCount) : '—'
-}
-
-function doctorRating(doc: LandingDoctor | undefined): string {
-  return doc?.rating != null ? String(doc.rating) : '—'
-}
-
-function doctorBio(doc: LandingDoctor | undefined): string {
-  return doc?.bio || t('landing.doctors.featuredBio')
-}
-
-function goToDoctorBooking(doctorId: string | undefined) {
-  if (doctorId) {
-    router.push(`/booking/${doctorId}`)
-  } else {
-    goToBooking()
-  }
-}
-
-const showLoadingScreen = ref(true)
-const isLoadingComplete = ref(false)
-
-const pageTitle = computed(() => t('index.pageTitle'))
-const pageDesc = computed(() => langT('landing.home.desc'))
-
-useSeoMeta({
-  title: pageTitle,
-  description: pageDesc,
-  ogTitle: pageTitle,
-  ogDescription: pageDesc,
-})
-
-const router = useRouter()
-
-function goToBooking() {
-  router.push('/booking/')
-}
-
-const mobileMenuOpen = ref(false)
-
-function toggleMobileMenu() {
-  mobileMenuOpen.value = !mobileMenuOpen.value
-}
-
-function closeMobileMenu() {
-  mobileMenuOpen.value = false
-}
-
-const { x: glowX, y: glowY, visible: glowVisible } = useCursorGlow()
-
-const { isLight, toggleTheme, initTheme: initLandingTheme } = useLandingTheme()
-
-const { value: statDoctors, animate: animateDoctors } = useCounter(15, 1600)
-const { value: statYears, animate: animateYears } = useCounter(10, 1400)
-const { value: statSatisfaction, animate: animateSatisfaction } = useCounter(98, 1800)
-const { value: statPatients, animate: animatePatients } = useCounter(12, 1200)
-const statsAnimated = ref(false)
-
-function animateStats() {
-  if (statsAnimated.value) return
-  statsAnimated.value = true
-  animateDoctors()
-  animateYears()
-  animateSatisfaction()
-  animatePatients()
-}
-
-const titleWords = computed(() => t('landing.home.title1').split(' '))
-const titleAccentWords = computed(() => t('landing.home.title2').split(' '))
-const titleRevealed = ref(false)
-
-function revealTitle() {
-  if (titleRevealed.value) return
-  titleRevealed.value = true
-}
-
-const activeTestimonial = ref(0)
-let testimonialInterval: ReturnType<typeof setInterval> | null = null
-
-function startTestimonialRotation() {
-  testimonialInterval = setInterval(() => {
-    activeTestimonial.value = (activeTestimonial.value + 1) % testimonials.value.length
-  }, 5000)
-}
-
-function setTestimonial(i: number) {
-  activeTestimonial.value = i
-  if (testimonialInterval) {
-    clearInterval(testimonialInterval)
-    startTestimonialRotation()
-  }
-}
-
-const formSubmitted = ref(false)
-const contactForm = ref({
-  name: '',
-  phone: '',
-  service: '',
-  message: '',
-})
-const submittingForm = ref(false)
-const { $toast } = useNuxtApp()
-
-function onSubmitForm() {
-  if (!contactForm.value.name || !contactForm.value.phone) return
-  submittingForm.value = true
-  $toast.success(t('landing.contact.successTitle'))
-  formSubmitted.value = true
-  submittingForm.value = false
-}
-
-function resetForm() {
-  formSubmitted.value = false
-  contactForm.value = { name: '', phone: '', service: '', message: '' }
-}
-
-const serviceOptions = computed(() =>
-  services.map(s => ({
-    value: s.titleKey.split('.').pop()!.replace(/Title$/, ''),
-    label: t(s.titleKey),
-  }))
-)
-
-const activeSection = ref('home')
-const scrollProgress = ref(0)
-const sectionIds = ['home', 'services', 'doctors', 'contact']
-const navScrolled = ref(false)
-
-function updateScrollProgress() {
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight
-  scrollProgress.value = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0
-}
-
-const { scrollTo } = useLenis({ navOffset: 72 })
-
-const servicesRoot = ref<HTMLElement | null>(null)
-const contactRoot = ref<HTMLElement | null>(null)
-
-useScrollReveal(servicesRoot, { items: '.imm-section-header', duration: 0.9 }, isLoadingComplete)
-useScrollReveal(servicesRoot, { items: '.imm-service-card', stagger: 0.1 }, isLoadingComplete)
-useScrollReveal(
-  contactRoot,
-  { items: '.imm-contact-info > .scene-stagger, .imm-contact-form-shell', stagger: 0.12 },
-  isLoadingComplete
-)
-
-function scrollToSection(id: string) {
-  closeMobileMenu()
-  const el = document.getElementById(id)
-  if (el) {
-    const navEl = document.querySelector<HTMLElement>('.imm-nav')
-    const navHeight = navEl?.offsetHeight ?? 72
-    const top = el.getBoundingClientRect().top + window.scrollY - navHeight
-    scrollTo(top, { offset: 0, duration: 1.4 })
-  }
-}
-
-function handleNavClick(id: string) {
-  if (sectionIds.includes(id)) {
-    scrollToSection(id)
-  } else {
-    router.push(`/${id}`)
-  }
-}
-
-let observer: IntersectionObserver | null = null
-let heroScrollTl: any = null
-let doctorsRevealTl: any = null
-
-function setupObserver() {
-  observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          activeSection.value = entry.target.id
-        }
-      }
-    },
-    { threshold: 0.3, rootMargin: '-80px 0px 0px 0px' }
-  )
-
-  for (const id of sectionIds) {
-    const el = document.getElementById(id)
-    if (el) observer.observe(el)
-  }
-}
-
-const prefersReducedMotion = ref(false)
-
-function playIntro() {
-  const { $gsap } = useNuxtApp()
-  const gsap = $gsap as any
-  if (!gsap || prefersReducedMotion.value) {
-    revealTitle()
-    animateStats()
-    return
-  }
-
-  const tl = gsap.timeline()
-
-  tl.fromTo('.imm-nav',
-    { y: -72, opacity: 0 },
-    { y: 0, opacity: 1, duration: 1.00, ease: 'power2.out' }
-  )
-
-  tl.fromTo('.imm-hero-visual-stage',
-    { opacity: 0, scale: 0.86, y: 28, filter: 'blur(8px)' },
-    { opacity: 1, scale: 1, y: 0, filter: 'blur(0px)', duration: 0.9, ease: 'power2.out' },
-    '-=0.35'
-  )
-
-  tl.fromTo('.imm-home-content .scene-stagger',
-    { y: 16 },
-    { y: 0, stagger: 0.05, duration: 0.45, ease: 'power2.out' },
-    '-=0.5'
-  )
-
-  tl.fromTo('.imm-hero-chip-wrap',
-    { opacity: 0, y: 26, scale: 0.7 },
-    { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'back.out(1.7)', stagger: 0.12 },
-    '-=0.45'
-  )
-
-  tl.fromTo('.imm-scroll-cue',
-    { opacity: 0, y: 12 },
-    { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
-    '-=0.3'
-  )
-
-  tl.call(() => { revealTitle(); animateStats() }, null, '-=0.2')
-
-  heroScrollTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: '#home',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: true,
-    },
-  })
-  heroScrollTl
-    .to('.imm-home-content', { yPercent: -14, opacity: 0.25, ease: 'none' }, 0)
-    .to('.imm-hero-visual-stage', { yPercent: 12, ease: 'none' }, 0)
-    .to('.imm-scroll-cue', { opacity: 0, ease: 'none' }, 0)
-
-  doctorsRevealTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: '.imm-section--doctors',
-      start: 'top 78%',
-      once: true,
-    },
-  })
-  doctorsRevealTl
-    .fromTo('.imm-section--doctors .imm-section-header',
-      { y: 28, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' })
-    .fromTo('.imm-section--doctors .imm-doctor-card',
-      { y: 48, opacity: 0, scale: 0.98 },
-      { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'power2.out', stagger: 0.12 },
-      '-=0.35')
-}
-
-function initTiltCards() {
-  if (prefersReducedMotion.value) return
-  let tiltRaf: number | null = null
-  const container = document.querySelector<HTMLElement>('.imm-scroll-container')
-  if (!container) return
-
-  container.addEventListener('mousemove', (e) => {
-    if (tiltRaf) cancelAnimationFrame(tiltRaf)
-    tiltRaf = requestAnimationFrame(() => {
-      const card = (e.target as HTMLElement).closest<HTMLElement>('.imm-tilt-card')
-      if (!card) return
-      const r = card.getBoundingClientRect()
-      const x = (e.clientX - r.left) / r.width - 0.5
-      const y = (e.clientY - r.top) / r.height - 0.5
-      card.style.transform = `perspective(600px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) scale(1.02)`
-    })
-  })
-
-  container.addEventListener('mouseleave', () => {
-    const cards = container.querySelectorAll<HTMLElement>('.imm-tilt-card')
-    cards.forEach(card => {
-      card.style.transform = 'perspective(600px) rotateY(0deg) rotateX(0deg) scale(1)'
-      card.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
-      setTimeout(() => { card.style.transition = '' }, 500)
-    })
-  })
-}
-
-const sectionInView = ref('home')
-
-function onScroll() {
-  updateScrollProgress()
-  navScrolled.value = window.scrollY > 60
-  const sections = sectionIds
-  const scrollPos = window.scrollY + 120
-  for (let i = sections.length - 1; i >= 0; i--) {
-    const el = document.getElementById(sections[i])
-    if (el && el.offsetTop <= scrollPos) {
-      sectionInView.value = sections[i]
-      break
-    }
-  }
-}
-
-onMounted(async () => {
-  prefersReducedMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  document.documentElement.classList.add('imm-page')
-  document.body.classList.add('imm-page')
-  document.documentElement.dir = isRtl.value ? 'rtl' : 'ltr'
-  document.documentElement.lang = lang.value
-  initLandingTheme()
-
-  setTimeout(() => {
-    showLoadingScreen.value = false
-  }, 1000)
-})
-
-watch(isLoadingComplete, async (isComplete) => {
-  if (isComplete) {
-    await nextTick()
-    updateScrollProgress()
-    setupObserver()
-    const homeEl = document.getElementById('home')
-    if (homeEl) homeEl.classList.add('active')
-    playIntro()
-    startTestimonialRotation()
-    initTiltCards()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', updateScrollProgress)
-  }
-})
-
-onBeforeUnmount(() => {
-  document.documentElement.classList.remove('imm-page')
-  document.body.classList.remove('imm-page')
-  window.removeEventListener('scroll', onScroll)
-  window.removeEventListener('resize', updateScrollProgress)
-  if (observer) observer.disconnect()
-  if (testimonialInterval) clearInterval(testimonialInterval)
-  if (heroScrollTl) heroScrollTl.kill()
-  if (doctorsRevealTl) doctorsRevealTl.kill()
-})
-
-const navItems = computed(() => [
-  { id: 'home', label: t('landing.nav.home') },
-  { id: 'education', label: t('landing.nav.education') },
-  { id: 'blog', label: t('landing.nav.blog') },
-  { id: 'aboutUs', label: t('landing.nav.aboutUs') },
-  { id: 'contact', label: t('landing.nav.contact') },
+definePageMeta({ layout: 'landing' })
+
+const { t, isRtl, toggleLang } = useLang()
+
+const railItems = computed(() => [
+  { key: 'booking', href: '/booking', num: t('aestheticLanding.rail.booking.num'), title: t('aestheticLanding.rail.booking.title'), sub: t('aestheticLanding.rail.booking.sub'), delay: '2900ms' },
+  { key: 'login', href: '/auth/login', num: t('aestheticLanding.rail.login.num'), title: t('aestheticLanding.rail.login.title'), sub: t('aestheticLanding.rail.login.sub'), delay: '3030ms' },
+  { key: 'tutorials', href: '#', num: t('aestheticLanding.rail.tutorials.num'), title: t('aestheticLanding.rail.tutorials.title'), sub: t('aestheticLanding.rail.tutorials.sub'), delay: '3160ms' },
+  { key: 'blog', href: '#', num: t('aestheticLanding.rail.blog.num'), title: t('aestheticLanding.rail.blog.title'), sub: t('aestheticLanding.rail.blog.sub'), delay: '3290ms' },
+  { key: 'about', href: '#', num: t('aestheticLanding.rail.about.num'), title: t('aestheticLanding.rail.about.title'), sub: t('aestheticLanding.rail.about.sub'), delay: '3420ms' },
 ])
 
-const icons: Record<string, string> = {
-  heart: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>',
-  shield: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>',
-  pulse: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></svg>',
-  flask: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16.5h10"/></svg>',
-  clock: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
-  users: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
-  phone: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
-  pin: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
-  mail: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>',
-  star: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
-  arrow: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>',
-  arrowFa: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>',
-  medical: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2a2 2 0 0 0-2 2v4H6a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v3a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-3h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2h-3V6a2 2 0 0 0-2-2z"/></svg>',
-  lang: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
-  check: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
-  sun: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>',
-  moon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
-  hamburger: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>',
-  close: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+function onRailClick(event: MouseEvent, href: string) {
+  if (href === '#') {
+    event.preventDefault()
+    return
+  }
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return
+  event.preventDefault()
+  navigateTo(href)
 }
+
+const metaTitle = computed(() => t('aestheticLanding.metaTitle'))
+const metaDescription = computed(() => t('aestheticLanding.metaDescription'))
+const ogTitle = computed(() => t('aestheticLanding.ogTitle'))
+const ogDescription = computed(() => t('aestheticLanding.ogDescription'))
+
+useSeoMeta({
+  title: metaTitle,
+  description: metaDescription,
+  ogTitle,
+  ogDescription,
+  ogType: 'website',
+  ogImage: '/images/hero-poster.jpg',
+})
 </script>
 
-<template>
-  <LandingLoadingScreen :show="showLoadingScreen" @finished="isLoadingComplete = true" />
+<style scoped>
+/* ==================== STAGE ==================== */
 
-  <div v-if="isLoadingComplete" class="imm-viewport">
+.stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  overflow-x: hidden;
+  background: var(--ink);
+  color: var(--lightcyan);
+  color-scheme: dark;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
 
-    <!-- Scroll Progress Bar -->
-    <div class="imm-progress-bar" aria-hidden="true">
-      <div class="imm-progress-bar-inner" :style="{ width: scrollProgress + '%' }" />
-    </div>
+/* Hairline matte frame — a quiet photographic edge around the whole stage */
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 0.75rem;
+  z-index: 40;
+  border: 1px solid var(--hairline);
+  pointer-events: none;
+}
 
-    <!-- Background -->
+a {
+  color: inherit;
+}
 
-    <!-- Cursor Glow -->
-    <div class="imm-cursor-glow" :class="{ visible: glowVisible }"
-      :style="{ '--glow-x': glowX + '%', '--glow-y': glowY + '%' }" aria-hidden="true" />
+/* ==================== HERO BACKDROP ==================== */
 
-    <!-- Navigation -->
-    <nav class="imm-nav" :class="{ scrolled: navScrolled }" role="navigation" aria-label="Main navigation">
-      <a href="/" class="imm-nav-logo" :aria-label="t('landing.clinicName') + ' ' + t('landing.nav.home')">
-        <div class="imm-nav-logo-icon bg-[#2563eb]" aria-hidden="true">
-          <img src="~/assets/images/hastihoseinilogo.png" :alt="t('landing.clinicName')" class="imm-nav-logo-img"
-            width="40" height="40" />
-        </div>
-        <span class="imm-nav-logo-text pt-2 hidden md:flex">{{ t('landing.clinicName') }}</span>
-      </a>
+.backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
 
-      <div class="imm-nav-tabs" role="tablist" aria-label="Page sections">
-        <button v-for="item in navItems" :key="item.id" role="tab" :aria-selected="activeSection === item.id"
-          class="imm-nav-tab" :class="{ active: activeSection === item.id && sectionIds.includes(item.id) }"
-          @click="handleNavClick(item.id)">
-          {{ item.label }}
-        </button>
-      </div>
+.backdrop__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+  animation: slow-drift 46s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
 
-      <div class="imm-nav-actions">
-        <BackgroundMusic />
-        <button class="imm-theme-toggle" :title="isLight ? t('landing.theme.dark') : t('landing.theme.light')"
-          @click="toggleTheme">
-          <span v-if="isLight" v-html="icons.moon" aria-hidden="true" />
-          <span v-else v-html="icons.sun" aria-hidden="true" />
-        </button>
-        <button class="imm-nav-lang" :title="t('index.langToggleTitle')" @click="toggleLang">
-          <span v-html="icons.lang" aria-hidden="true" />
-          <span>{{ t('landing.lang.toggle') }}</span>
-        </button>
-        <button v-dir class="imm-nav-cta imm-magnetic dir-ltr" @click="goToBooking">
-          {{ t('landing.nav.book') }}
-          <span v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" />
-        </button>
-      </div>
+.backdrop__veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    color-mix(in oklab, var(--ink) 94%, transparent) 0%,
+    color-mix(in oklab, var(--ink) 70%, transparent) 42%,
+    color-mix(in oklab, var(--ink) 40%, transparent) 100%
+  );
+}
 
-      <!-- Mobile Hamburger -->
-      <button class="imm-nav-hamburger" :aria-label="mobileMenuOpen ? 'Close menu' : 'Open menu'"
-        :aria-expanded="mobileMenuOpen" @click="toggleMobileMenu">
-        <span v-if="!mobileMenuOpen" v-html="icons.hamburger" aria-hidden="true" />
-        <span v-else v-html="icons.close" aria-hidden="true" />
-      </button>
-    </nav>
+.backdrop__glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    110% 80% at 18% 88%,
+    color-mix(in oklab, var(--sapphire) 26%, transparent),
+    transparent 65%
+  );
+}
 
-    <!-- Mobile Menu Drawer -->
-    <Transition name="imm-mobile-menu">
-      <div v-if="mobileMenuOpen" class="imm-mobile-drawer" role="dialog" aria-label="Mobile navigation">
-        <div class="imm-mobile-drawer-content">
-          <button v-for="item in navItems" :key="item.id" class="imm-mobile-drawer-tab"
-            :class="{ active: activeSection === item.id && sectionIds.includes(item.id) }"
-            @click="handleNavClick(item.id)">
-            {{ item.label }}
-          </button>
-          <div class="imm-mobile-drawer-divider" />
-          <div class="imm-mobile-drawer-actions">
-            <button class="imm-mobile-drawer-lang" @click="toggleLang">
-              <span v-html="icons.lang" aria-hidden="true" />
-              {{ t('landing.lang.toggle') }}
-            </button>
-            <button class="imm-mobile-drawer-theme" @click="toggleTheme">
-              <span v-if="isLight" v-html="icons.moon" aria-hidden="true" />
-              <span v-else v-html="icons.sun" aria-hidden="true" />
-              {{ isLight ? t('landing.theme.dark') : t('landing.theme.light') }}
-            </button>
-          </div>
-          <button class="imm-mobile-drawer-cta imm-magnetic" @click="goToBooking">
-            {{ t('landing.nav.book') }}
-            <span v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" />
-          </button>
-        </div>
-      </div>
-    </Transition>
+.backdrop__orb {
+  position: absolute;
+  top: -10rem;
+  right: -8rem;
+  width: 46vw;
+  height: 46vw;
+  border-radius: 50%;
+  opacity: 0.5;
+  filter: blur(80px);
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--cornflower) 55%, transparent),
+    transparent 70%
+  );
+  will-change: transform;
+  animation: orb-float 22s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
 
-    <!-- Navigation Dots -->
-    <div class="imm-nav-dots" role="navigation" aria-label="Section navigation">
-      <button v-for="id in sectionIds" :key="id" class="imm-nav-dot" :class="{ active: sectionInView === id }"
-        :aria-label="`Go to ${id} section`" @click="scrollToSection(id)" />
-    </div>
+/* Warm champagne counter-orb — the single gold foil to the cool blues */
+.backdrop__orb--champagne {
+  top: auto;
+  right: auto;
+  bottom: -14rem;
+  left: -10rem;
+  width: 42vw;
+  height: 42vw;
+  opacity: 0.14;
+  filter: blur(100px);
+  background: radial-gradient(circle, var(--champagne), transparent 70%);
+  animation: orb-float 26s cubic-bezier(0.45, 0, 0.55, 1) infinite reverse;
+}
 
-    <!-- ═══ Sections ═══ -->
-    <main class="imm-scroll-container">
+/* Fine film grain — keeps the photographic depth from feeling synthetic */
+.backdrop__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
 
-      <!-- ── HOME ── -->
-      <section id="home" class="imm-section imm-section--home" data-section="home">
-        <div class="imm-hero-bg" aria-hidden="true">
-          <div class="imm-hero-aurora imm-hero-aurora--1"></div>
-          <div class="imm-hero-aurora imm-hero-aurora--2"></div>
-          <div class="imm-hero-aurora imm-hero-aurora--3"></div>
-          <div class="imm-hero-grid"></div>
-        </div>
+.backdrop__vignette {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 260px 80px var(--ink);
+}
 
-        <div class="imm-home">
-          <div v-dir class="imm-home-content">
-            <div class="scene-stagger imm-home-badge">
-              <span class="imm-home-badge-dot" />
-              {{ t('landing.home.badge') }}
-              <span class="imm-home-badge-shine" aria-hidden="true" />
-            </div>
-            <h1 class="scene-stagger imm-home-title text-center">
-              <span class="imm-reveal-text">
-                <span v-for="(word, i) in titleWords" :key="'tw-' + i" class="imm-reveal-word"
-                  :class="{ revealed: titleRevealed }" :style="{ transitionDelay: (i * 80) + 'ms' }">{{ word
-                  }}&nbsp;</span>
-              </span>
-              <br />
-              <span class="imm-reveal-text imm-home-title-accent">
-                <span v-for="(word, i) in titleAccentWords" :key="'taw-' + i" class="imm-reveal-word"
-                  :class="{ revealed: titleRevealed }"
-                  :style="{ transitionDelay: ((titleWords.length + i) * 80 + 100) + 'ms' }">{{ word }}&nbsp;</span>
-              </span>
-            </h1>
-            <div class="scene-stagger imm-title-rule w-full! justify-center align-middle" aria-hidden="true">
-              <span class="imm-title-rule-line" />
-              <span class="imm-title-rule-dot" />
-              <span class="imm-title-rule-line" />
-            </div>
-            <p class="scene-stagger imm-home-desc w-full! text-center">
-              {{ t('landing.home.desc') }}
-            </p>
-            <div class="scene-stagger imm-home-actions flex justify-center align-middle items-center">
-              <button v-dir class="imm-btn-primary imm-magnetic dir-ltr" @click="goToBooking">
-                <span class="imm-btn-label">{{ t('landing.home.cta.book') }}</span>
-                <span class="imm-btn-icon" v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" />
-                <span class="imm-btn-shine" aria-hidden="true" />
-              </button>
-              <button class="imm-btn-secondary" @click="router.push('/auth/login')">
-                {{ t('landing.home.cta.login') }}
-                <span class="imm-btn-shine" aria-hidden="true" />
-              </button>
-            </div>
-            <div v-dir class="scene-stagger imm-home-stats flex justify-center align-middle items-center">
-              <div class="imm-stat">
-                <div class="imm-stat-value"><span>{{ pn(statDoctors) }}</span>+</div>
-                <div class="imm-stat-label">{{ t('landing.home.stat.doctors') }}</div>
-              </div>
-              <div class="imm-stat">
-                <div class="imm-stat-value"><span>{{ pn(statYears) }}</span> {{ t('index.years') }}</div>
-                <div class="imm-stat-label">{{ t('landing.home.stat.experience') }}</div>
-              </div>
-              <div class="imm-stat">
-                <div class="imm-stat-value"><span>{{ pn(statSatisfaction) }}</span>%</div>
-                <div class="imm-stat-label">{{ t('landing.home.stat.satisfaction') }}</div>
-              </div>
-              <div class="imm-stat">
-                <div class="imm-stat-value"><span>{{ pn(statPatients) }}K</span>+</div>
-                <div class="imm-stat-label">{{ t('landing.home.stat.patients') }}</div>
-              </div>
-            </div>
-          </div>
+/* ==================== HEADER ==================== */
 
-          <div class="imm-home-visual scene-stagger" aria-hidden="true">
-            <div class="imm-hero-visual-stage">
-              <div class="imm-hero-pulse-ring"></div>
-              <div class="imm-hero-pulse-ring imm-hero-pulse-ring--2"></div>
-              <div class="imm-hero-orb imm-hero-orb--blue"></div>
-              <div class="imm-hero-orb imm-hero-orb--cyan"></div>
+.masthead {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--ink) 45%, transparent),
+    transparent
+  );
+}
 
-              <ImmHeroImage />
+.masthead__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  line-height: 1;
+}
 
-              <div class="imm-hero-chip-wrap imm-hero-chip-wrap--appt">
-                <div class="imm-hero-chip">
-                  <span class="imm-hero-chip-icon" v-html="icons.clock" />
-                  <span class="imm-hero-chip-text">
-                    <span class="imm-hero-chip-label">{{ t('landing.home.nextAppointment') }}</span>
-                    <span class="imm-hero-chip-value">{{ t('landing.home.appointmentTime') }}</span>
-                  </span>
-                </div>
-              </div>
+.masthead__name {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 300;
+  letter-spacing: 0.32em;
+  color: var(--lightcyan);
+}
 
-              <div class="imm-hero-chip-wrap imm-hero-chip-wrap--online">
-                <div class="imm-hero-chip">
-                  <span class="imm-hero-chip-dot" />
-                  {{ t('landing.home.onlineDoctors') }}
-                </div>
-              </div>
+.masthead__subtitle {
+  font-size: 0.55rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--champagne) 60%, transparent);
+}
 
-              <div class="imm-hero-chip-wrap imm-hero-chip-wrap--satisfaction">
-                <div class="imm-hero-chip">
-                  <span class="imm-hero-chip-icon" v-html="icons.shield" />
-                  <span class="imm-hero-chip-value">{{ pn(statSatisfaction) }}% {{ t('landing.home.satisfaction')
-                  }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+.masthead__tagline {
+  display: none;
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--periwinkle) 60%, transparent);
+}
 
-        <div class="imm-scroll-cue" aria-hidden="true">
-          <span class="imm-scroll-cue-mouse"><span class="imm-scroll-cue-wheel" /></span>
-          <span class="imm-scroll-cue-label">{{ t('landing.home.scroll') }}</span>
-        </div>
-      </section>
+.masthead__actions {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+}
 
-      <!-- ── OUR SERVICES ── -->
-      <section id="services" ref="servicesRoot" class="imm-section imm-section--services" data-section="services">
-        <div class="imm-services">
-          <div class="imm-services-bg" aria-hidden="true">
-            <div class="imm-services-bg-orbe imm-services-bg-orbe--1"></div>
-            <div class="imm-services-bg-orbe imm-services-bg-orbe--2"></div>
-            <div class="imm-services-bg-orbe imm-services-bg-orbe--3"></div>
-          </div>
+.masthead__lang {
+  position: relative;
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--periwinkle) 60%, transparent);
+  background: none;
+  border: 0;
+  padding: 0.25rem 0;
+  cursor: pointer;
+  transition: color 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-          <div class="scene-stagger imm-section-header">
-            <div class="imm-section-badge">
-              <span v-html="icons.medical" aria-hidden="true" />
-              {{ t('landing.services.badge') }}
-            </div>
-            <h2 class="imm-section-title">
-              {{ t('landing.services.title1') }} <span class="imm-section-title-accent">{{ t('landing.services.title2')
-              }}</span>
-            </h2>
-          </div>
+.masthead__lang::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -2px;
+  height: 1px;
+  background: var(--champagne);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-          <div class="imm-services-grid">
-            <div v-for="(service, i) in services" :key="i" v-dir
-              class="scene-stagger imm-service-card imm-tilt-card dir-ltr">
-              <div class="imm-service-num" aria-hidden="true">{{ String(i + 1).padStart(2, '0') }}</div>
-              <div class="imm-service-card-bg" aria-hidden="true"></div>
-              <div class="imm-service-icon" :class="`imm-service-icon--${service.colorClass}`">
-                <span v-html="icons[service.icon]" />
-              </div>
-              <h3 class="imm-service-title">{{ t(service.titleKey) }}</h3>
-              <p v-dir class="imm-service-desc">{{ t(service.descKey) }}</p>
-              <div class="imm-service-bar mt-4" :class="`imm-service-bar--${service.colorClass}`"></div>
-            </div>
-          </div>
-        </div>
-      </section>
+.masthead__lang:hover {
+  color: var(--champagne-bright);
+}
 
-      <!-- ── DOCTORS ── -->
-      <section v-if="showDoctorsSection" id="doctors" class="imm-section imm-section--doctors" data-section="doctors">
-        <div class="imm-doctors">
-          <div class="scene-stagger imm-section-header">
-            <div class="imm-section-badge">
-              <span v-html="icons.users" aria-hidden="true" />
-              {{ t('landing.doctors.badge') }}
-            </div>
-            <h2 class="imm-section-title">
-              {{ t('landing.doctors.title1') }} <span class="imm-section-title-accent">{{ t('landing.doctors.title2')
-              }}</span>
-            </h2>
-            <p class="imm-doctors-desc">{{ t('landing.doctors.desc') }}</p>
-            <div class="imm-doctors-divider" aria-hidden="true">
-              <span class="imm-doctors-divider-line" />
-              <span class="imm-doctors-divider-pulse" />
-              <span class="imm-doctors-divider-line" />
-            </div>
-          </div>
+.masthead__lang:hover::after,
+.masthead__lang:focus-visible::after {
+  transform: scaleX(1);
+}
 
-          <div v-if="doctorsPending" class="imm-doctors-grid imm-doctors-grid--skeleton" aria-hidden="true">
-            <div class="imm-doctor-card imm-doctor-card--featured imm-doctor-card--blue imm-skeleton-card">
-              <div class="imm-doctor-media">
-                <div class="imm-skeleton imm-skeleton--media"></div>
-              </div>
-              <div class="imm-doctor-body">
-                <div class="imm-skeleton imm-skeleton--pill"></div>
-                <div class="imm-skeleton imm-skeleton--line imm-skeleton--name"></div>
-                <div class="imm-skeleton imm-skeleton--line"></div>
-                <div class="imm-skeleton imm-skeleton--line imm-skeleton--short"></div>
-              </div>
-            </div>
-            <div v-for="n in 3" :key="n" class="imm-doctor-card imm-doctor-card--side imm-skeleton-card">
-              <div class="imm-doctor-thumb">
-                <div class="imm-skeleton imm-skeleton--thumb"></div>
-              </div>
-              <div class="imm-doctor-side-info">
-                <div class="imm-skeleton imm-skeleton--line imm-skeleton--name"></div>
-                <div class="imm-skeleton imm-skeleton--line imm-skeleton--short"></div>
-              </div>
-            </div>
-          </div>
+.masthead__lang:focus-visible {
+  outline: 1px dashed color-mix(in oklab, var(--champagne) 60%, transparent);
+  outline-offset: 4px;
+}
 
-          <div v-else class="imm-doctors-grid">
-            <!-- Featured doctor -->
-            <article
-              class="scene-stagger imm-doctor-card imm-doctor-card--featured imm-tilt-card imm-doctor-card--blue">
-              <div class="imm-doctor-media">
-                <img v-if="featuredDoctor?.photoUrl" :src="doctorPhoto(featuredDoctor)" :alt="doctorName(featuredDoctor)"
-                  class="imm-doctor-img" loading="lazy" />
-                <div v-else class="imm-doctor-monogram imm-doctor-monogram--lg" aria-hidden="true">
-                  {{ doctorInitials(doctorName(featuredDoctor)) }}
-                </div>
-                <span class="imm-doctor-status">
-                  <span class="imm-doctor-status-dot" aria-hidden="true" />
-                  {{ t('landing.doctors.available') }}
-                </span>
-                <svg class="imm-ecg" viewBox="0 0 600 60" preserveAspectRatio="none" aria-hidden="true">
-                  <polyline
-                    points="0,30 80,30 100,30 118,14 138,46 158,30 290,30 310,30 328,8 348,52 368,30 510,30 532,30 550,21 568,39 590,30 600,30" />
-                </svg>
-                <span class="imm-doctor-num" aria-hidden="true">01</span>
-                <span class="imm-doctor-media-glow" aria-hidden="true" />
-              </div>
-              <div class="imm-doctor-body">
-                <span class="imm-doctor-specialty-pill">{{ doctorSpecialty(featuredDoctor) }}</span>
-                <h3 class="imm-doctor-name">{{ doctorName(featuredDoctor) }}</h3>
-                <p class="imm-doctor-about">{{ doctorBio(featuredDoctor) }}</p>
-                <div class="imm-doctor-credentials">
-                  <span class="imm-doctor-metric">
-                    <span class="imm-doctor-metric-ico" v-html="icons.clock" aria-hidden="true" />
-                    <span class="imm-doctor-metric-val">{{ doctorExperience(featuredDoctor) }}</span>
-                  </span>
-                  <span class="imm-doctor-metric">
-                    <span class="imm-doctor-metric-ico" v-html="icons.users" aria-hidden="true" />
-                    <span class="imm-doctor-metric-val">{{ doctorPatients(featuredDoctor) }}</span>
-                  </span>
-                </div>
-                <div class="imm-doctor-body-actions">
-                  <span class="imm-doctor-rating"
-                    :aria-label="`${t('landing.doctors.rating')} ${doctorRating(featuredDoctor)} / 5`">
-                    <span v-html="icons.star" aria-hidden="true" />
-                    {{ doctorRating(featuredDoctor) }}<span class="imm-doctor-rating-max">/5</span>
-                  </span>
-                  <button class="imm-doctor-book-btn" @click="goToDoctorBooking(featuredDoctor?.id)">
-                    <span>{{ t('landing.doctors.book') }}</span>
-                    <span class="imm-doctor-book-arrow" v-html="isRtl ? icons.arrowFa : icons.arrow"
-                      aria-hidden="true" />
-                  </button>
-                </div>
-              </div>
-            </article>
+/* ==================== LAYOUT ==================== */
 
-            <!-- Side doctors -->
-            <article v-for="(doc, i) in sideDoctors" :key="doc.id"
-              :class="['scene-stagger', 'imm-doctor-card', 'imm-doctor-card--side', 'imm-tilt-card', sideDoctorAccents[i % sideDoctorAccents.length]]">
-              <div class="imm-doctor-thumb">
-                <img v-if="doc.photoUrl" :src="doctorPhoto(doc)" :alt="doctorName(doc)" class="imm-doctor-img"
-                  loading="lazy" />
-                <div v-else class="imm-doctor-monogram" aria-hidden="true">{{ doctorInitials(doctorName(doc)) }}</div>
-                <span class="imm-doctor-num" aria-hidden="true">{{ String(i + 2).padStart(2, '0') }}</span>
-              </div>
-              <div class="imm-doctor-side-info">
-                <h3 class="imm-doctor-name">{{ doctorName(doc) }}</h3>
-                <p class="imm-doctor-specialty">{{ doctorSpecialty(doc) }}</p>
-                <div class="imm-doctor-side-meta">
-                  <span class="imm-doctor-metric">
-                    <span class="imm-doctor-metric-ico" v-html="icons.clock" aria-hidden="true" />
-                    <span class="imm-doctor-metric-val">{{ doctorExperience(doc) }}</span>
-                  </span>
-                  <span class="imm-doctor-metric">
-                    <span class="imm-doctor-metric-ico" v-html="icons.users" aria-hidden="true" />
-                    <span class="imm-doctor-metric-val">{{ doctorPatients(doc) }}</span>
-                  </span>
-                </div>
-              </div>
-              <div class="imm-doctor-side-actions">
-                <span class="imm-doctor-rating" :aria-label="`${t('landing.doctors.rating')} ${doctorRating(doc)} / 5`">
-                  <span v-html="icons.star" aria-hidden="true" />
-                  {{ doctorRating(doc) }}
-                </span>
-                <button class="imm-doctor-book-btn" @click="goToDoctorBooking(doc.id)"
-                  :aria-label="`${t('landing.doctors.book')} — ${doctorName(doc)}`">
-                  <span class="imm-doctor-book-arrow" v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" />
-                </button>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
+.layout {
+  position: relative;
+  z-index: 10;
+  flex: 1 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 2.5rem;
+  padding: 6rem 1.5rem 5rem;
+}
 
-      <!-- ── CONTACT US ── -->
-      <section id="contact" ref="contactRoot" class="imm-section imm-section--contact" data-section="contact">
-        <div class="imm-contact">
-          <div class="imm-contact-info">
-            <div class="scene-stagger imm-section-badge" style="width: fit-content;">
-              <span v-html="icons.phone" aria-hidden="true" />
-              {{ t('landing.contact.badge') }}
-            </div>
-            <h2 class="scene-stagger imm-contact-title">
-              {{ t('landing.contact.title') }}
-            </h2>
-            <p class="scene-stagger imm-contact-desc">
-              {{ t('landing.contact.desc') }}
-            </p>
-            <div v-dir class="scene-stagger imm-contact-items dir-ltr">
-              <component :is="item.href ? 'a' : 'div'" v-for="(item, i) in contactItems" :key="i"
-                class="imm-contact-item" :class="{ 'imm-contact-item--static': !item.href }"
-                :href="item.href || undefined" :target="item.external ? '_blank' : undefined"
-                :rel="item.external ? 'noopener noreferrer' : undefined">
-                <div class="imm-contact-item-icon">
-                  <span v-html="icons[item.icon]" />
-                </div>
-                <div class="imm-contact-item-body">
-                  <div class="imm-contact-item-label">{{ t(item.labelKey) }}</div>
-                  <div class="imm-contact-item-value">{{ item.value }}</div>
-                </div>
-              </component>
-            </div>
-            <div class="scene-stagger imm-contact-status">
-              <span class="imm-contact-status-dot" aria-hidden="true" />
-              {{ t('landing.contact.online') }}
-            </div>
-          </div>
-          <div class="scene-stagger imm-contact-form-shell">
-            <div class="imm-contact-ring imm-contact-ring--a" aria-hidden="true" />
-            <div class="imm-contact-ring imm-contact-ring--b" aria-hidden="true" />
-            <div class="imm-contact-form-head">
-              <img class="imm-contact-avatar" :aria-label="t('landing.contact.formTitle')"
-                src="../assets/images/support.png" />
-              <div class="imm-contact-form-head-text">
-                <div class="imm-contact-form-title">{{ t('landing.contact.formTitle') }}</div>
-                <div class="imm-contact-form-desc">{{ t('landing.contact.formDesc') }}</div>
-              </div>
-            </div>
-            <Transition name="imm-form-fade" mode="out-in">
-              <div v-if="formSubmitted" class="imm-form-success" key="success">
-                <div class="imm-success-check">
-                  <span v-html="icons.check" />
-                </div>
-                <div class="imm-success-title">
-                  {{ t('landing.contact.successTitle') }}
-                </div>
-                <div class="imm-success-desc">
-                  {{ t('landing.contact.successDesc') }}
-                </div>
-                <button class="imm-btn-secondary" style="margin-top: 0.5rem;" @click="resetForm">
-                  {{ t('landing.contact.reset') }}
-                  <span class="imm-btn-shine" aria-hidden="true" />
-                </button>
-              </div>
-              <form v-else class="imm-form" key="form" @submit.prevent="onSubmitForm">
-                <div class="imm-form-row">
-                  <div class="imm-form-group">
-                    <label class="imm-form-label" for="contact-name">{{ t('landing.contact.formName') }}</label>
-                    <input id="contact-name" v-model="contactForm.name" class="imm-form-input" type="text"
-                      :placeholder="t('landing.contact.formNamePlaceholder')" required />
-                  </div>
-                  <div class="imm-form-group">
-                    <label class="imm-form-label" for="contact-phone">{{ t('landing.contact.formPhone') }}</label>
-                    <input id="contact-phone" v-model="contactForm.phone" class="imm-form-input" type="tel"
-                      :placeholder="t('landing.contact.formPhonePlaceholder')" required />
-                  </div>
-                </div>
-                <div class="imm-form-group">
-                  <label class="imm-form-label" for="contact-service">{{ t('landing.contact.formService') }}</label>
-                  <div class="imm-form-select-wrap">
-                    <select id="contact-service" v-model="contactForm.service" class="imm-form-select w-full">
-                      <option value="" disabled>{{ t('landing.contact.formServiceSelect') }}</option>
-                      <option v-for="opt in serviceOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="imm-form-group">
-                  <label class="imm-form-label" for="contact-msg">{{ t('landing.contact.formMessage') }}</label>
-                  <textarea id="contact-msg" v-model="contactForm.message" class="imm-form-textarea" rows="3"
-                    :placeholder="t('landing.contact.formMessagePlaceholder')" />
-                </div>
-                <button type="submit" :disabled="submittingForm"
-                  class="imm-form-submit imm-magnetic flex justify-center align-middle items-center gap-1 text-white!">
-                  <span class="imm-btn-shine" aria-hidden="true" />
-                  {{ submittingForm ? t('landing.contact.formSubmitting') || t('landing.contact.formSubmit') :
-                    t('landing.contact.formSubmit') }}
-                  <span v-html="isRtl ? icons.arrowFa : icons.arrow" aria-hidden="true" style="display: inline-flex;" />
-                </button>
-              </form>
-            </Transition>
-            <div class="imm-contact-chips">
-              <span class="imm-contact-chip">
-                <span class="imm-contact-chip-icon" v-html="icons.check" aria-hidden="true" />
-                {{ t('landing.contact.instantReply') }}
-              </span>
-              <span class="imm-contact-chip">
-                <span class="imm-contact-chip-icon" v-html="icons.shield" aria-hidden="true" />
-                {{ t('landing.contact.secure') }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
+/* ==================== LEAD ==================== */
 
-    </main>
-  </div>
-</template>
+.lead {
+  max-width: 36rem;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--iceblue) 70%, transparent);
+}
+
+.eyebrow__rule {
+  height: 1px;
+  width: 2.5rem;
+  background: color-mix(in oklab, var(--iceblue) 50%, transparent);
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5.4vw, 4.75rem);
+  line-height: 0.98;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  color: var(--lightcyan);
+}
+
+.headline__line {
+  display: block;
+  overflow: hidden;
+  font-weight: 700;
+}
+
+.headline__line-inner {
+  display: block;
+}
+
+.headline__line-inner--italic {
+  font-style: italic;
+}
+
+/* Champagne foil on the italic display line — the single warm accent */
+.headline__line-inner--accent {
+  background: linear-gradient(
+    100deg,
+    var(--champagne) 0%,
+    var(--champagne-bright) 55%,
+    var(--champagne) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.lead__text {
+  margin-top: 1rem;
+  max-width: 30rem;
+  font-size: 0.9rem;
+  line-height: 1.625;
+  letter-spacing: 0.06em;
+  color: color-mix(in oklab, var(--periwinkle) 85%, transparent);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+  row-gap: 0.75rem;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--lightcyan) 60%, transparent);
+}
+
+.tags__sep {
+  height: 1px;
+  width: 1.5rem;
+  background: var(--border);
+}
+
+/* ==================== INDEX RAIL ==================== */
+
+.rail-nav {
+  width: 100%;
+}
+
+.rail {
+  list-style: none;
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--lightcyan) 9%, transparent),
+    transparent 60%
+  );
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid color-mix(in oklab, var(--border) 45%, transparent);
+  border-radius: 10px;
+  box-shadow:
+    0 24px 60px -32px color-mix(in oklab, var(--ink) 90%, transparent),
+    inset 0 1px 0 color-mix(in oklab, var(--lightcyan) 12%, transparent);
+  padding: 0.5rem 1.25rem;
+}
+
+.rail__item {
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+}
+
+.rail__item:last-child {
+  border-bottom: 0;
+}
+
+.rail__link {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  text-decoration: none;
+  transition: padding-inline-start 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rail__link:hover {
+  padding-inline-start: 0.75rem;
+}
+
+.rail__link:focus-visible {
+  outline: 1px dashed color-mix(in oklab, var(--champagne) 60%, transparent);
+  outline-offset: 6px;
+}
+
+.rail__num {
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in oklab, var(--iceblue) 60%, transparent);
+  transition: color 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rail__link:hover .rail__num {
+  color: var(--champagne-bright);
+}
+
+.rail__body {
+  flex: 1;
+}
+
+.rail__title {
+  font-family: var(--font-display);
+  display: block;
+  font-size: 1.375rem;
+  line-height: 1;
+  font-weight: 300;
+  letter-spacing: 0.025em;
+  color: var(--lightcyan);
+  transition: color 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rail__link:hover .rail__title {
+  color: var(--periwinkle);
+}
+
+.rail__sub {
+  display: block;
+  margin-top: 0.25rem;
+  max-height: 0;
+  overflow: hidden;
+  font-size: 0.6rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--periwinkle) 50%, transparent);
+  opacity: 0;
+  transition: max-height 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rail__link:hover .rail__sub {
+  max-height: 1.5rem;
+  opacity: 1;
+}
+
+.rail__line {
+  width: 1.5rem;
+  height: 1px;
+  background: var(--iceblue);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rail__link:hover .rail__line {
+  transform: scaleX(1);
+}
+
+/* ==================== FOOTER ==================== */
+
+.footer {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  font-size: 0.55rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--periwinkle) 50%, transparent);
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--ink) 45%, transparent),
+    transparent
+  );
+}
+
+.footer__year {
+  display: none;
+}
+
+/* ==================== ENTRANCE ANIMATIONS ==================== */
+
+.anim-soft {
+  will-change: transform, opacity;
+  animation: 1.4s cubic-bezier(0.16, 1, 0.3, 1) both soft-in;
+}
+
+.anim-line {
+  will-change: transform, opacity;
+  animation: 1.5s cubic-bezier(0.16, 1, 0.3, 1) both line-rise;
+}
+
+.anim-rule {
+  transform-origin: 0;
+  will-change: transform;
+  animation: 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards rule-draw;
+}
+
+@keyframes soft-in {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes line-rise {
+  0% {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(110%) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate(0) rotate(0);
+  }
+}
+
+@keyframes rule-draw {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes orb-float {
+  0% {
+    transform: translate(0) scale(1);
+  }
+  50% {
+    transform: translate(2%, -3%) scale(1.08);
+  }
+  100% {
+    transform: translate(0) scale(1);
+  }
+}
+
+@keyframes slow-drift {
+  0% {
+    transform: scale(1.08) translate(0);
+  }
+  50% {
+    transform: scale(1.14) translate(-1.2%, -1%);
+  }
+  100% {
+    transform: scale(1.08) translate(0);
+  }
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (min-width: 640px) {
+  .masthead {
+    padding: 2rem 3rem;
+  }
+
+  .masthead__tagline {
+    display: block;
+  }
+
+  .layout {
+    padding: 6rem 3rem 5rem;
+  }
+
+  .rail {
+    padding: 0.75rem 1.75rem;
+  }
+
+  .rail__link {
+    gap: 1.5rem;
+    padding: 1rem 0;
+  }
+
+  .rail__title {
+    font-size: 1.625rem;
+  }
+
+  .footer {
+    padding: 1.25rem 3rem;
+  }
+
+  .footer__year {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 5rem;
+    padding: 0 3rem;
+  }
+
+  .rail-wrap {
+    padding-inline-start: 1.5rem;
+  }
+}
+
+/* ==================== REDUCED MOTION ==================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-soft,
+  .anim-line,
+  .anim-rule,
+  .backdrop__video,
+  .backdrop__orb {
+    animation: none !important;
+    will-change: auto;
+  }
+}
+</style>
+
+<style>
+/* ==================== RTL / PERSIAN TYPOGRAPHY ==================== */
+/*
+  Persian glyphs must not be letter-spaced (it breaks the joining script),
+  and need a taller line-height than the English display sizes. The shell
+  (.landing-shell) lives in the layout, so these global rules key off its
+  dir attribute, scoped under .stage to beat the scoped base rules.
+*/
+
+.landing-shell[dir="rtl"] .stage .masthead__name,
+.landing-shell[dir="rtl"] .stage .masthead__subtitle,
+.landing-shell[dir="rtl"] .stage .masthead__tagline,
+.landing-shell[dir="rtl"] .stage .eyebrow,
+.landing-shell[dir="rtl"] .stage .lead__text,
+.landing-shell[dir="rtl"] .stage .tags,
+.landing-shell[dir="rtl"] .stage .rail__num,
+.landing-shell[dir="rtl"] .stage .rail__sub,
+.landing-shell[dir="rtl"] .stage .footer {
+  letter-spacing: 0;
+}
+
+.landing-shell[dir="rtl"] .stage .masthead__lang::after {
+  transform-origin: left;
+}
+
+.landing-shell[dir="rtl"] .stage .headline {
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.landing-shell[dir="rtl"] .stage .rail__title {
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+.landing-shell[dir="rtl"] .stage .rail__line {
+  transform-origin: left;
+}
+
+.landing-shell[dir="rtl"] .stage .eyebrow__rule {
+  transform-origin: 100% 50%;
+}
+
+@media (max-width: 639px) {
+  .landing-shell[dir="rtl"] .stage .rail__link {
+    padding: 0.6rem 0;
+  }
+
+  .landing-shell[dir="rtl"] .stage .rail__title {
+    font-size: 1.125rem;
+    line-height: 1.25;
+  }
+}
+</style>
