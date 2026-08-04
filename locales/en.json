@@ -488,7 +488,8 @@
       "doctor": "Doctor",
       "lab": "Laboratory",
       "pharmacy": "Pharmacy",
-      "patient": "Patient"
+      "patient": "Patient",
+      "clinic_staff": "Clinic Staff"
     },
     "statuses": {
       "pending": "Pending Review",
@@ -1446,7 +1447,9 @@
     "appointment_booked": "Appointment Booked",
     "visited": "Visited",
     "converted": "Converted",
-    "lost": "Lost"
+    "lost": "Lost",
+    "in_progress": "In Progress",
+    "done": "Done"
   },
   "leadPriorities": {
     "low": "Low",
@@ -3169,6 +3172,77 @@
     },
     "footer": {
       "consultations": "Consultations by appointment"
+    }
+  },
+  "schedule": {
+    "title": "Schedule",
+    "titleSeo": "Schedule & Tasks",
+    "subtitle": "Assign and track tasks for clinic members",
+    "addTask": "New Task",
+    "editTask": "Edit Task",
+    "taskDetails": "Tasks",
+    "searchPlaceholder": "Search tasks…",
+    "totalTasks": "Total Tasks",
+    "pendingTasks": "Pending",
+    "inProgressTasks": "In Progress",
+    "doneTasks": "Done",
+    "overdueTasks": "Overdue",
+    "task": "Task",
+    "assignee": "Assignee",
+    "priority": "Priority",
+    "dueDate": "Due Date",
+    "status": "Status",
+    "updated": "Updated",
+    "actions": "Actions",
+    "filterAllStatus": "All statuses",
+    "filterAllPriority": "All priorities",
+    "filterAllAssignee": "All assignees",
+    "filterAllDue": "All dates",
+    "dueOverdue": "Overdue",
+    "dueToday": "Due today",
+    "dueUpcoming": "Upcoming",
+    "myTasks": "Assigned to me",
+    "allTasks": "All tasks",
+    "noDueDate": "No due date",
+    "noTasks": "No tasks found",
+    "noTasksDescription": "No tasks match the current filters. Adjust the filters or create a new task.",
+    "emptyDescription": "No tasks yet. Create the first task for the clinic team.",
+    "createdBy": "Created by",
+    "confirmDelete": "Delete this task?",
+    "deleteSuccess": "Task deleted",
+    "deleteError": "Failed to delete task",
+    "fetchError": "Failed to load tasks",
+    "statusUpdateSuccess": "Status updated",
+    "statusUpdateError": "Failed to update status",
+    "statuses": {
+      "pending": "Pending",
+      "in_progress": "In Progress",
+      "done": "Done",
+      "cancelled": "Cancelled"
+    },
+    "priorities": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "form": {
+      "addTitle": "New Task",
+      "editTitle": "Edit Task",
+      "title": "Title",
+      "titleRequired": "Title is required",
+      "description": "Description",
+      "assignee": "Assignee",
+      "assigneeRequired": "Choose an assignee",
+      "priority": "Priority",
+      "dueDate": "Due Date",
+      "dueDateHint": "Jalali date, e.g. 1405/05/20",
+      "notes": "Notes",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "createTask": "Create Task",
+      "createSuccess": "Task created",
+      "updateSuccess": "Task updated",
+      "error": "Something went wrong"
     }
   }
 }

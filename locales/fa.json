@@ -488,7 +488,8 @@
       "doctor": "پزشک",
       "lab": "آزمایشگاه",
       "pharmacy": "داروخانه",
-      "patient": "بیمار"
+      "patient": "بیمار",
+      "clinic_staff": "پرسنل کلینیک"
     },
     "statuses": {
       "pending": "در انتظار بررسی",
@@ -1446,7 +1447,9 @@
     "appointment_booked": "نوبت رزرو شده",
     "visited": "مراجعه شده",
     "converted": "تبدیل شده",
-    "lost": "از دست رفته"
+    "lost": "از دست رفته",
+    "in_progress": "در حال انجام",
+    "done": "انجام شده"
   },
   "leadPriorities": {
     "low": "کم",
@@ -3169,6 +3172,77 @@
     },
     "footer": {
       "consultations": "مشاوره‌ها فقط با نوبت قبلی"
+    }
+  },
+  "schedule": {
+    "title": "برنامه کاری",
+    "titleSeo": "برنامه کاری و وظایف",
+    "subtitle": "ایجاد و پیگیری وظایف اعضای کلینیک",
+    "addTask": "وظیفه جدید",
+    "editTask": "ویرایش وظیفه",
+    "taskDetails": "وظایف",
+    "searchPlaceholder": "جستجوی وظایف…",
+    "totalTasks": "کل وظایف",
+    "pendingTasks": "در انتظار",
+    "inProgressTasks": "در حال انجام",
+    "doneTasks": "انجام شده",
+    "overdueTasks": "بازمانده",
+    "task": "وظیفه",
+    "assignee": "مسئول",
+    "priority": "اولویت",
+    "dueDate": "تاریخ سررسید",
+    "status": "وضعیت",
+    "updated": "آخرین بروزرسانی",
+    "actions": "عملیات",
+    "filterAllStatus": "همه وضعیت‌ها",
+    "filterAllPriority": "همه اولویت‌ها",
+    "filterAllAssignee": "همه مسئولان",
+    "filterAllDue": "همه تاریخ‌ها",
+    "dueOverdue": "بازمانده",
+    "dueToday": "سررسید امروز",
+    "dueUpcoming": "پیش‌رو",
+    "myTasks": "اختصاص داده‌شده به من",
+    "allTasks": "همه وظایف",
+    "noDueDate": "بدون سررسید",
+    "noTasks": "وظیفه‌ای یافت نشد",
+    "noTasksDescription": "هیچ وظیفه‌ای با فیلترهای فعلی مطابقت ندارد. فیلترها را تغییر دهید یا وظیفه جدیدی ایجاد کنید.",
+    "emptyDescription": "هنوز وظیفه‌ای ثبت نشده است. اولین وظیفه را برای تیم کلینیک ایجاد کنید.",
+    "createdBy": "ایجاد شده توسط",
+    "confirmDelete": "این وظیفه حذف شود؟",
+    "deleteSuccess": "وظیفه حذف شد",
+    "deleteError": "حذف وظیفه ناموفق بود",
+    "fetchError": "بارگذاری وظایف ناموفق بود",
+    "statusUpdateSuccess": "وضعیت بروزرسانی شد",
+    "statusUpdateError": "بروزرسانی وضعیت ناموفق بود",
+    "statuses": {
+      "pending": "در انتظار",
+      "in_progress": "در حال انجام",
+      "done": "انجام شده",
+      "cancelled": "لغو شده"
+    },
+    "priorities": {
+      "low": "کم",
+      "medium": "متوسط",
+      "high": "زیاد"
+    },
+    "form": {
+      "addTitle": "وظیفه جدید",
+      "editTitle": "ویرایش وظیفه",
+      "title": "عنوان",
+      "titleRequired": "عنوان الزامی است",
+      "description": "توضیحات",
+      "assignee": "مسئول",
+      "assigneeRequired": "مسئول را انتخاب کنید",
+      "priority": "اولویت",
+      "dueDate": "تاریخ سررسید",
+      "dueDateHint": "تاریخ شمسی، مانند ۱۴۰۵/۰۵/۲۰",
+      "notes": "یادداشت",
+      "cancel": "انصراف",
+      "saveChanges": "ذخیره تغییرات",
+      "createTask": "ایجاد وظیفه",
+      "createSuccess": "وظیفه ایجاد شد",
+      "updateSuccess": "وظیفه بروزرسانی شد",
+      "error": "خطایی رخ داد"
     }
   }
 }

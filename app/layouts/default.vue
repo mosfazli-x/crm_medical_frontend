@@ -190,6 +190,7 @@ import BookOpen from '~/components/icons/BookOpen.vue'
 import Activity from '~/components/icons/Activity.vue'
 import FolderHeart from '~/components/icons/FolderHeart.vue'
 import FileText from '~/components/icons/FileText.vue'
+import ClipboardCheck from '~/components/icons/ClipboardCheck.vue'
 
 const route = useRoute()
 const { user, logout } = useAuth()
@@ -260,6 +261,7 @@ onBeforeUnmount(() => {
       pharmacy: t('users.roles.pharmacy'),
       lab: t('users.roles.lab'),
       patient: t('users.roles.patient'),
+      clinic_staff: t('users.roles.clinic_staff'),
     }
     const currentRole = user?.value?.role || (user as any)?.role
     return roles[currentRole] || t('layout.systemUser')
@@ -283,6 +285,7 @@ const ALL_MENUS = computed(() => [
   { title: t('staff.title'), to: '/staff', icon: UsersGroup, roles: ['admin_doctor'], category: 'primary' },
   { title: t('adminSchedule.title'), to: '/admin/schedule', icon: Clock, roles: ['admin_doctor'], category: 'primary' },
   { title: t('attendance.title'), to: '/attendance', icon: Bell, roles: ['admin_doctor', 'doctor'], category: 'primary' },
+  { title: t('schedule.title'), to: '/schedule', icon: ClipboardCheck, roles: ['admin_doctor', 'doctor', 'lab', 'pharmacy', 'clinic_staff'], category: 'primary' },
   { title: t('adminSettings.title'), to: '/admin/settings', icon: Settings, roles: ['admin_doctor'], category: 'primary' },
   { title: t('screening.title'), to: '/screening', icon: ShieldCheck, roles: ['admin_doctor', 'doctor'], category: 'primary' },
   { title: t('labResults.title'), to: '/lab-results', icon: DocumentText, roles: ['admin_doctor', 'doctor', 'lab'], category: 'primary' },

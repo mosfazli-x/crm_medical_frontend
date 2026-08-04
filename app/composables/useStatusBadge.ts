@@ -17,6 +17,9 @@ const STATUS_CLASSES: Record<string, string> = {
   visited: 'crm-badge crm-badge-completed',
   converted: 'crm-badge crm-badge-emerald',
   lost: 'crm-badge crm-badge-cancelled',
+  // Task statuses
+  in_progress: 'crm-badge crm-badge-blue',
+  done: 'crm-badge crm-badge-emerald',
 }
 
 const PRIORITY_CLASSES: Record<string, string> = {
