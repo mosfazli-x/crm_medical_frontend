@@ -189,6 +189,7 @@ import Box from '~/components/icons/Box.vue'
 import BookOpen from '~/components/icons/BookOpen.vue'
 import Activity from '~/components/icons/Activity.vue'
 import FolderHeart from '~/components/icons/FolderHeart.vue'
+import FileText from '~/components/icons/FileText.vue'
 
 const route = useRoute()
 const { user, logout } = useAuth()
@@ -287,6 +288,7 @@ const ALL_MENUS = computed(() => [
   { title: t('labResults.title'), to: '/lab-results', icon: DocumentText, roles: ['admin_doctor', 'doctor', 'lab'], category: 'primary' },
   { title: t('prescriptions.title'), to: '/prescriptions', icon: MedicalKit, roles: ['admin_doctor', 'doctor', 'pharmacy'], category: 'primary' },
   { title: t('accounting.title'), to: '/accounting', icon: BookOpen, roles: ['admin_doctor'], category: 'primary' },
+  { title: t('dailyReports.title'), to: '/daily-reports', icon: FileText, roles: ['admin_doctor', 'doctor'], category: 'primary' },
   { title: t('inventory.title'), to: '/inventory', icon: Box, roles: ['admin_doctor', 'pharmacy'], category: 'primary' },
   { title: t('auditLogs.title'), to: '/admin/audit', icon: AddClipboard, roles: ['admin_doctor'], category: 'primary' },
   { title: t('myProfile.title'), to: '/my-profile', icon: Profile, roles: ['all'], category: 'primary' },

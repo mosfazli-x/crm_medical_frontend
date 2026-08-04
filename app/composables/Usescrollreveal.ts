@@ -1,5 +1,5 @@
 import { useNuxtApp } from 'nuxt/app'
-import { onMounted, type Ref } from 'vue'
+import { nextTick, onMounted, watch, type Ref } from 'vue'
 
 interface RevealOptions {
   /** CSS selector (relative to the root element) for items to stagger. Omit to animate the root itself. */
@@ -15,8 +15,12 @@ interface RevealOptions {
  * Reveals an element (or a group of child items) as it scrolls into view.
  * Wraps GSAP + ScrollTrigger, no-ops on the server and is skipped entirely
  * for users who prefer reduced motion.
+ *
+ * Pass a `when` ref for targets that are rendered lazily (e.g. behind a
+ * loading gate): the reveal waits until the ref flips to `true` and the DOM
+ * has flushed before wiring up ScrollTrigger.
  */
-export function useScrollReveal(target: Ref<HTMLElement | null>, options: RevealOptions = {}) {
+export function useScrollReveal(target: Ref<HTMLElement | null>, options: RevealOptions = {}, when?: Ref<boolean>) {
   if (import.meta.server) return
 
   const {
@@ -28,7 +32,7 @@ export function useScrollReveal(target: Ref<HTMLElement | null>, options: Reveal
     start = 'top 82%'
   } = options
 
-  onMounted(async () => {
+  const reveal = async () => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (!target.value) return
 
@@ -45,7 +49,9 @@ export function useScrollReveal(target: Ref<HTMLElement | null>, options: Reveal
       return
     }
 
-    const gsapInstance = (useNuxtApp() as any).$gsap
+    const { $gsap } = useNuxtApp()
+    if (!$gsap) return
+    const gsapInstance = $gsap
     const els = items ? target.value.querySelectorAll(items) : target.value
 
     gsapInstance.fromTo(
@@ -64,5 +70,13 @@ export function useScrollReveal(target: Ref<HTMLElement | null>, options: Reveal
         }
       }
     )
-  })
+  }
+
+  if (when) {
+    watch(when, (ready) => {
+      if (ready) nextTick(reveal)
+    }, { immediate: true })
+  } else {
+    onMounted(reveal)
+  }
 }

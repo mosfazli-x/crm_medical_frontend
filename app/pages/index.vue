@@ -115,11 +115,6 @@ function closeMobileMenu() {
 }
 
 const { x: glowX, y: glowY, visible: glowVisible } = useCursorGlow()
-const { mx: _pmx, my: _pmy, sx: psx, sy: psy } = useMouseParallax()
-
-const parallaxLottie = computed(() => ({
-  transform: `perspective(900px) rotateY(${-psx.value * 26}deg) rotateX(${psy.value * 20}deg) translateY(${psy.value * 14}px)`,
-}))
 
 const { isLight, toggleTheme, initTheme: initLandingTheme } = useLandingTheme()
 
@@ -204,11 +199,27 @@ function updateScrollProgress() {
   scrollProgress.value = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0
 }
 
+const { scrollTo } = useLenis({ navOffset: 72 })
+
+const servicesRoot = ref<HTMLElement | null>(null)
+const contactRoot = ref<HTMLElement | null>(null)
+
+useScrollReveal(servicesRoot, { items: '.imm-section-header', duration: 0.9 }, isLoadingComplete)
+useScrollReveal(servicesRoot, { items: '.imm-service-card', stagger: 0.1 }, isLoadingComplete)
+useScrollReveal(
+  contactRoot,
+  { items: '.imm-contact-info > .scene-stagger, .imm-contact-form-shell', stagger: 0.12 },
+  isLoadingComplete
+)
+
 function scrollToSection(id: string) {
   closeMobileMenu()
   const el = document.getElementById(id)
   if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const navEl = document.querySelector<HTMLElement>('.imm-nav')
+    const navHeight = navEl?.offsetHeight ?? 72
+    const top = el.getBoundingClientRect().top + window.scrollY - navHeight
+    scrollTo(top, { offset: 0, duration: 1.4 })
   }
 }
 
@@ -602,9 +613,7 @@ const icons: Record<string, string> = {
               <div class="imm-hero-orb imm-hero-orb--blue"></div>
               <div class="imm-hero-orb imm-hero-orb--cyan"></div>
 
-              <div class="imm-lottie-panel" :style="parallaxLottie">
-                <LottiePlayer src="/lottie/health_insurance.json" />
-              </div>
+              <ImmHeroImage />
 
               <div class="imm-hero-chip-wrap imm-hero-chip-wrap--appt">
                 <div class="imm-hero-chip">
@@ -641,7 +650,7 @@ const icons: Record<string, string> = {
       </section>
 
       <!-- ── OUR SERVICES ── -->
-      <section id="services" class="imm-section imm-section--services" data-section="services">
+      <section id="services" ref="servicesRoot" class="imm-section imm-section--services" data-section="services">
         <div class="imm-services">
           <div class="imm-services-bg" aria-hidden="true">
             <div class="imm-services-bg-orbe imm-services-bg-orbe--1"></div>
@@ -808,7 +817,7 @@ const icons: Record<string, string> = {
       </section>
 
       <!-- ── CONTACT US ── -->
-      <section id="contact" class="imm-section imm-section--contact" data-section="contact">
+      <section id="contact" ref="contactRoot" class="imm-section imm-section--contact" data-section="contact">
         <div class="imm-contact">
           <div class="imm-contact-info">
             <div class="scene-stagger imm-section-badge" style="width: fit-content;">

@@ -49,6 +49,27 @@ body.imm-page {
   color: var(--imm-text);
 }
 
+/* ── Lenis smooth scroll (landing page only) ──
+   Recommended base rules. These classes are added by Lenis to <html>
+   only while the landing page is active, so other routes stay native.
+   Overrides the global `html { scroll-behavior: smooth }`. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
 /* ── Video / Animated Background ── */
 .imm-bg-layer {
   position: absolute;
@@ -274,50 +295,15 @@ body.imm-page {
 .imm-hero-visual-stage {
   position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: 640px;
   display: flex;
   align-items: center;
   justify-content: center;
   will-change: transform, opacity, filter;
 }
 
-/* Animated glass panel housing the lottie */
-.imm-lottie-panel {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-  aspect-ratio: 1;
-  border-radius: 28px;
-  overflow: hidden;
-  padding: 2rem;
-  will-change: transform;
-}
-
-@keyframes imm-conic-rotate {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Inner sheen */
-.imm-lottie-panel::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.imm-lottie-panel:hover {
-  filter: brightness(1.06);
-}
-
-.imm-lottie-panel>div {
-  position: relative;
-  z-index: 1;
-  width: 100% !important;
-  height: 100% !important;
-}
+/* Layered hero visual (CardiaTec `#brxe-pdomdt` port) lives in
+   ImmHeroImage.vue with scoped styles — the panel below was removed. */
 
 /* Expanding pulse rings behind the panel */
 .imm-hero-pulse-ring {
@@ -393,18 +379,18 @@ body.imm-page {
 }
 
 .imm-hero-chip-wrap--appt {
-  left: -12%;
+  left: -1%;
   top: 6%;
 }
 
 .imm-hero-chip-wrap--online {
-  right: -9%;
+  right: -4%;
   bottom: 22%;
 }
 
 .imm-hero-chip-wrap--satisfaction {
   left: 0;
-  bottom: -9%;
+  bottom: -2%;
 }
 
 .imm-hero-chip {
@@ -2504,11 +2490,6 @@ a.imm-contact-item:hover .imm-contact-item-icon {
   .imm-home-stats {
     justify-content: center;
   }
-
-  .imm-lottie-panel {
-    max-width: 280px;
-    padding: 1rem;
-  }
 }
 
 /* ── RTL Support ── */
@@ -3147,7 +3128,6 @@ a.imm-contact-item:hover .imm-contact-item-icon {
 /* ── Reduced Motion ── */
 @media (prefers-reduced-motion: reduce) {
 
-  .imm-lottie-panel,
   .imm-bg-gradient,
   .imm-testimonial-card {
     animation: none !important;
@@ -3591,8 +3571,6 @@ a.imm-contact-item:hover .imm-contact-item-icon {
     transition: none;
   }
 
-  .imm-lottie-panel::before,
-  .imm-lottie-panel::after,
   .imm-hero-pulse-ring,
   .imm-hero-pulse-ring--2,
   .imm-hero-orb--blue,
@@ -3871,10 +3849,6 @@ a.imm-contact-item:hover .imm-contact-item-icon {
     font-size: clamp(0.85rem, 1.4vw, 1rem);
   }
 
-  .imm-lottie-panel {
-    max-width: 320px;
-  }
-
   .imm-services {
     max-width: 100%;
   }
@@ -4009,14 +3983,8 @@ a.imm-contact-item:hover .imm-contact-item-icon {
     order: -1;
   }
 
-  .imm-lottie-panel {
-    max-width: 220px;
-    padding: 0.75rem;
-    border-radius: 16px;
-  }
-
   .imm-hero-visual-stage {
-    max-width: 280px;
+    max-width: 360px;
   }
 
   .imm-hero-chip {
@@ -4330,13 +4298,8 @@ a.imm-contact-item:hover .imm-contact-item-icon {
     font-size: 0.6rem;
   }
 
-  .imm-lottie-panel {
-    max-width: 180px;
-    padding: 0.5rem;
-  }
-
   .imm-hero-visual-stage {
-    max-width: 230px;
+    max-width: 300px;
   }
 
   .imm-hero-chip-wrap--appt {
@@ -4414,10 +4377,6 @@ a.imm-contact-item:hover .imm-contact-item-icon {
   .imm-stat {
     min-width: auto;
   }
-
-  .imm-lottie-panel {
-    max-width: 150px;
-  }
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -4433,10 +4392,6 @@ a.imm-contact-item:hover .imm-contact-item-icon {
   .imm-home-visual {
     order: 0;
     min-height: 280px;
-  }
-
-  .imm-lottie-panel {
-    max-width: 280px;
   }
 
   .imm-services-grid {
@@ -4473,10 +4428,6 @@ a.imm-contact-item:hover .imm-contact-item-icon {
   .imm-home-desc {
     font-size: clamp(1rem, 1.5vw, 1.2rem);
     max-width: 540px;
-  }
-
-  .imm-lottie-panel {
-    max-width: 480px;
   }
 
   .imm-services {
@@ -4613,14 +4564,8 @@ a.imm-contact-item:hover .imm-contact-item-icon {
     font-size: 0.85rem;
   }
 
-  .imm-lottie-panel {
-    max-width: 560px;
-    padding: 2.5rem;
-    border-radius: 28px;
-  }
-
   .imm-hero-visual-stage {
-    max-width: 560px;
+    max-width: 880px;
   }
 
   .imm-hero-chip {
@@ -4815,16 +4760,16 @@ a.imm-contact-item:hover .imm-contact-item-icon {
     max-width: 900px;
   }
 
+  .imm-hero-visual-stage {
+    max-width: 1080px;
+  }
+
   .imm-home-title {
     font-size: clamp(3.5rem, 3.5vw, 5rem);
   }
 
   .imm-home-desc {
     font-size: clamp(1.2rem, 1.5vw, 1.5rem);
-  }
-
-  .imm-lottie-panel {
-    max-width: 650px;
   }
 
   .imm-services {
@@ -4956,10 +4901,6 @@ a.imm-contact-item:hover .imm-contact-item-icon {
   .imm-home-visual {
     order: -1;
     min-height: 260px;
-  }
-
-  .imm-lottie-panel {
-    max-width: 300px;
   }
 
   .imm-services-grid {
