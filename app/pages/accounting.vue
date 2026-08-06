@@ -2,8 +2,7 @@
   <UiPageContainer>
     <UiPageHeader :title="$t('accounting.title')" :subtitle="$t('accounting.subtitle')">
       <template #actions>
-        <button v-if="accounts.length === 0" @click="seedAccounts"
-          class="crm-btn crm-btn-secondary">
+        <button v-if="accounts.length === 0" @click="seedAccounts" class="crm-btn crm-btn-secondary">
           <Icon name="lucide:database" class="!w-4 !h-4" />
           {{ $t('accounting.seedAccounts') }}
         </button>
@@ -20,9 +19,8 @@
     <!-- Chart of Accounts -->
     <template v-if="activeTab === 'accounts'">
       <div class="!flex !justify-end !pb-4">
-        <button @click="openAccountDialog"
-          class="crm-btn crm-btn-primary">
-          <Icon name="lucide:plus" class="!w-4 !h-4" />
+        <button @click="openAccountDialog" class="crm-btn crm-btn-primary">
+          <Plus class="!w-4 !h-4" />
           {{ $t('accounting.addAccount') }}
         </button>
       </div>
@@ -53,7 +51,7 @@
               </tr>
               <tr v-else v-for="account in accounts" :key="account.id"
                 class="hover:!bg-slate-50/50 dark:hover:!bg-slate-800/30">
-                <td class="!font-mono !font-bold">{{ account.code }}</td>
+                <td class=" !font-bold">{{ account.code }}</td>
                 <td class="!font-bold">{{ account.name }}</td>
                 <td>
                   <span class="crm-badge" :class="typeBadgeClass(account.type)">
@@ -89,14 +87,12 @@
           :label="$t('accounting.endDate')" type="date" hide-details="auto"
           class="!bg-white dark:!bg-[#0f1115] !rounded-xl" />
         <div class="!flex !gap-2 !items-end">
-          <button @click="fetchJournalEntries"
-            class="crm-btn crm-btn-primary !flex-1">
-            <Icon name="lucide:search" class="!w-4 !h-4" />
+          <button @click="fetchJournalEntries" class="crm-btn crm-btn-primary !flex-1">
+            <Search class="!w-4 !h-4" />
             {{ $t('common.search') }}
           </button>
-          <button @click="openJournalDialog"
-            class="crm-btn crm-btn-primary">
-            <Icon name="lucide:plus" class="!w-4 !h-4" />
+          <button @click="openJournalDialog" class="crm-btn crm-btn-primary">
+            <Plus class="!w-4 !h-4" />
           </button>
         </div>
       </div>
@@ -130,12 +126,14 @@
               <tr v-else v-for="entry in journalEntries" :key="entry.id"
                 class="hover:!bg-slate-50/50 dark:hover:!bg-slate-800/30 !cursor-pointer"
                 @click="viewJournalEntry(entry)">
-                <td class="!font-mono !font-bold !text-xs">{{ entry.entryNumber }}</td>
+                <td class=" !font-bold !text-xs">{{ entry.entryNumber }}</td>
                 <td class="!text-sm !font-medium">{{ formatJalaliDate(entry.entryDate) }}</td>
                 <td class="!max-w-xs !truncate !text-sm">{{ entry.description }}</td>
-                <td class="!font-mono !font-bold !text-emerald-600" dir="ltr">{{ formatPrice(entry.totalDebit) }}</td>
-                <td class="!font-mono !font-bold !text-red-500" dir="ltr">{{ formatPrice(entry.totalCredit) }}</td>
-                <td><UiStatusBadge :status="entry.status === 'posted' ? 'active' : 'inactive'" /></td>
+                <td class=" !font-bold !text-emerald-600" dir="ltr">{{ formatPrice(entry.totalDebit) }}</td>
+                <td class=" !font-bold !text-red-500" dir="ltr">{{ formatPrice(entry.totalCredit) }}</td>
+                <td>
+                  <UiStatusBadge :status="entry.status === 'posted' ? 'active' : 'inactive'" />
+                </td>
                 <td class="!text-center">
                   <button @click.stop="viewJournalEntry(entry)"
                     class="!p-1.5 !text-slate-400 hover:!text-indigo-500 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/20 !rounded-lg">
@@ -177,7 +175,8 @@
           <UiStatCard :label="$t('accounting.netIncome')" :value="formatPrice(reportData.summary.netIncome)"
             :value-class="reportData.summary.netIncome >= 0 ? '!text-emerald-600' : '!text-red-500'">
             <template #icon>
-              <Icon name="lucide:wallet" class="!w-5 !h-5" :class="reportData.summary.netIncome >= 0 ? '!text-emerald-500' : '!text-red-400'" />
+              <Icon name="lucide:wallet" class="!w-5 !h-5"
+                :class="reportData.summary.netIncome >= 0 ? '!text-emerald-500' : '!text-red-400'" />
             </template>
           </UiStatCard>
           <UiStatCard :label="$t('accounting.transactionCount')" :value="String(reportData.summary.transactionCount)"
@@ -196,11 +195,12 @@
               <div v-for="acc in reportData.incomeStatement.revenue.accounts" :key="acc.id"
                 class="!flex !justify-between !py-1.5 !px-2 hover:!bg-slate-50 dark:hover:!bg-slate-800/30 !rounded-lg">
                 <span class="!text-sm">{{ acc.code }} - {{ acc.name }}</span>
-                <span class="!text-sm !font-bold !font-mono" dir="ltr">{{ formatPrice(acc.balance) }}</span>
+                <span class="!text-sm !font-bold " dir="ltr">{{ formatPrice(acc.balance) }}</span>
               </div>
               <div class="!flex !justify-between !py-2 !px-2 !border-t !border-slate-200 dark:!border-slate-700 !mt-1">
                 <span class="!text-sm !font-black">{{ $t('accounting.totalRevenue') }}</span>
-                <span class="!text-sm !font-black !text-emerald-600 !font-mono" dir="ltr">{{ formatPrice(reportData.incomeStatement.revenue.total) }}</span>
+                <span class="!text-sm !font-black !text-emerald-600 " dir="ltr">{{
+                  formatPrice(reportData.incomeStatement.revenue.total) }}</span>
               </div>
             </div>
             <div>
@@ -208,16 +208,18 @@
               <div v-for="acc in reportData.incomeStatement.expense.accounts" :key="acc.id"
                 class="!flex !justify-between !py-1.5 !px-2 hover:!bg-slate-50 dark:hover:!bg-slate-800/30 !rounded-lg">
                 <span class="!text-sm">{{ acc.code }} - {{ acc.name }}</span>
-                <span class="!text-sm !font-bold !font-mono" dir="ltr">{{ formatPrice(acc.balance) }}</span>
+                <span class="!text-sm !font-bold " dir="ltr">{{ formatPrice(acc.balance) }}</span>
               </div>
               <div class="!flex !justify-between !py-2 !px-2 !border-t !border-slate-200 dark:!border-slate-700 !mt-1">
                 <span class="!text-sm !font-black">{{ $t('accounting.totalExpense') }}</span>
-                <span class="!text-sm !font-black !text-red-500 !font-mono" dir="ltr">{{ formatPrice(reportData.incomeStatement.expense.total) }}</span>
+                <span class="!text-sm !font-black !text-red-500 " dir="ltr">{{
+                  formatPrice(reportData.incomeStatement.expense.total) }}</span>
               </div>
             </div>
             <div class="!flex !justify-between !py-3 !px-2 !bg-slate-50 dark:!bg-slate-800/50 !rounded-xl">
               <span class="!text-base !font-black">{{ $t('accounting.netIncome') }}</span>
-              <span class="!text-base !font-black !font-mono" :class="reportData.incomeStatement.netIncome >= 0 ? '!text-emerald-600' : '!text-red-500'" dir="ltr">
+              <span class="!text-base !font-black "
+                :class="reportData.incomeStatement.netIncome >= 0 ? '!text-emerald-600' : '!text-red-500'" dir="ltr">
                 {{ formatPrice(reportData.incomeStatement.netIncome) }}
               </span>
             </div>
@@ -238,10 +240,12 @@
               </thead>
               <tbody>
                 <tr v-for="entry in reportData.entries.slice(0, 10)" :key="entry.id">
-                  <td class="!font-mono !font-bold !text-xs">{{ entry.entryNumber }}</td>
+                  <td class=" !font-bold !text-xs">{{ entry.entryNumber }}</td>
                   <td class="!text-sm">{{ formatJalaliDate(entry.entryDate) }}</td>
                   <td class="!text-sm">{{ entry.description }}</td>
-                  <td><UiStatusBadge :status="entry.status === 'posted' ? 'active' : 'inactive'" /></td>
+                  <td>
+                    <UiStatusBadge :status="entry.status === 'posted' ? 'active' : 'inactive'" />
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -259,12 +263,15 @@
 
     <!-- Account Dialog -->
     <v-dialog v-model="accountDialog" max-width="500">
-      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden">
-        <div class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
-          <h2 class="!text-xl !font-black">{{ editingAccount ? $t('accounting.editAccount') : $t('accounting.addAccount') }}</h2>
+      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-auto">
+        <div
+          class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
+          <h2 class="!text-xl !font-black">{{ editingAccount ? $t('accounting.editAccount') :
+            $t('accounting.addAccount') }}
+          </h2>
           <button @click="accountDialog = false"
             class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
-            <Icon name="lucide:x" class="!w-4 !h-4" />
+            <IconsCloseCircle class="!w-4 !h-4" />
           </button>
         </div>
         <div class="!p-8 !space-y-5">
@@ -279,7 +286,8 @@
           <v-textarea v-model="accountForm.description" variant="outlined" density="comfortable"
             :label="$t('common.notes')" rows="2" hide-details="auto" />
         </div>
-        <div class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
+        <div
+          class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
           <button @click="accountDialog = false" class="crm-btn crm-btn-ghost">{{ $t('common.cancel') }}</button>
           <button :disabled="savingAccount" @click="saveAccount" class="crm-btn crm-btn-primary">
             <Icon v-if="savingAccount" name="lucide:loader-2" class="!w-4 !h-4 !animate-spin" />
@@ -291,12 +299,13 @@
 
     <!-- Journal Entry Dialog -->
     <v-dialog v-model="journalDialog" max-width="700">
-      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden">
-        <div class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
+      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-auto">
+        <div
+          class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black">{{ $t('accounting.newJournalEntry') }}</h2>
           <button @click="journalDialog = false"
             class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
-            <Icon name="lucide:x" class="!w-4 !h-4" />
+            <IconsCloseCircle class="!w-4 !h-4" />
           </button>
         </div>
         <div class="!p-8 !space-y-5">
@@ -304,7 +313,8 @@
             <v-text-field v-model="journalForm.entry_date" variant="outlined" density="comfortable"
               :label="$t('accounting.date')" type="date" hide-details="auto" />
             <v-text-field v-model="journalForm.reference" variant="outlined" density="comfortable"
-              :label="$t('accounting.reference')" :placeholder="$t('accounting.referencePlaceholder')" hide-details="auto" />
+              :label="$t('accounting.reference')" :placeholder="$t('accounting.referencePlaceholder')"
+              hide-details="auto" />
           </div>
           <v-textarea v-model="journalForm.description" variant="outlined" density="comfortable"
             :label="$t('accounting.description')" rows="2" hide-details="auto" />
@@ -313,13 +323,13 @@
             <div class="!flex !items-center !justify-between !mb-3">
               <h3 class="!text-sm !font-bold">{{ $t('accounting.journalLines') }}</h3>
               <button @click="addJournalLine" class="crm-btn crm-btn-sm crm-btn-secondary">
-                <Icon name="lucide:plus" class="!w-3.5 !h-3.5" />
+                <Plus class="!w-3.5 !h-3.5" />
                 {{ $t('accounting.addLine') }}
               </button>
             </div>
             <div class="!space-y-3">
               <div v-for="(line, idx) in journalForm.lines" :key="idx"
-                class="!flex !flex-wrap !gap-2 !items-end !p-3 !bg-slate-50 dark:!bg-slate-800/30 !rounded-xl">
+                class="!flex !flex-wrap !gap-2 !items-center justify-center align-middle !p-3 !bg-slate-50 dark:!bg-slate-800/30 !rounded-xl">
                 <div class="!flex-1 !min-w-[200px]">
                   <v-select v-model="line.account_id" :items="accounts" item-title="label" item-value="id"
                     variant="outlined" density="compact" :label="$t('accounting.account')" hide-details="auto" />
@@ -332,21 +342,22 @@
                   <v-text-field v-model="line.credit" variant="outlined" density="compact"
                     :label="$t('accounting.credit')" type="number" hide-details="auto" />
                 </div>
-                <button @click="removeJournalLine(idx)"
-                  class="!p-2 !text-red-400 hover:!text-red-600 !rounded-lg">
-                  <Icon name="lucide:trash-2" class="!w-4 !h-4" />
+                <button @click="removeJournalLine(idx)" class="!p-2 !text-red-400 hover:!text-red-600 !rounded-lg">
+                  <TrashBin class="!w-4 !h-4" />
                 </button>
               </div>
             </div>
             <div class="!flex !justify-between !mt-4 !px-2 !py-2 !bg-slate-100 dark:!bg-slate-800/50 !rounded-lg">
               <span class="!text-sm !font-bold">{{ $t('accounting.balance') }}:</span>
-              <span class="!text-sm !font-mono !font-bold" :class="journalBalance !== 0 ? '!text-red-500' : '!text-emerald-500'" dir="ltr">
+              <span class="!text-sm  !font-bold" :class="journalBalance !== 0 ? '!text-red-500' : '!text-emerald-500'"
+                dir="ltr">
                 {{ formatPrice(journalBalance) }}
               </span>
             </div>
           </div>
         </div>
-        <div class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
+        <div
+          class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
           <button @click="journalDialog = false" class="crm-btn crm-btn-ghost">{{ $t('common.cancel') }}</button>
           <button :disabled="savingJournal" @click="saveJournalEntry" class="crm-btn crm-btn-primary">
             <Icon v-if="savingJournal" name="lucide:loader-2" class="!w-4 !h-4 !animate-spin" />
@@ -358,19 +369,20 @@
 
     <!-- View Journal Entry Dialog -->
     <v-dialog v-model="viewJournalDialog" max-width="650">
-      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden">
-        <div class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
+      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-auto">
+        <div
+          class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black">{{ $t('accounting.journalEntryDetails') }}</h2>
           <button @click="viewJournalDialog = false"
             class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
-            <Icon name="lucide:x" class="!w-4 !h-4" />
+            <IconsCloseCircle class="!w-4 !h-4" />
           </button>
         </div>
         <div class="!p-8 !space-y-5" v-if="viewingEntry">
           <div class="!grid !grid-cols-2 !gap-4">
             <div>
               <span class="!text-xs !text-slate-500">{{ $t('accounting.entryNumber') }}</span>
-              <p class="!font-bold !font-mono">{{ viewingEntry.entryNumber }}</p>
+              <p class="!font-bold ">{{ viewingEntry.entryNumber }}</p>
             </div>
             <div>
               <span class="!text-xs !text-slate-500">{{ $t('accounting.date') }}</span>
@@ -383,7 +395,8 @@
           </div>
           <div v-if="viewingEntry.reference">
             <span class="!text-xs !text-slate-500">{{ $t('accounting.reference') }}</span>
-            <p class="!font-medium">{{ viewingEntry.reference }} <span v-if="viewingEntry.referenceType" class="!text-slate-400">({{ viewingEntry.referenceType }})</span></p>
+            <p class="!font-medium">{{ viewingEntry.reference }} <span v-if="viewingEntry.referenceType"
+                class="!text-slate-400">({{ viewingEntry.referenceType }})</span></p>
           </div>
           <div class="!border-t !border-slate-100 dark:!border-slate-800 !pt-4">
             <table class="crm-table">
@@ -397,10 +410,10 @@
               </thead>
               <tbody>
                 <tr v-for="line in viewingEntry.lines" :key="line.id">
-                  <td class="!font-mono">{{ line.accountCode }}</td>
+                  <td class="">{{ line.accountCode }}</td>
                   <td class="!font-medium">{{ line.accountName }}</td>
-                  <td class="!font-mono !font-bold !text-emerald-600" dir="ltr">{{ formatPrice(line.debit) }}</td>
-                  <td class="!font-mono !font-bold !text-red-500" dir="ltr">{{ formatPrice(line.credit) }}</td>
+                  <td class=" !font-bold !text-emerald-600" dir="ltr">{{ formatPrice(line.debit) }}</td>
+                  <td class=" !font-bold !text-red-500" dir="ltr">{{ formatPrice(line.credit) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -413,6 +426,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import Plus from '~/components/icons/Plus.vue'
+import Search from '~/components/icons/Search.vue'
+import TrashBin from '~/components/icons/TrashBin.vue'
 import { useApi } from '~/composables/useApi'
 import { useFormatting } from '~/composables/useFormatting'
 

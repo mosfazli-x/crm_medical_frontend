@@ -17,16 +17,14 @@ export interface ClinicTask {
   id: string
   title: string
   description: string | null
-  assigneeId: string
-  assigneeName: string | null
-  assigneePhone: string | null
-  assigneeRole: string | null
-  assigneePosition: string | null
+  assignees: ScheduleAssignee[]
   createdById: string
   createdByName: string | null
   status: TaskStatus
   priority: TaskPriority
   dueDate: string | null
+  estimatedMinutes: number | null
+  spentMinutes: number
   notes: string | null
   completedAt: string | null
   cancelledAt: string | null

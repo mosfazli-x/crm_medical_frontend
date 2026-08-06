@@ -22,6 +22,7 @@ function toPersianNum(input: string | number): string {
 
 export function useLang() {
   const { t: i18nT, locale, setLocale } = useI18n()
+  const langCookie = useCookie('i18n_lang', { sameSite: 'lax', maxAge: 60 * 60 * 24 * 365, path: '/' })
 
   const lang = computed(() => locale.value as 'fa' | 'en')
 
@@ -31,6 +32,7 @@ export function useLang() {
 
   async function toggleLang() {
     const newLang = lang.value === 'fa' ? 'en' : 'fa'
+    langCookie.value = newLang
     await setLocale(newLang)
     if (typeof document !== 'undefined') {
       document.documentElement.dir = newLang === 'fa' ? 'rtl' : 'ltr'

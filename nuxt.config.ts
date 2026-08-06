@@ -72,10 +72,7 @@ export default defineNuxtConfig({
     experimental: {
       localeDetector: 'localeDetector.ts',
     },
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: 'i18n_lang',
-    },
+    detectBrowserLanguage: false,
   },
 
 })

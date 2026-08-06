@@ -7,9 +7,14 @@ import { onBeforeUnmount, onMounted, shallowRef } from 'vue'
  * guaranteed to start without a user gesture. The player therefore:
  *  - attempts playback as soon as the page mounts (works where allowed);
  *  - if the browser blocks it, arms a one-tap fallback — the next pointer/key
- *    interaction anywhere on the page starts the track;
+ *    interaction anywhere on the page (except on the music control itself)
+ *    starts the track. Events inside the control are ignored so the control's
+ *    own button keeps a single, clean click→play/click→pause toggle instead of
+ *    double-firing through both the gesture handler and the button's click;
  *  - pauses while the tab is hidden and resumes on return;
- *  - remembers the visitor's last on/off choice and volume across visits.
+ *  - remembers the visitor's last on/off choice and volume across visits;
+ *  - never auto-plays or arms the one-tap fallback for visitors who prefer
+ *    reduced motion — they start the track explicitly.
  *
  * All consumers share one module-level audio element and one set of document
  * listeners, so exactly one track plays no matter how many components mount.
@@ -43,6 +48,8 @@ let mountedCount = 0
 let initialized = false
 let gestureArmed = false
 let resumeOnReturn = false
+let reducedMotion = false
+let controlEl: HTMLElement | null = null
 
 /* ------------------------------------------------------------------ */
 /* Persistence                                                         */
@@ -156,12 +163,20 @@ function setVolume(next: number): void {
 /* One-tap fallback                                                    */
 /* ------------------------------------------------------------------ */
 
-function onGesture(): void {
+function eventInsideControl(e: Event): boolean {
+  if (!controlEl) return false
+  const target = e.target
+  return target instanceof Node && controlEl.contains(target)
+}
+
+function onGesture(e: Event): void {
+  if (eventInsideControl(e)) return
   void play()
 }
 
 function onGestureKeydown(e: KeyboardEvent): void {
-  if (e.key === 'Enter' || e.key === ' ') onGesture()
+  if (eventInsideControl(e)) return
+  if (e.key === 'Enter' || e.key === ' ') onGesture(e)
 }
 
 function armGesture(): void {
@@ -208,7 +223,10 @@ function init(): void {
   ensureAudio()
   applyVolume()
   document.addEventListener('visibilitychange', handleVisibility)
-  if (!userMuted.value) {
+  reducedMotion =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (!userMuted.value && !reducedMotion) {
     // Defer one frame so the element can start fetching; browsers that allow
     // autoplay will begin immediately, the rest fall into the one-tap state.
     window.setTimeout(() => {
@@ -217,9 +235,18 @@ function init(): void {
   }
 }
 
+function registerControl(el: HTMLElement): void {
+  controlEl = el
+}
+
+function unregisterControl(el: HTMLElement): void {
+  if (controlEl === el) controlEl = null
+}
+
 function teardown(): void {
   if (!initialized) return
   initialized = false
+  reducedMotion = false
   resumeOnReturn = false
   disarmGesture()
   if (typeof document !== 'undefined') {
@@ -230,6 +257,7 @@ function teardown(): void {
   audio?.load()
   audio?.parentNode?.removeChild(audio)
   audio = null
+  controlEl = null
   isPlaying.value = false
   isReady.value = false
   needsGesture.value = false
@@ -253,7 +281,10 @@ export function useLandingMusic() {
     hasError,
     isReady,
     volume,
+    userMuted,
     toggle,
     setVolume,
+    registerControl,
+    unregisterControl,
   }
 }

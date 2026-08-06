@@ -1,4 +1,4 @@
-import { defineI18nLocaleDetector, tryCookieLocale, tryHeaderLocale } from '#imports'
+import { defineI18nLocaleDetector, tryCookieLocale } from '#imports'
 
 const SUPPORTED = new Set(['fa', 'en'])
 
@@ -12,18 +12,14 @@ function baseTag(locale: unknown): string | undefined {
  *
  * 1. The `i18n_lang` cookie (set when the visitor picks a language) wins,
  *    so the site renders in the visitor's chosen language on every request.
- * 2. Otherwise the browser's `accept-language` header is used, so the first
- *    visit renders in the correct language with no client-side swap.
- * 3. Fall back to the configured default locale.
+ * 2. Otherwise fall back to the configured default locale (`fa`), so the
+ *    site always loads in Persian on a first visit regardless of the
+ *    browser's `accept-language` header.
  */
 export default defineI18nLocaleDetector((event, config) => {
   const cookie = tryCookieLocale(event, { lang: '', name: 'i18n_lang' })
   const fromCookie = baseTag(cookie)
   if (fromCookie) return fromCookie
-
-  const header = tryHeaderLocale(event, { lang: '' })
-  const fromHeader = baseTag(header)
-  if (fromHeader) return fromHeader
 
   return config.defaultLocale
 })

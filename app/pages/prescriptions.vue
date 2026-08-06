@@ -73,7 +73,8 @@
             <div class="!flex !items-center !gap-2">
               <h2 class="!text-sm !font-bold !text-zinc-900 !tracking-tight">{{ selectedPatient.firstName }} {{
                 selectedPatient.lastName }}</h2>
-              <span class="!px-2 !py-0.5 !bg-zinc-100 !text-zinc-700 !rounded-md !text-[9px] !font-bold">{{ t('prescriptions.activeFile') }}</span>
+              <span class="!px-2 !py-0.5 !bg-zinc-100 !text-zinc-700 !rounded-md !text-[9px] !font-bold">{{
+                t('prescriptions.activeFile') }}</span>
             </div>
             <div class="!flex !items-center !gap-1.5 !mt-1 !text-[11px] !text-zinc-400">
               <span>{{ t('prescriptions.nationalIdLabel') }}</span>
@@ -91,15 +92,14 @@
           <button
             class="!flex-1 sm:!flex-none !flex !items-center !justify-center !gap-1.5 !px-4 !py-2.5 !bg-zinc-900 hover:!bg-zinc-800 !text-white !text-xs !font-semibold !rounded-xl !transition-all !shadow-sm"
             @click="openAddDialog">
-            <Icon name="lucide:plus" class="!w-3.5 !h-3.5" />
+            <Plus class="!w-3.5 !h-3.5" />
             {{ t('prescriptions.addPrescription') }}
           </button>
         </div>
       </div>
 
       <div v-if="loading" class="!space-y-3">
-        <div v-for="i in 5" :key="`skeleton-${i}`"
-          class="!bg-white !border !border-zinc-200/80 !rounded-2xl !p-5">
+        <div v-for="i in 5" :key="`skeleton-${i}`" class="!bg-white !border !border-zinc-200/80 !rounded-2xl !p-5">
           <v-skeleton-loader type="list-item" class="bg-transparent!" />
         </div>
       </div>
@@ -119,8 +119,7 @@
           class="!bg-white !border !border-zinc-200/80 !rounded-2xl !p-5 !transition-all hover:!shadow-md !group">
           <div class="!flex !flex-col sm:!flex-row !items-start sm:!items-center justify-between !gap-3">
             <div class="!flex !items-start !gap-3.5">
-              <div
-                class="!w-10 !h-10 !rounded-xl !flex !items-center !justify-center !text-sm !shrink-0 !border"
+              <div class="!w-10 !h-10 !rounded-xl !flex !items-center !justify-center !text-sm !shrink-0 !border"
                 :class="rx.is_active ? '!bg-emerald-50 !text-emerald-700 !border-emerald-200' : '!bg-zinc-50 !text-zinc-400 !border-zinc-200'">
                 <Icon :name="rx.is_active ? 'lucide:pill' : 'lucide:x-circle'" class="!w-4.5 !h-4.5" />
               </div>
@@ -137,13 +136,15 @@
                     <span class="!font-semibold !text-zinc-700">{{ t('prescriptions.dosage') }}:</span> {{ rx.dosage }}
                   </span>
                   <span v-if="rx.frequency" class="!text-[11px] !text-zinc-500">
-                    <span class="!font-semibold !text-zinc-700">{{ t('prescriptions.frequency') }}:</span> {{ rx.frequency }}
+                    <span class="!font-semibold !text-zinc-700">{{ t('prescriptions.frequency') }}:</span> {{
+                    rx.frequency }}
                   </span>
                   <span v-if="rx.route" class="!text-[11px] !text-zinc-500">
                     <span class="!font-semibold !text-zinc-700">{{ t('prescriptions.route') }}:</span> {{ rx.route }}
                   </span>
                   <span v-if="rx.duration" class="!text-[11px] !text-zinc-500">
-                    <span class="!font-semibold !text-zinc-700">{{ t('prescriptions.duration') }}:</span> {{ rx.duration }}
+                    <span class="!font-semibold !text-zinc-700">{{ t('prescriptions.duration') }}:</span> {{ rx.duration
+                    }}
                   </span>
                 </div>
                 <div v-if="rx.instructions" class="!mt-2 !text-[11px] !text-zinc-400 !leading-relaxed">
@@ -220,7 +221,8 @@
         </div>
         <div class="!px-6 !py-3 !border-t !border-zinc-100 !flex !justify-end !gap-2">
           <button @click="formDialog = false"
-            class="!px-4 !py-2 !text-xs !font-semibold !text-zinc-600 !bg-zinc-100 hover:!bg-zinc-200 !rounded-xl !transition-colors">{{ t('common.cancel') }}</button>
+            class="!px-4 !py-2 !text-xs !font-semibold !text-zinc-600 !bg-zinc-100 hover:!bg-zinc-200 !rounded-xl !transition-colors">{{
+              t('common.cancel') }}</button>
           <button @click="savePrescription" :disabled="saving"
             class="!px-5 !py-2 !text-xs !font-semibold !text-white !bg-zinc-900 hover:!bg-zinc-800 !rounded-xl !transition-colors !disabled:opacity-50 !flex !items-center !gap-2">
             <v-progress-circular v-if="saving" indeterminate size="12" width="2" color="white" />
@@ -242,10 +244,12 @@
           variant="outlined" density="compact" rows="2" class="!mt-4" />
         <div class="!flex !justify-center !gap-2 !mt-4">
           <button @click="discontinueDialog = false"
-            class="!flex-1 !px-4 !py-2 !bg-zinc-100 hover:!bg-zinc-200 !text-zinc-600 !text-xs !font-semibold !rounded-xl !transition-colors">{{ t('common.cancel') }}</button>
+            class="!flex-1 !px-4 !py-2 !bg-zinc-100 hover:!bg-zinc-200 !text-zinc-600 !text-xs !font-semibold !rounded-xl !transition-colors">{{
+              t('common.cancel') }}</button>
           <button @click="executeDiscontinue" :disabled="discontinueLoading"
             class="!flex-1 !px-4 !py-2 !bg-amber-500 hover:!bg-amber-600 !text-white !text-xs !font-semibold !rounded-xl !transition-colors !shadow-sm !flex !items-center !justify-center">
-            <v-progress-circular v-if="discontinueLoading" indeterminate size="12" width="2" color="white" class="!mr-2" />
+            <v-progress-circular v-if="discontinueLoading" indeterminate size="12" width="2" color="white"
+              class="!mr-2" />
             {{ t('prescriptions.discontinue') }}
           </button>
         </div>
@@ -262,7 +266,8 @@
         <p class="!text-zinc-400 !text-[11px] !leading-relaxed">{{ t('prescriptions.deleteConfirm') }}</p>
         <div class="!flex !justify-center !gap-2 !mt-5">
           <button @click="deleteDialog = false"
-            class="!flex-1 !px-4 !py-2 !bg-zinc-100 hover:!bg-zinc-200 !text-zinc-600 !text-xs !font-semibold !rounded-xl !transition-colors">{{ t('common.cancel') }}</button>
+            class="!flex-1 !px-4 !py-2 !bg-zinc-100 hover:!bg-zinc-200 !text-zinc-600 !text-xs !font-semibold !rounded-xl !transition-colors">{{
+              t('common.cancel') }}</button>
           <button @click="executeDelete" :disabled="deleting"
             class="!flex-1 !px-4 !py-2 !bg-red-600 hover:!bg-red-700 !text-white !text-xs !font-semibold !rounded-xl !transition-colors !shadow-sm !flex !items-center !justify-center">
             <v-progress-circular v-if="deleting" indeterminate size="12" width="2" color="white" class="!mr-2" />
@@ -276,6 +281,8 @@
 </template>
 
 <script setup lang="ts">
+import Plus from '~/components/icons/Plus.vue'
+
 const { t } = useI18n()
 const { apiFetch } = useApi()
 const { $toast } = useNuxtApp()

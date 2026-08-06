@@ -1,7 +1,5 @@
 import moment from 'moment-jalaali'
 
-const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹']
-
 export const useFormatting = () => {
   const { locale, t } = useI18n()
   const isFa = computed(() => locale.value === 'fa')
@@ -62,5 +60,17 @@ export const useFormatting = () => {
     return moment().format('jYYYY-jMM-jDD')
   }
 
-  return { formatJalaliDate, formatGregorianDate, formatJalaliDateShort, formatJalaliLong, formatPrice, toDateStr, toJalaliStr, todayJalali }
+  const formatMinutes = (mins: number | null | undefined) => {
+    if (mins === null || mins === undefined || Number.isNaN(mins)) return '---'
+    const h = Math.floor(mins / 60)
+    const m = mins % 60
+    if (h === 0 && m === 0) return isFa.value ? '۰' : '0'
+    const hLabel = t('schedule.timeShortHour')
+    const mLabel = t('schedule.timeShortMinute')
+    if (h === 0) return `${m}${mLabel}`
+    if (m === 0) return `${h}${hLabel}`
+    return `${h}${hLabel} ${m}${mLabel}`
+  }
+
+  return { formatJalaliDate, formatGregorianDate, formatJalaliDateShort, formatJalaliLong, formatPrice, toDateStr, toJalaliStr, todayJalali, formatMinutes }
 }

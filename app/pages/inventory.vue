@@ -6,19 +6,27 @@
     <div class="!grid !grid-cols-1 sm:!grid-cols-4 !gap-4 !pb-6">
       <UiStatCard :label="$t('inventory.totalProducts')" :value="String(summary?.totalProducts || 0)"
         value-class="!text-indigo-600 dark:!text-indigo-400">
-        <template #icon><Icon name="lucide:package" class="!w-5 !h-5 !text-indigo-400" /></template>
+        <template #icon>
+          <Icon name="lucide:package" class="!w-5 !h-5 !text-indigo-400" />
+        </template>
       </UiStatCard>
       <UiStatCard :label="$t('inventory.totalStockValue')" :value="formatPrice(summary?.totalStockValue || 0)"
         value-class="!text-emerald-600 dark:!text-emerald-400">
-        <template #icon><Icon name="lucide:wallet" class="!w-5 !h-5 !text-emerald-400" /></template>
+        <template #icon>
+          <Icon name="lucide:wallet" class="!w-5 !h-5 !text-emerald-400" />
+        </template>
       </UiStatCard>
       <UiStatCard :label="$t('inventory.lowStockCount')" :value="String(summary?.lowStockCount || 0)"
         :value-class="(summary?.lowStockCount || 0) > 0 ? '!text-amber-500' : '!text-emerald-600'">
-        <template #icon><Icon name="lucide:alert-triangle" class="!w-5 !h-5 !text-amber-400" /></template>
+        <template #icon>
+          <Icon name="lucide:alert-triangle" class="!w-5 !h-5 !text-amber-400" />
+        </template>
       </UiStatCard>
       <UiStatCard :label="$t('inventory.outOfStockCount')" :value="String(summary?.outOfStockCount || 0)"
         :value-class="(summary?.outOfStockCount || 0) > 0 ? '!text-red-500' : '!text-emerald-600'">
-        <template #icon><Icon name="lucide:package-x" class="!w-5 !h-5 !text-red-400" /></template>
+        <template #icon>
+          <Icon name="lucide:package-x" class="!w-5 !h-5 !text-red-400" />
+        </template>
       </UiStatCard>
     </div>
 
@@ -36,9 +44,8 @@
           <v-select v-model="productCategoryFilter" :items="categoryOptions" item-title="label" item-value="value"
             variant="outlined" density="comfortable" :label="$t('inventory.allCategories')" hide-details clearable
             class="!bg-white dark:!bg-[#0f1115] !rounded-xl !min-w-[180px]" />
-          <button @click="openProductDialog"
-            class="crm-btn crm-btn-primary">
-            <Icon name="lucide:plus" class="!w-4 !h-4" />
+          <button @click="openProductDialog" class="crm-btn crm-btn-primary">
+            <Plus class="!w-4 !h-4" />
             {{ $t('inventory.addProduct') }}
           </button>
         </div>
@@ -84,12 +91,13 @@
                   <span :class="[
                     '!font-bold',
                     Number(product.currentStock) <= 0 ? '!text-red-500' :
-                    Number(product.currentStock) <= Number(product.minStockLevel) ? '!text-amber-500' :
-                    '!text-emerald-600 dark:!text-emerald-400'
+                      Number(product.currentStock) <= Number(product.minStockLevel) ? '!text-amber-500' :
+                        '!text-emerald-600 dark:!text-emerald-400'
                   ]">
                     {{ product.currentStock }}
                   </span>
-                  <span v-if="Number(product.currentStock) <= Number(product.minStockLevel) && Number(product.minStockLevel) > 0"
+                  <span
+                    v-if="Number(product.currentStock) <= Number(product.minStockLevel) && Number(product.minStockLevel) > 0"
                     class="!text-[10px] !text-red-400 !mr-1">
                     ({{ $t('inventory.lowStock') }})
                   </span>
@@ -100,7 +108,7 @@
                     <button @click="openStockMovementDialog(product)"
                       class="!p-1.5 !text-slate-400 hover:!text-emerald-500 hover:!bg-emerald-50 dark:hover:!bg-emerald-900/20 !rounded-lg"
                       :title="$t('inventory.addStock')">
-                      <Icon name="lucide:plus-circle" class="!w-4 !h-4" />
+                      <Plus class="!w-4 !h-4" />
                     </button>
                     <button @click="editProduct(product)"
                       class="!p-1.5 !text-slate-400 hover:!text-indigo-500 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/20 !rounded-lg">
@@ -119,7 +127,7 @@
     <template v-if="activeTab === 'categories'">
       <div class="!flex !justify-end !pb-4">
         <button @click="openCategoryDialog" class="crm-btn crm-btn-primary">
-          <Icon name="lucide:plus" class="!w-4 !h-4" />
+          <Plus class="!w-4 !h-4" />
           {{ $t('inventory.addCategory') }}
         </button>
       </div>
@@ -164,9 +172,9 @@
     <!-- Stock Movements Tab -->
     <template v-if="activeTab === 'movements'">
       <div class="!flex !gap-3 !pb-4">
-        <v-select v-model="movementFilter.movement_type" :items="movementTypeOptions" item-title="label" item-value="value"
-          variant="outlined" density="comfortable" :label="$t('inventory.movementType')" hide-details clearable
-          class="!bg-white dark:!bg-[#0f1115] !rounded-xl !min-w-[150px]" />
+        <v-select v-model="movementFilter.movement_type" :items="movementTypeOptions" item-title="label"
+          item-value="value" variant="outlined" density="comfortable" :label="$t('inventory.movementType')" hide-details
+          clearable class="!bg-white dark:!bg-[#0f1115] !rounded-xl !min-w-[150px]" />
         <button @click="fetchStockMovements" class="crm-btn crm-btn-primary">
           <Icon name="lucide:search" class="!w-4 !h-4" />
         </button>
@@ -206,8 +214,8 @@
                   <span :class="[
                     '!px-2.5 !py-0.5 !rounded-full !text-xs !font-bold !border',
                     m.movementType === 'in' ? '!bg-emerald-50 dark:!bg-emerald-900/10 !text-emerald-700 !border-emerald-200' :
-                    m.movementType === 'out' ? '!bg-red-50 dark:!bg-red-900/10 !text-red-700 !border-red-200' :
-                    '!bg-amber-50 dark:!bg-amber-900/10 !text-amber-700 !border-amber-200'
+                      m.movementType === 'out' ? '!bg-red-50 dark:!bg-red-900/10 !text-red-700 !border-red-200' :
+                        '!bg-amber-50 dark:!bg-amber-900/10 !text-amber-700 !border-amber-200'
                   ]">
                     {{ movementTypeLabel(m.movementType) }}
                   </span>
@@ -218,7 +226,8 @@
                 <td class="!text-sm">{{ m.performedByName || '---' }}</td>
                 <td class="!text-xs !text-slate-500">
                   <template v-if="m.referenceType === 'patient_usage'">
-                    <span class="!px-2 !py-0.5 !rounded-full !text-xs !font-semibold !bg-indigo-50 dark:!bg-indigo-900/10 !text-indigo-600 !border !border-indigo-200">
+                    <span
+                      class="!px-2 !py-0.5 !rounded-full !text-xs !font-semibold !bg-indigo-50 dark:!bg-indigo-900/10 !text-indigo-600 !border !border-indigo-200">
                       {{ $t('inventory.tabs.patientUsage') }}
                     </span>
                   </template>
@@ -235,7 +244,7 @@
     <template v-if="activeTab === 'patientUsage'">
       <div class="!flex !justify-end !pb-4">
         <button v-if="canManageUsage" @click="openUsageDialog" class="crm-btn crm-btn-primary">
-          <Icon name="lucide:plus" class="!w-4 !h-4" />
+          <Plus class="!w-4 !h-4" />
           {{ $t('inventory.recordUsage') }}
         </button>
       </div>
@@ -266,8 +275,7 @@
                   </div>
                 </td>
               </tr>
-              <tr v-else v-for="u in usages" :key="u.id"
-                class="hover:!bg-slate-50/50 dark:hover:!bg-slate-800/30">
+              <tr v-else v-for="u in usages" :key="u.id" class="hover:!bg-slate-50/50 dark:hover:!bg-slate-800/30">
                 <td class="!text-sm !whitespace-nowrap">{{ formatJalaliDate(u.usedAt) }}</td>
                 <td class="!font-semibold !whitespace-nowrap">{{ u.patientName }} {{ u.patientLastName }}</td>
                 <td class="!text-sm">
@@ -295,8 +303,11 @@
     <!-- Product Dialog -->
     <v-dialog v-model="productDialog" max-width="600">
       <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden">
-        <div class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
-          <h2 class="!text-xl !font-black">{{ editingProduct ? $t('inventory.editProduct') : $t('inventory.addProduct') }}</h2>
+        <div
+          class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
+          <h2 class="!text-xl !font-black">{{ editingProduct ? $t('inventory.editProduct') : $t('inventory.addProduct')
+          }}
+          </h2>
           <button @click="productDialog = false"
             class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
             <Icon name="lucide:x" class="!w-4 !h-4" />
@@ -330,7 +341,8 @@
           <v-textarea v-model="productForm.description" variant="outlined" density="comfortable"
             :label="$t('common.notes')" rows="2" hide-details="auto" />
         </div>
-        <div class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
+        <div
+          class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
           <button @click="productDialog = false" class="crm-btn crm-btn-ghost">{{ $t('common.cancel') }}</button>
           <button :disabled="savingProduct" @click="saveProduct" class="crm-btn crm-btn-primary">
             <Icon v-if="savingProduct" name="lucide:loader-2" class="!w-4 !h-4 !animate-spin" />
@@ -343,9 +355,13 @@
     <!-- Category Dialog -->
     <v-dialog v-model="categoryDialog" max-width="450">
       <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden">
-        <div class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
-          <h2 class="!text-xl !font-black">{{ editingCategory ? $t('inventory.editCategory') : $t('inventory.addCategory') }}</h2>
-          <button @click="categoryDialog = false" class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+        <div
+          class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
+          <h2 class="!text-xl !font-black">{{ editingCategory ? $t('inventory.editCategory') :
+            $t('inventory.addCategory')
+          }}</h2>
+          <button @click="categoryDialog = false"
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
         </div>
@@ -355,7 +371,8 @@
           <v-textarea v-model="categoryForm.description" variant="outlined" density="comfortable"
             :label="$t('inventory.description')" rows="2" hide-details="auto" />
         </div>
-        <div class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
+        <div
+          class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
           <button @click="categoryDialog = false" class="crm-btn crm-btn-ghost">{{ $t('common.cancel') }}</button>
           <button :disabled="savingCategory" @click="saveCategory" class="crm-btn crm-btn-primary">
             <Icon v-if="savingCategory" name="lucide:loader-2" class="!w-4 !h-4 !animate-spin" />
@@ -368,20 +385,24 @@
     <!-- Stock Movement Dialog -->
     <v-dialog v-model="stockDialog" max-width="500">
       <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden">
-        <div class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
+        <div
+          class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black">{{ $t('inventory.addStock') }}</h2>
-          <button @click="stockDialog = false" class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+          <button @click="stockDialog = false"
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
         </div>
         <div class="!p-8 !space-y-5">
           <div class="!p-3 !bg-slate-50 dark:!bg-slate-800/50 !rounded-xl">
             <p class="!text-sm !font-bold">{{ stockProduct?.name }}</p>
-            <p class="!text-xs !text-slate-500">{{ $t('inventory.currentStock') }}: {{ stockProduct?.currentStock }} {{ stockProduct?.unit }}</p>
+            <p class="!text-xs !text-slate-500">{{ $t('inventory.currentStock') }}: {{ stockProduct?.currentStock }} {{
+              stockProduct?.unit }}</p>
           </div>
           <div class="!grid !grid-cols-2 !gap-4">
-            <v-select v-model="stockForm.movement_type" :items="movementTypeOptions" item-title="label" item-value="value"
-              variant="outlined" density="comfortable" :label="$t('inventory.movementType')" hide-details="auto" />
+            <v-select v-model="stockForm.movement_type" :items="movementTypeOptions" item-title="label"
+              item-value="value" variant="outlined" density="comfortable" :label="$t('inventory.movementType')"
+              hide-details="auto" />
             <v-text-field v-model="stockForm.quantity" variant="outlined" density="comfortable"
               :label="$t('inventory.quantity')" type="number" hide-details="auto" />
           </div>
@@ -392,7 +413,8 @@
           <v-textarea v-model="stockForm.description" variant="outlined" density="comfortable"
             :label="$t('inventory.description')" rows="2" hide-details="auto" />
         </div>
-        <div class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
+        <div
+          class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
           <button @click="stockDialog = false" class="crm-btn crm-btn-ghost">{{ $t('common.cancel') }}</button>
           <button :disabled="savingStock" @click="saveStockMovement" class="crm-btn crm-btn-primary">
             <Icon v-if="savingStock" name="lucide:loader-2" class="!w-4 !h-4 !animate-spin" />
@@ -405,9 +427,11 @@
     <!-- Record Usage Dialog -->
     <v-dialog v-model="usageDialog" max-width="600">
       <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden">
-        <div class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
+        <div
+          class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black">{{ $t('inventory.recordUsage') }}</h2>
-          <button @click="usageDialog = false" class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+          <button @click="usageDialog = false"
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
         </div>
@@ -417,8 +441,11 @@
             <div v-if="selectedUsagePatient"
               class="!flex !items-center !justify-between !gap-3 !p-3 !bg-slate-50 dark:!bg-slate-800/50 !rounded-xl">
               <div class="!flex !flex-col !items-start !gap-0.5 !min-w-0">
-                <div class="!text-sm !font-bold">{{ selectedUsagePatient.firstName }} {{ selectedUsagePatient.lastName }}</div>
-                <div class="!text-xs !text-slate-500 dark:!text-slate-400">{{ selectedUsagePatient.nationalId || selectedUsagePatient.phone || '' }}</div>
+                <div class="!text-sm !font-bold">{{ selectedUsagePatient.firstName }} {{ selectedUsagePatient.lastName
+                }}
+                </div>
+                <div class="!text-xs !text-slate-500 dark:!text-slate-400">{{ selectedUsagePatient.nationalId ||
+                  selectedUsagePatient.phone || '' }}</div>
               </div>
               <button @click="clearUsagePatient()"
                 class="!p-1 !text-slate-400 hover:!text-red-500 !rounded-lg hover:!bg-red-50 dark:hover:!bg-red-900/20 !transition-colors">
@@ -429,7 +456,8 @@
               @blur="hideUsagePatientResults"
               @focus="usagePatientSearchQuery?.trim()?.length >= 2 && usagePatientSearchResults.length && (showUsagePatientResults = true)"
               variant="outlined" density="comfortable" :label="$t('inventory.usagePatient')"
-              :placeholder="$t('inventory.searchPatientPlaceholder')" hide-details="auto" :loading="usagePatientSearching">
+              :placeholder="$t('inventory.searchPatientPlaceholder')" hide-details="auto"
+              :loading="usagePatientSearching">
               <template #prepend-inner>
                 <Icon name="lucide:search" class="!w-5 !h-5 !text-slate-400 !mr-2" />
               </template>
@@ -438,7 +466,8 @@
               class="!absolute !z-50 !mt-1 !w-full !bg-white dark:!bg-slate-800 !rounded-xl !shadow-xl !border !border-slate-200 dark:!border-slate-700 !overflow-hidden">
               <button v-for="p in usagePatientSearchResults" :key="p.id" @mousedown.prevent="selectUsagePatient(p)"
                 class="!w-full !px-4 !py-3 !flex !flex-col !items-start !gap-0.5 hover:!bg-slate-50 dark:hover:!bg-slate-700/50 !transition-colors !text-right !border-b !border-slate-100 dark:!border-slate-700/50 last:!border-b-0">
-                <span class="!text-sm !font-bold !text-slate-900 dark:!text-white">{{ p.firstName }} {{ p.lastName }}</span>
+                <span class="!text-sm !font-bold !text-slate-900 dark:!text-white">{{ p.firstName }} {{ p.lastName
+                }}</span>
                 <span class="!text-xs !text-slate-500 dark:!text-slate-400">{{ p.nationalId || p.phone || '' }}</span>
               </button>
             </div>
@@ -455,12 +484,14 @@
           </div>
 
           <v-select v-model="usageForm.visit_id" :items="usageVisitOptions" item-title="title" item-value="value"
-            variant="outlined" density="comfortable" :label="$t('inventory.visitOptional')" hide-details="auto" clearable />
+            variant="outlined" density="comfortable" :label="$t('inventory.visitOptional')" hide-details="auto"
+            clearable />
 
-          <v-textarea v-model="usageForm.notes" variant="outlined" density="comfortable"
-            :label="$t('common.notes')" rows="2" hide-details="auto" />
+          <v-textarea v-model="usageForm.notes" variant="outlined" density="comfortable" :label="$t('common.notes')"
+            rows="2" hide-details="auto" />
         </div>
-        <div class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
+        <div
+          class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
           <button @click="usageDialog = false" class="crm-btn crm-btn-ghost">{{ $t('common.cancel') }}</button>
           <button :disabled="savingUsage" @click="saveUsage" class="crm-btn crm-btn-primary">
             <Icon v-if="savingUsage" name="lucide:loader-2" class="!w-4 !h-4 !animate-spin" />
@@ -474,6 +505,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue'
+import Plus from '~/components/icons/Plus.vue'
 import { useApi } from '~/composables/useApi'
 import { useFormatting } from '~/composables/useFormatting'
 

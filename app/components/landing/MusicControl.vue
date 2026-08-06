@@ -26,8 +26,13 @@
       :title="t('aestheticLanding.music.volume')"
       @click="popOpen = !popOpen"
     >
-      <svg
-viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+      <svg v-if="isSilent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M11 5 6 9H2v6h4l5 4V5z" fill="currentColor" stroke="none" />
+        <path d="m22 9-6 6" />
+        <path d="m16 9 6 6" />
+      </svg>
+      <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
         stroke-linejoin="round" aria-hidden="true">
         <path d="M11 5 6 9H2v6h4l5 4V5z" fill="currentColor" stroke="none" />
         <path d="M15.5 8.5a5 5 0 0 1 0 7" />
@@ -45,8 +50,9 @@ viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-
           max="1"
           step="0.01"
           :value="volume"
-          :style="{ '--fill': fillPct }"
+          :style="sliderStyle"
           :aria-label="t('aestheticLanding.music.volume')"
+          :aria-valuetext="volumeLabel"
           @input="onVolumeInput"
         >
         <span class="music__pct">{{ volumeLabel }}</span>
@@ -58,14 +64,29 @@ viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
-const { t, pn } = useLang()
-const { isPlaying, needsGesture, volume, toggle, setVolume } = useLandingMusic()
+const { t, pn, isRtl } = useLang()
+const {
+  isPlaying,
+  needsGesture,
+  volume,
+  userMuted,
+  toggle,
+  setVolume,
+  registerControl,
+  unregisterControl,
+} = useLandingMusic()
 
 const popOpen = ref(false)
 const root = ref<HTMLElement | null>(null)
 
+const isSilent = computed(() => userMuted.value || volume.value <= 0)
 const volumePercent = computed(() => Math.round(volume.value * 100))
 const fillPct = computed(() => `${(volume.value * 100).toFixed(1)}%`)
+const fillDeg = computed(() => (isRtl.value ? 270 : 90))
+const sliderStyle = computed(() => ({
+  '--fill': fillPct.value,
+  '--fill-deg': `${fillDeg.value}deg`,
+}))
 const volumeLabel = computed(() => pn(volumePercent.value))
 
 const btnLabel = computed(() => {
@@ -89,11 +110,13 @@ function onDocKeydown(e: KeyboardEvent) {
 onMounted(() => {
   document.addEventListener('pointerdown', onDocPointer)
   document.addEventListener('keydown', onDocKeydown)
+  if (root.value) registerControl(root.value)
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('pointerdown', onDocPointer)
   document.removeEventListener('keydown', onDocKeydown)
+  if (root.value) unregisterControl(root.value)
 })
 </script>
 
@@ -280,8 +303,10 @@ onBeforeUnmount(() => {
   appearance: none;
   border: 0;
   border-radius: 1px;
+  /* --fill-deg follows the active writing direction (90deg = LTR, 270deg = RTL)
+     so the filled portion always starts at the track's low-value edge. */
   background: linear-gradient(
-    90deg,
+    var(--fill-deg, 90deg),
     var(--champagne) var(--fill, 50%),
     color-mix(in oklab, var(--lightcyan) 18%, transparent) var(--fill, 50%)
   );
