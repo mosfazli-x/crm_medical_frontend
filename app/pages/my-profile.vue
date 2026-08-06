@@ -648,7 +648,7 @@ async function handleGenerateCode() {
   try {
     const res = await generateLinkCode()
     linkCode.value = res.code
-    botUsername.value = res.botUsername || 'doctor_hosseini_bot'
+    botUsername.value = res.botUsername || 'hastihosseini_bot'
     codeExpiresAt.value = Date.now() + res.expires_in_minutes * 60 * 1000
     codeCopied.value = false
     telegramState.value = 'code'

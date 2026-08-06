@@ -20,6 +20,11 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
 
+  components: [
+    { path: '~/components/miniapp', pathPrefix: false },
+    '~/components',
+  ],
+
   pageTransition: {
     name: 'page',
     mode: 'out-in',
@@ -59,6 +64,10 @@ export default defineNuxtConfig({
     '@vueuse/motion/nuxt',
     '@nuxtjs/i18n',
   ],
+
+  icon: {
+    localApiEndpoint: '/nuxt_icon',
+  },
 
   i18n: {
     locales: [

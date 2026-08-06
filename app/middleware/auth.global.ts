@@ -2,7 +2,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   const { isAuthenticated } = useAuth()
 
   const publicPaths = ['/auth/login', '/auth/register']
-  if (to.path === '/' || to.path.startsWith('/booking')) {
+  if (to.path === '/' || to.path.startsWith('/booking') || to.path.startsWith('/tg')) {
     return
   }
 
