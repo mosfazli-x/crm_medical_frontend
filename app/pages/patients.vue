@@ -137,7 +137,14 @@
               <td class="crm-table-primary">{{ patient.firstName }} {{ patient.lastName }}</td>
               <td class="font-mono tracking-wider">{{ patient.nationalId }}</td>
               <td class="font-mono tracking-wider crm-ltr">{{ patient.phone || '-' }}</td>
-              <td>{{ formatGregorianDate(patient.birthDate) }}</td>
+              <td>
+                <div class="flex items-center gap-1.5">
+                  <span>{{ formatGregorianDate(patient.birthDate) }}</span>
+                  <span v-if="patient.birthDateExact === false" class="crm-badge crm-badge-amber !text-[10px]">
+                    {{ $t('patients.approxDob') }}
+                  </span>
+                </div>
+              </td>
               <td>
                 <span :class="maritalBadgeClass(patient.maritalStatus)">
                   {{ getMaritalLabel(patient.maritalStatus) || $t('patients.unknown') }}
@@ -374,7 +381,7 @@ const profileFields = computed(() => {
   const p = selectedProfile.value
   return [
     { label: t('patients.phoneLabel'), value: p.phone || t('patients.notRegistered'), ltr: true },
-    { label: t('patients.birthDateLabel'), value: formatGregorianDate(p.birthDate) },
+    { label: t('patients.birthDateLabel'), value: formatGregorianDate(p.birthDate) + (p.birthDateExact === false ? ` (${t('patients.approxDob')})` : '') },
     { label: t('patients.maritalStatusLabel'), value: getMaritalLabel(p.maritalStatus) || t('patients.unknown') },
     { label: t('patients.registrationDateLabel'), value: formatJalaliDate(p.createdAt) },
   ]

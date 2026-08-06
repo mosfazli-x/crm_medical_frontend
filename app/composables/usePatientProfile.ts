@@ -260,7 +260,8 @@ export const usePatientProfile = (options: UsePatientProfileOptions = {}): UsePa
         attachments: {
           ultrasound: [],
           lab: [],
-          prescription: []
+          prescription: [],
+          patientFiles: []
         }
       }
     } catch (err) {

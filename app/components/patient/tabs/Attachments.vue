@@ -114,7 +114,8 @@ const loadingDownload = reactive(new Set<string>())
 const categories = [
   { key: 'ultrasound', titleKey: 'attachments.categories.ultrasound', icon: 'mdi-camera-iris', color: 'purple-darken-1', accept: 'image/*,application/pdf' },
   { key: 'lab', titleKey: 'attachments.categories.lab', icon: 'mdi-flask-outline', color: 'teal-darken-1', accept: '.pdf,.jpg,.jpeg,.png' },
-  { key: 'prescription', titleKey: 'attachments.categories.prescription', icon: 'mdi-prescription', color: '#4F46E5', accept: 'image/*,application/pdf' }
+  { key: 'prescription', titleKey: 'attachments.categories.prescription', icon: 'mdi-prescription', color: '#4F46E5', accept: 'image/*,application/pdf' },
+  { key: 'patientFiles', titleKey: 'attachments.categories.patientFiles', icon: 'mdi-folder-multiple-outline', color: 'amber-darken-1', accept: 'image/*,application/pdf' }
 ]
 
 function formatSize(bytes: number): string {
@@ -183,6 +184,6 @@ const deleteExistingAttachment = async (categoryKey: string, file: any, index: n
   }
 }
 
-if (!attachments.value) attachments.value = { ultrasound: [], lab: [], prescription: [] }
-if (!existingAttachments.value) existingAttachments.value = { ultrasound: [], lab: [], prescription: [] }
+if (!attachments.value) attachments.value = { ultrasound: [], lab: [], prescription: [], patientFiles: [] }
+if (!existingAttachments.value) existingAttachments.value = { ultrasound: [], lab: [], prescription: [], patientFiles: [] }
 </script>

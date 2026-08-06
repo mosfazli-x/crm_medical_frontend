@@ -212,6 +212,7 @@
     "nationalId": "کد ملی",
     "phone": "شماره تماس",
     "birthDate": "تاریخ تولد",
+    "approxDob": "تقریبی",
     "maritalStatus": "وضعیت تأهل",
     "registrationDate": "تاریخ ثبت",
     "noPatients": "هیچ بیماری تا کنون ثبت نشده است.",
@@ -1738,7 +1739,8 @@
     "categories": {
       "ultrasound": "مدارک سونوگرافی",
       "lab": "گزارش‌های آزمایشگاه",
-      "prescription": "نسخه‌های قبلی"
+      "prescription": "نسخه‌های قبلی",
+      "patientFiles": "فایل‌های بیمار"
     },
     "downloadLinkError": "خطا در دریافت لینک دانلود",
     "deleteConfirm": "آیا از حذف این فایل اطمینان دارید؟ \"{name}\"",
@@ -2373,6 +2375,12 @@
     "phone": "تلفن",
     "maritalStatus": "وضعیت تاهل",
     "birthDate": "تاریخ تولد",
+    "age": "سن",
+    "ageRequired": "لطفاً سن بیمار را وارد کنید",
+    "ageInvalid": "سن باید بین ۱ تا ۱۲۰ سال باشد",
+    "birthDateApprox": "تاریخ تولد دقیق مشخص نیست (فقط سن)",
+    "calculatedAge": "سن محاسبه‌شده",
+    "years": "سال",
     "address": "آدرس",
     "invalidPhone": "شماره تلفن نامعتبر",
     "nationalIdMustBe10Digits": "کد ملی باید ۱۰ رقم باشد",
@@ -3154,7 +3162,7 @@
     "langToggle": "English",
     "brand": {
       "name": "کلینیک دکتر حسینی",
-      "tagline": "پزشکی زیبایی · با نوبت قبلی",
+      "tagline": "پلتفرم مراقبت‌های بهداشتی",
       "subtitle": "زیبایی به اندازهٔ تو"
     },
     "eyebrow": "مطب خصوصی",
@@ -3198,6 +3206,20 @@
     },
     "footer": {
       "consultations": "مشاوره‌ها فقط با نوبت قبلی"
+    },
+    "loading": {
+      "ariaLabel": "در حال بارگذاری کلینیک هستی حسینی",
+      "initials": "دح",
+      "status1": "در حال آماده‌سازی تجربه شما",
+      "status2": "در حال آماده‌سازی فضا",
+      "status3": "لحظاتی دیگر"
+    },
+    "music": {
+      "play": "پخش موسیقی محیطی",
+      "pause": "توقف موسیقی",
+      "volume": "صدا",
+      "track": "موسیقی محیطی",
+      "hint": "برای شروع موسیقی لمس کنید"
     }
   },
   "schedule": {

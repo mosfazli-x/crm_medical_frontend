@@ -30,7 +30,10 @@
                 <span class="w-1 h-1 bg-slate-300 rounded-full" />
                 <span dir="ltr">{{ basicInfo.phone || '---' }}</span>
                 <span class="w-1 h-1 bg-slate-300 rounded-full" />
-                <span>{{ formatDate(basicInfo.birth_date) }}</span>
+                <span class="flex items-center gap-1.5">
+                  <span>{{ formatDate(basicInfo.birth_date ?? basicInfo.birthDate) }}</span>
+                  <span v-if="(basicInfo.birth_date_exact ?? basicInfo.birthDateExact) === false" class="text-[10px] font-medium text-amber-700 bg-amber-100 rounded-full px-1.5 py-0.5">{{ $t('patients.approxDob') }}</span>
+                </span>
               </div>
             </div>
           </div>
@@ -231,9 +234,9 @@ const reproSaving = ref(false)
 const lifestyleSaving = ref(false)
 
 // Attachments tab
-const newAttachments = ref({ ultrasound: [], lab: [], prescription: [] })
+const newAttachments = ref({ ultrasound: [], lab: [], prescription: [], patientFiles: [] })
 const existingAttachmentsModel = computed({
-  get: () => profile.value?.attachments || { ultrasound: [], lab: [], prescription: [] },
+  get: () => profile.value?.attachments || { ultrasound: [], lab: [], prescription: [], patientFiles: [] },
   set: (val) => { if (profile.value) (profile.value as any).attachments = val },
 })
 

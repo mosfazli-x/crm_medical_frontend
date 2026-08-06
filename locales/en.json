@@ -212,6 +212,7 @@
     "nationalId": "National ID",
     "phone": "Phone Number",
     "birthDate": "Date of Birth",
+    "approxDob": "Approx.",
     "maritalStatus": "Marital Status",
     "registrationDate": "Registration Date",
     "noPatients": "No patients have been registered yet.",
@@ -1738,7 +1739,8 @@
     "categories": {
       "ultrasound": "Ultrasound Documents",
       "lab": "Lab Reports",
-      "prescription": "Previous Prescriptions"
+      "prescription": "Previous Prescriptions",
+      "patientFiles": "Patient Files"
     },
     "downloadLinkError": "Error getting download link",
     "deleteConfirm": "Are you sure you want to delete this file? \"{name}\"",
@@ -2373,6 +2375,12 @@
     "phone": "Phone",
     "maritalStatus": "Marital Status",
     "birthDate": "Birth Date",
+    "age": "Age",
+    "ageRequired": "Please enter the patient's age",
+    "ageInvalid": "Age must be between 1 and 120",
+    "birthDateApprox": "Exact birth date unknown (age only)",
+    "calculatedAge": "Calculated age",
+    "years": "years",
     "address": "Address",
     "invalidPhone": "Invalid phone number",
     "nationalIdMustBe10Digits": "National ID must be 10 digits",
@@ -3198,6 +3206,20 @@
     },
     "footer": {
       "consultations": "Consultations by appointment"
+    },
+    "loading": {
+      "ariaLabel": "Loading Hasti Hosseini Clinic",
+      "initials": "HH",
+      "status1": "Crafting your experience",
+      "status2": "Preparing the studio",
+      "status3": "Almost there"
+    },
+    "music": {
+      "play": "Play ambient music",
+      "pause": "Pause ambient music",
+      "volume": "Volume",
+      "track": "Ambient",
+      "hint": "Tap to start the music"
     }
   },
   "schedule": {

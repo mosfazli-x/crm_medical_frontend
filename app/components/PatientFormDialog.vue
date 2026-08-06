@@ -118,6 +118,7 @@ const form = reactive({
     insurance_code: '',
     insurance_type: '',
     birth_date: null as string | null,
+    birth_date_exact: null as boolean | null,
     phone: '',
     address: '',
     marital_status: '',
@@ -134,12 +135,14 @@ const attachments = reactive({
     ultrasound: [] as File[],
     lab: [] as File[],
     prescription: [] as File[],
+    patientFiles: [] as File[],
 })
 
 const existingAttachments = reactive({
-    ultrasound: [],
-    lab: [],
-    prescription: [],
+    ultrasound: [] as any[],
+    lab: [] as any[],
+    prescription: [] as any[],
+    patientFiles: [] as any[],
 })
 
 function pickExistingIds(items: { id?: string }[]): string[] {
@@ -158,6 +161,7 @@ const submitForm = async () => {
             insurance_code: form.insurance_code || null,
             insurance_type: form.insurance_type || null,
             birth_date: form.birth_date || null,
+            birth_date_exact: form.birth_date_exact ?? null,
             phone: form.phone || '',
             address: form.address || null,
             marital_status: form.marital_status || null,
@@ -269,6 +273,11 @@ const submitForm = async () => {
                 formData.append('prescription[]', file)
             }
         }
+        if (attachments.patientFiles?.length) {
+            for (const file of attachments.patientFiles) {
+                formData.append('patient_files[]', file)
+            }
+        }
 
         const endpoint =
             mode.value === 'edit'
@@ -305,6 +314,7 @@ function resetForm() {
     form.insurance_code = ''
     form.insurance_type = ''
     form.birth_date = null
+    form.birth_date_exact = null
     form.phone = ''
     form.address = ''
     form.marital_status = ''
@@ -320,10 +330,12 @@ function resetForm() {
     attachments.ultrasound = []
     attachments.lab = []
     attachments.prescription = []
+    attachments.patientFiles = []
 
     existingAttachments.ultrasound = []
     existingAttachments.lab = []
     existingAttachments.prescription = []
+    existingAttachments.patientFiles = []
 }
 
 function close() {
@@ -343,6 +355,7 @@ function fillForm(data: any) {
     form.insurance_code = info.insuranceCode ?? info.insurance_code ?? ''
     form.insurance_type = info.insuranceType ?? info.insurance_type ?? ''
     form.birth_date = info.birthDate ?? info.birth_date ?? null
+    form.birth_date_exact = info.birthDateExact ?? info.birth_date_exact ?? null
     form.phone = info.phone ?? ''
     form.address = info.address ?? ''
     form.marital_status = info.maritalStatus ?? info.marital_status ?? ''
@@ -404,6 +417,7 @@ function fillForm(data: any) {
     existingAttachments.ultrasound = [...(data.attachments?.ultrasound ?? [])]
     existingAttachments.lab = [...(data.attachments?.lab ?? [])]
     existingAttachments.prescription = [...(data.attachments?.prescription ?? [])]
+    existingAttachments.patientFiles = [...(data.attachments?.patientFiles ?? [])]
 }
 
 watch(

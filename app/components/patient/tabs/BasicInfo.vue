@@ -50,11 +50,24 @@
                     variant="outlined" density="comfortable" prepend-inner-icon="mdi-ring" />
             </v-col>
             <v-col cols="12" md="4">
-                <div class="relative h-[48px] border rounded overflow-hidden">
-                    <PersianDatetimePicker v-model="form.birth_date" type="date" :placeholder="$t('basicInfo.birthDate')"
-                        display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#000000" auto-submit clearable
-                        custom-input class="w-full !h-[48px] rounded-md px-3 bg-white" />
+                <v-checkbox v-model="ageOnly" :label="$t('basicInfo.birthDateApprox')" density="compact"
+                    color="#4F46E5" hide-details class="!mt-0 mb-1" />
+                <div v-if="ageOnly" class="relative">
+                    <v-text-field v-model="ageInput" :label="$t('basicInfo.age') + ' *'" variant="outlined"
+                        density="comfortable" type="number" min="1" max="120" inputmode="numeric"
+                        prepend-inner-icon="mdi-calendar-heart" :rules="[ageRule]" />
                 </div>
+                <template v-else>
+                    <div class="relative h-[48px] border rounded overflow-hidden">
+                        <PersianDatetimePicker v-model="form.birth_date" type="date" :placeholder="$t('basicInfo.birthDate')"
+                            display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#000000" auto-submit clearable
+                            custom-input class="w-full !h-[48px] rounded-md px-3 bg-white" />
+                    </div>
+                    <div v-if="computedAge != null" class="text-xs text-slate-400 mt-1.5">
+                        {{ $t('basicInfo.calculatedAge') }}:
+                        <span class="font-semibold text-slate-600 dark:text-slate-300">{{ formattedAge }} {{ $t('basicInfo.years') }}</span>
+                    </div>
+                </template>
             </v-col>
             <v-col cols="12">
                 <v-textarea v-model="form.address" :label="$t('basicInfo.address')" variant="outlined" rows="2" density="comfortable"
@@ -65,12 +78,96 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
+import moment from 'moment-jalaali'
 import { INSURANCE_TYPE_VALUES } from '~/types/insurance'
 const { t } = useI18n()
 
 const form = defineModel<any>({ required: true })
 const config = useRuntimeConfig()
+
+function calcAge(birthDate: string | null | undefined): number | null {
+    if (!birthDate) return null
+    const b = moment(birthDate, 'YYYY-MM-DD')
+    if (!b.isValid()) return null
+    const now = moment()
+    let age = now.jYear() - b.jYear()
+    const monthDiff = now.jMonth() - b.jMonth()
+    if (monthDiff < 0 || (monthDiff === 0 && now.jDate() < b.jDate())) age--
+    return age >= 0 ? age : null
+}
+
+function approxDobFromAge(age: number): string {
+    const birthYear = moment().jYear() - age
+    return moment(`${birthYear}/1/1`, 'jYYYY/jM/jD').format('YYYY-MM-DD')
+}
+
+const ageInput = ref<number | '' | null>(null)
+
+const ageOnly = computed({
+    get: () => form.value.birth_date_exact === false,
+    set: (val: boolean) => {
+        if (val) {
+            form.value.birth_date_exact = false
+            if (ageInput.value == null && form.value.birth_date) {
+                ageInput.value = calcAge(form.value.birth_date)
+            }
+            const n = Number(ageInput.value)
+            if (Number.isFinite(n) && n >= 1 && n <= 120) {
+                form.value.birth_date = approxDobFromAge(n)
+            } else {
+                form.value.birth_date = null
+            }
+        } else {
+            form.value.birth_date_exact = null
+        }
+    },
+})
+
+watch(ageInput, (val) => {
+    if (!ageOnly.value) return
+    const n = Number(val)
+    if (Number.isFinite(n) && n >= 1 && n <= 120) {
+        form.value.birth_date = approxDobFromAge(n)
+    } else if (val === null || val === '' || val === undefined) {
+        form.value.birth_date = null
+    }
+})
+
+watch(
+    () => form.value.birth_date,
+    (val) => {
+        if (!ageOnly.value && val) {
+            form.value.birth_date_exact = true
+        }
+    },
+)
+
+watch(
+    () => [form.value.birth_date_exact, form.value.birth_date],
+    () => {
+        if (ageOnly.value) {
+            ageInput.value = calcAge(form.value.birth_date)
+        } else {
+            ageInput.value = null
+        }
+    },
+    { immediate: true },
+)
+
+const computedAge = computed(() => (ageOnly.value ? null : calcAge(form.value.birth_date)))
+
+const formattedAge = computed(() => {
+    if (computedAge.value == null) return ''
+    return new Intl.NumberFormat('fa-IR').format(computedAge.value)
+})
+
+const ageRule = (value: number | string | null | undefined) => {
+    if (value === null || value === undefined || value === '') return t('basicInfo.ageRequired')
+    const n = Number(value)
+    if (!Number.isFinite(n) || n < 1 || n > 120) return t('basicInfo.ageInvalid')
+    return true
+}
 
 const insuranceOptions = INSURANCE_TYPE_VALUES.map(item => ({
     title: item.label,

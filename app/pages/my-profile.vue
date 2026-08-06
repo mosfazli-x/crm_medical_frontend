@@ -615,7 +615,7 @@ let pollingTimer: ReturnType<typeof setInterval> | null = null
 const codeCopied = ref(false)
 
 const telegramDeepLink = computed(() => {
-  const username = botUsername.value || 'doctor_hosseini_bot'
+  const username = botUsername.value || 'hastihosseini_bot'
   return `https://t.me/${username}?start=${linkCode.value}`
 })
 
