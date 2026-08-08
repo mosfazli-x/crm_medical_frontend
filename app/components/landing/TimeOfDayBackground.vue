@@ -19,16 +19,14 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
-import type { DayPhase } from "../composables/useTimeOfDayBackground";
+import type { DayPhase } from "~/composables/useTimeOfDayBackground";
 
 /**
  * Full-screen, time-of-day aware background player.
  *
  * Two stacked <video> elements ping-pong roles: the active one is visible and
  * playing, the dormant one silently buffers the next phase so the swap at a
- * day boundary is a seamless opacity crossfade instead of a reload. A single
- * shared drift transform is applied to the container, so both videos stay
- * perfectly aligned while crossfading.
+ * day boundary is a seamless opacity crossfade instead of a reload.
  */
 
 const { phase } = useTimeOfDayBackground();
@@ -65,7 +63,7 @@ function bindVideo(key: number, el: unknown) {
 
 function successorOf(dayPhase: DayPhase): DayPhase {
   const index = PHASE_ORDER.indexOf(dayPhase);
-  return PHASE_ORDER[(index + 1) % PHASE_ORDER.length];
+  return PHASE_ORDER[(index + 1) % PHASE_ORDER.length]!;
 }
 
 function createLayer(dayPhase: DayPhase): VideoLayer {
@@ -221,8 +219,6 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  /* animation: tod-drift 46s cubic-bezier(0.45, 0, 0.55, 1) infinite; */
-  will-change: transform;
 }
 
 .tod-bg__video {
@@ -240,24 +236,7 @@ onBeforeUnmount(() => {
   opacity: 1;
 }
 
-@keyframes tod-drift {
-  0% {
-    transform: scale(1.08) translate(0);
-  }
-  50% {
-    transform: scale(1.14) translate(-1.2%, -1%);
-  }
-  100% {
-    transform: scale(1.08) translate(0);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .tod-bg {
-    animation: none;
-    will-change: auto;
-  }
-
   .tod-bg__video {
     transition: opacity 0.3s ease;
   }
