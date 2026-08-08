@@ -11,7 +11,7 @@
     </UiPageHeader>
 
     <template v-if="loading">
-      <UiLoadingSpinner />
+      <MedicalDashboardLoader />
     </template>
 
     <!-- ─── Patient Dashboard ─── -->
@@ -751,6 +751,7 @@ import CloseCircle from '~/components/icons/CloseCircle.vue'
 import BreakdownRow from '~/components/dashboard/BreakdownRow.vue'
 import { INSURANCE_TYPES, INSURANCE_TYPE_KEYS } from '~/types/insurance'
 import type { InsuranceTypeKey } from '~/types/insurance'
+import MedicalDashboardLoader from '~/components/loading/MedicalDashboardLoader.vue'
 
 interface DashboardSmsCredit {
   sent: number
@@ -792,7 +793,7 @@ interface DashboardLowStockItem {
   name: string
   sku: string | null
   currentStock: string | null
-  minStockLevel: string | null
+  minStockLevel: number | null
   unit: string
 }
 

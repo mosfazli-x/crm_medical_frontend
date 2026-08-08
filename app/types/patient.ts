@@ -267,3 +267,32 @@ export interface ReproForm {
   }>
   summary: ReproductiveSummary
 }
+
+// List / pagination types (GET /api/patients)
+export interface PatientListItem {
+  id: string
+  firstName: string | null
+  lastName: string | null
+  nationalId: string | null
+  phone: string | null
+  birthDate: string | null
+  birthDateExact: boolean | null
+  insuranceCode: string | null
+  insuranceType: string | null
+  maritalStatus: string | null
+  createdAt: string
+}
+
+export interface PatientPagination {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+  hasMore: boolean
+}
+
+export interface PatientsListResponse {
+  success: boolean
+  data: PatientListItem[]
+  pagination?: PatientPagination
+}

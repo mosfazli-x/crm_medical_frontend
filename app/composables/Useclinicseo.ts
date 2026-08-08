@@ -1,10 +1,10 @@
 import { useHead, useSeoMeta } from "nuxt/app"
 
-export function useClinicSeo() {
+export function useClinicSeo(options: { titleKey?: string; descriptionKey?: string } = {}) {
   const { t, locale } = useI18n()
 
-  const title = computed(() => t('seo.title'))
-  const description = computed(() => t('seo.description'))
+  const title = computed(() => t(options.titleKey ?? 'seo.title'))
+  const description = computed(() => t(options.descriptionKey ?? 'seo.description'))
   const url = 'https://lotusclinic.example.com'
   const ogImage = `${url}/og-cover.jpg`
 

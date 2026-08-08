@@ -40,7 +40,7 @@ interface VideoLayer {
   active: boolean;
 }
 
-const PHASE_ORDER: DayPhase[] = ["morning", "midday", "night"];
+const PHASE_ORDER: DayPhase[] = ["morning", "noon", "midday", "night"];
 const FADE_MS = 1200;
 const READY_TIMEOUT_MS = 8000;
 
@@ -221,7 +221,7 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  animation: tod-drift 46s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  /* animation: tod-drift 46s cubic-bezier(0.45, 0, 0.55, 1) infinite; */
   will-change: transform;
 }
 

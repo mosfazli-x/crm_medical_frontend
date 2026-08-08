@@ -59,7 +59,7 @@
                 <th>{{ $t('inventory.productName') }}</th>
                 <th>{{ $t('inventory.sku') }}</th>
                 <th>{{ $t('inventory.category') }}</th>
-                <th>{{ $t('inventory.unit') }}</th>
+                <th class="hidden md:flex">{{ $t('inventory.unit') }}</th>
                 <th>{{ $t('inventory.purchasePrice') }}</th>
                 <th>{{ $t('inventory.sellingPrice') }}</th>
                 <th>{{ $t('inventory.currentStock') }}</th>
@@ -84,9 +84,9 @@
                 <td class="!font-bold">{{ product.name }}</td>
                 <td class="!font-mono !text-xs">{{ product.sku || '---' }}</td>
                 <td class="!text-sm">{{ product.categoryName || '---' }}</td>
-                <td class="!text-sm">{{ product.unit }}</td>
-                <td class="!font-mono" dir="ltr">{{ formatPrice(product.purchasePrice) }}</td>
-                <td class="!font-mono" dir="ltr">{{ formatPrice(product.sellingPrice) }}</td>
+                <td class="!text-sm hidden md:flex">{{ product.unit }}</td>
+                <td class="" dir="rtl">{{ formatPrice(product.purchasePrice) }}</td>
+                <td class="" dir="rtl">{{ formatPrice(product.sellingPrice) }}</td>
                 <td>
                   <span :class="[
                     '!font-bold',
@@ -94,7 +94,7 @@
                       Number(product.currentStock) <= Number(product.minStockLevel) ? '!text-amber-500' :
                         '!text-emerald-600 dark:!text-emerald-400'
                   ]">
-                    {{ product.currentStock }}
+                    {{ +(product.currentStock) }}
                   </span>
                   <span
                     v-if="Number(product.currentStock) <= Number(product.minStockLevel) && Number(product.minStockLevel) > 0"
@@ -102,7 +102,7 @@
                     ({{ $t('inventory.lowStock') }})
                   </span>
                 </td>
-                <td class="!font-mono !text-sm" dir="ltr">{{ formatPrice(product.stockValue) }}</td>
+                <td class="!text-sm" dir="rtl">{{ formatPrice(product.stockValue) }}</td>
                 <td class="!text-center">
                   <div class="!flex !items-center !justify-center !gap-1">
                     <button @click="openStockMovementDialog(product)"
@@ -302,14 +302,14 @@
 
     <!-- Product Dialog -->
     <v-dialog v-model="productDialog" max-width="600">
-      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden">
+      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-auto">
         <div
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black">{{ editingProduct ? $t('inventory.editProduct') : $t('inventory.addProduct')
-          }}
+            }}
           </h2>
           <button @click="productDialog = false"
-            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors flex justify-center align-middle items-center">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
         </div>
@@ -329,14 +329,29 @@
               :label="$t('inventory.unit')" hide-details="auto" />
           </div>
           <div class="!grid !grid-cols-2 !gap-4">
-            <v-text-field v-model="productForm.purchase_price" variant="outlined" density="comfortable"
-              :label="$t('inventory.purchasePrice')" type="number" hide-details="auto" />
-            <v-text-field v-model="productForm.selling_price" variant="outlined" density="comfortable"
-              :label="$t('inventory.sellingPrice')" type="number" hide-details="auto" />
+            <div class="!flex !flex-col">
+              <v-text-field v-model="productForm.purchase_price" variant="outlined" density="comfortable"
+                :label="$t('inventory.purchasePrice')" type="number" min="0" step="1" hide-details="auto"
+                @input="sanitizeInteger(productForm, 'purchase_price')" />
+              <p v-if="purchasePriceHint"
+                class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !whitespace-nowrap">
+                {{ purchasePriceHint }}
+              </p>
+            </div>
+            <div class="!flex !flex-col">
+              <v-text-field v-model="productForm.selling_price" variant="outlined" density="comfortable"
+                :label="$t('inventory.sellingPrice')" type="number" min="0" step="1" hide-details="auto"
+                @input="sanitizeInteger(productForm, 'selling_price')" />
+              <p v-if="sellingPriceHint"
+                class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !whitespace-nowrap">
+                {{ sellingPriceHint }}
+              </p>
+            </div>
           </div>
           <div class="!grid !grid-cols-2 !gap-4">
             <v-text-field v-model="productForm.min_stock_level" variant="outlined" density="comfortable"
-              :label="$t('inventory.minStockLevel')" type="number" hide-details="auto" />
+              :label="$t('inventory.minStockLevel')" type="number" min="0" step="1" hide-details="auto"
+              @input="sanitizeInteger(productForm, 'min_stock_level')" />
           </div>
           <v-textarea v-model="productForm.description" variant="outlined" density="comfortable"
             :label="$t('common.notes')" rows="2" hide-details="auto" />
@@ -354,14 +369,14 @@
 
     <!-- Category Dialog -->
     <v-dialog v-model="categoryDialog" max-width="450">
-      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden">
+      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-auto">
         <div
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black">{{ editingCategory ? $t('inventory.editCategory') :
             $t('inventory.addCategory')
-          }}</h2>
+            }}</h2>
           <button @click="categoryDialog = false"
-            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors flex justify-center align-middle items-center">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
         </div>
@@ -384,12 +399,12 @@
 
     <!-- Stock Movement Dialog -->
     <v-dialog v-model="stockDialog" max-width="500">
-      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden">
+      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-auto">
         <div
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black">{{ $t('inventory.addStock') }}</h2>
           <button @click="stockDialog = false"
-            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors flex justify-center align-middle items-center">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
         </div>
@@ -406,8 +421,15 @@
             <v-text-field v-model="stockForm.quantity" variant="outlined" density="comfortable"
               :label="$t('inventory.quantity')" type="number" hide-details="auto" />
           </div>
-          <v-text-field v-model="stockForm.unit_price" variant="outlined" density="comfortable"
-            :label="$t('inventory.unitPrice')" type="number" hide-details="auto" />
+          <div class="!flex !flex-col">
+            <v-text-field v-model="stockForm.unit_price" variant="outlined" density="comfortable"
+              :label="$t('inventory.unitPrice')" type="number" min="0" step="1" hide-details="auto"
+              @input="sanitizeInteger(stockForm, 'unit_price')" />
+            <p v-if="stockUnitPriceHint"
+              class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !whitespace-nowrap">
+              {{ stockUnitPriceHint }}
+            </p>
+          </div>
           <v-text-field v-model="stockForm.reference" variant="outlined" density="comfortable"
             :label="$t('inventory.reference')" hide-details="auto" />
           <v-textarea v-model="stockForm.description" variant="outlined" density="comfortable"
@@ -426,12 +448,12 @@
 
     <!-- Record Usage Dialog -->
     <v-dialog v-model="usageDialog" max-width="600">
-      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden">
+      <div class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-auto">
         <div
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black">{{ $t('inventory.recordUsage') }}</h2>
           <button @click="usageDialog = false"
-            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors flex justify-center align-middle items-center flex justify-center align-middle items-center">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
         </div>
@@ -442,7 +464,7 @@
               class="!flex !items-center !justify-between !gap-3 !p-3 !bg-slate-50 dark:!bg-slate-800/50 !rounded-xl">
               <div class="!flex !flex-col !items-start !gap-0.5 !min-w-0">
                 <div class="!text-sm !font-bold">{{ selectedUsagePatient.firstName }} {{ selectedUsagePatient.lastName
-                }}
+                  }}
                 </div>
                 <div class="!text-xs !text-slate-500 dark:!text-slate-400">{{ selectedUsagePatient.nationalId ||
                   selectedUsagePatient.phone || '' }}</div>
@@ -467,7 +489,7 @@
               <button v-for="p in usagePatientSearchResults" :key="p.id" @mousedown.prevent="selectUsagePatient(p)"
                 class="!w-full !px-4 !py-3 !flex !flex-col !items-start !gap-0.5 hover:!bg-slate-50 dark:hover:!bg-slate-700/50 !transition-colors !text-right !border-b !border-slate-100 dark:!border-slate-700/50 last:!border-b-0">
                 <span class="!text-sm !font-bold !text-slate-900 dark:!text-white">{{ p.firstName }} {{ p.lastName
-                }}</span>
+                  }}</span>
                 <span class="!text-xs !text-slate-500 dark:!text-slate-400">{{ p.nationalId || p.phone || '' }}</span>
               </button>
             </div>
@@ -479,8 +501,15 @@
           <div class="!grid !grid-cols-2 !gap-4">
             <v-text-field v-model="usageForm.quantity" variant="outlined" density="comfortable"
               :label="$t('inventory.quantity')" type="number" min="0" hide-details="auto" />
-            <v-text-field v-model="usageForm.unit_price" variant="outlined" density="comfortable"
-              :label="$t('inventory.unitPrice')" type="number" min="0" hide-details="auto" />
+            <div class="!flex !flex-col">
+              <v-text-field v-model="usageForm.unit_price" variant="outlined" density="comfortable"
+                :label="$t('inventory.unitPrice')" type="number" min="0" step="1" hide-details="auto"
+                @input="sanitizeInteger(usageForm, 'unit_price')" />
+              <p v-if="usageUnitPriceHint"
+                class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !whitespace-nowrap">
+                {{ usageUnitPriceHint }}
+              </p>
+            </div>
           </div>
 
           <v-select v-model="usageForm.visit_id" :items="usageVisitOptions" item-title="title" item-value="value"
@@ -513,7 +542,7 @@ const { t } = useI18n()
 const { apiFetch } = useApi()
 const { user } = useAuth()
 const { $toast } = useNuxtApp()
-const { formatJalaliDate, formatPrice } = useFormatting()
+const { formatJalaliDate, formatPrice, formatThousandToman } = useFormatting()
 
 const role = computed(() => user?.value?.role || (user as any)?.role)
 const canManageUsage = computed(() => ['admin_doctor', 'pharmacy'].includes(role.value))
@@ -597,6 +626,13 @@ function openProductDialog() {
   editingProduct.value = null
   productForm.value = { name: '', sku: '', barcode: '', category_id: null, unit: 'عدد', purchase_price: '', selling_price: '', min_stock_level: '', description: '' }
   productDialog.value = true
+}
+
+function sanitizeInteger(form: Record<string, unknown>, key: string) {
+  const v = form[key]
+  if (v === '' || v === null || v === undefined) return
+  const n = Math.trunc(Number(v))
+  form[key] = Number.isNaN(n) ? '' : String(n)
 }
 
 function editProduct(product: any) {
@@ -766,6 +802,11 @@ function deleteUsage(usage: any) {
 const usageDialog = ref(false)
 const savingUsage = ref(false)
 const usageForm = ref({ product_id: null, quantity: '', unit_price: '', visit_id: null, notes: '' })
+
+const purchasePriceHint = computed(() => formatThousandToman(productForm.value.purchase_price))
+const sellingPriceHint = computed(() => formatThousandToman(productForm.value.selling_price))
+const stockUnitPriceHint = computed(() => formatThousandToman(stockForm.value.unit_price))
+const usageUnitPriceHint = computed(() => formatThousandToman(usageForm.value.unit_price))
 
 const productUsageOptions = computed(() =>
   products.value.map((p: any) => ({

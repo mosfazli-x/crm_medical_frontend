@@ -9,23 +9,17 @@
       </transition>
 
       <!-- Sidebar -->
-      <v-navigation-drawer v-model="drawer" :rail="rail && !isMobile" permanent width="260" rail-width="72"
-        class="!border-l !border-[#e5e7eb] dark:!border-[#1e2028] !bg-white dark:!bg-[#13141a] transition-all duration-300"
-        elevation="0" :temporary="isMobile">
-        <!-- Collapse Toggle -->
-        <button v-if="!isMobile" @click="rail = !rail"
-          class="absolute -left-3 top-7 z-50 w-6 h-6 bg-white dark:bg-[#1e2028] border border-[#e5e7eb] dark:border-[#2a2c36] rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-300">
-          <AltArrowLeft class="w-3.5 h-3.5 fill-[#6b7280] dark:fill-[#9ca3af] transition-transform duration-300"
-            :class="rail ? '' : 'rotate-180'" />
-        </button>
-
+      <v-navigation-drawer v-model="drawer" :permanent="lgAndUp" :rail="lgAndUp && rail" rail-width="72"
+        :scrim="false" width="260"
+        class="!border-l !border-[#e5e7eb] dark:!border-[#1e2028] !bg-white dark:!bg-[#13141a]"
+        elevation="0">
         <!-- Logo -->
-        <div class="h-[72px] flex items-center gap-3 transition-all border-b border-[#f3f4f6] dark:border-[#1e2028]"
-          :class="rail && !isMobile ? 'justify-center px-0' : 'px-5'">
+        <div class="h-[72px] flex items-center gap-3 px-5 transition-all border-b border-[#f3f4f6] dark:border-[#1e2028]"
+          :class="isCompact ? 'justify-center !px-0' : ''">
           <img src="../assets/images/logo.jpg"
             class="!flex !h-9 !w-9 sm:!h-10 sm:!w-10 !items-center !justify-center !rounded-xl sm:!rounded-2xl !bg-ink !transition-all !duration-300 group-hover:!shadow-[0_0_20px_rgba(62,232,168,0.3)] group-hover:!scale-105">
 
-          <div v-if="!rail || isMobile" class="flex flex-col overflow-hidden whitespace-nowrap">
+          <div v-if="!isCompact" class="flex flex-col overflow-hidden whitespace-nowrap">
             <span class="font-bold text-sm text-[#111827] dark:text-[#f3f4f6] tracking-tight">{{ t('layout.clinicName')
               }}</span>
             <span class="text-[10px] text-[#9ca3af] font-medium">{{ t('layout.managementPanel') }}</span>
@@ -33,34 +27,23 @@
         </div>
 
         <!-- Navigation -->
-        <div class="mt-3 px-3 space-y-0.5">
-          <!-- Rail / collapsed drawer: flat icon list -->
-          <v-list v-if="rail && !isMobile" nav class="!p-0">
-            <v-tooltip v-for="item in allVisibleItems" :key="item.to" location="left">
-              <template #activator="{ props }">
-                <v-list-item v-bind="props" :to="item.to" nuxt
-                  class="rounded-lg! mb-0.5 transition-all duration-200 gap-1 flex px-0! justify-center" :class="[
-                    isActive(item.to)
-                      ? '!bg-[#EEF2FF] dark:!bg-[#1e1b4b]/50 !text-[#4F46E5] dark:!text-[#818cf8]'
-                      : '!text-[#6b7280] dark:!text-[#9ca3af] hover:!bg-[#f9fafb] dark:hover:!bg-[#1e2028]'
-                  ]" active-class="">
-                  <template #prepend>
-                    <div class="flex items-center justify-center">
-                      <component :is="item.icon" class="w-[18px] h-[18px] shrink-0"
-                        :class="isActive(item.to) ? 'fill-[#4F46E5] dark:fill-[#818cf8]' : 'fill-[#9ca3af]'" />
-                    </div>
-                  </template>
-                  <template #title>
-                    <span v-if="!rail || isMobile" class="text-[13px] font-medium">{{ item.title }}</span>
-                  </template>
-                </v-list-item>
-              </template>
-              <span class="text-xs">{{ item.title }}</span>
-            </v-tooltip>
-          </v-list>
+        <transition name="menu-fade" mode="out-in">
+          <!-- Compact (rail) navigation: icon-only -->
+          <nav v-if="isCompact" key="compact" class="mt-3 px-2 flex flex-col items-center gap-1">
+            <NuxtLink v-for="item in allVisibleItems" :key="item.to" :to="item.to" :title="item.title"
+              class="flex h-9 w-9 items-center justify-center rounded-xl outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#4F46E5]/40"
+              :class="isActive(item.to)
+                ? 'bg-[#EEF2FF] dark:bg-[#1e1b4b]/50'
+                : 'hover:bg-[#f9fafb] dark:hover:bg-[#1e2028]'">
+              <component :is="item.icon" class="h-[18px] w-[18px] transition-colors duration-200"
+                :class="isActive(item.to) ? 'fill-[#4F46E5] dark:fill-[#818cf8]' : 'fill-[#9ca3af]'" />
+            </NuxtLink>
+          </nav>
 
-          <!-- Expanded drawer: accordion sections -->
-          <div v-else class="flex flex-col gap-1">
+          <!-- Expanded navigation: accordion sections -->
+          <div v-else key="full" class="mt-3 px-3 space-y-0.5">
+            <!-- Accordion sections -->
+            <div class="flex flex-col gap-1">
             <template v-for="group in visibleGroups" :key="group.key">
               <button type="button" @click="toggleGroup(group.key)"
                 class="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2! text-start outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#4F46E5]/40"
@@ -86,7 +69,7 @@
                 </span>
 
                 <span
-                  class="shrink-0 rounded-full px-2 py-0.5! text-[10px] font-bold leading-none transition-colors duration-200"
+                  class="shrink-0 rounded-full px-2 pt-1 pb-0.5! text-[10px] font-bold leading-none transition-colors duration-200"
                   :class="isGroupOpen(group.key)
                     ? 'bg-[#C7D2FE] text-[#4338CA] dark:bg-[#312e81] dark:text-[#c7d2fe]'
                     : 'bg-[#f3f4f6] text-[#9ca3af] dark:bg-[#1e2028] dark:text-[#6b7280]'">
@@ -126,43 +109,52 @@
             </template>
           </div>
         </div>
+        </transition>
 
         <!-- User Section -->
         <template #append>
           <div class="p-3 border-t border-[#f3f4f6] dark:border-[#1e2028]">
             <div
               class="flex items-center gap-3 p-2! rounded-lg hover:bg-[#f9fafb] dark:hover:bg-[#1e2028] transition-colors cursor-pointer"
-              :class="rail && !isMobile ? 'justify-center' : ''">
+              :class="isCompact ? 'justify-center' : ''">
               <div
                 class="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1e1b4b]/50 flex items-center justify-center shrink-0">
                 <span class="text-[#4F46E5] dark:text-[#818cf8] font-bold text-xs">{{ userInitial }}</span>
               </div>
-              <div v-if="!rail || isMobile" class="flex-1 min-w-0 overflow-hidden">
-                <p class="text-xs font-semibold text-[#111827] dark:text-[#f3f4f6] truncate">{{ user?.fullName ||
-                  t('layout.guestUser') }}</p>
-                <p class="text-[10px] text-[#9ca3af]">{{ roleLabel }}</p>
-              </div>
-              <button v-if="!rail || isMobile" @click.stop="logout"
-                class="p-1.5 rounded-md hover:bg-[#fef2f2] dark:hover:bg-[#7f1d1d]/20 transition-colors group"
-                :title="t('layout.logout')">
-                <TurnOffIcon class="w-4 h-4 fill-[#9ca3af] group-hover:fill-[#ef4444] transition-colors" />
-              </button>
+              <template v-if="!isCompact">
+                <div class="flex-1 min-w-0 overflow-hidden">
+                  <p class="text-xs font-semibold text-[#111827] dark:text-[#f3f4f6] truncate">{{ user?.fullName ||
+                    t('layout.guestUser') }}</p>
+                  <p class="text-[10px] text-[#9ca3af]">{{ roleLabel }}</p>
+                </div>
+                <button @click.stop="logout"
+                  class="p-1.5 rounded-md hover:bg-[#fef2f2] dark:hover:bg-[#7f1d1d]/20 transition-colors group"
+                  :title="t('layout.logout')">
+                  <TurnOffIcon class="w-4 h-4 fill-[#9ca3af] group-hover:fill-[#ef4444] transition-colors" />
+                </button>
+              </template>
             </div>
           </div>
         </template>
       </v-navigation-drawer>
+
+      <!-- Drawer scrim (dark overlay behind the menu, only when the drawer is temporary) -->
+      <transition name="scrim-fade">
+        <div v-if="!lgAndUp && drawer" class="crm-drawer-scrim" @click="drawer = false" aria-hidden="true" />
+      </transition>
 
       <!-- Top Bar -->
       <v-app-bar height="64" flat
         class="!bg-white/80 dark:!bg-[#13141a]/80 backdrop-blur-xl !border-b !border-[#e5e7eb] dark:!border-[#1e2028] px-3"
         elevation="0">
         <template #prepend>
-          <v-app-bar-nav-icon variant="text" @click="drawer = !drawer" class="!text-[#6b7280] lg:!hidden" />
+          <v-app-bar-nav-icon variant="text" @click="onNavToggle" class="!text-[#6b7280]"
+            :title="lgAndUp && rail ? t('layout.expandMenu') : t('layout.collapseMenu')" />
         </template>
 
         <div class="hidden lg:flex items-center gap-3">
           <div class="w-8 h-8 rounded-lg bg-[#f0fdf4] dark:bg-[#064e3b]/30 flex items-center justify-center">
-            <span class="text-[#059669] text-sm">&#10003;</span>
+            <Welcome class="w-6 h-6 fill-green-500" />
           </div>
           <div>
             <p class="text-sm font-semibold text-[#111827] dark:text-[#f3f4f6] leading-tight">{{
@@ -254,17 +246,19 @@ import Activity from '~/components/icons/Activity.vue'
 import FolderHeart from '~/components/icons/FolderHeart.vue'
 import FileText from '~/components/icons/FileText.vue'
 import ClipboardCheck from '~/components/icons/ClipboardCheck.vue'
+import Welcome from '~/components/icons/Welcome.vue'
 
 const route = useRoute()
 const { user, logout } = useAuth()
 const { apiLoading } = useApi()
-const { smAndDown } = useDisplay()
 const { isDark, toggleTheme, initTheme } = useThemeMode()
 const { t, locale, setLocale } = useI18n()
+const { lgAndUp } = useDisplay()
 
 const tutorial = useTutorial()
 const showTutorial = async () => {
   tutorial.resetTutorial()
+  drawer.value = true
   await nextTick()
   tutorial.startTutorial()
 }
@@ -279,24 +273,31 @@ const switchLanguage = async (code: 'fa' | 'en') => {
   await setLocale(code)
 }
 
-const drawer = ref(true)
+const drawer = ref(false)
 const rail = ref(false)
 const isLoading = ref(true)
-const isMobile = computed(() => smAndDown.value)
+
+const isCompact = computed(() => lgAndUp.value && rail.value)
+
+const onNavToggle = () => {
+  if (lgAndUp.value) {
+    rail.value = !rail.value
+  } else {
+    drawer.value = !drawer.value
+  }
+}
+
+watch(lgAndUp, (isDesktop) => {
+  drawer.value = !!isDesktop
+}, { immediate: true })
 
 const isActive = (path: string) => {
   if (path === '/dashboard') return route.path === '/dashboard'
   return route.path.startsWith(path)
 }
 
-const updateDrawerState = () => {
-  drawer.value = !isMobile.value
-}
-
 onMounted(() => {
   setTimeout(() => { isLoading.value = false }, 1400)
-  updateDrawerState()
-  window.addEventListener('resize', updateDrawerState)
   initTheme()
   tutorial.fetchStatus()
 
@@ -304,18 +305,29 @@ onMounted(() => {
   if (savedLocale && (savedLocale === 'fa' || savedLocale === 'en')) {
     setLocale(savedLocale)
   }
+
+  window.addEventListener('keydown', onDrawerKeydown)
 })
+
+const onDrawerKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && drawer.value && !lgAndUp.value) {
+    drawer.value = false
+  }
+}
 
 watch(() => route.path, (path) => {
   if (path === '/dashboard' && !tutorial.completed.value && !tutorial.loading.value) {
+    drawer.value = true
     nextTick(() => {
       setTimeout(() => tutorial.startTutorial(), 600)
     })
+  } else if (!lgAndUp.value) {
+    drawer.value = false
   }
 }, { immediate: true })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', updateDrawerState)
+  window.removeEventListener('keydown', onDrawerKeydown)
 })
 
 const roleLabel = computed(() => {
@@ -456,6 +468,43 @@ const afterLeave = (el: Element) => {
 </script>
 
 <style scoped>
+.crm-drawer-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1005;
+  background: rgba(15, 17, 23, 0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.scrim-fade-enter-active,
+.scrim-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.scrim-fade-enter-from,
+.scrim-fade-leave-to {
+  opacity: 0;
+}
+
+.scrim-fade-leave-active {
+  pointer-events: none;
+}
+
+.menu-fade-enter-active,
+.menu-fade-leave-active {
+  transition: opacity 0.18s ease;
+}
+
+.menu-fade-enter-from,
+.menu-fade-leave-to {
+  opacity: 0;
+}
+
+.menu-fade-leave-active {
+  pointer-events: none;
+}
+
 .accordion-panel {
   overflow: hidden;
   transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease;

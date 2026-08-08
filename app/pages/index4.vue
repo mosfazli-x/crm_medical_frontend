@@ -693,7 +693,7 @@ onBeforeUnmount(() => {
 
 input,
 textarea {
-  font-family: 'yekan-bakh', sans-serif !important;
+  font-family: 'IRANSansX', sans-serif !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

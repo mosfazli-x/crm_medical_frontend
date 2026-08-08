@@ -270,7 +270,7 @@
             $t('accounting.addAccount') }}
           </h2>
           <button @click="accountDialog = false"
-            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors flex justify-center align-middle items-center">
             <IconsCloseCircle class="!w-4 !h-4" />
           </button>
         </div>
@@ -304,7 +304,7 @@
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black">{{ $t('accounting.newJournalEntry') }}</h2>
           <button @click="journalDialog = false"
-            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors flex justify-center align-middle items-center">
             <IconsCloseCircle class="!w-4 !h-4" />
           </button>
         </div>
@@ -374,7 +374,7 @@
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black">{{ $t('accounting.journalEntryDetails') }}</h2>
           <button @click="viewJournalDialog = false"
-            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors">
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors flex justify-center align-middle items-center">
             <IconsCloseCircle class="!w-4 !h-4" />
           </button>
         </div>

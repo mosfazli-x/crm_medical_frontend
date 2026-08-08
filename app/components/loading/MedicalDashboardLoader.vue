@@ -1,30 +1,26 @@
 <template>
   <Transition name="loader-exit" @after-leave="$emit('finished')">
-    <div
-      v-if="rendered"
-      :dir="isRtl ? 'rtl' : 'ltr'"
+    <div v-if="rendered" :dir="isRtl ? 'rtl' : 'ltr'"
       class="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden dark:bg-slate-950 bg-white"
-      role="status"
-      aria-live="polite"
-      :aria-label="translatedStatuses[currentIndex]"
-    >
+      role="status" aria-live="polite" :aria-label="translatedStatuses[currentIndex]">
       <div ref="threeContainer" class="absolute inset-0 pointer-events-none"></div>
-
-      <div class="absolute inset-0 bg-gradient-to-b dark:from-slate-950/50 dark:via-transparent dark:to-slate-950/90 from-white/40 via-transparent to-white/80"></div>
-      <div class="absolute inset-0 bg-gradient-to-r dark:from-slate-950/30 dark:via-transparent dark:to-slate-950/30 from-white/20 via-transparent to-white/20"></div>
-
       <div
-        ref="cardRef"
+        class="absolute inset-0 bg-gradient-to-b dark:from-slate-950/50 dark:via-transparent dark:to-slate-950/90 from-white/40 via-transparent to-white/80">
+      </div>
+      <div
+        class="absolute inset-0 bg-gradient-to-r dark:from-slate-950/30 dark:via-transparent dark:to-slate-950/30 from-white/20 via-transparent to-white/20">
+      </div>
+      <div ref="cardRef"
         class="relative z-10 flex flex-col w-[min(88vw,400px)] rounded-3xl border dark:border-white/[0.06] border-slate-200/80 dark:bg-slate-900/60 bg-white/80 shadow-2xl dark:shadow-indigo-500/10 shadow-indigo-200/50 overflow-hidden"
-        style="backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);"
-      >
+        style="backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);">
         <div class="flex flex-col items-center gap-8 w-full px-8 py-10">
           <div ref="logoRef" class="flex items-center gap-3">
             <div class="relative flex-shrink-0">
               <img src="../../assets/images/hastihoseinilogoBlack.png" class="h-11">
               <div class="absolute -inset-1 rounded-xl bg-indigo-500/10 blur-md -z-10"></div>
             </div>
-            <span class="text-md font-bold tracking-tight dark:text-slate-100/90 text-slate-800">{{ resolvedClinicName }}</span>
+            <span class="text-md font-bold tracking-tight dark:text-slate-100/90 text-slate-800">{{ resolvedClinicName
+            }}</span>
           </div>
 
           <div class="w-full">
@@ -39,27 +35,20 @@
               </p>
             </Transition>
             <div class="flex gap-1.5 mt-1" :class="isRtl ? 'flex-row-reverse' : ''">
-              <span
-                v-for="i in translatedStatuses.length"
-                :key="i"
-                class="h-1 rounded-full transition-all duration-500"
+              <span v-for="i in translatedStatuses.length" :key="i" class="h-1 rounded-full transition-all duration-500"
                 :class="i - 1 === currentIndex
                   ? 'w-5 bg-indigo-400'
                   : i - 1 < currentIndex
                     ? 'w-1.5 bg-indigo-400/40'
-                    : 'w-1.5 dark:bg-slate-600/50 bg-slate-300/70'"
-              />
+                    : 'w-1.5 dark:bg-slate-600/50 bg-slate-300/70'" />
             </div>
           </div>
         </div>
 
-        <div
-          class="h-[3px] transition-all duration-500 ease-out"
-          :style="{
-            width: progress + '%',
-            background: 'linear-gradient(90deg, #818cf8, #6366f1, #4F46E5)',
-          }"
-        />
+        <div class="h-[3px] transition-all duration-500 ease-out" :style="{
+          width: progress + '%',
+          background: 'linear-gradient(90deg, #818cf8, #6366f1, #4F46E5)',
+        }" />
       </div>
     </div>
   </Transition>
@@ -133,17 +122,17 @@ function applyThemeToScene() {
   if (dnaGroup) {
     dnaGroup.children.forEach((child) => {
       if (child instanceof THREE.Points) {
-        ;(child.material as THREE.Material).opacity = dark ? 0.9 : 0.7
+        ; (child.material as THREE.Material).opacity = dark ? 0.9 : 0.7
       } else if (child instanceof THREE.LineSegments) {
-        ;(child.material as THREE.Material).opacity = dark ? 0.25 : 0.35
+        ; (child.material as THREE.Material).opacity = dark ? 0.25 : 0.35
       }
     })
   }
   if (particleSystem) {
-    ;(particleSystem.material as THREE.Material).opacity = dark ? 0.4 : 0.35
+    ; (particleSystem.material as THREE.Material).opacity = dark ? 0.4 : 0.35
   }
   if (networkLines) {
-    ;(networkLines.material as THREE.Material).opacity = dark ? 0.06 : 0.12
+    ; (networkLines.material as THREE.Material).opacity = dark ? 0.06 : 0.12
   }
 }
 
@@ -423,6 +412,7 @@ onBeforeUnmount(() => {
 .loader-exit-leave-active {
   transition: opacity 0.55s ease, filter 0.55s ease, transform 0.55s ease;
 }
+
 .loader-exit-leave-to {
   opacity: 0;
   filter: blur(10px);
@@ -433,10 +423,12 @@ onBeforeUnmount(() => {
 .status-fade-leave-active {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
+
 .status-fade-enter-from {
   opacity: 0;
   transform: translateY(6px);
 }
+
 .status-fade-leave-to {
   opacity: 0;
   transform: translateY(-6px);
@@ -446,6 +438,7 @@ onBeforeUnmount(() => {
   .loader-exit-leave-active {
     transition: opacity 0.3s ease;
   }
+
   .loader-exit-leave-to {
     filter: none;
     transform: none;

@@ -17,7 +17,7 @@
     <!-- ==================== HEADER ==================== -->
     <header class="masthead">
       <span class="masthead__brand anim-soft" style="animation-delay: 2400ms">
-        <span class="masthead__name">{{ t('aestheticLanding.brand.name') }}</span>
+        <span class="masthead__name font-iran-sans">{{ t('aestheticLanding.brand.name') }}</span>
         <span class="masthead__subtitle">{{ t('aestheticLanding.brand.subtitle') }}</span>
       </span>
       <span class="masthead__actions anim-soft" style="animation-delay: 2500ms">
@@ -29,13 +29,13 @@
       </span>
     </header>
 
-    <figure
+    <!-- <figure
       class="anim-portrait pointer-events-none absolute !start-[48%] bottom-5 z-[1] m-0 h-[62vh] opacity-95 sm:h-[74vh] lg:right-0 lg:h-[88vh] lg:opacity-100 lg:flex w-full">
       <img
 src="../assets/images/dr-hosseini-cutout.png" alt="Dr. Hasti Hosseini, clinic director, in clinical whites"
         class="portrait-mask h-full w-auto object-contain object-bottom"
         style="filter:brightness(0.86) contrast(1.06) saturate(0.92) drop-shadow(0 40px 80px color-mix(in oklab, var(--ink) 70%, transparent))">
-    </figure>
+    </figure> -->
 
     <!-- ==================== CONTENT ==================== -->
     <div class="layout overflow-hidden">
@@ -45,31 +45,35 @@ src="../assets/images/dr-hosseini-cutout.png" alt="Dr. Hasti Hosseini, clinic di
         <h1 class="headline">
           <span class="headline__line"><span class="headline__line-inner anim-line" style="animation-delay: 2550ms">{{
             t('aestheticLanding.headline.line1') }}</span></span>
-          <span class="headline__line"><span
-class="headline__line-inner anim-line"
+          <span class="headline__line">
+            <span class="headline__line-inner anim-line !bg-clip-text !text-transparent !bg-gradient-to-r !from-amber-100 !via-amber-300 !to-amber-100"
               :class="{ 'headline__line-inner--italic headline__line-inner--accent': !isRtl }"
               style="animation-delay: 2700ms">{{ t('aestheticLanding.headline.line2') }}</span></span>
-          <span class="headline__line"><span class="headline__line-inner anim-line" style="animation-delay: 2850ms">{{
-            t('aestheticLanding.headline.line3') }}</span></span>
         </h1>
 
-        <p class="lead__text anim-soft" style="animation-delay: 3100ms">{{ t('aestheticLanding.intro') }}</p>
+        <p class="lead__text anim-soft font-iran-sans" style="animation-delay: 3100ms">{{ t('aestheticLanding.intro') }}
+        </p>
 
         <div class="tags anim-soft" style="animation-delay: 3300ms">
-          <span>{{ t('aestheticLanding.badges.certified') }}</span>
+          <span
+            class="!px-4 !py-2 !rounded-full !border !border-white/10 !bg-white/5 !backdrop-blur-md !text-xs !tracking-widest !uppercase !text-slate-300 font-iran-sans">{{
+              t('aestheticLanding.badges.certified') }}</span>
           <span class="tags__sep" />
-          <span>{{ t('aestheticLanding.badges.privacy') }}</span>
+          <span
+            class="!px-4 !py-2 !rounded-full !border !border-white/10 !bg-white/5 !backdrop-blur-md !text-xs !tracking-widest !uppercase !text-slate-300 font-iran-sans">{{
+              t('aestheticLanding.badges.privacy') }}</span>
           <span class="tags__sep" />
-          <span>{{ t('aestheticLanding.badges.protocols') }}</span>
+          <span
+            class="!px-4 !py-2 !rounded-full !border !border-white/10 !bg-white/5 !backdrop-blur-md !text-xs !tracking-widest !uppercase !text-slate-300 font-iran-sans">{{
+              t('aestheticLanding.badges.protocols') }}</span>
         </div>
       </section>
 
       <aside class="flex justify-center md:justify-end! align-middle items-center">
-        <nav :aria-label="t('aestheticLanding.navLabel')" class="w-full lg:w-8/12">
+        <nav :aria-label="t('aestheticLanding.navLabel')" class="w-full lg:w-7/11">
           <ul class="rail">
             <li v-for="item in railItems" :key="item.key" class="rail__item">
-              <a
-:href="item.href" class="rail__link anim-soft" :style="{ animationDelay: item.delay }"
+              <a :href="item.href" class="rail__link anim-soft" :style="{ animationDelay: item.delay }"
                 @click="onRailClick($event, item.href)">
                 <span class="rail__num">{{ item.num }}</span>
                 <span class="rail__body">
@@ -108,7 +112,7 @@ const railItems = computed(() => [
   { key: 'login', href: '/auth/login', num: t('aestheticLanding.rail.login.num'), title: t('aestheticLanding.rail.login.title'), sub: t('aestheticLanding.rail.login.sub'), delay: '3030ms' },
   { key: 'tutorials', href: '#', num: t('aestheticLanding.rail.tutorials.num'), title: t('aestheticLanding.rail.tutorials.title'), sub: t('aestheticLanding.rail.tutorials.sub'), delay: '3160ms' },
   { key: 'blog', href: '#', num: t('aestheticLanding.rail.blog.num'), title: t('aestheticLanding.rail.blog.title'), sub: t('aestheticLanding.rail.blog.sub'), delay: '3290ms' },
-  { key: 'about', href: '#', num: t('aestheticLanding.rail.about.num'), title: t('aestheticLanding.rail.about.title'), sub: t('aestheticLanding.rail.about.sub'), delay: '3420ms' },
+  { key: 'about', href: '/about', num: t('aestheticLanding.rail.about.num'), title: t('aestheticLanding.rail.about.title'), sub: t('aestheticLanding.rail.about.sub'), delay: '3420ms' },
 ])
 
 function onRailClick(event: MouseEvent, href: string) {
@@ -193,6 +197,10 @@ a {
    more of the footage shows through, night keeps the full cinematic dark. */
 .stage--morning .backdrop__veil {
   opacity: 0.72;
+}
+
+.stage--noon .backdrop__veil {
+  opacity: 0.76;
 }
 
 .stage--midday .backdrop__veil {
@@ -283,13 +291,13 @@ a {
 .masthead__name {
   font-family: var(--font-display);
   font-size: 1.125rem;
-  font-weight: 300;
+  font-weight: 500;
   letter-spacing: 0.32em;
   color: var(--lightcyan);
 }
 
 .masthead__subtitle {
-  font-size: 0.55rem;
+  font-size: 0.75rem;
   letter-spacing: 0.42em;
   text-transform: uppercase;
   color: color-mix(in oklab, var(--champagne) 60%, transparent);
@@ -365,7 +373,7 @@ a {
 /* ==================== LEAD ==================== */
 
 .lead {
-  max-width: 36rem;
+  max-width: 50rem;
 }
 
 .eyebrow {
@@ -738,7 +746,7 @@ a {
 }
 
 .landing-shell[dir="rtl"] .stage .headline {
-  line-height: 1.2;
+  line-height: 1.3;
   letter-spacing: 0;
 }
 

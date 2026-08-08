@@ -33,7 +33,7 @@
         />
         <div class="flex-1 min-w-[8rem]" />
         <span class="text-sm font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap">
-          {{ t('patients.resultsCount', { count: filteredPatients.length }) }}
+          {{ t('patients.resultsCount', { count: total }) }}
         </span>
         <button
           v-if="hasActiveFilters"
@@ -98,9 +98,24 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-if="loading" v-for="i in 5" :key="`skeleton-${i}`">
-              <td colspan="7" class="p-4!">
-                <v-skeleton-loader type="list-item" class="bg-transparent!" />
+            <template v-if="loading && !patients.length">
+              <tr v-for="i in 5" :key="`skeleton-${i}`">
+                <td colspan="7" class="p-4!">
+                  <v-skeleton-loader type="list-item" class="bg-transparent!" />
+                </td>
+              </tr>
+            </template>
+
+            <tr v-else-if="!patients.length && hasActiveFilters">
+              <td colspan="7">
+                <UiEmptyState :title="$t('patients.noFilterResults')">
+                  <template #icon>
+                    <v-icon icon="mdi-filter-off-outline" size="32" color="slate-400" />
+                  </template>
+                  <template #action>
+                    <button class="crm-btn crm-btn-ghost" @click="clearFilters">{{ $t('patients.clearFilters') }}</button>
+                  </template>
+                </UiEmptyState>
               </td>
             </tr>
 
@@ -114,22 +129,9 @@
               </td>
             </tr>
 
-            <tr v-else-if="!filteredPatients.length">
-              <td colspan="7">
-                <UiEmptyState :title="$t('patients.noFilterResults')">
-                  <template #icon>
-                    <v-icon icon="mdi-filter-off-outline" size="32" color="slate-400" />
-                  </template>
-                  <template #action>
-                    <button class="crm-btn crm-btn-ghost" @click="clearFilters">{{ $t('patients.clearFilters') }}</button>
-                  </template>
-                </UiEmptyState>
-              </td>
-            </tr>
-
             <tr
+              v-for="patient in patients"
               v-else
-              v-for="patient in filteredPatients"
               :key="patient.id"
               class="cursor-pointer group"
               @click="openPatientProfile(patient)"
@@ -203,6 +205,17 @@
           </tbody>
         </table>
       </div>
+
+      <div v-if="patients.length" class="px-3 pb-4 flex flex-col items-center gap-2">
+        <div ref="sentinelRef" class="h-px w-full" aria-hidden="true" />
+        <div v-if="loadingMore" class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+          <v-progress-circular indeterminate size="18" width="2" />
+          {{ $t('patients.loadingMore') }}
+        </div>
+        <p v-else-if="!hasMore" class="text-sm text-slate-400 dark:text-slate-500">
+          {{ $t('patients.endOfList') }}
+        </p>
+      </div>
     </UiContentCard>
 
     <!-- Profile Dialog -->
@@ -265,32 +278,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-const { t } = useI18n()
+import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import PatientFormDialog from '~/components/PatientFormDialog.vue'
 import TrashBin from '~/components/icons/TrashBin.vue'
 import { usePatientFormDialog } from '~/composables/usePatientFormDialog'
 import { useEventBus } from '~/composables/useEventBus'
+import type { PatientListItem, PatientProfile } from '~/types/patient'
+
+const { t } = useI18n()
 
 const { openEdit } = usePatientFormDialog()
 const { apiFetch } = useApi()
+const { listPatients } = usePatients()
 const { on, off, emit } = useEventBus()
 const { $toast } = useNuxtApp()
 const { formatJalaliDate, formatGregorianDate } = useFormatting()
 
-const patients = ref<any[]>([])
+const patients = ref<PatientListItem[]>([])
 const loading = ref(true)
 const profileDialog = ref(false)
-const selectedProfile = ref<any>(null)
+const selectedProfile = ref<PatientListItem | null>(null)
 const smsDialog = ref(false)
-const selectedSmsPatient = ref<any>(null)
+const selectedSmsPatient = ref<PatientListItem | null>(null)
 const smsText = ref('')
 
 // ─── Search / Filter / Sort ───
+const PAGE_LIMIT = 20
+
 const searchQuery = ref('')
 const maritalFilter = ref('all')
 const sortKey = ref('createdAt')
 const sortDir = ref<'asc' | 'desc'>('desc')
+const page = ref(1)
+const total = ref(0)
+const loadingMore = ref(false)
 
 const maritalFilterOptions = computed(() => [
   { title: t('patients.filterAllMaritalStatus'), value: 'all' },
@@ -323,39 +344,91 @@ const sortIcon = (key: string) => {
   return sortDir.value === 'asc' ? 'mdi-arrow-up' : 'mdi-arrow-down'
 }
 
-const sortValue = (p: any, key: string) => {
-  switch (key) {
-    case 'fullName': return `${p.firstName || ''} ${p.lastName || ''}`
-    case 'maritalStatus': return getMaritalLabel(p.maritalStatus) || ''
-    default: return p[key] || ''
+const SORT_KEY_TO_PARAM: Record<string, string> = {
+  fullName: 'full_name',
+  nationalId: 'national_id',
+  phone: 'phone',
+  birthDate: 'birth_date',
+  maritalStatus: 'marital_status',
+  createdAt: 'created_at',
+}
+
+const hasMore = computed(() => patients.value.length < total.value)
+
+const sentinelRef = ref<HTMLElement | null>(null)
+let observer: IntersectionObserver | null = null
+let requestSeq = 0
+let searchTimer: ReturnType<typeof setTimeout> | null = null
+
+const disconnectObserver = () => {
+  observer?.disconnect()
+  observer = null
+}
+
+const observeSentinel = () => {
+  if (!sentinelRef.value) return
+  disconnectObserver()
+  observer = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0]
+      if (
+        entry?.isIntersecting &&
+        hasMore.value &&
+        !loading.value &&
+        !loadingMore.value
+      ) {
+        page.value += 1
+        loadPage(page.value)
+      }
+    },
+    { rootMargin: '200px 0px' }
+  )
+  observer.observe(sentinelRef.value)
+}
+
+const loadPage = async (pageNum: number) => {
+  const seq = ++requestSeq
+  if (pageNum === 1) loading.value = true
+  else loadingMore.value = true
+  try {
+    const response = await listPatients({
+      page: pageNum,
+      limit: PAGE_LIMIT,
+      q: searchQuery.value.trim(),
+      maritalStatus: maritalFilter.value,
+      sort: `${SORT_KEY_TO_PARAM[sortKey.value]}_${sortDir.value}`,
+    })
+    if (seq !== requestSeq) return
+    if (!response.success) {
+      $toast.error(t('patients.fetchError'))
+      return
+    }
+    total.value = response.pagination?.total ?? response.data.length
+    if (pageNum === 1) {
+      patients.value = response.data
+    } else {
+      const existing = new Set(patients.value.map((p) => p.id))
+      patients.value = [
+        ...patients.value,
+        ...response.data.filter((p) => !existing.has(p.id)),
+      ]
+    }
+    await nextTick()
+    observeSentinel()
+  } catch {
+    if (seq === requestSeq) $toast.error(t('patients.serverError'))
+  } finally {
+    if (seq === requestSeq) {
+      loading.value = false
+      loadingMore.value = false
+    }
   }
 }
 
-const filteredPatients = computed(() => {
-  let result = patients.value
-  const q = searchQuery.value.trim().toLowerCase()
-  if (q) {
-    result = result.filter((p) => {
-      const fullName = `${p.firstName || ''} ${p.lastName || ''}`
-      const reversed = `${p.lastName || ''} ${p.firstName || ''}`
-      return (
-        fullName.toLowerCase().includes(q) ||
-        reversed.toLowerCase().includes(q) ||
-        (p.nationalId || '').toLowerCase().includes(q) ||
-        (p.phone || '').toLowerCase().includes(q)
-      )
-    })
-  }
-  if (maritalFilter.value !== 'all') {
-    result = result.filter((p) => p.maritalStatus === maritalFilter.value)
-  }
-  const dir = sortDir.value === 'asc' ? 1 : -1
-  return [...result].sort((a, b) => {
-    const va = sortValue(a, sortKey.value)
-    const vb = sortValue(b, sortKey.value)
-    return String(va).localeCompare(String(vb), 'fa', { numeric: true }) * dir
-  })
-})
+const fetchPatients = () => {
+  page.value = 1
+  loadPage(1)
+}
 
 const maritalLabelMap = computed<Record<string, string>>(() => ({
   'متاهل': t('patients.married'),
@@ -364,16 +437,16 @@ const maritalLabelMap = computed<Record<string, string>>(() => ({
   'بیوه': t('patients.widowed'),
 }))
 
-const getMaritalLabel = (status: string) => status ? (maritalLabelMap.value[status] || status) : ''
+const getMaritalLabel = (status: string | null) => status ? (maritalLabelMap.value[status] || status) : ''
 
-const maritalBadgeClass = (status: string) => {
+const maritalBadgeClass = (status: string | null) => {
   const badgeMap: Record<string, string> = {
     'متاهل': 'crm-badge crm-badge-emerald',
     'مجرد': 'crm-badge crm-badge-blue',
     'مطلقه': 'crm-badge crm-badge-amber',
     'بیوه': 'crm-badge crm-badge-neutral',
   }
-  return badgeMap[status] || 'crm-badge crm-badge-neutral'
+  return (status && badgeMap[status]) || 'crm-badge crm-badge-neutral'
 }
 
 const profileFields = computed(() => {
@@ -387,25 +460,12 @@ const profileFields = computed(() => {
   ]
 })
 
-const fetchPatients = async () => {
-  loading.value = true
-  try {
-    const response = await apiFetch('/api/patients', { baseURL: useRuntimeConfig().public.apiBase })
-    if (response.success) patients.value = response.data
-    else $toast.error(t('patients.fetchError'))
-  } catch {
-    $toast.error(t('patients.serverError'))
-  } finally {
-    loading.value = false
-  }
-}
-
-const openPatientProfile = (patient: any) => {
+const openPatientProfile = (patient: PatientListItem) => {
   selectedProfile.value = patient
   profileDialog.value = true
 }
 
-const openFullRecord = async (patient: any) => {
+const openFullRecord = async (patient: PatientListItem) => {
   try {
     const { token } = useAuth()
     const apiBase = useRuntimeConfig().public.apiBase || ''
@@ -426,9 +486,9 @@ const openFullRecord = async (patient: any) => {
   }
 }
 
-const openPatientForEdit = async (patient: any) => {
+const openPatientForEdit = async (patient: PatientListItem) => {
   try {
-    const result = await apiFetch(`/api/patients/${patient.id}/profile`)
+    const result = await apiFetch<{ success: boolean; data: PatientProfile }>(`/api/patients/${patient.id}/profile`)
     if (result.success && result.data) openEdit(patient.id, result.data)
     else $toast.error(t('patients.fetchForEditError'))
   } catch {
@@ -436,21 +496,22 @@ const openPatientForEdit = async (patient: any) => {
   }
 }
 
-const openSmsModal = (patient: any) => {
+const openSmsModal = (patient: PatientListItem) => {
   selectedSmsPatient.value = patient
   smsText.value = ''
   smsDialog.value = true
 }
 
 const sendSms = async () => {
-  if (!smsText.value.trim()) {
+  const patient = selectedSmsPatient.value
+  if (!patient || !smsText.value.trim()) {
     $toast.error(t('patients.smsEmptyError'))
     return
   }
   try {
     await apiFetch('/api/patients/send-sms', {
       method: 'POST',
-      body: { phone: selectedSmsPatient.value.phone, text: smsText.value },
+      body: { phone: patient.phone, text: smsText.value },
     })
     $toast.success(t('patients.smsSentSuccess'))
     smsDialog.value = false
@@ -459,10 +520,10 @@ const sendSms = async () => {
   }
 }
 
-const confirmDelete = async (patient: any) => {
+const confirmDelete = async (patient: PatientListItem) => {
   if (!confirm(t('patients.deleteConfirm', { name: `${patient.firstName} ${patient.lastName}` }))) return
   try {
-    const response = await apiFetch(`/api/patients/${patient.id}`, { method: 'DELETE' })
+    const response = await apiFetch<{ success: boolean; error?: string }>(`/api/patients/${patient.id}`, { method: 'DELETE' })
     if (response.success) {
       $toast.success(t('patients.deleteSuccess'))
       emit('patient:changed')
@@ -479,7 +540,18 @@ onMounted(() => {
   on('patient:changed', fetchPatients)
 })
 
-onBeforeUnmount(() => off('patient:changed'))
+watch(searchQuery, () => {
+  if (searchTimer) clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => fetchPatients(), 400)
+})
+
+watch([maritalFilter, sortKey, sortDir], () => fetchPatients())
+
+onBeforeUnmount(() => {
+  off('patient:changed')
+  disconnectObserver()
+  if (searchTimer) clearTimeout(searchTimer)
+})
 
 useSeoMeta({ title: () => t('patients.titleSeo'), ogTitle: () => t('patients.ogTitle') })
 </script>

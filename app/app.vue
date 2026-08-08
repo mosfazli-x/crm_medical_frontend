@@ -1,7 +1,7 @@
 <template>
   <NuxtLayout>
     <Toaster :toastOptions="{
-      style: { fontFamily: 'yekan-bakh', direction: 'rtl', gap: '12px' },
+      style: { fontFamily: 'IRANSansX', direction: 'rtl', gap: '12px' },
       class: 'toast',
       descriptionClass: 'my-toast-description'
     }" richColors position="top-right" :close-button=true closeButtonPosition="top-left" />

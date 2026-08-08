@@ -2,6 +2,16 @@
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 import { useWindowScroll } from '@vueuse/core';
 
+const props = withDefaults(defineProps<{
+  links?: { label: string; href: string }[]
+  ctaHref?: string
+  logoHref?: string
+}>(), {
+  links: undefined,
+  ctaHref: '#appointment',
+  logoHref: '#hero'
+})
+
 const { y } = useWindowScroll()
 const isScrolled = computed(() => y.value > 24)
 const mobileOpen = ref(false)
@@ -9,7 +19,7 @@ const activeSection = ref('#hero')
 const scrollProgress = ref(0)
 const { t } = useI18n()
 
-const links = computed(() => [
+const defaultLinks = computed(() => [
   { label: t('header.home'), href: '#hero' },
   { label: t('header.about'), href: '#about' },
   { label: t('header.services'), href: '#services' },
@@ -17,6 +27,10 @@ const links = computed(() => [
   { label: t('header.blog'), href: '#blog' },
   { label: t('header.contact'), href: '#appointment' }
 ])
+
+const links = computed(() =>
+  props.links && props.links.length ? props.links : defaultLinks.value
+)
 
 function updateScrollProgress() {
   const docHeight = document.documentElement.scrollHeight - window.innerHeight
@@ -69,7 +83,7 @@ onBeforeUnmount(() => {
         :class="isScrolled ? 'glass-surface !shadow-soft' : '!bg-transparent'"
       >
         <!-- Logo -->
-        <a href="#hero" class="!flex !items-center !gap-2 sm:!gap-2.5 !shrink-0 !group">
+        <a :href="logoHref" class="!flex !items-center !gap-2 sm:!gap-2.5 !shrink-0 !group">
           <img src="../assets/images/logo.jpg" class="!flex !h-9 !w-9 sm:!h-10 sm:!w-10 !items-center !justify-center !rounded-xl sm:!rounded-2xl !bg-ink !transition-all !duration-300 group-hover:!shadow-[0_0_20px_rgba(62,232,168,0.3)] group-hover:!scale-105">
           <span class="!font-display !text-sm sm:!text-base md:!text-lg !font-bold !tracking-tight !truncate">{{ t('header.clinicName') }}</span>
         </a>
@@ -96,7 +110,7 @@ onBeforeUnmount(() => {
         </nav>
 
         <div class="!flex !items-center !gap-2 sm:!gap-3">
-          <MagneticButton as="a" href="#appointment" variant="solid" class="!hidden sm:!inline-flex !px-5 !py-2.5 md:!px-7 md:!py-3.5">
+          <MagneticButton as="a" :href="ctaHref" variant="solid" class="!hidden sm:!inline-flex !px-5 !py-2.5 md:!px-7 md:!py-3.5">
             {{ t('header.bookAppointment') }}
           </MagneticButton>
 
@@ -138,7 +152,7 @@ onBeforeUnmount(() => {
           >
             {{ link.label }}
           </a>
-          <MagneticButton as="a" href="#appointment" variant="solid" class="!mt-1 sm:!mt-2 !justify-center !px-5 !py-3 md:!px-7 md:!py-3.5" @click="mobileOpen = false">
+          <MagneticButton as="a" :href="ctaHref" variant="solid" class="!mt-1 sm:!mt-2 !justify-center !px-5 !py-3 md:!px-7 md:!py-3.5" @click="mobileOpen = false">
             {{ t('header.bookAppointment') }}
           </MagneticButton>
         </nav>

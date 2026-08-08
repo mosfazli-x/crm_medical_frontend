@@ -8,7 +8,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: '',
+      // apiBase: 'https://crmapi.ladiesneeds.com',
+      apiBase: ''
     },
   },
   nitro: {

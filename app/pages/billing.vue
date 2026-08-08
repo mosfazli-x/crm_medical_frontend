@@ -287,12 +287,12 @@
 
     <v-dialog v-model="recordDialog" max-width="600" content-class="">
       <div
-        class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden !border !border-slate-200/50 dark:!border-slate-800">
+        class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-auto !border !border-slate-200/50 dark:!border-slate-800">
         <div
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black !text-slate-900 dark:!text-white">{{ $t('billing.addRecordTitle') }}</h2>
           <button @click="recordDialog = false"
-            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors aspect-square justify-center align-middle flex hover:bg-slate-100 dark:hover:bg-slate-700!">
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors flex justify-center align-middle items-center aspect-square justify-center align-middle flex hover:bg-slate-100 dark:hover:bg-slate-700!">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
         </div>
@@ -369,12 +369,12 @@
 
     <v-dialog v-model="codeDialog" max-width="550" content-class="">
       <div
-        class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden !border !border-slate-200/50 dark:!border-slate-800">
+        class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-auto !border !border-slate-200/50 dark:!border-slate-800">
         <div
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black !text-slate-900 dark:!text-white">{{ $t('billing.addCodeTitle') }}</h2>
           <button @click="codeDialog = false"
-            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors aspect-square justify-center align-middle flex hover:bg-slate-100 dark:hover:bg-slate-700!">
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors flex justify-center align-middle items-center aspect-square justify-center align-middle flex hover:bg-slate-100 dark:hover:bg-slate-700!">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
         </div>
@@ -411,12 +411,12 @@
 
     <v-dialog v-model="balanceDialog" max-width="450" content-class="">
       <div
-        class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-hidden !border !border-slate-200/50 dark:!border-slate-800">
+        class="!bg-white dark:!bg-[#0f1115] !rounded-3xl !shadow-2xl !overflow-auto !border !border-slate-200/50 dark:!border-slate-800">
         <div
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
           <h2 class="!text-xl !font-black !text-slate-900 dark:!text-white">{{ $t('billing.checkPatientAccount') }}</h2>
           <button @click="balanceDialog = false"
-            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors aspect-square justify-center align-middle flex hover:bg-slate-100 dark:hover:bg-slate-700!">
+            class="!p-2 !text-slate-400 hover:!text-slate-600 dark:hover:!text-slate-200 !bg-slate-50 dark:!bg-slate-800 !rounded-full !transition-colors flex justify-center align-middle items-center aspect-square justify-center align-middle flex hover:bg-slate-100 dark:hover:bg-slate-700!">
             <Icon name="lucide:x" class="!w-4 !h-4" />
           </button>
         </div>

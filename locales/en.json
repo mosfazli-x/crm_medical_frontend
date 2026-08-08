@@ -25,6 +25,7 @@
     "status": "Status",
     "notes": "Notes",
     "toman": "Toman",
+    "thousandToman": "thousand Toman",
     "active": "Active",
     "inactive": "Inactive",
     "normal": "Normal",
@@ -252,6 +253,8 @@
     "clearFilters": "Clear filters",
     "sortAsc": "Sort ascending",
     "sortDesc": "Sort descending",
+    "loadingMore": "Loading more...",
+    "endOfList": "You've reached the end of the list",
     "titleSeo": "Patient List | Clinic System",
     "ogTitle": "Patient Management"
   },
@@ -1893,7 +1896,9 @@
     "systemUser": "System User",
     "logout": "Logout",
     "langFa": "Persian",
-    "langEn": "English"
+    "langEn": "English",
+    "expandMenu": "Expand menu",
+    "collapseMenu": "Collapse menu"
   },
   "medicalHistory": {
     "underlyingDiseases": "Underlying Diseases",
@@ -3226,6 +3231,203 @@
       "hint": "Tap to start the music"
     }
   },
+  "aboutPage": {
+    "seo": {
+      "title": "About Us — Hasti Hosseini Clinic",
+      "desc": "A small practice, deliberately so. One patient at a time, planning in years rather than appointments, and privacy treated as part of the medicine."
+    },
+    "masthead": {
+      "brand": "HASTI HOSSEINI",
+      "back": "Back to entrance"
+    },
+    "hero": {
+      "eyebrow": "About the practice",
+      "title": {
+        "line1": "A small practice,",
+        "line2": "deliberately so."
+      },
+      "intro": "Hasti Hosseini Clinic was founded on a simple refusal: no conveyor belt, no trends, no faces that resemble one another. We see one patient at a time, plan in years rather than appointments, and treat privacy as part of the medicine.",
+      "figureAlt": "Abstract glass sculpture representing the clinic's aesthetic philosophy",
+      "stats": {
+        "yearsValue": "11",
+        "yearsLabel": "Years in practice",
+        "proceduresValue": "4,200+",
+        "proceduresLabel": "Procedures performed",
+        "patientsValue": "1",
+        "patientsLabel": "Patient at a time"
+      }
+    },
+    "team": {
+      "num": "01",
+      "kicker": "The team",
+      "title": "Hands you can name.",
+      "members": {
+        "1": {
+          "name": "Dr. Hasti Hosseini",
+          "role": "Clinic Director · Aesthetic Physician",
+          "alt": "Dr. Hasti Hosseini, Clinic Director · Aesthetic Physician",
+          "bio": "Founder of the practice. Board certified, with a decade devoted to facial harmony and regenerative protocols for women."
+        },
+        "2": {
+          "name": "Dr. Leyla Amini",
+          "role": "Associate Aesthetic Physician",
+          "alt": "Dr. Leyla Amini, Associate Aesthetic Physician",
+          "bio": "Specialises in injectable artistry and skin-quality medicine, with a conservative, structure-first philosophy."
+        },
+        "3": {
+          "name": "Nasrin Farhadi, RN",
+          "role": "Lead Clinical Nurse",
+          "alt": "Nasrin Farhadi, RN, Lead Clinical Nurse",
+          "bio": "Oversees treatment safety, laser protocols and the aftercare programme that follows every procedure."
+        },
+        "4": {
+          "name": "Sara Mehrabi",
+          "role": "Patient Care Director",
+          "alt": "Sara Mehrabi, Patient Care Director",
+          "bio": "Guides each patient from first enquiry to final review — scheduling, discretion and continuity of care."
+        }
+      }
+    },
+    "services": {
+      "num": "02",
+      "kicker": "Services",
+      "title": "What we practise.",
+      "items": {
+        "1": { "num": "01", "title": "Facial Harmonisation", "desc": "Injectables, contour and profile balancing" },
+        "2": { "num": "02", "title": "Regenerative Skin Medicine", "desc": "PRP, polynucleotides, biostimulators" },
+        "3": { "num": "03", "title": "Laser & Light", "desc": "Pigment, vascular and resurfacing programmes" },
+        "4": { "num": "04", "title": "Women's Intimate Health", "desc": "Non-surgical restorative protocols" },
+        "5": { "num": "05", "title": "Medical Skincare", "desc": "Prescription-grade, individually formulated" },
+        "6": { "num": "06", "title": "Longevity Consultations", "desc": "Preventive, whole-face planning over years" }
+      }
+    },
+    "visit": {
+      "num": "03",
+      "kicker": "Visit",
+      "title": "Where to find us.",
+      "contact": {
+        "heading": "Contact",
+        "phoneLabel": "Telephone",
+        "phone": "+98 21 8800 4120",
+        "emailLabel": "Email",
+        "email": "care{'@'}hastihosseini.clinic",
+        "addressLabel": "Address",
+        "address1": "No. 24, Farmanieh Boulevard",
+        "address2": "Tehran 1938713, Iran"
+      },
+      "hours": {
+        "heading": "Hours",
+        "satWedLabel": "Saturday — Wednesday",
+        "satWedValue": "09:00 — 20:00",
+        "thuLabel": "Thursday",
+        "thuValue": "09:00 — 14:00",
+        "friLabel": "Friday",
+        "friValue": "By private appointment",
+        "note": "Consultations are scheduled with buffer time between patients, so the waiting room is never shared."
+      },
+      "social": {
+        "heading": "Social",
+        "instagram": { "name": "Instagram", "handle": "{'@'}hastihosseiniclinic" },
+        "linkedin": { "name": "LinkedIn", "handle": "Hasti Hosseini Clinic" },
+        "telegram": { "name": "Telegram", "handle": "{'@'}hhclinic" },
+        "whatsapp": { "name": "WhatsApp", "handle": "+98 21 8800 4120" }
+      }
+    },
+    "footer": {
+      "note": "Consultations by appointment",
+      "return": "Return to entrance"
+    }
+  },
+  "about": {
+    "seo": {
+      "title": "About Us | Dr. Hosseini Clinic",
+      "desc": "Meet Dr. Hosseini Clinic — over a decade of specialized women's healthcare, absolute privacy and tailored protocols."
+    },
+    "hero": {
+      "badge": "About Us",
+      "title1": "A clinic",
+      "title2": "built for you",
+      "desc": "From the first visit to full recovery; a team of specialists, advanced equipment and a human approach by your side.",
+      "ctaBook": "Book an Appointment",
+      "ctaStory": "Our Story",
+      "scroll": "Scroll",
+      "chips": {
+        "certified": "Board-certified",
+        "privacy": "Absolute privacy",
+        "protocols": "Tailored protocols"
+      }
+    },
+    "story": {
+      "badge": "Our Story",
+      "title1": "A decade of",
+      "title2": "specialized care",
+      "desc1": "Dr. Hosseini Clinic was founded on the belief that medical care should be precise, personal and calm; starting with Dr. Hasti Hosseini, an OB/GYN specialist in women's aesthetic medicine.",
+      "desc2": "Today, with a team of more than 15 specialist doctors and advanced equipment, we serve thousands of patients every year through absolute privacy and tailored protocols.",
+      "feature1": "Online appointment booking",
+      "feature2": "Specialist doctors",
+      "feature3": "Absolute privacy",
+      "feature4": "Tailored protocols",
+      "ctaServices": "Our Services",
+      "ctaAppointment": "Book Appointment",
+      "imgAlt": "Inside Dr. Hosseini Clinic",
+      "expYears": "+10",
+      "expLabel": "Years of experience"
+    },
+    "doctor": {
+      "badge": "Founder & Medical Director",
+      "name": "Dr. Hasti Hosseini",
+      "specialty": "OB/GYN & Women's Aesthetic Medicine",
+      "bio1": "With over a decade of clinical experience, Dr. Hasti Hosseini founded her clinic to create a safe, private and fully specialized space for women.",
+      "bio2": "Her belief is simple: every patient deserves to be examined and treated calmly, with clinical precision and no rush — one-on-one, confidential and with the latest protocols in the world.",
+      "credential1": "Board-certified specialist",
+      "credential2": "Over 10 years of clinical experience",
+      "credential3": "Member of the national OB/GYN society",
+      "credential4": "Patient-first, confidential approach",
+      "cta": "Book with Dr. Hosseini",
+      "imgAlt": "Dr. Hasti Hosseini"
+    },
+    "values": {
+      "badge": "Our Values",
+      "title1": "Why you",
+      "title2": "trust us",
+      "desc": "The principles we live by every day at our clinic.",
+      "01": {
+        "title": "Absolute Privacy",
+        "desc": "Your information and privacy are protected to the highest possible standard."
+      },
+      "02": {
+        "title": "Clinical Precision",
+        "desc": "Diagnosis and treatment based on the latest scientific protocols and standards."
+      },
+      "03": {
+        "title": "One-on-One Care",
+        "desc": "Only you at every visit; no rush, no crowds, with full attention."
+      },
+      "04": {
+        "title": "Tailored Protocols",
+        "desc": "A treatment plan designed around the specific needs of each patient."
+      }
+    },
+    "stats": {
+      "badge": "Our Achievements",
+      "title1": "Our impact",
+      "title2": "in numbers",
+      "doctors": "Specialist doctors",
+      "experience": "Experience",
+      "experienceSuffix": " yrs",
+      "satisfaction": "Satisfaction",
+      "satisfactionSuffix": "%",
+      "patients": "Happy patients"
+    },
+    "cta": {
+      "title1": "Your care journey",
+      "title2": "starts with one visit",
+      "desc": "Book your appointment online in under 60 seconds, without a single phone call.",
+      "book": "Book Online",
+      "call": "Call the Clinic",
+      "phoneValue": "09379412491"
+    }
+  },
   "schedule": {
     "title": "Schedule",
     "titleSeo": "Schedule & Tasks",
@@ -3255,6 +3457,8 @@
     "dueUpcoming": "Upcoming",
     "myTasks": "Assigned to me",
     "allTasks": "All tasks",
+    "filters": "Filters",
+    "clearFilters": "Clear filters",
     "noDueDate": "No due date",
     "noTasks": "No tasks found",
     "noTasksDescription": "No tasks match the current filters. Adjust the filters or create a new task.",

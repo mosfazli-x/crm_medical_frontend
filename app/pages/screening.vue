@@ -475,6 +475,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import Plus from '~/components/icons/Plus.vue'
 
 const { t } = useI18n()
 const { apiFetch } = useApi()

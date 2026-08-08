@@ -1772,7 +1772,7 @@
 
 /* ── Vuetify Overrides ── */
 .v-application {
-  font-family: "yekan-bakh", sans-serif !important;
+  font-family: "IRANSansX", sans-serif !important;
 }
 
 .v-btn {
@@ -1815,12 +1815,6 @@
 
 .v-app-bar-nav-icon {
   display: flex !important;
-}
-
-@media (min-width: 1024px) {
-  .v-app-bar-nav-icon {
-    display: none !important;
-  }
 }
 
 .v-list-item {

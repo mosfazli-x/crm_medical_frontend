@@ -4,16 +4,12 @@
       <template #actions>
         <div class="flex items-center gap-3 flex-wrap">
           <div class="inline-flex items-center rounded-lg bg-slate-100 dark:bg-slate-800 p-1 gap-1">
-            <button
-              class="view-toggle-btn"
-              :class="viewMode === 'board' ? 'view-toggle-active' : ''"
+            <button class="view-toggle-btn" :class="viewMode === 'board' ? 'view-toggle-active' : ''"
               @click="viewMode = 'board'">
               <v-icon size="15">mdi-view-column-outline</v-icon>
               <span>{{ t('schedule.board') }}</span>
             </button>
-            <button
-              class="view-toggle-btn"
-              :class="viewMode === 'list' ? 'view-toggle-active' : ''"
+            <button class="view-toggle-btn" :class="viewMode === 'list' ? 'view-toggle-active' : ''"
               @click="viewMode = 'list'">
               <v-icon size="15">mdi-format-list-bulleted</v-icon>
               <span>{{ t('schedule.listView') }}</span>
@@ -27,7 +23,7 @@
       </template>
     </UiPageHeader>
 
-    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
       <UiStatCard :label="$t('schedule.totalTasks')" :value="stats.total">
         <template #icon><v-icon size="24" color="#4F46E5">mdi-clipboard-text-outline</v-icon></template>
       </UiStatCard>
@@ -49,26 +45,43 @@
       <template #header>
         <h3 class="crm-card-title">{{ $t('schedule.taskDetails') }}</h3>
       </template>
-      <template #headerAction>
-        <div class="flex flex-wrap items-center gap-3">
-          <v-text-field v-model="filters.q" variant="outlined" density="compact" hide-details
-            :label="$t('schedule.searchPlaceholder')" clearable class="max-w-[220px]"
-            prepend-inner-icon="mdi-magnify" />
-          <v-select v-model="filters.status" :items="statusOptions" item-title="title" item-value="value"
-            variant="outlined" density="compact" hide-details clearable :label="$t('schedule.status')"
-            class="max-w-[150px]" />
-          <v-select v-model="filters.priority" :items="priorityOptions" item-title="title" item-value="value"
-            variant="outlined" density="compact" hide-details clearable :label="$t('schedule.priority')"
-            class="max-w-[140px]" />
-          <v-select v-if="isAdmin" v-model="filters.assigneeId" :items="assigneeFilterOptions" item-title="label"
-            item-value="value" variant="outlined" density="compact" hide-details clearable
-            :label="$t('schedule.assignee')" class="max-w-[190px]" />
-          <v-select v-model="filters.due" :items="dueOptions" item-title="title" item-value="value" variant="outlined"
-            density="compact" hide-details clearable :label="$t('schedule.dueDate')" class="max-w-[140px]" />
-          <v-switch v-if="isAdmin" v-model="assignedToMe" hide-details :label="$t('schedule.myTasks')" color="#4F46E5"
-            density="compact" class="mt-2" />
+
+      <div class="crm-filter-bar">
+        <div class="crm-filter-bar-head">
+          <div class="flex items-center gap-2">
+            <v-icon size="16" class="!text-slate-400">mdi-filter-variant</v-icon>
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">{{ $t('schedule.filters') }}</span>
+            <span v-if="filtersActive" class="crm-badge crm-badge-blue">{{ activeFilterCount }}</span>
+          </div>
+          <div class="w-full md:w-auto flex flex-wrap items-center gap-x-4 gap-y-2 justify-center align-middle">
+            <v-switch v-if="isAdmin" v-model="assignedToMe" hide-details :label="$t('schedule.myTasks')"
+              color="#4F46E5" density="compact" inset />
+            <v-btn v-if="filtersActive" variant="text" size="small" color="#EF4444" class="!font-semibold"
+              @click="resetFilters">
+              <v-icon start size="15">mdi-filter-remove-outline</v-icon>
+              {{ $t('schedule.clearFilters') }}
+            </v-btn>
+          </div>
         </div>
-      </template>
+
+        <div class="crm-filter-grid">
+          <div class="crm-filter-search">
+            <v-text-field v-model="filters.q" variant="outlined" density="comfortable" hide-details="auto" clearable
+              rounded="lg" :label="$t('schedule.searchPlaceholder')" prepend-inner-icon="mdi-magnify" />
+          </div>
+          <v-select v-model="filters.status" :items="statusOptions" item-title="title" item-value="value"
+            variant="outlined" density="comfortable" hide-details="auto" clearable rounded="lg"
+            :label="$t('schedule.status')" />
+          <v-select v-model="filters.priority" :items="priorityOptions" item-title="title" item-value="value"
+            variant="outlined" density="comfortable" hide-details="auto" clearable rounded="lg"
+            :label="$t('schedule.priority')" />
+          <v-select v-if="isAdmin" v-model="filters.assigneeId" :items="assigneeFilterOptions" item-title="label"
+            item-value="value" variant="outlined" density="comfortable" hide-details="auto" clearable rounded="lg"
+            :label="$t('schedule.assignee')" />
+          <v-select v-model="filters.due" :items="dueOptions" item-title="title" item-value="value" variant="outlined"
+            density="comfortable" hide-details="auto" clearable rounded="lg" :label="$t('schedule.dueDate')" />
+        </div>
+      </div>
 
       <div class="px-2!">
         <p v-if="viewMode === 'board' && tasks.length > 0" class="text-xs text-slate-400 mb-3">
@@ -102,15 +115,16 @@
                   <th class="px-4 py-3 text-sm font-bold whitespace-nowrap">{{ $t('schedule.status') }}</th>
                   <th class="px-4 py-3 text-sm font-bold whitespace-nowrap">{{ $t('schedule.timeSpent') }}</th>
                   <th class="px-4 py-3 text-sm font-bold whitespace-nowrap">{{ $t('schedule.updated') }}</th>
-                  <th v-if="isAdmin" class="px-4 py-3 text-sm font-bold text-center whitespace-nowrap">{{ $t('schedule.actions') }}</th>
+                  <th v-if="isAdmin" class="px-4 py-3 text-sm font-bold text-center whitespace-nowrap">{{
+                    $t('schedule.actions') }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100">
                 <tr v-for="task in pagedTasks" :key="task.id" class="hover:bg-slate-50/80 transition-colors">
                   <td class="px-4 py-3 cursor-pointer" @click="openDetail(task)">
                     <div class="text-sm font-semibold text-slate-800 dark:text-slate-200">{{ task.title }}</div>
-                    <div v-if="task.description"
-                      class="text-xs text-slate-400 max-w-[280px] truncate mt-0.5">{{ task.description }}</div>
+                    <div v-if="task.description" class="text-xs text-slate-400 max-w-[280px] truncate mt-0.5">{{
+                      task.description }}</div>
                   </td>
                   <td class="px-4 py-3">
                     <div class="flex items-center gap-1.5">
@@ -141,7 +155,8 @@
                   <td class="px-4 py-3 whitespace-nowrap">
                     <v-menu>
                       <template #activator="{ props: menuProps }">
-                        <span v-bind="menuProps" :class="['px-2 py-0.5 rounded-full text-xs font-semibold cursor-pointer inline-flex items-center gap-1', badgeClass(task.status)]">
+                        <span v-bind="menuProps"
+                          :class="['px-2 py-0.5 rounded-full text-xs font-semibold cursor-pointer inline-flex items-center gap-1', badgeClass(task.status)]">
                           {{ statusLabel(task.status) }}
                           <v-icon size="12">mdi-chevron-down</v-icon>
                         </span>
@@ -164,12 +179,13 @@
                       </template>
                     </span>
                   </td>
-                  <td class="px-4 py-3 text-xs text-slate-400 whitespace-nowrap">{{ formatJalaliDateShort(task.updatedAt) }}</td>
+                  <td class="px-4 py-3 text-xs text-slate-400 whitespace-nowrap">{{
+                    formatJalaliDateShort(task.updatedAt) }}</td>
                   <td v-if="isAdmin" class="px-4 py-3 text-center whitespace-nowrap">
                     <v-tooltip :text="$t('schedule.editTask')" location="top">
                       <template #activator="{ props: tipProps }">
-                        <v-btn v-bind="tipProps" icon variant="text" size="small" class="text-amber-500 hover:text-amber-600"
-                          @click="openEdit(task)">
+                        <v-btn v-bind="tipProps" icon variant="text" size="small"
+                          class="text-amber-500 hover:text-amber-600" @click="openEdit(task)">
                           <v-icon size="18">mdi-pencil-outline</v-icon>
                         </v-btn>
                       </template>
@@ -189,13 +205,15 @@
 
             <div v-if="tasks.length === 0" class="text-center py-10">
               <v-icon size="40" class="text-slate-300 mb-2">mdi-clipboard-text-outline</v-icon>
-              <p class="text-sm text-slate-400">{{ filtersActive ? $t('schedule.noTasksDescription') : $t('schedule.emptyDescription') }}</p>
+              <p class="text-sm text-slate-400">{{ filtersActive ? $t('schedule.noTasksDescription') :
+                $t('schedule.emptyDescription') }}</p>
             </div>
           </div>
 
           <div v-if="tasks.length > perPage" class="flex items-center justify-between mt-4 px-2!">
             <span class="text-xs text-slate-400">
-              {{ (currentPage - 1) * perPage + 1 }}–{{ Math.min(currentPage * perPage, tasks.length) }} / {{ tasks.length }}
+              {{ (currentPage - 1) * perPage + 1 }}–{{ Math.min(currentPage * perPage, tasks.length) }} / {{
+                tasks.length }}
             </span>
             <div class="flex items-center gap-2">
               <v-btn variant="tonal" size="small" class="crm-btn" :disabled="currentPage <= 1" @click="currentPage--">
@@ -213,13 +231,13 @@
       </div>
     </UiContentCard>
 
-    <ScheduleTaskFormDialog v-model="formDialog" :task="editingTask" :assignees="assignees"
-      :readonly="dialogReadonly" :initial-status="createStatus" @saved="onSaved" />
+    <ScheduleTaskFormDialog v-model="formDialog" :task="editingTask" :assignees="assignees" :readonly="dialogReadonly"
+      :initial-status="createStatus" @saved="onSaved" />
   </UiPageContainer>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
 import { TASK_STATUSES } from '~/types/schedule'
 import type { ClinicTask, ScheduleAssignee, TaskFilters, TaskStatus } from '~/types/schedule'
 
@@ -291,6 +309,12 @@ const assigneeFilterOptions = computed(() =>
 
 const filtersActive = computed(() =>
   !!(filters.status || filters.priority || filters.assigneeId || filters.due || filters.assignedToMe || filters.q),
+)
+
+const activeFilterCount = computed(
+  () =>
+    [filters.status, filters.priority, filters.assigneeId, filters.due, filters.q, filters.assignedToMe ? 'on' : '']
+      .filter(Boolean).length,
 )
 
 const stats = computed(() => ({
@@ -411,14 +435,33 @@ const onSaved = () => {
 }
 
 let searchTimer: ReturnType<typeof setTimeout> | null = null
+const resettingFilters = ref(false)
 watch(() => filters.q, () => {
+  if (resettingFilters.value) return
   if (searchTimer) clearTimeout(searchTimer)
   searchTimer = setTimeout(() => fetchTasks(), 400)
 })
 
 watch(() => [filters.status, filters.priority, filters.assigneeId, filters.due], () => {
-  fetchTasks()
+  if (!resettingFilters.value) fetchTasks()
 })
+
+const resetFilters = async () => {
+  if (searchTimer) {
+    clearTimeout(searchTimer)
+    searchTimer = null
+  }
+  resettingFilters.value = true
+  filters.status = ''
+  filters.priority = ''
+  filters.assigneeId = ''
+  filters.due = ''
+  filters.q = ''
+  filters.assignedToMe = false
+  await nextTick()
+  resettingFilters.value = false
+  fetchTasks()
+}
 
 onMounted(() => {
   if (isAdmin.value) fetchAssignees()
@@ -429,6 +472,58 @@ useSeoMeta({ title: t('schedule.titleSeo') })
 </script>
 
 <style scoped>
+.crm-filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #f3f4f6;
+  background-color: rgba(248, 250, 252, 0.4);
+}
+
+.dark .crm-filter-bar {
+  border-bottom-color: #1e2028;
+  background-color: rgba(30, 32, 40, 0.3);
+}
+
+.crm-filter-bar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.crm-filter-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.875rem;
+}
+
+.crm-filter-search {
+  grid-column: span 1;
+}
+
+@media (min-width: 640px) {
+  .crm-filter-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .crm-filter-search {
+    grid-column: span 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .crm-filter-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .crm-filter-search {
+    grid-column: span 2;
+  }
+}
+
 .view-toggle-btn {
   display: inline-flex;
   align-items: center;
@@ -441,14 +536,17 @@ useSeoMeta({ title: t('schedule.titleSeo') })
   transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
   cursor: pointer;
 }
+
 .dark .view-toggle-btn {
   color: rgb(148 163 184);
 }
+
 .view-toggle-active {
   background: #fff;
   color: #4f46e5;
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
 }
+
 .dark .view-toggle-active {
   background: rgb(51 65 85);
   color: rgb(129 140 248);

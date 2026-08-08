@@ -13,7 +13,7 @@ import { computed, onBeforeUnmount, onMounted, shallowRef } from "vue";
  * not match the visitor's, so the value is only ever computed in the browser.
  */
 
-export type DayPhase = "morning" | "midday" | "night";
+export type DayPhase = "morning" | "noon" | "midday" | "night";
 
 export interface TimeOfDaySlot {
   phase: DayPhase;
@@ -35,10 +35,17 @@ export const TIME_OF_DAY_SLOTS: TimeOfDaySlot[] = [
     endHour: 12,
   },
   {
+    phase: "noon",
+    label: "Noon",
+    src: "/background-videos/clinic-noon-60fps.mp4",
+    startHour: 12,
+    endHour: 15,
+  },
+  {
     phase: "midday",
     label: "Midday",
     src: "/background-videos/clinic-midday-60fps.mp4",
-    startHour: 12,
+    startHour: 15,
     endHour: 18,
   },
   {
@@ -50,12 +57,12 @@ export const TIME_OF_DAY_SLOTS: TimeOfDaySlot[] = [
   },
 ];
 
-export const DEFAULT_PHASE: DayPhase = TIME_OF_DAY_SLOTS[0].phase;
+export const DEFAULT_PHASE: DayPhase = TIME_OF_DAY_SLOTS[0]!.phase;
 
 export function getPhaseConfig(phase: DayPhase): TimeOfDaySlot {
   return (
     TIME_OF_DAY_SLOTS.find((slot) => slot.phase === phase) ??
-    TIME_OF_DAY_SLOTS[0]
+    TIME_OF_DAY_SLOTS[0]!
   );
 }
 

@@ -55,13 +55,13 @@ useHead({
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: hidden;
-  overscroll-behavior: none;
+  /* overscroll-behavior: none; */
   background: var(--ink);
 }
 
 .landing-shell[dir="rtl"] {
-  --font-display: "yekan-bakh", "Vazirmatn", ui-sans-serif, sans-serif;
-  --font-sans: "yekan-bakh", "Vazirmatn", ui-sans-serif, sans-serif;
+  --font-display: "Bon", "Vazirmatn", ui-sans-serif, sans-serif;
+  --font-sans: "Bon", "Vazirmatn", ui-sans-serif, sans-serif;
 }
 
 /* Quiet-luxury selection: champagne ink over ice, not the browser default */

@@ -45,6 +45,13 @@ export const useFormatting = () => {
     return formatted + ' ' + t('common.toman')
   }
 
+  const formatThousandToman = (amount: number | string) => {
+    const num = typeof amount === 'string' ? parseFloat(amount) : amount
+    if (isNaN(num) || num <= 0) return ''
+    const formatted = new Intl.NumberFormat(isFa.value ? 'fa-IR' : 'en-US').format(num / 1000)
+    return formatted + ' ' + t('common.thousandToman')
+  }
+
   const toDateStr = (date: Date) => {
     const y = date.getFullYear()
     const m = String(date.getMonth() + 1).padStart(2, '0')
@@ -72,5 +79,5 @@ export const useFormatting = () => {
     return `${h}${hLabel} ${m}${mLabel}`
   }
 
-  return { formatJalaliDate, formatGregorianDate, formatJalaliDateShort, formatJalaliLong, formatPrice, toDateStr, toJalaliStr, todayJalali, formatMinutes }
+  return { formatJalaliDate, formatGregorianDate, formatJalaliDateShort, formatJalaliLong, formatPrice, formatThousandToman, toDateStr, toJalaliStr, todayJalali, formatMinutes }
 }

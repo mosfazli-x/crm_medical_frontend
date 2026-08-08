@@ -34,9 +34,10 @@
         <div
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-700/80 !bg-slate-50/50 dark:!bg-slate-800/50">
           <div class="!flex !items-center !gap-3">
-            <v-icon color="primary" size="x-large">mdi-account-details-outline</v-icon>
+            <UserDeatils class="w-8 h-8 fill-none stroke-blue-700" />
             <div>
-              <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.identityInfo') }}</h2>
+              <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.identityInfo') }}
+              </h2>
               <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">{{ t('myProfile.identityInfoDesc') }}
               </p>
             </div>
@@ -47,14 +48,17 @@
           <v-form ref="profileFormRef" @submit.prevent="handleUpdateProfile">
             <v-text-field v-model="profileForm.fullName" :label="$t('myProfile.fullName')" variant="outlined"
               density="comfortable" prepend-inner-icon="mdi-account-edit-outline"
-              :rules="[v => !v || v.length >= 2 || t('myProfile.fullNameMinError')]" class="!mb-2" dir="rtl" clearable />
+              :rules="[v => !v || v.length >= 2 || t('myProfile.fullNameMinError')]" class="!mb-2" dir="rtl"
+              clearable />
 
-            <v-text-field v-if="isLabOrPharmacy" v-model="profileForm.organizationName" :label="$t('myProfile.organizationName')"
-              variant="outlined" density="comfortable" prepend-inner-icon="mdi-domain"
-              :rules="[v => !v || v.length >= 1 || t('myProfile.organizationMinError')]" class="!mb-2" dir="rtl" clearable />
+            <v-text-field v-if="isLabOrPharmacy" v-model="profileForm.organizationName"
+              :label="$t('myProfile.organizationName')" variant="outlined" density="comfortable"
+              prepend-inner-icon="mdi-domain" :rules="[v => !v || v.length >= 1 || t('myProfile.organizationMinError')]"
+              class="!mb-2" dir="rtl" clearable />
 
             <div class="!mb-6">
-              <label class="!text-sm !font-semibold !text-slate-600 dark:!text-slate-300 !mb-2 !block">{{ t('myProfile.mobileLabel') }}</label>
+              <label class="!text-sm !font-semibold !text-slate-600 dark:!text-slate-300 !mb-2 !block">{{
+                t('myProfile.mobileLabel') }}</label>
               <div
                 class="!flex !items-center !gap-4 !px-5 !py-4 !rounded-xl !bg-slate-100 dark:!bg-slate-900/50 !border !border-slate-200 dark:!border-slate-700">
                 <v-icon class="!text-slate-500">mdi-cellphone</v-icon>
@@ -87,7 +91,7 @@
         <div
           class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-700/80 !bg-slate-50/50 dark:!bg-slate-800/50">
           <div class="!flex !items-center !gap-3">
-            <v-icon color="error" size="x-large">mdi-shield-lock-outline</v-icon>
+            <Security class="w-7 h-7 fill-red-600" />
             <div>
               <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.security') }}</h2>
               <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">{{ t('myProfile.securityDesc') }}</p>
@@ -132,22 +136,23 @@
 
     </div>
 
-    <div v-if="isDoctor"
+    <!-- <div v-if="isDoctor"
       class="!bg-white dark:!bg-slate-800 !rounded-3xl !border !border-slate-200 dark:!border-slate-700 !shadow-sm !overflow-hidden !transition-all !duration-300 hover:!shadow-md !mt-8">
       <div
         class="!px-8 !py-6 !border-b !border-slate-100 dark:!border-slate-700/80 !bg-slate-50/50 dark:!bg-slate-800/50">
         <div class="!flex !items-center !gap-3">
           <v-icon color="primary" size="x-large">mdi-bell-ring-outline</v-icon>
           <div>
-              <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.notifications') }}</h2>
-              <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">{{ t('myProfile.notificationsDesc') }}</p>
+            <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.notifications') }}</h2>
+            <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">{{ t('myProfile.notificationsDesc') }}</p>
           </div>
         </div>
       </div>
 
       <div class="!p-8">
         <div v-if="!prefsLoaded" class="!space-y-4">
-          <div v-for="i in 2" :key="i" class="!flex !items-center !gap-4 !p-4 !rounded-xl !bg-slate-50 dark:!bg-slate-900/30 !animate-pulse">
+          <div v-for="i in 2" :key="i"
+            class="!flex !items-center !gap-4 !p-4 !rounded-xl !bg-slate-50 dark:!bg-slate-900/30 !animate-pulse">
             <div class="!w-10 !h-10 !rounded-full !bg-slate-200 dark:!bg-slate-700"></div>
             <div class="!flex-1 !space-y-2">
               <div class="!h-4 !w-28 !rounded !bg-slate-200 dark:!bg-slate-700"></div>
@@ -158,61 +163,52 @@
         </div>
 
         <div v-else class="!space-y-3">
-          <div class="!flex !items-center !justify-between !gap-4 !p-4 !rounded-xl !border !border-slate-200 dark:!border-slate-700 !transition-all !duration-200 hover:!border-blue-300 dark:hover:!border-blue-700 hover:!shadow-sm">
+          <div
+            class="!flex !items-center !justify-between !gap-4 !p-4 !rounded-xl !border !border-slate-200 dark:!border-slate-700 !transition-all !duration-200 hover:!border-blue-300 dark:hover:!border-blue-700 hover:!shadow-sm">
             <div class="!flex !items-center !gap-3">
-              <div class="!w-10 !h-10 !rounded-full !bg-blue-50 dark:!bg-blue-900/30 !flex !items-center !justify-center !shrink-0">
+              <div
+                class="!w-10 !h-10 !rounded-full !bg-blue-50 dark:!bg-blue-900/30 !flex !items-center !justify-center !shrink-0">
                 <v-icon color="primary" size="22">mdi-message-text-outline</v-icon>
+                
               </div>
               <div>
                 <p class="!font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.smsNotifications') }}</p>
                 <p class="!text-xs !text-slate-500 dark:!text-slate-400">{{ t('myProfile.smsNotificationsDesc') }}</p>
               </div>
             </div>
-            <v-switch
-              :model-value="smsEnabled"
-              color="primary"
-              hide-details
-              :loading="smsToggleLoading"
-              @update:model-value="(val: boolean) => togglePref('sms', val)"
-            />
+            <v-switch :model-value="smsEnabled" color="primary" hide-details :loading="smsToggleLoading"
+              @update:model-value="(val: boolean) => togglePref('sms', val)" />
           </div>
 
-          <div class="!flex !items-center !justify-between !gap-4 !p-4 !rounded-xl !border !border-slate-200 dark:!border-slate-700 !transition-all !duration-200 hover:!border-sky-300 dark:hover:!border-sky-700 hover:!shadow-sm"
+          <div
+            class="!flex !items-center !justify-between !gap-4 !p-4 !rounded-xl !border !border-slate-200 dark:!border-slate-700 !transition-all !duration-200 hover:!border-sky-300 dark:hover:!border-sky-700 hover:!shadow-sm"
             :class="{ '!opacity-60': telegramToggleDisabled }">
             <div class="!flex !items-center !gap-3">
-              <div class="!w-10 !h-10 !rounded-full !bg-sky-50 dark:!bg-sky-900/30 !flex !items-center !justify-center !shrink-0">
-                <v-icon color="info" size="22">mdi-send-variant-outline</v-icon>
+              <div
+                class="!w-10 !h-10 !rounded-full !bg-sky-50 dark:!bg-sky-900/30 !flex !items-center !justify-center !shrink-0">
+                <Telegram class="w-6.5 h-6.5 fill-blue-500"/>
               </div>
               <div>
-                <p class="!font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.telegramNotifications') }}</p>
-                <p class="!text-xs !text-slate-500 dark:!text-slate-400">{{ t('myProfile.telegramNotificationsDesc') }}</p>
+                <p class="!font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.telegramNotifications') }}
+                </p>
+                <p class="!text-xs !text-slate-500 dark:!text-slate-400">{{ t('myProfile.telegramNotificationsDesc') }}
+                </p>
               </div>
             </div>
             <v-tooltip v-if="telegramToggleDisabled" :text="$t('myProfile.connectTelegramFirst')" location="top">
               <template v-slot:activator="{ props }">
                 <div v-bind="props">
-                  <v-switch
-                    :model-value="telegramEnabled"
-                    color="info"
-                    hide-details
-                    disabled
-                    :loading="telegramToggleLoading"
-                  />
+                  <v-switch :model-value="telegramEnabled" color="info" hide-details disabled
+                    :loading="telegramToggleLoading" />
                 </div>
               </template>
             </v-tooltip>
-            <v-switch
-              v-else
-              :model-value="telegramEnabled"
-              color="info"
-              hide-details
-              :loading="telegramToggleLoading"
-              @update:model-value="(val: boolean) => togglePref('telegram', val)"
-            />
+            <v-switch v-else :model-value="telegramEnabled" color="info" hide-details :loading="telegramToggleLoading"
+              @update:model-value="(val: boolean) => togglePref('telegram', val)" />
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div
       class="!bg-white dark:!bg-slate-800 !rounded-3xl !border !border-slate-200 dark:!border-slate-700 !shadow-sm !overflow-hidden !transition-all !duration-300 hover:!shadow-md !mt-8">
@@ -221,7 +217,8 @@
         <div class="!flex !items-center !gap-3">
           <v-icon color="primary" size="x-large">mdi-send-variant-outline</v-icon>
           <div>
-            <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.telegramConnection') }}</h2>
+            <h2 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100">{{ t('myProfile.telegramConnection') }}
+            </h2>
             <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1">{{ t('myProfile.telegramConnectionDesc') }}
             </p>
           </div>
@@ -231,8 +228,10 @@
       <div class="!p-8">
 
         <div v-if="telegramLinked">
-          <div class="!flex !items-center !gap-4 !p-4 !rounded-xl !bg-green-50 dark:!bg-green-900/20 !border !border-green-200 dark:!border-green-700/50">
-            <div class="!w-12 !h-12 !rounded-full !bg-green-100 dark:!bg-green-800/50 !flex !items-center !justify-center !shrink-0">
+          <div
+            class="!flex !items-center !gap-4 !p-4 !rounded-xl !bg-green-50 dark:!bg-green-900/20 !border !border-green-200 dark:!border-green-700/50">
+            <div
+              class="!w-12 !h-12 !rounded-full !bg-green-100 dark:!bg-green-800/50 !flex !items-center !justify-center !shrink-0">
               <v-icon color="success" size="28">mdi-check-circle</v-icon>
             </div>
             <div class="!flex-1 !min-w-0">
@@ -258,10 +257,11 @@
 
         <div v-else-if="telegramState === 'code' || telegramState === 'polling'">
           <div class="!text-center !py-4">
-            <div class="!w-16 !h-16 !rounded-full !bg-sky-50 dark:!bg-sky-900/30 !flex !items-center !justify-center !mx-auto !mb-4">
+            <div
+              class="!w-16 !h-16 !rounded-full !bg-sky-50 dark:!bg-sky-900/30 !flex !items-center !justify-center !mx-auto !mb-4">
               <v-icon color="info" size="32">mdi-telegram</v-icon>
             </div>
-            
+
             <h3 class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100 !mb-2">
               {{ t('myProfile.oneClickConnect') }}
             </h3>
@@ -271,36 +271,35 @@
 
             <!-- 1-Click Telegram Button -->
             <div class="!mb-6">
-              <v-btn
-                :href="telegramDeepLink"
-                target="_blank"
-                color="info"
-                size="x-large"
-                elevation="3"
-                class="!font-bold !rounded-2xl !px-8 !py-4 !h-auto !text-base"
-                @click="telegramState = 'polling'"
-              >
+              <v-btn :href="telegramDeepLink" target="_blank" color="info" size="x-large" elevation="3"
+                class="!font-bold !rounded-2xl !px-8 !py-4 !h-auto !text-base" @click="telegramState = 'polling'">
                 <v-icon start size="28">mdi-telegram</v-icon>
                 {{ t('myProfile.openTelegramBot') }}
               </v-btn>
             </div>
 
             <!-- Polling Indicator -->
-            <div v-if="telegramState === 'polling'" class="!flex !items-center !justify-center !gap-3 !mb-6 !bg-blue-50 dark:!bg-blue-900/20 !border !border-blue-200 dark:!border-blue-700/50 !rounded-xl !p-4 !max-w-md !mx-auto">
+            <div v-if="telegramState === 'polling'"
+              class="!flex !items-center !justify-center !gap-3 !mb-6 !bg-blue-50 dark:!bg-blue-900/20 !border !border-blue-200 dark:!border-blue-700/50 !rounded-xl !p-4 !max-w-md !mx-auto">
               <v-progress-circular indeterminate color="primary" size="24" width="3" />
-              <span class="!text-sm !font-semibold !text-blue-700 dark:!text-blue-300">{{ t('myProfile.waitConfirmation') }}</span>
+              <span class="!text-sm !font-semibold !text-blue-700 dark:!text-blue-300">{{
+                t('myProfile.waitConfirmation')
+              }}</span>
             </div>
 
             <!-- Alternative Manual Code Details -->
             <div class="!mt-8 !pt-6 !border-t !border-slate-100 dark:!border-slate-700/80 !text-left" dir="rtl">
               <details class="!group">
-                <summary class="!cursor-pointer !text-xs !font-semibold !text-slate-500 dark:!text-slate-400 hover:!text-blue-600 dark:hover:!text-blue-400 !flex !items-center !gap-1 !justify-center">
+                <summary
+                  class="!cursor-pointer !text-xs !font-semibold !text-slate-500 dark:!text-slate-400 hover:!text-blue-600 dark:hover:!text-blue-400 !flex !items-center !gap-1 !justify-center">
                   <v-icon size="small">mdi-code-braces</v-icon>
                   {{ t('myProfile.advancedManualCode') }}
                 </summary>
                 <div class="!mt-4 !bg-slate-50 dark:!bg-slate-900/50 !rounded-xl !p-4 !text-center">
-                  <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mb-2">{{ t('myProfile.enterCodePrompt') }}</p>
-                  <div class="!inline-block !bg-white dark:!bg-slate-950 !border !border-slate-200 dark:!border-slate-700 !rounded-xl !px-6 !py-3 !tracking-[0.2em] !font-mono !text-2xl !font-bold !text-blue-600 dark:!text-blue-400 !select-all !mb-3">
+                  <p class="!text-xs !text-slate-500 dark:!text-slate-400 !mb-2">{{ t('myProfile.enterCodePrompt') }}
+                  </p>
+                  <div
+                    class="!inline-block !bg-white dark:!bg-slate-950 !border !border-slate-200 dark:!border-slate-700 !rounded-xl !px-6 !py-3 !tracking-[0.2em] !font-mono !text-2xl !font-bold !text-blue-600 dark:!text-blue-400 !select-all !mb-3">
                     {{ linkCode }}
                   </div>
                   <div>
@@ -341,14 +340,15 @@
 
         <div v-else>
           <div class="!text-center !py-4">
-            <div class="!w-16 !h-16 !rounded-full !bg-blue-50 dark:!bg-blue-900/30 !flex !items-center !justify-center !mx-auto !mb-4">
-              <v-icon color="primary" size="32">mdi-send-variant-outline</v-icon>
+            <div
+              class="!w-16 !h-16 !rounded-full !bg-blue-50 dark:!bg-blue-900/30 !flex !items-center !justify-center !mx-auto !mb-4">
+              <Telegram class="w-7 h-7 fill-blue-500" />
             </div>
             <p class="!text-slate-600 dark:!text-slate-300 !font-medium !mb-1">{{ t('myProfile.notConnected') }}</p>
             <p class="!text-xs !text-slate-400 dark:!text-slate-500 !mb-6">{{ t('myProfile.connectDescription') }}</p>
             <v-btn color="primary" size="large" elevation="2" :loading="codeLoading" @click="handleGenerateCode"
-              class="!font-bold !rounded-xl !px-8">
-              <v-icon start>mdi-send-variant-outline</v-icon>
+              class="!font-bold !rounded-xl !px-8 flex">
+              <Telegram class="w-5 h-5 fill-blue-200 mx-2" />
               {{ t('myProfile.connectButton') }}
             </v-btn>
           </div>
@@ -359,7 +359,8 @@
 
     <v-dialog v-model="unlinkDialog" max-width="420" persistent>
       <v-card class="!rounded-2xl !text-center !pa-6">
-        <div class="!w-14 !h-14 !rounded-full !bg-red-50 dark:!bg-red-900/30 !flex !items-center !justify-center !mx-auto !mb-4">
+        <div
+          class="!w-14 !h-14 !rounded-full !bg-red-50 dark:!bg-red-900/30 !flex !items-center !justify-center !mx-auto !mb-4">
           <v-icon color="error" size="28">mdi-link-variant-off</v-icon>
         </div>
         <v-card-title class="!text-lg !font-bold !text-slate-800 dark:!text-slate-100 !justify-center !px-0 !pt-0">
@@ -384,6 +385,9 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
+import Security from '~/components/icons/Security.vue'
+import Telegram from '~/components/icons/Telegram.vue'
+import UserDeatils from '~/components/icons/UserDeatils.vue'
 
 const { t } = useI18n()
 const { apiFetch } = useApi()
@@ -615,6 +619,7 @@ let pollingTimer: ReturnType<typeof setInterval> | null = null
 const codeCopied = ref(false)
 
 const telegramDeepLink = computed(() => {
+  console.log(linkCode)
   const username = botUsername.value || 'hastihosseini_bot'
   return `https://t.me/${username}?start=${linkCode.value}`
 })

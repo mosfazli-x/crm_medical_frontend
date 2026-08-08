@@ -1,3 +1,19 @@
+@import url(iran-sans.css);
+@import url(aria-web.css);
+@import url(Bon.css);
+
+.font-don {
+  font-family: "bon" !important;
+}
+
+.font-iran-sans {
+  font-family: "IRANSansX" !important;
+}
+
+.font-aria {
+  font-family: "AriaWeb" !important;
+}
+
 @font-face {
   font-family: "yekan-bakh";
   font-display: swap;

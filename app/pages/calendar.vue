@@ -26,10 +26,11 @@
                 <v-card-text class="pt-6 px-6 md:pt-8 md:px-8 bg-slate-50/50 dark:bg-slate-800">
                     <v-row>
                         <v-col cols="12">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('calendar.patient') }}
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{
+                                $t('calendar.patient') }}
                                 <span class="text-red-500">{{ $t('calendar.required') }}</span></label>
                             <v-autocomplete v-model="newVisit.patientId" :items="patients" item-title="fullName"
-                                item-value="id"                                 :placeholder="$t('calendar.searchPatient')" variant="outlined"
+                                item-value="id" :placeholder="$t('calendar.searchPatient')" variant="outlined"
                                 density="comfortable" prepend-inner-icon="mdi-account-search-outline" clearable
                                 class="dark:text-slate-300 dark:bg-slate-700 dark:border-slate-600" hide-details="auto"
                                 :loading="patientsLoading">
@@ -42,37 +43,48 @@
                         </v-col>
 
                         <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('calendar.startTime') }}
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{
+                                $t('calendar.startTime') }}
                                 <span class="text-red-500">{{ $t('calendar.required') }}</span></label>
-                            <PersianDatetimePicker v-model="newVisit.start" type="datetime"
-                                display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4F46E5"
-                                auto-submit custom-input class="w-full" />
+                            <div class="relative h-[48px] border rounded overflow-hidden w-full">
+                                <PersianDatetimePicker v-model="newVisit.start" type="datetime"
+                                    display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4F46E5"
+                                    auto-submit custom-input class="w-full" />
+                            </div>
                         </v-col>
 
                         <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('calendar.endTime') }}</label>
-                            <PersianDatetimePicker v-model="newVisit.end" type="datetime"
-                                display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4F46E5"
-                                auto-submit custom-input class="w-full" />
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{
+                                $t('calendar.endTime')
+                            }}</label>
+                            <div class="relative h-[48px] border rounded overflow-hidden w-full">
+                                <PersianDatetimePicker v-model="newVisit.end" type="datetime"
+                                    display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4F46E5"
+                                    auto-submit custom-input class="w-full" />
+                            </div>
                         </v-col>
 
                         <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('calendar.visitType') }}</label>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{
+                                $t('calendar.visitType')
+                            }}</label>
                             <v-select v-model="newVisit.type" :items="visitTypes" variant="outlined"
                                 class="dark:text-slate-300 dark:bg-slate-700 dark:border-slate-600"
                                 density="comfortable" hide-details="auto" />
                         </v-col>
 
                         <v-col cols="12" md="6">
-                            <label
-                                class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('common.status') }}</label>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{
+                                $t('common.status') }}</label>
                             <v-select v-model="newVisit.status" :items="$t('calendar.statusOptions')"
                                 class="dark:text-slate-300 dark:bg-slate-700 dark:border-slate-600" variant="outlined"
                                 density="comfortable" hide-details="auto" />
                         </v-col>
 
                         <v-col cols="12">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{ $t('calendar.doctorNotes') }}</label>
+                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{
+                                $t('calendar.doctorNotes')
+                            }}</label>
                             <v-textarea v-model="newVisit.notes" :placeholder="$t('calendar.notesPlaceholder')"
                                 class="dark:text-slate-300 dark:bg-slate-700 dark:border-slate-600" variant="outlined"
                                 rows="3" density="comfortable" hide-details="auto" />
