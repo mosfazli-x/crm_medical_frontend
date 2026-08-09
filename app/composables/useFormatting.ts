@@ -1,4 +1,5 @@
 import moment from 'moment-jalaali'
+import { numberToWords } from '@persian-tools/persian-tools'
 
 export const useFormatting = () => {
   const { locale, t } = useI18n()
@@ -45,6 +46,24 @@ export const useFormatting = () => {
     return formatted + ' ' + t('common.toman')
   }
 
+  const toPriceNumber = (amount: number | string | null | undefined): number => {
+    const num = typeof amount === 'string' ? parseFloat(amount) : amount
+    return num === null || num === undefined ? NaN : num
+  }
+
+  const formatPriceDetail = (amount: number | string | null | undefined) => {
+    const num = toPriceNumber(amount)
+    if (isNaN(num)) return { digits: '', unit: t('common.toman'), words: '', hasValue: false }
+    const unit = t('common.toman')
+    const digits = new Intl.NumberFormat(isFa.value ? 'fa-IR' : 'en-US').format(num)
+    const words = isFa.value ? `${numberToWords(Math.round(num))} ${unit}` : ''
+    return { digits, unit, words, hasValue: true }
+  }
+
+  const formatPriceWords = (amount: number | string | null | undefined) => {
+    return formatPriceDetail(amount).words
+  }
+
   const formatThousandToman = (amount: number | string) => {
     const num = typeof amount === 'string' ? parseFloat(amount) : amount
     if (isNaN(num) || num <= 0) return ''
@@ -79,5 +98,5 @@ export const useFormatting = () => {
     return `${h}${hLabel} ${m}${mLabel}`
   }
 
-  return { formatJalaliDate, formatGregorianDate, formatJalaliDateShort, formatJalaliLong, formatPrice, formatThousandToman, toDateStr, toJalaliStr, todayJalali, formatMinutes }
+  return { formatJalaliDate, formatGregorianDate, formatJalaliDateShort, formatJalaliLong, formatPrice, formatPriceDetail, formatPriceWords, formatThousandToman, toDateStr, toJalaliStr, todayJalali, formatMinutes }
 }

@@ -10,10 +10,13 @@
           <Icon name="lucide:package" class="!w-5 !h-5 !text-indigo-400" />
         </template>
       </UiStatCard>
-      <UiStatCard :label="$t('inventory.totalStockValue')" :value="formatPrice(summary?.totalStockValue || 0)"
+      <UiStatCard :label="$t('inventory.totalStockValue')" :value="summary?.totalStockValue ?? 0"
         value-class="!text-emerald-600 dark:!text-emerald-400">
         <template #icon>
           <Icon name="lucide:wallet" class="!w-5 !h-5 !text-emerald-400" />
+        </template>
+        <template #value>
+          <UiPrice :value="summary?.totalStockValue" />
         </template>
       </UiStatCard>
       <UiStatCard :label="$t('inventory.lowStockCount')" :value="String(summary?.lowStockCount || 0)"
@@ -85,8 +88,8 @@
                 <td class="!font-mono !text-xs">{{ product.sku || '---' }}</td>
                 <td class="!text-sm">{{ product.categoryName || '---' }}</td>
                 <td class="!text-sm hidden md:flex">{{ product.unit }}</td>
-                <td class="" dir="rtl">{{ formatPrice(product.purchasePrice) }}</td>
-                <td class="" dir="rtl">{{ formatPrice(product.sellingPrice) }}</td>
+                <td class="!whitespace-nowrap"><UiPrice :value="product.purchasePrice" /></td>
+                <td class="!whitespace-nowrap"><UiPrice :value="product.sellingPrice" /></td>
                 <td>
                   <span :class="[
                     '!font-bold',
@@ -102,7 +105,7 @@
                     ({{ $t('inventory.lowStock') }})
                   </span>
                 </td>
-                <td class="!text-sm" dir="rtl">{{ formatPrice(product.stockValue) }}</td>
+                <td class="!whitespace-nowrap"><UiPrice :value="product.stockValue" /></td>
                 <td class="!text-center">
                   <div class="!flex !items-center !justify-center !gap-1">
                     <button @click="openStockMovementDialog(product)"
@@ -221,8 +224,8 @@
                   </span>
                 </td>
                 <td class="!font-mono !font-bold">{{ m.quantity }}</td>
-                <td class="!font-mono" dir="ltr">{{ formatPrice(m.unitPrice) }}</td>
-                <td class="!font-mono !font-bold" dir="ltr">{{ formatPrice(m.totalPrice) }}</td>
+                <td class="!whitespace-nowrap"><UiPrice :value="m.unitPrice" /></td>
+                <td class="!whitespace-nowrap"><UiPrice :value="m.totalPrice" /></td>
                 <td class="!text-sm">{{ m.performedByName || '---' }}</td>
                 <td class="!text-xs !text-slate-500">
                   <template v-if="m.referenceType === 'patient_usage'">
@@ -283,8 +286,8 @@
                   <span v-if="u.visitId" class="!text-xs !text-slate-400">• {{ u.visitType || '' }}</span>
                 </td>
                 <td class="!font-mono !font-bold">{{ u.quantity }}</td>
-                <td class="!font-mono" dir="ltr">{{ formatPrice(u.unitPrice) }}</td>
-                <td class="!font-mono !font-bold" dir="ltr">{{ formatPrice(u.totalPrice) }}</td>
+                <td class="!whitespace-nowrap"><UiPrice :value="u.unitPrice" /></td>
+                <td class="!whitespace-nowrap"><UiPrice :value="u.totalPrice" /></td>
                 <td class="!text-sm">{{ u.performedByName || '---' }}</td>
                 <td v-if="role === 'admin_doctor'" class="!text-center">
                   <button @click="deleteUsage(u)"
@@ -334,7 +337,7 @@
                 :label="$t('inventory.purchasePrice')" type="number" min="0" step="1" hide-details="auto"
                 @input="sanitizeInteger(productForm, 'purchase_price')" />
               <p v-if="purchasePriceHint"
-                class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !whitespace-nowrap">
+                class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !leading-relaxed">
                 {{ purchasePriceHint }}
               </p>
             </div>
@@ -343,7 +346,7 @@
                 :label="$t('inventory.sellingPrice')" type="number" min="0" step="1" hide-details="auto"
                 @input="sanitizeInteger(productForm, 'selling_price')" />
               <p v-if="sellingPriceHint"
-                class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !whitespace-nowrap">
+                class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !leading-relaxed">
                 {{ sellingPriceHint }}
               </p>
             </div>
@@ -426,7 +429,7 @@
               :label="$t('inventory.unitPrice')" type="number" min="0" step="1" hide-details="auto"
               @input="sanitizeInteger(stockForm, 'unit_price')" />
             <p v-if="stockUnitPriceHint"
-              class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !whitespace-nowrap">
+              class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !leading-relaxed">
               {{ stockUnitPriceHint }}
             </p>
           </div>
@@ -506,7 +509,7 @@
                 :label="$t('inventory.unitPrice')" type="number" min="0" step="1" hide-details="auto"
                 @input="sanitizeInteger(usageForm, 'unit_price')" />
               <p v-if="usageUnitPriceHint"
-                class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !whitespace-nowrap">
+                class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !leading-relaxed">
                 {{ usageUnitPriceHint }}
               </p>
             </div>
@@ -542,7 +545,7 @@ const { t } = useI18n()
 const { apiFetch } = useApi()
 const { user } = useAuth()
 const { $toast } = useNuxtApp()
-const { formatJalaliDate, formatPrice, formatThousandToman } = useFormatting()
+const { formatJalaliDate, formatPriceWords } = useFormatting()
 
 const role = computed(() => user?.value?.role || (user as any)?.role)
 const canManageUsage = computed(() => ['admin_doctor', 'pharmacy'].includes(role.value))
@@ -803,10 +806,10 @@ const usageDialog = ref(false)
 const savingUsage = ref(false)
 const usageForm = ref({ product_id: null, quantity: '', unit_price: '', visit_id: null, notes: '' })
 
-const purchasePriceHint = computed(() => formatThousandToman(productForm.value.purchase_price))
-const sellingPriceHint = computed(() => formatThousandToman(productForm.value.selling_price))
-const stockUnitPriceHint = computed(() => formatThousandToman(stockForm.value.unit_price))
-const usageUnitPriceHint = computed(() => formatThousandToman(usageForm.value.unit_price))
+const purchasePriceHint = computed(() => formatPriceWords(productForm.value.purchase_price))
+const sellingPriceHint = computed(() => formatPriceWords(productForm.value.selling_price))
+const stockUnitPriceHint = computed(() => formatPriceWords(stockForm.value.unit_price))
+const usageUnitPriceHint = computed(() => formatPriceWords(usageForm.value.unit_price))
 
 const productUsageOptions = computed(() =>
   products.value.map((p: any) => ({

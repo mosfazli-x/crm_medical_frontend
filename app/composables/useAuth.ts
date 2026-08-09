@@ -73,7 +73,7 @@ export const useAuth = () => {
       } else if (status === 403) {
         message = t('auth.errors.accountDisabled')
       } else if (status === 422) {
-        message = err.data?.error || t('auth.errors.invalidInput')
+        message = err.data?.details?.[0]?.message || err.data?.error || t('auth.errors.invalidInput')
       } else if (status === 429) {
         message = t('auth.errors.rateLimited')
       } else if (status && status >= 500) {
@@ -88,7 +88,7 @@ export const useAuth = () => {
     }
   }
 
-  const register = async (data: { phone: string; fullName: string; password: string; role: string }) => {
+  const register = async (data: { phone: string; fullName: string; password: string; role: string; website?: string }) => {
     try {
       const response: any = await $fetch('/api/auth/register', {
         method: 'POST',
@@ -96,11 +96,37 @@ export const useAuth = () => {
         baseURL: useRuntimeConfig().public.apiBase,
       })
       if (response.success) {
+        const isApproved = response.user?.status === 'approved'
+        useNuxtApp().$toast.success(isApproved ? t('auth.register.success') : t('auth.register.successPending'))
         await navigateTo('/auth/login')
-        useNuxtApp().$toast.success(t('auth.register.success'))
+      } else {
+        useNuxtApp().$toast.error(response.message || t('auth.register.error'))
       }
     } catch (err: any) {
-      useNuxtApp().$toast.error(err.data?.error || t('auth.register.error'))
+      const status = err?.response?.status
+
+      let message: string
+      if (err?.name === 'NetworkError' || (!process.server && !navigator.onLine)) {
+        message = t('auth.errors.networkError')
+      } else if (status === 400) {
+        message = err.data?.details?.[0]?.message || err.data?.error || t('auth.errors.invalidInput')
+      } else if (status === 401) {
+        message = t('auth.errors.invalidCredentials')
+      } else if (status === 403) {
+        message = err.data?.error || t('auth.errors.accountDisabled')
+      } else if (status === 409) {
+        message = t('auth.errors.phoneExists')
+      } else if (status === 429) {
+        message = t('auth.errors.rateLimited')
+      } else if (status && status >= 500) {
+        message = t('auth.errors.serverError')
+      } else if (err?.code === 'ECONNABORTED') {
+        message = t('auth.errors.timeoutError')
+      } else {
+        message = err.data?.error || t('auth.register.error')
+      }
+
+      useNuxtApp().$toast.error(message)
     }
   }
 

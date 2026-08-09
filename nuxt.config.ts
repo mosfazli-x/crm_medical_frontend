@@ -15,6 +15,12 @@ export default defineNuxtConfig({
   nitro: {
     routeRules: {
       '/api/**': { proxy: 'http://localhost:3001/api/**' },
+      '/**': {
+        headers: {
+          'X-Content-Type-Options': 'nosniff',
+          'Referrer-Policy': 'strict-origin-when-cross-origin',
+        },
+      },
     },
   },
 

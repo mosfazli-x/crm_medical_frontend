@@ -23,6 +23,7 @@
     "@nuxt/image": "^2.0.0",
     "@nuxt/scripts": "^0.13.2",
     "@nuxtjs/i18n": "^10.5.0",
+    "@persian-tools/persian-tools": "^4.0.4",
     "@unhead/vue": "^2.1.1",
     "@vueuse/motion": "^3.0.3",
     "driver.js": "^1.8.0",

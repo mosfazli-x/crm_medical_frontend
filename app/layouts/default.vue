@@ -167,14 +167,15 @@
         <v-spacer />
 
         <div class="flex items-center gap-1">
-          <v-btn icon variant="text" size="small" @click="showTutorial" class="!text-[#6b7280]" title="Help">
+          <!-- Tutorial help button disabled (showTutorial) until the dashboard tutorial is revamped. -->
+          <!-- <v-btn icon variant="text" size="small" @click="showTutorial" class="!text-[#6b7280]" title="Help">
             <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10" />
               <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
               <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
-          </v-btn>
+          </v-btn> -->
           <v-btn icon variant="text" size="small" @click="toggleTheme" class="!text-[#6b7280]">
             <Sun v-if="!isDark" class="w-[18px] h-[18px] stroke-[#6b7280] fill-none" />
             <Moon v-else class="w-[18px] h-[18px] fill-[#9ca3af]" />
@@ -316,12 +317,14 @@ const onDrawerKeydown = (e: KeyboardEvent) => {
 }
 
 watch(() => route.path, (path) => {
-  if (path === '/dashboard' && !tutorial.completed.value && !tutorial.loading.value) {
-    drawer.value = true
-    nextTick(() => {
-      setTimeout(() => tutorial.startTutorial(), 600)
-    })
-  } else if (!lgAndUp.value) {
+  // Tutorial auto-start disabled (showTutorial) until the dashboard tutorial is revamped.
+  // if (path === '/dashboard' && !tutorial.completed.value && !tutorial.loading.value) {
+  //   drawer.value = true
+  //   nextTick(() => {
+  //     setTimeout(() => tutorial.startTutorial(), 600)
+  //   })
+  // } else
+  if (!lgAndUp.value) {
     drawer.value = false
   }
 }, { immediate: true })

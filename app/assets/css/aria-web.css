@@ -10,8 +10,8 @@
 	font-family: AriaWeb;
 	font-style: normal;
 	font-weight: 200;
-	src: url('../fonts/aria/woff/AriaWeb-UltraLight.woff') format('woff'),   
-	url('../fonts/aria/woff2/AriaWeb-UltraLight.woff2') format('woff2');	
+	src: url('../fonts/aria/woff/AriaWeb-ExtraLight.woff') format('woff'),   
+	url('../fonts/aria/woff2/AriaWeb-ExtraLight.woff2') format('woff2');	
 }
 
 @font-face {
@@ -34,8 +34,8 @@
 	font-family: AriaWeb;
 	font-style: normal;
 	font-weight: 600;
-	src: url('../fonts/aria/woff/AriaWeb-DemiBold.woff') format('woff'),   
-	url('../fonts/aria/woff2/AriaWeb-DemiBold.woff2') format('woff2');	 
+	src: url('../fonts/aria/woff/AriaWeb-SemiBold.woff') format('woff'),   
+	url('../fonts/aria/woff2/AriaWeb-SemiBold.woff2') format('woff2');	 
 }
 
 @font-face {
@@ -58,8 +58,8 @@
 	font-family: AriaWeb;
 	font-style: normal;
 	font-weight: 950;
-	src: url('../fonts/aria/woff/AriaWeb-ExtraBlack.woff') format('woff'),   
-	url('../fonts/aria/woff2/AriaWeb-ExtraBlack.woff2') format('woff2');		 
+	src: url('../fonts/aria/woff/AriaWeb-UltraBold.woff') format('woff'),   
+	url('../fonts/aria/woff2/AriaWeb-UltraBold.woff2') format('woff2');		 
 }
 
 @font-face {

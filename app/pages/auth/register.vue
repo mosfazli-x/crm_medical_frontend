@@ -10,6 +10,7 @@ const phone = ref('')
 const fullName = ref('')
 const password = ref('')
 const role = ref<string>('doctor')
+const website = ref('')
 const loading = ref(false)
 const showPassword = ref(false)
 
@@ -58,6 +59,7 @@ const handleRegister = async () => {
     fullName: fullName.value,
     password: password.value,
     role: role.value as any,
+    website: website.value,
   })
   loading.value = false
 }
@@ -69,6 +71,18 @@ definePageMeta({ layout: false })
 <template>
   <AuthShell :title="t('auth.register.title')" :subtitle="t('auth.register.subtitle')">
     <form class="auth-form" @submit.prevent="handleRegister">
+      <!-- Honeypot: hidden from humans, bots auto-fill it -->
+      <div aria-hidden="true" class="auth-honeypot">
+        <label for="reg-website">Website</label>
+        <input
+          id="reg-website"
+          v-model="website"
+          type="text"
+          name="website"
+          tabindex="-1"
+          autocomplete="off"
+        />
+      </div>
       <!-- Full Name -->
       <div class="auth-field" :class="{ 'auth-field--error': errors.fullName }">
         <label class="auth-label" for="reg-name">{{ t('auth.register.fullNameLabel') }}</label>
@@ -476,5 +490,17 @@ definePageMeta({ layout: false })
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* Honeypot field — hidden from humans, traps bots */
+.auth-honeypot {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  opacity: 0;
+  pointer-events: none;
 }
 </style>

@@ -1378,6 +1378,7 @@
       "pharmacy": "Pharmacy",
       "patient": "Patient",
       "success": "User created successfully!",
+      "successPending": "Your account was created. You will be able to log in after admin approval.",
       "error": "Registration error",
       "titleSeo": "Register | Clinic System"
     },
@@ -1432,6 +1433,7 @@
       "invalidCredentials": "Invalid phone or password",
       "accountDisabled": "Your account has been disabled",
       "invalidInput": "Invalid input data",
+      "phoneExists": "This phone number is already registered",
       "rateLimited": "Too many requests. Please try again later",
       "serverError": "Server error. Please try again in a few moments",
       "timeoutError": "Server response timeout. Please try again",
