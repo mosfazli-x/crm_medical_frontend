@@ -51,12 +51,24 @@ export const useFormatting = () => {
     return num === null || num === undefined ? NaN : num
   }
 
+  const numberToWordsFa = (num: number) => {
+    const abs = Math.abs(num)
+    const intPart = Math.trunc(abs)
+    const cents = Math.round((abs - intPart) * 100)
+    let words = numberToWords(intPart)
+    if (cents > 0) {
+      const frac = String(cents).padStart(2, '0')
+      words += ` ممیز ${frac.split('').map((d) => numberToWords(Number(d))).join(' ')}`
+    }
+    return words
+  }
+
   const formatPriceDetail = (amount: number | string | null | undefined) => {
     const num = toPriceNumber(amount)
     if (isNaN(num)) return { digits: '', unit: t('common.toman'), words: '', hasValue: false }
     const unit = t('common.toman')
     const digits = new Intl.NumberFormat(isFa.value ? 'fa-IR' : 'en-US').format(num)
-    const words = isFa.value ? `${numberToWords(Math.round(num))} ${unit}` : ''
+    const words = isFa.value ? `${numberToWordsFa(num)} ${unit}` : ''
     return { digits, unit, words, hasValue: true }
   }
 

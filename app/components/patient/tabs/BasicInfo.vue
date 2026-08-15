@@ -4,20 +4,22 @@
         <v-row dense class="mt-2">
             <v-col cols="12" md="6">
                 <v-text-field v-model="form.first_name" :label="$t('basicInfo.firstName') + ' *'" variant="outlined" density="comfortable"
-                    prepend-inner-icon="mdi-account-outline" />
+                    prepend-inner-icon="mdi-account-outline" append-inner-icon="mdi-draw-pen"
+                    @click:append-inner="openHandwriting('first_name')" />
             </v-col>
             <v-col cols="12" md="6">
                 <v-text-field v-model="form.last_name" :label="$t('basicInfo.lastName') + ' *'" variant="outlined"
-                    density="comfortable" />
+                    density="comfortable" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('last_name')" />
             </v-col>
             <v-col cols="12" md="6">
                 <v-text-field v-model="form.national_id" :label="$t('basicInfo.nationalId') + ' *'" variant="outlined" density="comfortable"
-                    prepend-inner-icon="mdi-card-account-details-outline" maxlength="10" inputmode="numeric"
-                    :rules="[nationalCodeRule]" />
+                    prepend-inner-icon="mdi-card-account-details-outline" append-inner-icon="mdi-draw-pen" maxlength="10" inputmode="numeric"
+                    :rules="[nationalCodeRule]" @click:append-inner="openHandwriting('national_id', true)" />
             </v-col>
             <v-col cols="12" md="6">
                 <v-text-field v-model="form.insurance_code" :label="$t('basicInfo.insuranceCode')" variant="outlined" density="comfortable"
-                    prepend-inner-icon="mdi-shield-check-outline" />
+                    prepend-inner-icon="mdi-shield-check-outline" append-inner-icon="mdi-draw-pen"
+                    @click:append-inner="openHandwriting('insurance_code', true)" />
             </v-col>
             <v-col cols="12" md="6">
                 <v-select v-model="form.insurance_type" :items="insuranceOptions" item-title="title" item-value="value"
@@ -43,7 +45,8 @@
             </v-col>
             <v-col cols="12" md="4">
                 <v-text-field v-model="form.phone" :label="$t('basicInfo.phone')" variant="outlined" density="comfortable"
-                    prepend-inner-icon="mdi-phone-outline" type="tel" dir="ltr" :rules="[iranMobileRule]" />
+                    prepend-inner-icon="mdi-phone-outline" append-inner-icon="mdi-draw-pen" type="tel" dir="ltr"
+                    :rules="[iranMobileRule]" @click:append-inner="openHandwriting('phone', true)" />
             </v-col>
             <v-col cols="12" md="4">
                 <v-select v-model="form.marital_status" :items="maritalStatusOptions" :label="$t('basicInfo.maritalStatus')"
@@ -71,9 +74,13 @@
             </v-col>
             <v-col cols="12">
                 <v-textarea v-model="form.address" :label="$t('basicInfo.address')" variant="outlined" rows="2" density="comfortable"
-                    prepend-inner-icon="mdi-map-marker-outline" hide-details />
+                    prepend-inner-icon="mdi-map-marker-outline" append-inner-icon="mdi-draw-pen" hide-details
+                    @click:append-inner="openHandwriting('address')" />
             </v-col>
         </v-row>
+
+        <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric"
+            @insert="applyHandwriting" />
     </div>
 </template>
 
@@ -81,10 +88,39 @@
 import { computed, ref, watch } from 'vue'
 import moment from 'moment-jalaali'
 import { INSURANCE_TYPE_VALUES } from '~/types/insurance'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 const { t } = useI18n()
 
-const form = defineModel<any>({ required: true })
+const form = defineModel<Record<string, unknown>>({ required: true })
 const config = useRuntimeConfig()
+
+const handwritingOpen = ref(false)
+const handwritingTarget = ref<string | null>(null)
+const handwritingNumeric = ref(false)
+
+const HANDWRITING_LABEL_KEYS: Record<string, string> = {
+    first_name: 'basicInfo.firstName',
+    last_name: 'basicInfo.lastName',
+    national_id: 'basicInfo.nationalId',
+    insurance_code: 'basicInfo.insuranceCode',
+    phone: 'basicInfo.phone',
+    address: 'basicInfo.address',
+}
+
+const handwritingLabel = computed(() =>
+    handwritingTarget.value ? t(HANDWRITING_LABEL_KEYS[handwritingTarget.value]) : '',
+)
+
+function openHandwriting(field: string, numeric = false) {
+    handwritingTarget.value = field
+    handwritingNumeric.value = numeric
+    handwritingOpen.value = true
+}
+
+function applyHandwriting(text: string) {
+    if (!handwritingTarget.value) return
+    form.value[handwritingTarget.value] = text
+}
 
 function calcAge(birthDate: string | null | undefined): number | null {
     if (!birthDate) return null
@@ -110,7 +146,7 @@ const ageOnly = computed({
         if (val) {
             form.value.birth_date_exact = false
             if (ageInput.value == null && form.value.birth_date) {
-                ageInput.value = calcAge(form.value.birth_date)
+                ageInput.value = calcAge(form.value.birth_date as string)
             }
             const n = Number(ageInput.value)
             if (Number.isFinite(n) && n >= 1 && n <= 120) {
@@ -147,7 +183,7 @@ watch(
     () => [form.value.birth_date_exact, form.value.birth_date],
     () => {
         if (ageOnly.value) {
-            ageInput.value = calcAge(form.value.birth_date)
+            ageInput.value = calcAge(form.value.birth_date as string)
         } else {
             ageInput.value = null
         }
@@ -155,7 +191,7 @@ watch(
     { immediate: true },
 )
 
-const computedAge = computed(() => (ageOnly.value ? null : calcAge(form.value.birth_date)))
+const computedAge = computed(() => (ageOnly.value ? null : calcAge(form.value.birth_date as string)))
 
 const formattedAge = computed(() => {
     if (computedAge.value == null) return ''

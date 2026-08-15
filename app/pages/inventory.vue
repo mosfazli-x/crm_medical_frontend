@@ -334,8 +334,8 @@
           <div class="!grid !grid-cols-2 !gap-4">
             <div class="!flex !flex-col">
               <v-text-field v-model="productForm.purchase_price" variant="outlined" density="comfortable"
-                :label="$t('inventory.purchasePrice')" type="number" min="0" step="1" hide-details="auto"
-                @input="sanitizeInteger(productForm, 'purchase_price')" />
+                :label="$t('inventory.purchasePrice')" type="number" min="0" step="0.01" hide-details="auto"
+                @input="sanitizeDecimal(productForm, 'purchase_price')" />
               <p v-if="purchasePriceHint"
                 class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !leading-relaxed">
                 {{ purchasePriceHint }}
@@ -343,8 +343,8 @@
             </div>
             <div class="!flex !flex-col">
               <v-text-field v-model="productForm.selling_price" variant="outlined" density="comfortable"
-                :label="$t('inventory.sellingPrice')" type="number" min="0" step="1" hide-details="auto"
-                @input="sanitizeInteger(productForm, 'selling_price')" />
+                :label="$t('inventory.sellingPrice')" type="number" min="0" step="0.01" hide-details="auto"
+                @input="sanitizeDecimal(productForm, 'selling_price')" />
               <p v-if="sellingPriceHint"
                 class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !leading-relaxed">
                 {{ sellingPriceHint }}
@@ -426,8 +426,8 @@
           </div>
           <div class="!flex !flex-col">
             <v-text-field v-model="stockForm.unit_price" variant="outlined" density="comfortable"
-              :label="$t('inventory.unitPrice')" type="number" min="0" step="1" hide-details="auto"
-              @input="sanitizeInteger(stockForm, 'unit_price')" />
+              :label="$t('inventory.unitPrice')" type="number" min="0" step="0.01" hide-details="auto"
+              @input="sanitizeDecimal(stockForm, 'unit_price')" />
             <p v-if="stockUnitPriceHint"
               class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !leading-relaxed">
               {{ stockUnitPriceHint }}
@@ -506,8 +506,8 @@
               :label="$t('inventory.quantity')" type="number" min="0" hide-details="auto" />
             <div class="!flex !flex-col">
               <v-text-field v-model="usageForm.unit_price" variant="outlined" density="comfortable"
-                :label="$t('inventory.unitPrice')" type="number" min="0" step="1" hide-details="auto"
-                @input="sanitizeInteger(usageForm, 'unit_price')" />
+                :label="$t('inventory.unitPrice')" type="number" min="0" step="0.01" hide-details="auto"
+                @input="sanitizeDecimal(usageForm, 'unit_price')" />
               <p v-if="usageUnitPriceHint"
                 class="!text-xs !text-slate-500 dark:!text-slate-400 !mt-1 !ps-4 !leading-relaxed">
                 {{ usageUnitPriceHint }}
@@ -636,6 +636,16 @@ function sanitizeInteger(form: Record<string, unknown>, key: string) {
   if (v === '' || v === null || v === undefined) return
   const n = Math.trunc(Number(v))
   form[key] = Number.isNaN(n) ? '' : String(n)
+}
+
+function sanitizeDecimal(form: Record<string, unknown>, key: string) {
+  const v = form[key]
+  if (v === '' || v === null || v === undefined) return
+  const s = String(v)
+    .replace(/[^0-9.]/g, '')
+    .replace(/(\..*)\./g, '$1')
+    .replace(/\.(\d{2})\d+/, '.$1')
+  form[key] = s
 }
 
 function editProduct(product: any) {

@@ -247,6 +247,7 @@ import Activity from '~/components/icons/Activity.vue'
 import FolderHeart from '~/components/icons/FolderHeart.vue'
 import FileText from '~/components/icons/FileText.vue'
 import ClipboardCheck from '~/components/icons/ClipboardCheck.vue'
+import Basket from '~/components/icons/Basket.vue'
 import Welcome from '~/components/icons/Welcome.vue'
 
 const route = useRoute()
@@ -377,6 +378,7 @@ const ALL_MENUS = computed(() => [
   { title: t('billing.title'), to: '/billing', icon: Wallet, roles: ['admin_doctor'], group: 'finance' },
   { title: t('inventory.title'), to: '/inventory', icon: Box, roles: ['admin_doctor', 'pharmacy'], group: 'finance' },
   { title: t('accounting.title'), to: '/accounting', icon: BookOpen, roles: ['admin_doctor'], group: 'finance' },
+  { title: t('consumables.title'), to: '/consumables', icon: Basket, roles: ['admin_doctor', 'doctor'], group: 'finance' },
   { title: t('dailyReports.title'), to: '/daily-reports', icon: FileText, roles: ['admin_doctor', 'doctor'], group: 'finance' },
 ])
 
