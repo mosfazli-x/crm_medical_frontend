@@ -40,17 +40,7 @@
                     {{ $t('handwriting.latinNote') }}
                 </p>
 
-                <div v-if="isModelLoading" class="mt-4">
-                    <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 mb-1.5">
-                        <v-progress-circular indeterminate size="18" width="2" color="#4F46E5" />
-                        <span>{{ $t('handwriting.loadingModel') }}</span>
-                    </div>
-                    <v-progress-linear
-                        :model-value="loadProgress" color="#4F46E5" height="6" rounded
-                        :label="loadProgress + '%'" />
-                </div>
-
-                <div v-if="converting" class="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                <div v-if="isConverting" class="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                     <v-progress-circular indeterminate size="18" width="2" color="#4F46E5" />
                     <span>{{ $t('handwriting.converting') }}</span>
                 </div>
@@ -76,11 +66,11 @@
             <v-card-actions class="crm-dialog-footer">
                 <v-spacer />
                 <button class="crm-btn crm-btn-ghost" @click="close">{{ $t('handwriting.close') }}</button>
-                <button v-if="hasInk && !converting && !isModelLoading" class="crm-btn crm-btn-ghost" @click="convert">
+                <button v-if="hasInk && !isConverting" class="crm-btn crm-btn-ghost" @click="convert">
                     {{ $t('handwriting.convert') }}
                 </button>
                 <button
-                    class="crm-btn crm-btn-accent" :disabled="!resultText || converting || isModelLoading"
+                    class="crm-btn crm-btn-accent" :disabled="!resultText || isConverting"
                     @click="insertText">
                     {{ $t('handwriting.insert') }}
                 </button>
@@ -104,18 +94,16 @@ const emit = defineEmits<{
 
 const isOpen = defineModel<boolean>({ default: false })
 
-const { recognizeLine, isModelLoading, loadProgress } = useHandwritingOcr()
+const { recognizeLine, isConverting } = useHandwritingOcr()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const strokes = ref<Array<Array<{ x: number; y: number }>>>([])
 const drawing = ref(false)
 const resultText = ref('')
-const converting = ref(false)
 const status = ref<'idle' | 'done' | 'empty' | 'error'>('idle')
 
 const hasInk = () => strokes.value.some((s) => s.length > 0)
 
-let convertTimer: ReturnType<typeof setTimeout> | null = null
 let resizeObserver: ResizeObserver | null = null
 
 const GUIDE_STEP = 48
@@ -185,8 +173,6 @@ function onPointerUp(event: PointerEvent) {
     drawing.value = false
     const canvas = canvasRef.value
     if (canvas?.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId)
-    if (convertTimer) clearTimeout(convertTimer)
-    convertTimer = setTimeout(convert, 700)
 }
 
 function clearCanvas() {
@@ -197,7 +183,6 @@ function clearCanvas() {
 }
 
 function close() {
-    if (convertTimer) clearTimeout(convertTimer)
     isOpen.value = false
     strokes.value = []
     resultText.value = ''
@@ -217,43 +202,35 @@ function insertText() {
 }
 
 async function convert() {
-    if (!hasInk() || converting.value) return
-    if (convertTimer) clearTimeout(convertTimer)
-    converting.value = true
+    if (!hasInk() || isConverting.value) return
     status.value = 'idle'
     try {
-        const lines = await renderLines()
-        if (lines.length === 0) {
+        const image = await renderImage()
+        if (!image) {
             status.value = 'empty'
             return
         }
-        const parts: string[] = []
-        for (const line of lines) {
-            const text = await recognizeLine(line)
-            if (text) parts.push(text)
-        }
-        const joined = parts.join(' ').trim()
+        const text = await recognizeLine(image)
+        const joined = text.trim()
         resultText.value = joined
         status.value = joined ? 'done' : 'empty'
     } catch (error) {
         console.error('Handwriting OCR error:', error)
         status.value = 'error'
-    } finally {
-        converting.value = false
     }
 }
 
-async function renderLines(): Promise<Blob[]> {
+async function renderImage(): Promise<Blob | null> {
     const canvas = canvasRef.value
-    if (!canvas) return []
+    if (!canvas) return null
     const ctx = canvas.getContext('2d')
-    if (!ctx) return []
+    if (!ctx) return null
     const rect = canvas.getBoundingClientRect()
     const dpr = window.devicePixelRatio || 1
 
     const all = strokes.value.flat()
-    if (all.length === 0) return []
-    const pad = 10 * dpr
+    if (all.length === 0) return null
+    const pad = 16
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
     for (const p of all) {
         minX = Math.min(minX, p.x)
@@ -262,12 +239,12 @@ async function renderLines(): Promise<Blob[]> {
         maxY = Math.max(maxY, p.y)
     }
     const bbox = {
-        x0: Math.max(0, Math.floor(minX - pad / dpr)),
-        y0: Math.max(0, Math.floor(minY - pad / dpr)),
-        x1: Math.min(rect.width, Math.ceil(maxX + pad / dpr)),
-        y1: Math.min(rect.height, Math.ceil(maxY + pad / dpr)),
+        x0: Math.max(0, Math.floor(minX - pad)),
+        y0: Math.max(0, Math.floor(minY - pad)),
+        x1: Math.min(rect.width, Math.ceil(maxX + pad)),
+        y1: Math.min(rect.height, Math.ceil(maxY + pad)),
     }
-    if (bbox.x1 <= bbox.x0 || bbox.y1 <= bbox.y0) return []
+    if (bbox.x1 <= bbox.x0 || bbox.y1 <= bbox.y0) return null
 
     const bw = Math.round((bbox.x1 - bbox.x0) * dpr)
     const bh = Math.round((bbox.y1 - bbox.y0) * dpr)
@@ -275,7 +252,7 @@ async function renderLines(): Promise<Blob[]> {
     off.width = Math.max(1, bw)
     off.height = Math.max(1, bh)
     const offCtx = off.getContext('2d')
-    if (!offCtx) return []
+    if (!offCtx) return null
     offCtx.fillStyle = '#ffffff'
     offCtx.fillRect(0, 0, bw, bh)
     offCtx.setTransform(dpr, 0, 0, dpr, 0, 0)
@@ -293,80 +270,7 @@ async function renderLines(): Promise<Blob[]> {
     }
     offCtx.setTransform(1, 0, 0, 1, 0, 0)
 
-    const crops = segmentLines(off, offCtx, dpr, bbox.x0, bbox.y0)
-    const blobs: Blob[] = []
-    for (const crop of crops) {
-        const lineCanvas = document.createElement('canvas')
-        lineCanvas.width = crop.w
-        lineCanvas.height = crop.h
-        const lctx = lineCanvas.getContext('2d')
-        if (!lctx) continue
-        lctx.fillStyle = '#ffffff'
-        lctx.fillRect(0, 0, crop.w, crop.h)
-        lctx.drawImage(off, crop.x, crop.y, crop.w, crop.h, 0, 0, crop.w, crop.h)
-        const blob = await canvasToBlob(lineCanvas)
-        if (blob) blobs.push(blob)
-    }
-    return blobs
-}
-
-function segmentLines(off: HTMLCanvasElement, offCtx: CanvasRenderingContext2D, dpr: number, originX: number, originY: number): Array<{ x: number; y: number; w: number; h: number }> {
-    const { width, height } = off
-    const data = offCtx.getImageData(0, 0, width, height).data
-    const rowInk = new Array<number>(height).fill(0)
-    for (let y = 0; y < height; y++) {
-        let count = 0
-        const rowOffset = y * width * 4
-        for (let x = 0; x < width; x++) {
-            if (data[rowOffset + x * 4 + 3] > 128) count++
-        }
-        rowInk[y] = count
-    }
-
-    const minGap = Math.round(8 * dpr)
-    const lines: Array<{ y0: number; y1: number }> = []
-    let y = 0
-    while (y < height) {
-        if (rowInk[y] > 1) {
-            let yEnd = y
-            let gap = 0
-            while (yEnd < height) {
-                if (rowInk[yEnd] > 1) {
-                    yEnd++
-                    gap = 0
-                } else {
-                    gap++
-                    if (gap > minGap) break
-                    yEnd++
-                }
-            }
-            lines.push({ y0: y, y1: yEnd - 1 })
-            y = yEnd
-        } else {
-            y++
-        }
-    }
-
-    const crops: Array<{ x: number; y: number; w: number; h: number }> = []
-    for (const line of lines) {
-        let lx = Infinity, rx = -Infinity
-        for (const stroke of strokes.value) {
-            for (const p of stroke) {
-                const py = (p.y - originY) * dpr
-                if (py >= line.y0 && py <= line.y1) {
-                    lx = Math.min(lx, (p.x - originX) * dpr)
-                    rx = Math.max(rx, (p.x - originX) * dpr)
-                }
-            }
-        }
-        if (lx === Infinity || rx === Infinity) continue
-        const x0 = Math.max(0, Math.floor(lx - 6 * dpr))
-        const y0 = Math.max(0, line.y0)
-        const x1 = Math.min(width, Math.ceil(rx + 6 * dpr))
-        const y1 = Math.min(height, line.y1 + 1)
-        crops.push({ x: x0, y: y0, w: x1 - x0, h: y1 - y0 })
-    }
-    return crops
+    return canvasToBlob(off)
 }
 
 function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob | null> {
@@ -390,7 +294,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     resizeObserver?.disconnect()
-    if (convertTimer) clearTimeout(convertTimer)
 })
 
 watch(isOpen, (open) => {
