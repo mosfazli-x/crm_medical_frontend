@@ -2993,6 +2993,9 @@
     "selectDate": "تاریخ گزارش",
     "patient": "بیمار",
     "patientPlaceholder": "جستجو و انتخاب بیمار...",
+    "changePatient": "تایپ کنید برای تغییر بیمار...",
+    "clearPatient": "پاک کردن انتخاب بیمار",
+    "clearSearch": "پاک کردن جستجو",
     "patientDetails": "مشخصات بیمار",
     "nationalId": "کد ملی",
     "phone": "تلفن",
@@ -3147,6 +3150,7 @@
   },
   "consumables": {
     "title": "مخارج و مواد مصرفی",
+    "titleSeo": "مخارج و مواد مصرفی",
     "subtitle": "ثبت هزینه‌های ماهانه اقلام مصرفی و مخارج عمومی کلینیک",
     "monthLabel": "ماه",
     "yearLabel": "سال",
@@ -3606,6 +3610,70 @@
       "createSuccess": "وظیفه ایجاد شد",
       "updateSuccess": "وظیفه بروزرسانی شد",
       "error": "خطایی رخ داد"
+    }
+  },
+  "support": {
+    "widget": {
+      "title": "پشتیبانی و راهنما",
+      "subtitle": "سوالات خود را بپرسید",
+      "placeholder": "سوال خود را بنویسید...",
+      "clearChat": "پاک کردن چت",
+      "welcomeTitle": "چطور می‌توانم کمک کنم؟",
+      "welcomeDesc": "سوال خود را در مورد سیستم CRM بپرسید",
+      "suggestedQuestions": "سوالات پیشنهادی"
+    },
+    "source": {
+      "faq": "پایگاه دانش",
+      "gemini": "هوش مصنوعی Gemini",
+      "groq": "هوش مصنوعی Groq",
+      "admin": "پشتیبانی انسانی"
+    },
+    "message": {
+      "helpful": "آیا این پاسخ مفید بود؟",
+      "yes": "بله",
+      "no": "خیر",
+      "confirmed": "تأیید شد",
+      "escalated": "ارسال شده به پشتیبانی"
+    },
+    "suggested": {
+      "howToCreatePatient": "چگونه بیمار جدید ثبت کنم؟",
+      "howToBookAppointment": "چگونه نوبت‌دهی کنم؟",
+      "howToAddPrescription": "چگونه نسخه اضافه کنم؟",
+      "howToViewLabResults": "چگونه نتایج آزمایش را ببینم؟",
+      "howToManageBilling": "چگونه صورتحساب مدیریت کنم؟",
+      "howToPrintReport": "چگونه گزارش چاپ کنم؟"
+    },
+    "admin": {
+      "title": "مدیریت پرسش و پاسخ",
+      "pendingApprovals": "در انتظار تأیید",
+      "allFaq": "همه سوالات",
+      "stats": "آمار پشتیبانی",
+      "totalTickets": "کل تیکت‌ها",
+      "resolvedTickets": "حل شده",
+      "pendingTickets": "در انتظار تأیید",
+      "escalatedTickets": "ارسال شده",
+      "avgResponseTime": "زمان پاسخگویی میانگین",
+      "approve": "تأیید",
+      "reject": "رد",
+      "edit": "ویرایش",
+      "delete": "حذف",
+      "createFaq": "ایجاد سوال جدید",
+      "editFaq": "ویرایش سوال",
+      "questionFa": "سوال (فارسی)",
+      "answerFa": "پاسخ (فارسی)",
+      "questionEn": "سوال (انگلیسی)",
+      "answerEn": "پاسخ (انگلیسی)",
+      "category": "دسته‌بندی",
+      "tags": "برچسب‌ها",
+      "save": "ذخیره",
+      "cancel": "انصراف",
+      "confirmDelete": "آیا از حذف این سوال مطمئنید؟",
+      "approvedSuccess": "سوال تأیید شد",
+      "deletedSuccess": "سوال حذف شد",
+      "savedSuccess": "سوال ذخیره شد",
+      "resolveByAdmin": "پاسخ مدیر",
+      "resolvePlaceholder": "پاسخ خود را بنویسید...",
+      "resolveSubmit": "ارسال پاسخ"
     }
   }
 }

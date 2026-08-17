@@ -213,6 +213,9 @@
         </div>
       </v-main>
     </v-app>
+
+    <!-- FAQ Support Widget (outside v-app to avoid overflow:hidden clipping) -->
+    <SupportFaqWidget />
   </v-locale-provider>
 </template>
 
@@ -249,6 +252,7 @@ import FileText from '~/components/icons/FileText.vue'
 import ClipboardCheck from '~/components/icons/ClipboardCheck.vue'
 import Basket from '~/components/icons/Basket.vue'
 import Welcome from '~/components/icons/Welcome.vue'
+import FaqIcon from '~/components/icons/FaqIcon.vue'
 
 const route = useRoute()
 const { user, logout } = useAuth()
@@ -375,6 +379,7 @@ const ALL_MENUS = computed(() => [
   { title: t('adminSchedule.title'), to: '/admin/schedule', icon: Clock, roles: ['admin_doctor'], group: 'management' },
   { title: t('adminSettings.title'), to: '/admin/settings', icon: Settings, roles: ['admin_doctor'], group: 'management' },
   { title: t('auditLogs.title'), to: '/admin/audit', icon: AddClipboard, roles: ['admin_doctor'], group: 'management' },
+  { title: t('support.admin.title'), to: '/admin/faq-management', icon: FaqIcon, roles: ['admin_doctor'], group: 'management' },
   { title: t('billing.title'), to: '/billing', icon: Wallet, roles: ['admin_doctor'], group: 'finance' },
   { title: t('inventory.title'), to: '/inventory', icon: Box, roles: ['admin_doctor', 'pharmacy'], group: 'finance' },
   { title: t('accounting.title'), to: '/accounting', icon: BookOpen, roles: ['admin_doctor'], group: 'finance' },

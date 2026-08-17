@@ -448,4 +448,8 @@ async function deleteItem(row: ReportRow) {
     $toast.error(t('consumables.saveError'))
   }
 }
+
+useSeoMeta({
+  title: t('consumables.titleSeo'),
+})
 </script>

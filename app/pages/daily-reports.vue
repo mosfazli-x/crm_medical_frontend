@@ -23,10 +23,11 @@
               display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#4F46E5" auto-submit clearable custom-input />
           </div>
         </div>
-        <v-select v-model="form.patientId" :items="patientOptions" item-title="label" item-value="value"
-          variant="outlined" density="comfortable" :label="t('dailyReports.patient')"
-          :placeholder="t('dailyReports.patientPlaceholder')" hide-details="auto" clearable
-          class="!bg-white dark:!bg-[#0f1115] !rounded-xl" />
+        <div>
+          <label class="crm-label !mb-1.5">{{ t('dailyReports.patient') }}</label>
+          <PatientSelector v-model="form.patientId" :patients="patients" :label="t('dailyReports.patient')"
+            :placeholder="t('dailyReports.patientPlaceholder')" />
+        </div>
       </div>
 
       <div v-if="selectedPatient" class="crm-info-box !mb-4">
@@ -36,7 +37,7 @@
           <span class="!font-bold">{{ selectedPatient.firstName }} {{ selectedPatient.lastName }}</span>
           <span class="crm-divider-dot" aria-hidden="true" />
           <span>{{ t('dailyReports.nationalId') }}: <span class="crm-ltr !font-mono">{{ selectedPatient.nationalId
-              }}</span></span>
+          }}</span></span>
           <template v-if="selectedPatient.phone">
             <span class="crm-divider-dot" aria-hidden="true" />
             <span>{{ t('dailyReports.phone') }}: <span class="crm-ltr">{{ selectedPatient.phone }}</span></span>
@@ -121,9 +122,11 @@
           <v-select v-model="listFilters.visitType" :items="visitTypeOptions" item-title="label" item-value="value"
             variant="outlined" density="compact" :label="t('dailyReports.allVisitTypes')" hide-details clearable
             class="!min-w-[160px]" />
-          <v-select v-model="listFilters.patientId" :items="patientOptions" item-title="label" item-value="value"
-            variant="outlined" density="compact" :label="t('dailyReports.patient')" hide-details clearable
-            class="!min-w-[180px]" />
+          <div class="!min-w-[220px]">
+            <label class="crm-label !mb-1.5">{{ t('dailyReports.patient') }}</label>
+            <PatientSelector v-model="listFilters.patientId" :patients="patients" :label="t('dailyReports.patient')"
+              :placeholder="t('dailyReports.patientPlaceholder')" />
+          </div>
           <div class="!flex !gap-2">
             <button class="crm-btn crm-btn-primary" @click="loadReports">{{ t('dailyReports.applyFilters') }}</button>
             <button class="crm-btn crm-btn-ghost" @click="resetFilters">{{ t('dailyReports.resetFilters') }}</button>
@@ -348,13 +351,15 @@
           <v-select v-model="statsFilters.visitType" :items="visitTypeOptions" item-title="label" item-value="value"
             variant="outlined" density="compact" :label="t('dailyReports.allVisitTypes')" hide-details clearable
             class="!min-w-[160px]" />
-          <v-select v-model="statsFilters.patientId" :items="patientOptions" item-title="label" item-value="value"
-            variant="outlined" density="compact" :label="t('dailyReports.patient')" hide-details clearable
-            class="!min-w-[180px]" />
+          <div class="!min-w-[220px]">
+            <label class="crm-label !mb-1.5">{{ t('dailyReports.patient') }}</label>
+            <PatientSelector v-model="statsFilters.patientId" :patients="patients" :label="t('dailyReports.patient')"
+              :placeholder="t('dailyReports.patientPlaceholder')" />
+          </div>
           <div class="!flex !gap-2">
             <button class="crm-btn crm-btn-primary" @click="loadStats">{{ t('dailyReports.applyFilters') }}</button>
             <button class="crm-btn crm-btn-ghost" @click="resetStatsFilters">{{ t('dailyReports.resetFilters')
-              }}</button>
+            }}</button>
           </div>
         </div>
       </UiContentCard>
@@ -405,7 +410,7 @@
                 <td>
                   <span class="crm-badge" :class="paymentBadgeClass(row.payment_method)">{{
                     paymentLabel(row.payment_method)
-                    }}</span>
+                  }}</span>
                 </td>
                 <td class="!text-center !font-bold">{{ formatNumber(row.count) }}</td>
                 <td class="!font-mono" dir="ltr">{{ formatPrice(row.total) }}</td>
@@ -430,7 +435,7 @@
               <tr v-for="row in stats.byProcedure" :key="row.procedure">
                 <td>
                   <span class="crm-badge" :class="procedureBadgeClass(row.procedure)">{{ procedureLabel(row.procedure)
-                    }}</span>
+                  }}</span>
                 </td>
                 <td class="!text-center !font-bold">{{ formatNumber(row.count) }}</td>
                 <td class="!font-mono" dir="ltr">{{ formatPrice(row.total) }}</td>
@@ -518,7 +523,7 @@
         </div>
         <h3 class="!text-xs !font-bold !text-zinc-900 dark:!text-white !mb-1.5">{{
           t('dailyReports.visitTypeDeleteConfirm')
-          }}</h3>
+        }}</h3>
         <p class="!text-zinc-400 !text-[11px] !leading-relaxed">{{ t('dailyReports.visitTypeDeleteConfirm') }}</p>
         <div class="!flex !justify-center !gap-2 !mt-5">
           <button
@@ -642,12 +647,7 @@ const statsFilters = reactive<DailyReportStatsFilters>({
 })
 const statsLoading = ref(false)
 
-const patientOptions = computed(() =>
-  patients.value.map((p) => ({
-    value: p.id,
-    label: `${p.firstName} ${p.lastName}${p.nationalId ? ` (${p.nationalId})` : ''}`,
-  }))
-)
+
 
 const selectedPatient = computed(() => patients.value.find((p) => p.id === form.value.patientId) || null)
 
@@ -959,5 +959,10 @@ watch(tab, (value) => {
 onMounted(() => {
   loadPatients()
   loadActiveVisitTypes()
+})
+
+
+useSeoMeta({
+  title: t('dashboard.dailyReports'),
 })
 </script>

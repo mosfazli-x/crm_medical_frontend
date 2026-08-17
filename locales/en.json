@@ -2993,6 +2993,9 @@
     "selectDate": "Report Date",
     "patient": "Patient",
     "patientPlaceholder": "Search and select a patient...",
+    "changePatient": "Type to change patient...",
+    "clearPatient": "Clear patient selection",
+    "clearSearch": "Clear search",
     "patientDetails": "Patient Details",
     "nationalId": "National ID",
     "phone": "Phone",
@@ -3159,6 +3162,7 @@
     "amount": "Amount (Toman)",
     "notes": "Notes",
     "total": "Grand total",
+    "titleSeo": "Consumables & Expenses - Monthly Clinic Records",
     "saveMonth": "Save month",
     "exportExcel": "Export Excel",
     "addItem": "Add item",
@@ -3344,12 +3348,36 @@
       "kicker": "Services",
       "title": "What we practise.",
       "items": {
-        "1": { "num": "01", "title": "Facial Harmonisation", "desc": "Injectables, contour and profile balancing" },
-        "2": { "num": "02", "title": "Regenerative Skin Medicine", "desc": "PRP, polynucleotides, biostimulators" },
-        "3": { "num": "03", "title": "Laser & Light", "desc": "Pigment, vascular and resurfacing programmes" },
-        "4": { "num": "04", "title": "Women's Intimate Health", "desc": "Non-surgical restorative protocols" },
-        "5": { "num": "05", "title": "Medical Skincare", "desc": "Prescription-grade, individually formulated" },
-        "6": { "num": "06", "title": "Longevity Consultations", "desc": "Preventive, whole-face planning over years" }
+        "1": {
+          "num": "01",
+          "title": "Facial Harmonisation",
+          "desc": "Injectables, contour and profile balancing"
+        },
+        "2": {
+          "num": "02",
+          "title": "Regenerative Skin Medicine",
+          "desc": "PRP, polynucleotides, biostimulators"
+        },
+        "3": {
+          "num": "03",
+          "title": "Laser & Light",
+          "desc": "Pigment, vascular and resurfacing programmes"
+        },
+        "4": {
+          "num": "04",
+          "title": "Women's Intimate Health",
+          "desc": "Non-surgical restorative protocols"
+        },
+        "5": {
+          "num": "05",
+          "title": "Medical Skincare",
+          "desc": "Prescription-grade, individually formulated"
+        },
+        "6": {
+          "num": "06",
+          "title": "Longevity Consultations",
+          "desc": "Preventive, whole-face planning over years"
+        }
       }
     },
     "visit": {
@@ -3378,10 +3406,22 @@
       },
       "social": {
         "heading": "Social",
-        "instagram": { "name": "Instagram", "handle": "{'@'}hastihosseiniclinic" },
-        "linkedin": { "name": "LinkedIn", "handle": "Hasti Hosseini Clinic" },
-        "telegram": { "name": "Telegram", "handle": "{'@'}hhclinic" },
-        "whatsapp": { "name": "WhatsApp", "handle": "+98 21 8800 4120" }
+        "instagram": {
+          "name": "Instagram",
+          "handle": "{'@'}hastihosseiniclinic"
+        },
+        "linkedin": {
+          "name": "LinkedIn",
+          "handle": "Hasti Hosseini Clinic"
+        },
+        "telegram": {
+          "name": "Telegram",
+          "handle": "{'@'}hhclinic"
+        },
+        "whatsapp": {
+          "name": "WhatsApp",
+          "handle": "+98 21 8800 4120"
+        }
       }
     },
     "footer": {
@@ -3567,6 +3607,70 @@
       "createSuccess": "Task created",
       "updateSuccess": "Task updated",
       "error": "Something went wrong"
+    }
+  },
+  "support": {
+    "widget": {
+      "title": "Support & Help",
+      "subtitle": "Ask your questions",
+      "placeholder": "Type your question...",
+      "clearChat": "Clear chat",
+      "welcomeTitle": "How can I help?",
+      "welcomeDesc": "Ask your questions about the CRM system",
+      "suggestedQuestions": "Suggested questions"
+    },
+    "source": {
+      "faq": "Knowledge Base",
+      "gemini": "AI Gemini",
+      "groq": "AI Groq",
+      "admin": "Human Support"
+    },
+    "message": {
+      "helpful": "Was this answer helpful?",
+      "yes": "Yes",
+      "no": "No",
+      "confirmed": "Confirmed",
+      "escalated": "Escalated to support"
+    },
+    "suggested": {
+      "howToCreatePatient": "How do I create a new patient?",
+      "howToBookAppointment": "How do I book an appointment?",
+      "howToAddPrescription": "How do I add a prescription?",
+      "howToViewLabResults": "How do I view lab results?",
+      "howToManageBilling": "How do I manage billing?",
+      "howToPrintReport": "How do I print a report?"
+    },
+    "admin": {
+      "title": "FAQ Management",
+      "pendingApprovals": "Pending Approvals",
+      "allFaq": "All FAQs",
+      "stats": "Support Statistics",
+      "totalTickets": "Total Tickets",
+      "resolvedTickets": "Resolved",
+      "pendingTickets": "Pending Approval",
+      "escalatedTickets": "Escalated",
+      "avgResponseTime": "Avg Response Time",
+      "approve": "Approve",
+      "reject": "Reject",
+      "edit": "Edit",
+      "delete": "Delete",
+      "createFaq": "Create New FAQ",
+      "editFaq": "Edit FAQ",
+      "questionFa": "Question (Farsi)",
+      "answerFa": "Answer (Farsi)",
+      "questionEn": "Question (English)",
+      "answerEn": "Answer (English)",
+      "category": "Category",
+      "tags": "Tags",
+      "save": "Save",
+      "cancel": "Cancel",
+      "confirmDelete": "Are you sure you want to delete this FAQ?",
+      "approvedSuccess": "FAQ approved",
+      "deletedSuccess": "FAQ deleted",
+      "savedSuccess": "FAQ saved",
+      "resolveByAdmin": "Admin Response",
+      "resolvePlaceholder": "Type your response...",
+      "resolveSubmit": "Submit Response"
     }
   }
 }
