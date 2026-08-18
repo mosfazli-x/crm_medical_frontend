@@ -15,7 +15,7 @@
 
     <!-- User message -->
     <div v-else-if="message.role === 'user'" class="max-w-[85%]">
-      <div class="rounded-2xl rounded-br-md bg-indigo-600 px-4 py-2.5 text-white">
+      <div class="rounded-2xl rounded-br-md bg-indigo-600 px-4 py-2.5! text-white">
         <p class="text-sm leading-relaxed whitespace-pre-wrap">{{ message.content }}</p>
       </div>
       <p class="mt-1 text-[10px] text-gray-400 dark:text-gray-500 text-end">{{ formatTime(message.timestamp) }}</p>

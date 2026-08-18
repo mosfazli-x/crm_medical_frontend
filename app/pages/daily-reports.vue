@@ -12,10 +12,10 @@
     <!-- ============================= Save report ============================= -->
     <UiContentCard v-if="tab === 'report'">
       <template #header>
-        <h2 class="crm-card-title">{{ t('dailyReports.saveReport') }}</h2>
+        <h2 class="crm-card-title text-lg">{{ t('dailyReports.saveReport') }}</h2>
       </template>
 
-      <div class="!grid !grid-cols-1 md:!grid-cols-2 !gap-4 !mb-4">
+      <div class="!grid !grid-cols-1 md:!grid-cols-2 !gap-4 !mb-4 px-2">
         <div>
           <label class="crm-label !mb-1.5">{{ t('dailyReports.selectDate') }}</label>
           <div class="relative h-[56px] border rounded-xl overflow-hidden bg-white dark:bg-[#0f1115]">
@@ -49,14 +49,14 @@
         </div>
       </div>
 
-      <div class="!mb-4">
+      <div class="!mb-4 px-2">
         <label class="crm-label">{{ t('dailyReports.visitTypes') }}</label>
         <v-select v-model="form.visitTypes" :items="visitTypeOptions" item-title="label" item-value="value"
           variant="outlined" density="comfortable" :label="t('dailyReports.visitTypesPlaceholder')" multiple chips
           clearable hide-details="auto" class="!bg-white dark:!bg-[#0f1115] !rounded-xl" />
       </div>
 
-      <div class="!mb-4">
+      <div class="!mb-4 px-2">
         <label class="crm-label">{{ t('dailyReports.procedures') }}</label>
         <p class="!text-xs !text-slate-400 !mb-2">{{ t('dailyReports.proceduresHint') }}</p>
         <div class="!grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-3 !gap-3">
@@ -67,7 +67,7 @@
           :placeholder="t('dailyReports.otherPlaceholder')">
       </div>
 
-      <div class="!grid !grid-cols-1 md:!grid-cols-2 !gap-4 !mb-4">
+      <div class="!grid !grid-cols-1 md:!grid-cols-2 !gap-4 !mb-4 px-2">
         <v-text-field v-model.number="form.feeCollected" type="number" min="0" variant="outlined" density="comfortable"
           :label="t('dailyReports.feeCollected')" hide-details="auto"
           class="!bg-white dark:!bg-[#0f1115] !rounded-xl" />
@@ -77,9 +77,9 @@
       </div>
 
       <v-textarea v-model="form.notes" variant="outlined" density="comfortable" rows="2" auto-grow
-        :label="t('common.notes')" hide-details="auto" class="!mb-4 !bg-white dark:!bg-[#0f1115] !rounded-xl" />
+        :label="t('common.notes')" hide-details="auto" class="!mb-4 !bg-white dark:!bg-[#0f1115] !rounded-xl px-2" />
 
-      <div class="!flex !justify-end !gap-3">
+      <div class="!flex !justify-end !gap-3 pb-2">
         <button class="crm-btn crm-btn-ghost" :disabled="saving" @click="resetForm">{{ t('common.cancel') }}</button>
         <button class="crm-btn crm-btn-primary" :disabled="saving" @click="submitReport">
           <Icon v-if="saving" name="lucide:loader-2" class="!w-4 !h-4 !animate-spin" />
