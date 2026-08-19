@@ -318,18 +318,22 @@
         </div>
         <div class="!p-8 !space-y-5">
           <v-text-field v-model="productForm.name" variant="outlined" density="comfortable"
-            :label="$t('inventory.productName')" hide-details="auto" />
+            :label="$t('inventory.productName')" hide-details="auto"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openProductHw('name')" />
           <div class="!grid !grid-cols-2 !gap-4">
             <v-text-field v-model="productForm.sku" variant="outlined" density="comfortable"
-              :label="$t('inventory.sku')" hide-details="auto" />
+              :label="$t('inventory.sku')" hide-details="auto"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openProductHw('sku')" />
             <v-text-field v-model="productForm.barcode" variant="outlined" density="comfortable"
-              :label="$t('inventory.barcode')" hide-details="auto" />
+              :label="$t('inventory.barcode')" hide-details="auto"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openProductHw('barcode')" />
           </div>
           <div class="!grid !grid-cols-2 !gap-4">
             <v-select v-model="productForm.category_id" :items="categoryOptions" item-title="label" item-value="value"
               variant="outlined" density="comfortable" :label="$t('inventory.category')" hide-details clearable />
             <v-text-field v-model="productForm.unit" variant="outlined" density="comfortable"
-              :label="$t('inventory.unit')" hide-details="auto" />
+              :label="$t('inventory.unit')" hide-details="auto"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openProductHw('unit')" />
           </div>
           <div class="!grid !grid-cols-2 !gap-4">
             <div class="!flex !flex-col">
@@ -357,7 +361,8 @@
               @input="sanitizeInteger(productForm, 'min_stock_level')" />
           </div>
           <v-textarea v-model="productForm.description" variant="outlined" density="comfortable"
-            :label="$t('common.notes')" rows="2" hide-details="auto" />
+            :label="$t('common.notes')" rows="2" hide-details="auto"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openProductHw('description')" />
         </div>
         <div
           class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
@@ -385,9 +390,11 @@
         </div>
         <div class="!p-8 !space-y-5">
           <v-text-field v-model="categoryForm.name" variant="outlined" density="comfortable"
-            :label="$t('inventory.categoryName')" hide-details="auto" />
+            :label="$t('inventory.categoryName')" hide-details="auto"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openCategoryHw('name')" />
           <v-textarea v-model="categoryForm.description" variant="outlined" density="comfortable"
-            :label="$t('inventory.description')" rows="2" hide-details="auto" />
+            :label="$t('inventory.description')" rows="2" hide-details="auto"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openCategoryHw('description')" />
         </div>
         <div
           class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
@@ -434,9 +441,11 @@
             </p>
           </div>
           <v-text-field v-model="stockForm.reference" variant="outlined" density="comfortable"
-            :label="$t('inventory.reference')" hide-details="auto" />
+            :label="$t('inventory.reference')" hide-details="auto"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openStockHw('reference')" />
           <v-textarea v-model="stockForm.description" variant="outlined" density="comfortable"
-            :label="$t('inventory.description')" rows="2" hide-details="auto" />
+            :label="$t('inventory.description')" rows="2" hide-details="auto"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openStockHw('description')" />
         </div>
         <div
           class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
@@ -520,7 +529,8 @@
             clearable />
 
           <v-textarea v-model="usageForm.notes" variant="outlined" density="comfortable" :label="$t('common.notes')"
-            rows="2" hide-details="auto" />
+            rows="2" hide-details="auto"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openUsageHw('notes')" />
         </div>
         <div
           class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
@@ -532,6 +542,11 @@
         </div>
       </div>
     </v-dialog>
+
+    <HandwritingDialog v-model="productHwOpen" :label="productHwLabel" :numeric="productHwNumeric" @insert="applyProductHw" />
+    <HandwritingDialog v-model="categoryHwOpen" :label="categoryHwLabel" :numeric="categoryHwNumeric" @insert="applyCategoryHw" />
+    <HandwritingDialog v-model="stockHwOpen" :label="stockHwLabel" :numeric="stockHwNumeric" @insert="applyStockHw" />
+    <HandwritingDialog v-model="usageHwOpen" :label="usageHwLabel" :numeric="usageHwNumeric" @insert="applyUsageHw" />
   </UiPageContainer>
 </template>
 
@@ -540,6 +555,8 @@ import { ref, computed, onMounted, nextTick } from 'vue'
 import Plus from '~/components/icons/Plus.vue'
 import { useApi } from '~/composables/useApi'
 import { useFormatting } from '~/composables/useFormatting'
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const { t } = useI18n()
 const { apiFetch } = useApi()
@@ -815,6 +832,45 @@ function deleteUsage(usage: any) {
 const usageDialog = ref(false)
 const savingUsage = ref(false)
 const usageForm = ref({ product_id: null, quantity: '', unit_price: '', visit_id: null, notes: '' })
+
+// ─── Handwriting ───
+const { handwritingOpen: productHwOpen, handwritingLabel: productHwLabel, handwritingNumeric: productHwNumeric, openHandwriting: openProductHw, applyHandwriting: applyProductHw } =
+  useHandwritingFields({
+    fieldLabels: {
+      name: t('inventory.productName'),
+      sku: t('inventory.sku'),
+      barcode: t('inventory.barcode'),
+      unit: t('inventory.unit'),
+      description: t('common.notes'),
+    },
+    target: productForm,
+  })
+
+const { handwritingOpen: categoryHwOpen, handwritingLabel: categoryHwLabel, handwritingNumeric: categoryHwNumeric, openHandwriting: openCategoryHw, applyHandwriting: applyCategoryHw } =
+  useHandwritingFields({
+    fieldLabels: {
+      name: t('inventory.categoryName'),
+      description: t('inventory.description'),
+    },
+    target: categoryForm,
+  })
+
+const { handwritingOpen: stockHwOpen, handwritingLabel: stockHwLabel, handwritingNumeric: stockHwNumeric, openHandwriting: openStockHw, applyHandwriting: applyStockHw } =
+  useHandwritingFields({
+    fieldLabels: {
+      reference: t('inventory.reference'),
+      description: t('inventory.description'),
+    },
+    target: stockForm,
+  })
+
+const { handwritingOpen: usageHwOpen, handwritingLabel: usageHwLabel, handwritingNumeric: usageHwNumeric, openHandwriting: openUsageHw, applyHandwriting: applyUsageHw } =
+  useHandwritingFields({
+    fieldLabels: {
+      notes: t('common.notes'),
+    },
+    target: usageForm,
+  })
 
 const purchasePriceHint = computed(() => formatPriceWords(productForm.value.purchase_price))
 const sellingPriceHint = computed(() => formatPriceWords(productForm.value.selling_price))

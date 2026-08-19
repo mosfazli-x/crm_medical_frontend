@@ -48,12 +48,14 @@
           <v-form ref="profileFormRef" @submit.prevent="handleUpdateProfile">
             <v-text-field v-model="profileForm.fullName" :label="$t('myProfile.fullName')" variant="outlined"
               density="comfortable" prepend-inner-icon="mdi-account-edit-outline"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('fullName')"
               :rules="[v => !v || v.length >= 2 || t('myProfile.fullNameMinError')]" class="!mb-2" dir="rtl"
               clearable />
 
             <v-text-field v-if="isLabOrPharmacy" v-model="profileForm.organizationName"
               :label="$t('myProfile.organizationName')" variant="outlined" density="comfortable"
-              prepend-inner-icon="mdi-domain" :rules="[v => !v || v.length >= 1 || t('myProfile.organizationMinError')]"
+              prepend-inner-icon="mdi-domain" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('organizationName')"
+              :rules="[v => !v || v.length >= 1 || t('myProfile.organizationMinError')]"
               class="!mb-2" dir="rtl" clearable />
 
             <div class="!mb-6">
@@ -380,6 +382,8 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
   </UiPageContainer>
 </template>
 
@@ -388,6 +392,8 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import Security from '~/components/icons/Security.vue'
 import Telegram from '~/components/icons/Telegram.vue'
 import UserDeatils from '~/components/icons/UserDeatils.vue'
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const { t } = useI18n()
 const { apiFetch } = useApi()
@@ -410,6 +416,15 @@ const profileForm = reactive({
   fullName: '',
   organizationName: '',
 })
+
+const { handwritingOpen, handwritingLabel, handwritingNumeric, openHandwriting, applyHandwriting } =
+  useHandwritingFields({
+    fieldLabels: {
+      fullName: t('myProfile.fullName'),
+      organizationName: t('myProfile.organizationName'),
+    },
+    target: profileForm,
+  })
 
 const passwordForm = reactive({
   currentPassword: '',

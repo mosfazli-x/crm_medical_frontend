@@ -119,7 +119,7 @@
 
               <div class="space-y-3">
                 <div v-for="(c, i) in rec.maternal_complications" :key="'comp-'+i" class="flex gap-3 items-start">
-                  <v-text-field v-model="c.title" :label="t('pregnancy.complicationTitle')" variant="outlined" density="compact" hide-details="auto" class="flex-1" />
+                  <v-text-field v-model="c.title" :label="t('pregnancy.complicationTitle')" variant="outlined" density="compact" hide-details="auto" class="flex-1" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('pregnancy.complicationTitle'), false, (text) => c.title = text)" />
                   <v-select v-model="c.severity" :items="severityOptions" :label="t('pregnancy.severity')" variant="outlined" density="compact" hide-details="auto" class="w-32 shrink-0" />
                   <v-btn icon="mdi-close" variant="text" color="error" size="small" density="comfortable" class="mt-1"
                          @click="rec.maternal_complications.splice(i, 1)" />
@@ -149,7 +149,7 @@
                          @click="rec.newborns_details.splice(i, 1)" :title="t('pregnancy.deleteNewborn')" />
                          
                   <div class="px-2 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 items-center">
-                    <v-text-field v-model="b.gender" :label="t('pregnancy.gender')" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
+                    <v-text-field v-model="b.gender" :label="t('pregnancy.gender')" variant="outlined" density="compact" hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('pregnancy.gender'), false, (text) => b.gender = text)" />
                     <v-text-field v-model.number="b.weight" :label="t('pregnancy.weightGrams')" type="number" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
                     <v-text-field v-model.number="b.height" :label="t('pregnancy.heightCm')" type="number" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
                     <v-text-field v-model.number="b.head_circumference" :label="t('pregnancy.headCircumference')" type="number" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
@@ -164,7 +164,7 @@
               </div>
             </div>
 
-            <v-textarea v-model="rec.notes" :label="t('pregnancy.doctorNotes')" variant="outlined" density="compact" rows="2" hide-details="auto" bg-color="white" />
+            <v-textarea v-model="rec.notes" :label="t('pregnancy.doctorNotes')" variant="outlined" density="compact" rows="2" hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('pregnancy.doctorNotes'), false, (text) => rec.notes = text)" />
             
           </div>
         </v-expansion-panel-text>
@@ -176,17 +176,36 @@
         <v-icon icon="mdi-note-text-outline" class="text-slate-500" size="small" />
         {{ t('pregnancy.generalNotes') }}
       </h4>
-      <v-textarea v-model="generalNotes" :label="t('pregnancy.generalNotesPlaceholder')" variant="outlined" density="compact" rows="3" hide-details="auto" bg-color="slate-50" />
+      <v-textarea v-model="generalNotes" :label="t('pregnancy.generalNotesPlaceholder')" variant="outlined" density="compact" rows="3" hide-details="auto" bg-color="slate-50" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('pregnancy.generalNotesPlaceholder'), false, (text) => generalNotes = text)" />
     </div>
 
   </div>
+  <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 const { t } = useI18n()
 
 const records = defineModel<any[]>('records', { required: true })
 const generalNotes = defineModel<string>('generalNotes', { required: true })
+
+const handwritingOpen = ref(false)
+const handwritingLabel = ref('')
+const handwritingNumeric = ref(false)
+const handwritingCallback = ref<((text: string) => void) | null>(null)
+
+function openHandwriting(label: string, numeric: boolean, callback: (text: string) => void) {
+  handwritingLabel.value = label
+  handwritingNumeric.value = numeric
+  handwritingCallback.value = callback
+  handwritingOpen.value = true
+}
+
+function applyHandwriting(text: string) {
+  handwritingCallback.value?.(text)
+}
 
 const statusOptions = ['current', 'completed']
 

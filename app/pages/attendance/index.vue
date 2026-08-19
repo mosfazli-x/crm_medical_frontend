@@ -283,12 +283,14 @@
             </div>
             <div>
               <label class="crm-label">{{ $t('attendance.staffNote') }}</label>
-              <v-textarea v-model="editForm.notes" variant="outlined" density="comfortable" rows="2" hide-details />
+              <v-textarea v-model="editForm.notes" variant="outlined" density="comfortable" rows="2" hide-details
+                append-inner-icon="mdi-draw-pen" @click:append-inner="openEditHw(t('attendance.staffNote'), (text) => editForm.notes = text)" />
             </div>
             <div>
               <label class="crm-label">{{ $t('attendance.adminNote') }}</label>
               <v-textarea v-model="editForm.adminNotes" variant="outlined" density="comfortable" rows="2"
-                hide-details />
+                hide-details
+                append-inner-icon="mdi-draw-pen" @click:append-inner="openEditHw(t('attendance.adminNote'), (text) => editForm.adminNotes = text)" />
             </div>
           </div>
         </v-card-text>
@@ -323,7 +325,8 @@
                 <v-select v-model="item.status" :items="statusOptions" variant="outlined" density="compact" hide-details
                   class="max-w-[140px]" />
                 <v-text-field v-model="item.adminNotes" variant="outlined" density="compact" :placeholder="$t('attendance.notePlaceholder')"
-                  hide-details class="max-w-[150px]" />
+                  hide-details class="max-w-[150px]"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openEditHw(t('attendance.adminNote'), (text) => item.adminNotes = text)" />
               </div>
               <div class="space-y-1">
                 <div v-for="(session, sIdx) in item.sessions" :key="sIdx" class="flex items-center gap-2">
@@ -351,12 +354,14 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <HandwritingDialog v-model="editHwOpen" :label="editHwLabel" @insert="applyEditHw" />
   </UiPageContainer>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import moment from 'moment-jalaali'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const { user } = useAuth()
 const { apiFetch } = useApi()
@@ -387,6 +392,17 @@ const editForm = reactive<{ status: string; notes: string; adminNotes: string; s
   adminNotes: '',
   sessions: [],
 })
+
+const editHwOpen = ref(false)
+const editHwLabel = ref('')
+const editHwCallback = ref<((text: string) => void) | null>(null)
+
+function openEditHw(label: string, callback: (text: string) => void) {
+  editHwLabel.value = label
+  editHwCallback.value = callback
+  editHwOpen.value = true
+}
+function applyEditHw(text: string) { editHwCallback.value?.(text) }
 
 const bulkDialog = ref(false)
 const bulkLoading = ref(false)

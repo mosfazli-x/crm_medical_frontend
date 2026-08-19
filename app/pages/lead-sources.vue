@@ -102,7 +102,8 @@
                 <label class="text-sm font-semibold text-slate-700 mb-2 block dark:text-slate-200">{{ $t('leadSources.name') }} <span class="text-red-500">*</span></label>
                 <v-text-field v-model="form.name" variant="outlined" density="comfortable"
                   :placeholder="$t('leadSources.namePlaceholder')" hide-details="auto" bg-color="white" rounded="lg"
-                  :rules="[v => !!v?.trim() || $t('leadSources.nameRequired')]" />
+                  :rules="[v => !!v?.trim() || $t('leadSources.nameRequired')]"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('name')" />
               </v-col>
 
               <v-col cols="12" md="6" class="py-2">
@@ -121,7 +122,8 @@
                 <label class="text-sm font-semibold text-slate-700 mb-2 block dark:text-slate-200">{{ $t('leadSources.description') }}</label>
                 <v-textarea v-model="form.description" variant="outlined" density="comfortable"
                   :placeholder="$t('leadSources.descriptionPlaceholder')" hide-details="auto" bg-color="white" rounded="lg"
-                  rows="2" />
+                  rows="2"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('description')" />
               </v-col>
 
               <v-col cols="12" md="6" class="py-2">
@@ -167,6 +169,8 @@
       </v-card>
     </v-dialog>
 
+    <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
+
     <v-dialog v-model="deleteDialog" max-width="420">
       <v-card class="rounded-2xl text-center py-6">
         <v-card-text class="px-6">
@@ -201,6 +205,8 @@ import { useLeads } from '~/composables/useLeads'
 import { useEventBus } from '~/composables/useEventBus'
 import { useStatusBadge } from '~/composables/useStatusBadge'
 import { LEAD_SOURCE_CATEGORIES, LEAD_SOURCE_TYPES, type LeadSource } from '~/types/lead'
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const { t } = useI18n()
 const { listSources, createSource, updateSource, deactivateSource: deactivate } = useLeads()
@@ -238,6 +244,15 @@ const defaultForm = {
 }
 
 const form = ref({ ...defaultForm })
+
+const { handwritingOpen, handwritingLabel, handwritingNumeric, openHandwriting, applyHandwriting } =
+  useHandwritingFields({
+    fieldLabels: {
+      name: t('leadSources.name'),
+      description: t('leadSources.description'),
+    },
+    target: form,
+  })
 
 function resetForm() {
   form.value = { ...defaultForm }

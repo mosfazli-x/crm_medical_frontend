@@ -19,6 +19,8 @@
                 density="comfortable"
                 :rules="[v => !!v || t('staffForm.fullNameRequired')]"
                 hide-details="auto"
+                append-inner-icon="mdi-draw-pen"
+                @click:append-inner="openHandwriting('fullName')"
               />
             </div>
 
@@ -34,6 +36,8 @@
                   v => /^09\d{9}$/.test(v) || t('staffForm.mobileInvalid')
                 ]"
                 hide-details="auto"
+                append-inner-icon="mdi-draw-pen"
+                @click:append-inner="openHandwriting('phone')"
               />
             </div>
 
@@ -80,6 +84,8 @@
                 density="comfortable"
                 rows="2"
                 hide-details="auto"
+                append-inner-icon="mdi-draw-pen"
+                @click:append-inner="openHandwriting('notes')"
               />
             </div>
           </div>
@@ -100,9 +106,13 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+  <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
 </template>
 
 <script setup lang="ts">
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
+
 const { t } = useI18n()
 
 const props = defineProps<{
@@ -132,6 +142,16 @@ const form = reactive({
   employmentDate: '',
   notes: '',
 })
+
+const { handwritingOpen, handwritingLabel, handwritingNumeric, openHandwriting, applyHandwriting } =
+  useHandwritingFields({
+    fieldLabels: {
+      fullName: t('staffForm.fullName'),
+      phone: t('staffForm.mobile'),
+      notes: t('staffForm.notes'),
+    },
+    target: form,
+  })
 
 watch(() => props.modelValue, (val) => {
   if (val && props.staff && props.editMode) {

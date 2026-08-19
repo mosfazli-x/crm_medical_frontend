@@ -132,6 +132,8 @@
                 hide-details
                 class="dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
                 :placeholder="$t('messaging.recipientPlaceholder')"
+                append-inner-icon="mdi-draw-pen"
+                @click:append-inner="openHandwriting('recipient')"
               />
             </div>
 
@@ -151,6 +153,8 @@
               density="compact"
               class="mb-4 dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
               hide-details
+              append-inner-icon="mdi-draw-pen"
+              @click:append-inner="openHandwriting('subject')"
             />
             <v-textarea
               v-model="composeForm.body"
@@ -160,6 +164,8 @@
               class="mb-4 dark:text-slate-300 dark:bg-blue-grey! dark:border-slate-600!"
               rows="8"
               hide-details
+              append-inner-icon="mdi-draw-pen"
+              @click:append-inner="openHandwriting('body')"
             />
             <v-checkbox
               v-model="composeForm.confidential"
@@ -252,11 +258,14 @@
   </UiPageContainer>
 
   <PatientSearchDialog v-model="patientSearchDialog" @select="onPatientSelected" />
+  <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import moment from 'moment-jalaali'
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const { t } = useI18n()
 const { apiFetch } = useApi()
@@ -282,6 +291,16 @@ const composeForm = ref({
   priority: 'normal',
   confidential: false,
 })
+
+const { handwritingOpen, handwritingLabel, handwritingNumeric, openHandwriting, applyHandwriting } =
+  useHandwritingFields({
+    fieldLabels: {
+      recipient: t('messaging.recipientLabel'),
+      subject: t('messaging.subject'),
+      body: t('messaging.messageBody'),
+    },
+    target: composeForm,
+  })
 
 const priorityOptions = [
   { title: t('messaging.priorityOptions.normal'), value: 'normal' },

@@ -87,7 +87,8 @@
                             }}</label>
                             <v-textarea v-model="newVisit.notes" :placeholder="$t('calendar.notesPlaceholder')"
                                 class="dark:text-slate-300 dark:bg-slate-700 dark:border-slate-600" variant="outlined"
-                                rows="3" density="comfortable" hide-details="auto" />
+                                rows="3" density="comfortable" hide-details="auto"
+                                append-inner-icon="mdi-draw-pen" @click:append-inner="openVisitNotesHw(t('calendar.doctorNotes'), (text) => newVisit.notes = text)" />
                         </v-col>
                     </v-row>
                 </v-card-text>
@@ -116,6 +117,7 @@
             </v-card>
         </v-dialog>
     </UiPageContainer>
+    <HandwritingDialog v-model="visitNotesHwOpen" :label="visitNotesHwLabel" @insert="applyVisitNotesHw" />
 </template>
 
 <script setup lang="ts">
@@ -126,6 +128,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import faLocale from '@fullcalendar/core/locales/fa'
 import CloseCircle from '~/components/icons/CloseCircle.vue'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 import { useEventBus } from '~/composables/useEventBus'
 
 const { t } = useI18n()
@@ -158,6 +161,17 @@ const newVisit = ref({
     status: '',
     notes: '',
 })
+
+const visitNotesHwOpen = ref(false)
+const visitNotesHwLabel = ref('')
+const visitNotesHwCallback = ref<((text: string) => void) | null>(null)
+
+function openVisitNotesHw(label: string, callback: (text: string) => void) {
+  visitNotesHwLabel.value = label
+  visitNotesHwCallback.value = callback
+  visitNotesHwOpen.value = true
+}
+function applyVisitNotesHw(text: string) { visitNotesHwCallback.value?.(text) }
 
 const handleResize = () => {
     isMobile.value = window.innerWidth < 768

@@ -27,7 +27,8 @@
             <span class="!text-xs !font-bold !text-zinc-800">{{ t('labReport.notesAndComments') }}</span>
           </div>
           <v-textarea v-model="notes" variant="outlined" density="compact" rows="3" hide-details
-            :placeholder="t('labReport.notesPlaceholder')" class="custom-v-input" color="#18181b" base-color="#e4e4e7" />
+            :placeholder="t('labReport.notesPlaceholder')" class="custom-v-input" color="#18181b" base-color="#e4e4e7"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('labReport.notesAndComments'), false, (text) => notes = text)" />
         </div>
       </div>
 
@@ -44,12 +45,14 @@
       </div>
     </div>
   </v-dialog>
+  <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import PapSmearFields from './report-fields/PapSmearFields.vue'
 import HpvDnaFields from './report-fields/HpvDnaFields.vue'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const { t } = useI18n()
 
@@ -71,6 +74,22 @@ const { $toast } = useNuxtApp()
 const submitting = ref(false)
 const reportData = ref<Record<string, any>>({})
 const notes = ref('')
+
+const handwritingOpen = ref(false)
+const handwritingLabel = ref('')
+const handwritingNumeric = ref(false)
+const handwritingCallback = ref<((text: string) => void) | null>(null)
+
+function openHandwriting(label: string, numeric: boolean, callback: (text: string) => void) {
+  handwritingLabel.value = label
+  handwritingNumeric.value = numeric
+  handwritingCallback.value = callback
+  handwritingOpen.value = true
+}
+
+function applyHandwriting(text: string) {
+  handwritingCallback.value?.(text)
+}
 
 watch(() => props.modelValue, (val) => {
   if (val) {

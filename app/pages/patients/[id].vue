@@ -2,8 +2,8 @@
   <div class="max-w-7xl mx-auto p-4 md:p-8 pt-6 space-y-6">
     <!-- Loading State -->
     <div v-if="profileLoading" class="space-y-6">
-      <v-skeleton-loader type="card-heading" class="rounded-2xl" />
-      <v-skeleton-loader type="image" class="rounded-2xl h-[400px]" />
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 h-20 animate-pulse bg-slate-100" />
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 h-[400px] animate-pulse bg-slate-100" />
     </div>
 
     <!-- Error State -->
@@ -44,6 +44,7 @@
       <!-- Tabbed Content -->
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
         <v-tabs v-model="activeTab" color="black" bg-color="transparent" slider-color="black">
+          <v-tab value="timeline" class="text-sm font-medium tracking-wide">خط زمانی</v-tab>
           <v-tab value="reproductive" class="text-sm font-medium tracking-wide">سابقه باروری</v-tab>
           <v-tab value="pregnancy" class="text-sm font-medium tracking-wide">بارداری و زایمان</v-tab>
           <v-tab value="lifestyle" class="text-sm font-medium tracking-wide">سبک زندگی</v-tab>
@@ -57,6 +58,11 @@
 
         <div class="p-6">
           <v-window v-model="activeTab">
+            <!-- Timeline Tab -->
+            <v-window-item value="timeline">
+              <TimelineTab :patient-id="patientId" />
+            </v-window-item>
+
             <!-- Reproductive History Tab -->
             <v-window-item value="reproductive">
               <ReproductiveTab
@@ -187,6 +193,7 @@ import { usePatientProfile } from '~/composables/usePatientProfile'
 import { useRoute } from 'vue-router'
 import AttachmentsTab from '~/components/patient/tabs/Attachments.vue'
 import PregnancyHistoryTab from '~/components/patient/tabs/PregnancyHistory.vue'
+import TimelineTab from '~/components/patient/tabs/TimelineTab.vue'
 
 // Initialize composable - unified entry point
 const route = useRoute()

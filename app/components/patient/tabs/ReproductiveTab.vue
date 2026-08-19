@@ -33,7 +33,7 @@
           <div class="space-y-4 py-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <v-select v-model="reproForm.sexual.sexually_active" :items="yesNoOptions" :label="t('reproductive.sexuallyActive')" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
-              <v-text-field v-model="reproForm.sexual.current_contraceptive_method" :label="t('reproductive.currentContraceptive')" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
+              <v-text-field v-model="reproForm.sexual.current_contraceptive_method" :label="t('reproductive.currentContraceptive')" variant="outlined" density="compact" hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('reproductive.currentContraceptive'), false, (text) => reproForm.sexual.current_contraceptive_method = text)" />
               <v-text-field v-model.number="reproForm.sexual.partner_count" :label="t('reproductive.partnerCount')" type="number" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
               <v-select v-model="reproForm.sexual.dyspareunia" :items="yesNoOptions" :label="t('reproductive.dyspareunia')" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
             </div>
@@ -45,13 +45,13 @@
                 </v-btn>
               </div>
               <div v-for="(m, i) in reproForm.sexual.past_methods" :key="i" class="flex gap-2 mb-2">
-                <v-text-field v-model="reproForm.sexual.past_methods[i]" :label="t('reproductive.method')" variant="outlined" density="compact" hide-details="auto" bg-color="white" class="flex-1" />
+                <v-text-field v-model="reproForm.sexual.past_methods[i]" :label="t('reproductive.method')" variant="outlined" density="compact" hide-details="auto" bg-color="white" class="flex-1" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('reproductive.method'), false, (text) => reproForm.sexual.past_methods[i] = text)" />
                 <v-btn icon size="small" variant="text" color="error" @click="reproForm.sexual.past_methods.splice(i, 1)">
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </div>
             </div>
-            <v-textarea v-model="reproForm.sexual.notes" :label="t('reproductive.notes')" variant="outlined" density="compact" rows="2" hide-details="auto" bg-color="white" />
+            <v-textarea v-model="reproForm.sexual.notes" :label="t('reproductive.notes')" variant="outlined" density="compact" rows="2" hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('reproductive.notes'), false, (text) => reproForm.sexual.notes = text)" />
           </div>
           <div class="flex justify-end pt-4 border-t border-slate-100">
             <v-btn variant="flat" color="black" size="small" class="rounded-lg px-6" :loading="saving" @click="emit('save', 'sexual')">{{ t('common.save') }}</v-btn>
@@ -76,15 +76,15 @@
                 </v-btn>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <v-text-field v-model="surg.surgery_type" :label="t('reproductive.surgeryType')" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
+                <v-text-field v-model="surg.surgery_type" :label="t('reproductive.surgeryType')" variant="outlined" density="compact" hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('reproductive.surgeryType'), false, (text) => surg.surgery_type = text)" />
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <PersianDatetimePicker v-model="surg.surgery_date" type="date" :placeholder="t('reproductive.surgeryDate')"
                     display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#000000" auto-submit clearable
                     custom-input class="w-full !h-[40px] border border-slate-400 hover:border-slate-800 text-sm text-slate-700 outline-none focus:border-electric-sapphire rounded px-3 bg-white transition-colors" />
                 </div>
-                <v-text-field v-model="surg.hospital" :label="t('reproductive.hospital')" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
+                <v-text-field v-model="surg.hospital" :label="t('reproductive.hospital')" variant="outlined" density="compact" hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('reproductive.hospital'), false, (text) => surg.hospital = text)" />
               </div>
-              <v-textarea v-model="surg.notes" :label="t('reproductive.notes')" variant="outlined" density="compact" rows="1" hide-details="auto" bg-color="white" />
+              <v-textarea v-model="surg.notes" :label="t('reproductive.notes')" variant="outlined" density="compact" rows="1" hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('reproductive.notes'), false, (text) => surg.notes = text)" />
             </div>
             <v-btn variant="tonal" color="black" size="small" prepend-icon="mdi-plus" class="rounded-lg" @click="reproForm.surgeries.push({ surgery_type: '', surgery_date: null, hospital: '', notes: '' })">{{ t('reproductive.addSurgery') }}</v-btn>
           </div>
@@ -111,7 +111,7 @@
                 </v-btn>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <v-text-field v-model="c.method" :label="t('reproductive.method')" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
+                <v-text-field v-model="c.method" :label="t('reproductive.method')" variant="outlined" density="compact" hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('reproductive.method'), false, (text) => c.method = text)" />
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <PersianDatetimePicker v-model="c.start_date" type="date" :placeholder="t('reproductive.startDate')"
                     display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#000000" auto-submit clearable
@@ -123,7 +123,7 @@
                     custom-input class="w-full !h-[40px] border border-slate-400 hover:border-slate-800 text-sm text-slate-700 outline-none focus:border-electric-sapphire rounded px-3 bg-white transition-colors" />
                 </div>
               </div>
-              <v-text-field v-model="c.reason_stopped" :label="t('reproductive.reasonStopped')" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
+              <v-text-field v-model="c.reason_stopped" :label="t('reproductive.reasonStopped')" variant="outlined" density="compact" hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('reproductive.reasonStopped'), false, (text) => c.reason_stopped = text)" />
             </div>
             <v-btn variant="tonal" color="black" size="small" prepend-icon="mdi-plus" class="rounded-lg" @click="reproForm.contraceptives.push({ method: '', start_date: null, end_date: null, reason_stopped: '' })">{{ t('reproductive.addMethod') }}</v-btn>
           </div>
@@ -150,11 +150,11 @@
                 </v-btn>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <v-text-field v-model="fh.relation" :label="t('reproductive.relation')" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
-                <v-text-field v-model="fh.condition" :label="t('reproductive.condition')" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
+                <v-text-field v-model="fh.relation" :label="t('reproductive.relation')" variant="outlined" density="compact" hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('reproductive.relation'), false, (text) => fh.relation = text)" />
+                <v-text-field v-model="fh.condition" :label="t('reproductive.condition')" variant="outlined" density="compact" hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('reproductive.condition'), false, (text) => fh.condition = text)" />
                 <v-select v-model="fh.brca_mutation" :items="yesNoUnknownOptions" :label="t('reproductive.brcaMutation')" variant="outlined" density="compact" hide-details="auto" bg-color="white" />
               </div>
-              <v-textarea v-model="fh.notes" :label="t('reproductive.notes')" variant="outlined" density="compact" rows="1" hide-details="auto" bg-color="white" />
+              <v-textarea v-model="fh.notes" :label="t('reproductive.notes')" variant="outlined" density="compact" rows="1" hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('reproductive.notes'), false, (text) => fh.notes = text)" />
             </div>
             <v-btn variant="tonal" color="black" size="small" prepend-icon="mdi-plus" class="rounded-lg" @click="reproForm.family_history.push({ relation: '', condition: '', brca_mutation: '', notes: '' })">{{ t('reproductive.addHistory') }}</v-btn>
           </div>
@@ -186,9 +186,13 @@
       </v-expansion-panel>
     </v-expansion-panels>
   </div>
+  <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
+
 const { t } = useI18n()
 
 const props = defineProps<{
@@ -202,6 +206,22 @@ const props = defineProps<{
 const emit = defineEmits<{
   save: [section: string]
 }>()
+
+const handwritingOpen = ref(false)
+const handwritingLabel = ref('')
+const handwritingNumeric = ref(false)
+const handwritingCallback = ref<((text: string) => void) | null>(null)
+
+function openHandwriting(label: string, numeric: boolean, callback: (text: string) => void) {
+  handwritingLabel.value = label
+  handwritingNumeric.value = numeric
+  handwritingCallback.value = callback
+  handwritingOpen.value = true
+}
+
+function applyHandwriting(text: string) {
+  handwritingCallback.value?.(text)
+}
 
 const reproPanels = ref(['menstrual'])
 </script>

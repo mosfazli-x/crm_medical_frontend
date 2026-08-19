@@ -351,7 +351,8 @@
               display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#000000" auto-submit clearable custom-input
               class="relative h-max border rounded overflow-hidden" />
             <v-textarea v-model="recordForm.notes" variant="outlined" density="comfortable" :label="$t('common.notes')"
-              :placeholder="$t('billing.optionalNotes')" rows="1" hide-details="auto" />
+              :placeholder="$t('billing.optionalNotes')" rows="1" hide-details="auto"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openRecordHw('notes')" />
           </div>
         </div>
         <div
@@ -381,14 +382,17 @@
         <div class="!p-8 !space-y-5">
           <div class="!grid !grid-cols-2 !gap-4">
             <v-text-field v-model="codeForm.code" variant="outlined" density="comfortable" :label="$t('billing.code')"
-              :placeholder="$t('billing.codePlaceholder')" hide-details="auto" />
+              :placeholder="$t('billing.codePlaceholder')" hide-details="auto"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openCodeHw('code')" />
             <v-select v-model="codeForm.category" :items="categoryOptions" item-title="label" item-value="value"
               variant="outlined" density="comfortable" :label="$t('billing.category')" :placeholder="$t('billing.selectCategory')" hide-details="auto" />
           </div>
           <v-text-field v-model="codeForm.name" variant="outlined" density="comfortable" :label="$t('billing.serviceTitle')"
-            :placeholder="$t('billing.serviceNamePlaceholder')" hide-details="auto" />
+            :placeholder="$t('billing.serviceNamePlaceholder')" hide-details="auto"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openCodeHw('name')" />
           <v-textarea v-model="codeForm.description" variant="outlined" density="comfortable" :label="$t('billing.description')"
-            :placeholder="$t('billing.optionalNotes')" rows="2" hide-details="auto" />
+            :placeholder="$t('billing.optionalNotes')" rows="2" hide-details="auto"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openCodeHw('description')" />
           <div class="!grid !grid-cols-2 !gap-4">
             <v-text-field v-model="codeForm.price" variant="outlined" density="comfortable" :label="$t('billing.basePrice')"
               :placeholder="$t('common.toman')" type="number" hide-details="auto" />
@@ -488,12 +492,17 @@
         </div>
       </div>
     </v-dialog>
+
+    <HandwritingDialog v-model="recordOpen" :label="recordLabel" :numeric="recordNumeric" @insert="applyRecordHw" />
+    <HandwritingDialog v-model="codeOpen" :label="codeLabel" :numeric="codeNumeric" @insert="applyCodeHw" />
   </UiPageContainer>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useApi } from '~/composables/useApi'
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 const { t } = useI18n()
 // از آنجایی که Nuxt 3 اتوماتیک Icon را import میکند نیاز به ایمپورت دستی نیست، اما مطمئن شوید @nuxt/icon نصب است.
 
@@ -730,6 +739,24 @@ const codeForm = ref({
   insurance_coverage_percent: '',
   category: '',
 })
+
+const { handwritingOpen: recordOpen, handwritingLabel: recordLabel, handwritingNumeric: recordNumeric, openHandwriting: openRecordHw, applyHandwriting: applyRecordHw } =
+  useHandwritingFields({
+    fieldLabels: {
+      notes: t('common.notes'),
+    },
+    target: recordForm,
+  })
+
+const { handwritingOpen: codeOpen, handwritingLabel: codeLabel, handwritingNumeric: codeNumeric, openHandwriting: openCodeHw, applyHandwriting: applyCodeHw } =
+  useHandwritingFields({
+    fieldLabels: {
+      code: t('billing.code'),
+      name: t('billing.serviceTitle'),
+      description: t('billing.description'),
+    },
+    target: codeForm,
+  })
 
 function openAddCodeDialog() {
   codeForm.value = {

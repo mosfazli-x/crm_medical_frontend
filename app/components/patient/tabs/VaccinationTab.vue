@@ -50,16 +50,16 @@
 
               <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <v-text-field v-model="vac.manufacturer" :label="t('vaccination.manufacturer')" variant="outlined" density="compact"
-                  hide-details="auto" bg-color="white" placeholder="e.g. Sinovac, Pfizer" />
+                  hide-details="auto" bg-color="white" placeholder="e.g. Sinovac, Pfizer" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('vaccination.manufacturer'), false, (text) => vac.manufacturer = text)" />
                 <v-text-field v-model="vac.lot_number" :label="t('vaccination.lotNumber')" variant="outlined" density="compact"
-                  hide-details="auto" bg-color="white" />
+                  hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('vaccination.lotNumber'), false, (text) => vac.lot_number = text)" />
                 <v-select v-model="vac.site" :items="siteOptions" :label="t('vaccination.injectionSite')" variant="outlined" density="compact"
                   hide-details="auto" bg-color="white" />
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <v-text-field v-model="vac.administered_by" :label="t('vaccination.administeredBy')" variant="outlined" density="compact"
-                  hide-details="auto" bg-color="white" />
+                  hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('vaccination.administeredBy'), false, (text) => vac.administered_by = text)" />
                 <div class="relative h-[40px] border rounded overflow-hidden">
                   <PersianDatetimePicker v-model="vac.next_dose_date" type="date" :placeholder="t('vaccination.nextDoseDate')"
                     display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#000000" auto-submit clearable
@@ -71,7 +71,7 @@
               </div>
 
               <v-textarea v-model="vac.notes" :label="t('vaccination.notes')" variant="outlined" density="compact" rows="1"
-                hide-details="auto" bg-color="white" />
+                hide-details="auto" bg-color="white" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('vaccination.notes'), false, (text) => vac.notes = text)" />
             </div>
 
             <v-btn variant="tonal" color="black" size="small" prepend-icon="mdi-plus" class="rounded-lg"
@@ -109,14 +109,34 @@
       </v-expansion-panel>
     </v-expansion-panels>
   </div>
+  <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
+
 const { t } = useI18n()
 
 const records = defineModel<any[]>('records', { required: true })
 
 const openPanels = ref(['records'])
+
+const handwritingOpen = ref(false)
+const handwritingLabel = ref('')
+const handwritingNumeric = ref(false)
+const handwritingCallback = ref<((text: string) => void) | null>(null)
+
+function openHandwriting(label: string, numeric: boolean, callback: (text: string) => void) {
+  handwritingLabel.value = label
+  handwritingNumeric.value = numeric
+  handwritingCallback.value = callback
+  handwritingOpen.value = true
+}
+
+function applyHandwriting(text: string) {
+  handwritingCallback.value?.(text)
+}
 
 const commonVaccines = [
   'COVID-19 (Sinovac)',

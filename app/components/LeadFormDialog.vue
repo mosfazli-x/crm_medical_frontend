@@ -32,24 +32,28 @@
                 <label class="crm-label">{{ t('leads.firstName') }} <span class="text-red-500">*</span></label>
                 <v-text-field v-model="form.firstName" variant="outlined" density="comfortable"
                   :placeholder="t('leads.firstNamePlaceholder')" hide-details="auto" bg-color="white" rounded="lg"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('firstName')"
                   :rules="[v => !!v?.trim() || t('leads.firstNameRequired')]" />
               </div>
               <div>
                 <label class="crm-label">{{ t('leads.lastName') }} <span class="text-red-500">*</span></label>
                 <v-text-field v-model="form.lastName" variant="outlined" density="comfortable"
                   :placeholder="t('leads.lastNamePlaceholder')" hide-details="auto" bg-color="white" rounded="lg"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('lastName')"
                   :rules="[v => !!v?.trim() || t('leads.lastNameRequired')]" />
               </div>
               <div>
                 <label class="crm-label">{{ t('leads.phone') }}</label>
                 <v-text-field v-model="form.phone" variant="outlined" density="comfortable" dir="ltr"
                   class="text-left!" hide-details="auto" bg-color="white" rounded="lg"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('phone')"
                   :rules="[v => !v || v.length <= 20 || t('leads.phoneMax')]" />
               </div>
               <div>
                 <label class="crm-label">{{ t('leads.nationalId') }}</label>
                 <v-text-field v-model="form.nationalId" variant="outlined" density="comfortable" dir="ltr"
                   class="text-left!" hide-details="auto" bg-color="white" rounded="lg"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('nationalId', true)"
                   :rules="[v => !v || v.length <= 10 || t('leads.nationalIdMax')]" />
               </div>
               <div>
@@ -61,12 +65,14 @@
               <div>
                 <label class="crm-label">{{ t('leads.campaignName') }}</label>
                 <v-text-field v-model="form.campaignName" variant="outlined" density="comfortable"
-                  :placeholder="t('leads.campaignPlaceholder')" hide-details="auto" bg-color="white" rounded="lg" />
+                  :placeholder="t('leads.campaignPlaceholder')" hide-details="auto" bg-color="white" rounded="lg"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('campaignName')" />
               </div>
               <div class="md:col-span-2">
                 <label class="crm-label">{{ t('leads.note') }}</label>
                 <v-textarea v-model="form.note" variant="outlined" density="comfortable" rows="3"
-                  :placeholder="t('leads.notePlaceholder')" hide-details="auto" bg-color="white" rounded="lg" />
+                  :placeholder="t('leads.notePlaceholder')" hide-details="auto" bg-color="white" rounded="lg"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('note')" />
               </div>
             </div>
           </v-window-item>
@@ -76,27 +82,32 @@
               <div>
                 <label class="crm-label">{{ t('leads.utmSource') }}</label>
                 <v-text-field v-model="form.utmSource" variant="outlined" density="comfortable" dir="ltr"
-                  class="text-left!" hide-details="auto" bg-color="white" rounded="lg" placeholder="google / instagram" />
+                  class="text-left!" hide-details="auto" bg-color="white" rounded="lg" placeholder="google / instagram"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('utmSource')" />
               </div>
               <div>
                 <label class="crm-label">{{ t('leads.utmMedium') }}</label>
                 <v-text-field v-model="form.utmMedium" variant="outlined" density="comfortable" dir="ltr"
-                  class="text-left!" hide-details="auto" bg-color="white" rounded="lg" placeholder="cpc / organic" />
+                  class="text-left!" hide-details="auto" bg-color="white" rounded="lg" placeholder="cpc / organic"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('utmMedium')" />
               </div>
               <div>
                 <label class="crm-label">{{ t('leads.utmCampaign') }}</label>
                 <v-text-field v-model="form.utmCampaign" variant="outlined" density="comfortable" dir="ltr"
-                  class="text-left!" hide-details="auto" bg-color="white" rounded="lg" placeholder="summer-sale" />
+                  class="text-left!" hide-details="auto" bg-color="white" rounded="lg" placeholder="summer-sale"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('utmCampaign')" />
               </div>
               <div>
                 <label class="crm-label">{{ t('leads.landingUrl') }}</label>
                 <v-text-field v-model="form.landingUrl" variant="outlined" density="comfortable" dir="ltr"
-                  class="text-left!" hide-details="auto" bg-color="white" rounded="lg" placeholder="https://..." />
+                  class="text-left!" hide-details="auto" bg-color="white" rounded="lg" placeholder="https://..."
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('landingUrl')" />
               </div>
               <div class="md:col-span-2">
                 <label class="crm-label">{{ t('leads.referrerUrl') }}</label>
                 <v-text-field v-model="form.referrerUrl" variant="outlined" density="comfortable" dir="ltr"
-                  class="text-left!" hide-details="auto" bg-color="white" rounded="lg" placeholder="https://..." />
+                  class="text-left!" hide-details="auto" bg-color="white" rounded="lg" placeholder="https://..."
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('referrerUrl')" />
               </div>
               <div class="md:col-span-2">
                 <v-switch v-model="form.marketingConsent" color="#4F46E5" :label="t('leads.marketingConsent')"
@@ -182,6 +193,8 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+  <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric"
+    @insert="applyHandwriting" />
 </template>
 
 <script setup lang="ts">
@@ -191,6 +204,8 @@ import Plus from '~/components/icons/Plus.vue'
 import { useLeadFormDialog } from '~/composables/useLeadFormDialog'
 import { useLeads } from '~/composables/useLeads'
 import { useEventBus } from '~/composables/useEventBus'
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 import { LEAD_PRIORITIES } from '~/types/lead'
 
 const { t } = useI18n()
@@ -258,6 +273,24 @@ const defaultForm = () => ({
 })
 
 const form = reactive(defaultForm())
+
+const { handwritingOpen, handwritingLabel, handwritingNumeric, openHandwriting, applyHandwriting } =
+  useHandwritingFields({
+    fieldLabels: {
+      firstName: t('leads.firstName'),
+      lastName: t('leads.lastName'),
+      phone: t('leads.phone'),
+      nationalId: t('leads.nationalId'),
+      campaignName: t('leads.campaignName'),
+      note: t('leads.note'),
+      utmSource: t('leads.utmSource'),
+      utmMedium: t('leads.utmMedium'),
+      utmCampaign: t('leads.utmCampaign'),
+      landingUrl: t('leads.landingUrl'),
+      referrerUrl: t('leads.referrerUrl'),
+    },
+    target: form,
+  })
 
 const isAdmin = computed(() => {
   const role = user?.value?.role || (user as any)?.role

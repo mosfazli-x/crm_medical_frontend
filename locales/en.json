@@ -39,7 +39,7 @@
     "today": "Today",
     "tomorrow": "Tomorrow",
     "total": "Total",
-    "viewAll": "View All &larr;",
+    "viewAll": "View All;",
     "unreadOnly": "Unread only",
     "unreadMessages": "Unread messages",
     "unreadMessagesCount": "{count} unread messages",

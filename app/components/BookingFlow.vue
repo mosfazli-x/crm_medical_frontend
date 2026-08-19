@@ -361,7 +361,7 @@
                           class="text-red-500">*</span></label>
                       <v-text-field v-model="form.firstName" variant="outlined" density="comfortable"
                         :placeholder="t('booking.firstNamePlaceholder')" hide-details="auto" bg-color="white" rounded="lg" dir="rtl"
-                        :rules="[v => !!v || t('booking.firstNameRequired')]" />
+                        :rules="[v => !!v || t('booking.firstNameRequired')]" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('firstName')" />
                     </v-col>
 
                     <v-col cols="12" md="6" class="py-2">
@@ -369,7 +369,7 @@
                           class="text-red-500">*</span></label>
                       <v-text-field v-model="form.lastName" variant="outlined" density="comfortable"
                         :placeholder="t('booking.lastNamePlaceholder')" hide-details="auto" bg-color="white" rounded="lg" dir="rtl"
-                        :rules="[v => !!v || t('booking.lastNameRequired')]" />
+                        :rules="[v => !!v || t('booking.lastNameRequired')]" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('lastName')" />
                     </v-col>
 
                     <v-col cols="12" md="6" class="py-2">
@@ -380,7 +380,7 @@
                         dir="ltr" :rules="[
                           v => !!v || t('booking.nationalIdRequired'),
                           v => /^\d{10}$/.test(v) || t('booking.nationalIdLength')
-                        ]" class="text-right" />
+                        ]" class="text-right" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('nationalId', true)" />
                     </v-col>
 
                     <v-col cols="12" md="6" class="py-2">
@@ -391,7 +391,7 @@
                           v => !!v || t('booking.phoneRequired'),
                           v => /^09\d{9}$/.test(v) || t('booking.phoneInvalid')
                         ]"
-                        dir="ltr" class="text-right" />
+                        dir="ltr" class="text-right" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('phone')" />
                     </v-col>
                   </v-row>
 
@@ -448,13 +448,16 @@
       </div>
     </div>
   </div>
+  <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
 import moment from 'moment-jalaali'
 import HijriCalendar from '~/components/HijriCalendar.vue'
 import MedicalKit from '~/components/icons/MedicalKit.vue'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const props = defineProps<{
   initialDoctorId?: string
@@ -541,6 +544,17 @@ const form = ref({
   nationalId: '',
   phone: '',
 })
+
+const { handwritingOpen, handwritingLabel, handwritingNumeric, openHandwriting, applyHandwriting } =
+  useHandwritingFields({
+    fieldLabels: {
+      firstName: t('booking.firstName'),
+      lastName: t('booking.lastName'),
+      nationalId: t('booking.nationalId'),
+      phone: t('booking.phone'),
+    },
+    target: form,
+  })
 
 const persianDate = computed(() => {
   const d = currentDate.value

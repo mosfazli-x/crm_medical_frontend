@@ -77,7 +77,8 @@
       </div>
 
       <v-textarea v-model="form.notes" variant="outlined" density="comfortable" rows="2" auto-grow
-        :label="t('common.notes')" hide-details="auto" class="!mb-4 !bg-white dark:!bg-[#0f1115] !rounded-xl px-2" />
+        :label="t('common.notes')" hide-details="auto" append-inner-icon="mdi-draw-pen" @click:append-inner="openMainHandwriting(t('common.notes'), (text) => form.notes = text)"
+        class="!mb-4 !bg-white dark:!bg-[#0f1115] !rounded-xl px-2" />
 
       <div class="!flex !justify-end !gap-3 pb-2">
         <button class="crm-btn crm-btn-ghost" :disabled="saving" @click="resetForm">{{ t('common.cancel') }}</button>
@@ -290,9 +291,9 @@
           <div class="!p-6 !space-y-4">
             <v-text-field v-model="visitTypeForm.name" variant="outlined" density="comfortable"
               :label="t('dailyReports.visitTypeName')" :placeholder="t('dailyReports.visitTypeNamePlaceholder')"
-              hide-details="auto" />
+              hide-details="auto" append-inner-icon="mdi-draw-pen" @click:append-inner="openVtHandwriting(t('dailyReports.visitTypeName'), (text) => visitTypeForm.name = text)" />
             <v-textarea v-model="visitTypeForm.description" variant="outlined" density="comfortable" rows="2" auto-grow
-              :label="t('dailyReports.description')" hide-details="auto" />
+              :label="t('dailyReports.description')" hide-details="auto" append-inner-icon="mdi-draw-pen" @click:append-inner="openVtHandwriting(t('dailyReports.description'), (text) => visitTypeForm.description = text)" />
             <div class="!grid !grid-cols-2 !gap-4">
               <v-text-field v-model.number="visitTypeForm.price" type="number" min="0" variant="outlined"
                 density="comfortable" :label="t('dailyReports.price')" hide-details="auto" />
@@ -539,6 +540,8 @@
         </div>
       </div>
     </v-dialog>
+    <HandwritingDialog v-model="mainHandwritingOpen" :label="mainHandwritingLabel" :numeric="mainHandwritingNumeric" @insert="applyMainHandwriting" />
+    <HandwritingDialog v-model="vtHandwritingOpen" :label="vtHandwritingLabel" @insert="applyVtHandwriting" />
   </UiPageContainer>
 </template>
 
@@ -553,6 +556,8 @@ import type {
   PatientOption,
   ProcedureKey,
 } from '~/types/report'
+
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const { t } = useI18n()
 const { $toast } = useNuxtApp()
@@ -648,6 +653,21 @@ const statsFilters = reactive<DailyReportStatsFilters>({
 const statsLoading = ref(false)
 
 
+
+const mainHandwritingOpen = ref(false)
+const mainHandwritingLabel = ref('')
+const mainHandwritingNumeric = ref(false)
+const mainHandwritingCallback = ref<((text: string) => void) | null>(null)
+
+function openMainHandwriting(label: string, callback: (text: string) => void) {
+  mainHandwritingLabel.value = label
+  mainHandwritingCallback.value = callback
+  mainHandwritingOpen.value = true
+}
+
+function applyMainHandwriting(text: string) {
+  mainHandwritingCallback.value?.(text)
+}
 
 const selectedPatient = computed(() => patients.value.find((p) => p.id === form.value.patientId) || null)
 
@@ -848,6 +868,20 @@ const visitTypeFormId = ref<string | null>(null)
 const visitTypeDeleteDialog = ref(false)
 const deletingVisitType = ref(false)
 const visitTypeDeleteTarget = ref<DailyReportVisitType | null>(null)
+
+const vtHandwritingOpen = ref(false)
+const vtHandwritingLabel = ref('')
+const vtHandwritingCallback = ref<((text: string) => void) | null>(null)
+
+function openVtHandwriting(label: string, callback: (text: string) => void) {
+  vtHandwritingLabel.value = label
+  vtHandwritingCallback.value = callback
+  vtHandwritingOpen.value = true
+}
+
+function applyVtHandwriting(text: string) {
+  vtHandwritingCallback.value?.(text)
+}
 
 const emptyVisitTypeForm = () => ({
   name: '',

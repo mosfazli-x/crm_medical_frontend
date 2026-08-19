@@ -179,7 +179,8 @@
                 <div class="md:w-80 shrink-0">
                   <label class="crm-label">{{ $t('leads.addNoteTitle') }}</label>
                   <v-textarea v-model="newNote" variant="outlined" density="comfortable" rows="4"
-                    :placeholder="$t('leads.notePlaceholder')" hide-details="auto" bg-color="white" rounded="lg" />
+                    :placeholder="$t('leads.notePlaceholder')" hide-details="auto" bg-color="white" rounded="lg"
+                    append-inner-icon="mdi-draw-pen" @click:append-inner="openNoteHw(t('leads.addNoteTitle'), (text) => newNote = text)" />
                   <div class="mt-3 flex justify-end">
                     <button class="crm-btn crm-btn-accent text-sm!" :disabled="noteSaving || !newNote.trim()"
                       @click="submitNote">
@@ -212,7 +213,8 @@
         <div>
           <label class="crm-label">{{ $t('leads.note') }}</label>
           <v-textarea v-model="lostNote" variant="outlined" density="comfortable" rows="3"
-            hide-details="auto" bg-color="white" rounded="lg" />
+            hide-details="auto" bg-color="white" rounded="lg"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openNoteHw(t('leads.note'), (text) => lostNote = text)" />
         </div>
       </v-card-text>
       <v-card-actions class="px-6 pb-6 pt-2 border-t border-slate-100 dark:border-slate-700 gap-3">
@@ -234,7 +236,8 @@
       <v-card-text class="px-6 py-6">
         <label class="crm-label">{{ $t('leads.note') }}</label>
         <v-textarea v-model="contactNote" variant="outlined" density="comfortable" rows="3"
-          :placeholder="$t('leads.contactNotePlaceholder')" hide-details="auto" bg-color="white" rounded="lg" />
+          :placeholder="$t('leads.contactNotePlaceholder')" hide-details="auto" bg-color="white" rounded="lg"
+          append-inner-icon="mdi-draw-pen" @click:append-inner="openNoteHw(t('leads.note'), (text) => contactNote = text)" />
       </v-card-text>
       <v-card-actions class="px-6 pb-6 pt-2 border-t border-slate-100 dark:border-slate-700 gap-3">
         <v-btn variant="text" color="slate-500" size="large" class="rounded-lg font-medium" :disabled="actionSaving"
@@ -273,7 +276,8 @@
           <div>
             <label class="crm-label">{{ $t('leads.insuranceType') }}</label>
             <v-text-field v-model="convertForm.insuranceType" variant="outlined" density="comfortable"
-              hide-details="auto" bg-color="white" rounded="lg" />
+              hide-details="auto" bg-color="white" rounded="lg"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openConvHw('insuranceType')" />
           </div>
           <div>
             <label class="crm-label">{{ $t('leads.birthDate') }}</label>
@@ -283,17 +287,20 @@
           <div>
             <label class="crm-label">{{ $t('leads.maritalStatus') }}</label>
             <v-text-field v-model="convertForm.maritalStatus" variant="outlined" density="comfortable"
-              hide-details="auto" bg-color="white" rounded="lg" />
+              hide-details="auto" bg-color="white" rounded="lg"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openConvHw('maritalStatus')" />
           </div>
           <div class="md:col-span-2">
             <label class="crm-label">{{ $t('leads.address') }}</label>
             <v-textarea v-model="convertForm.address" variant="outlined" density="comfortable" rows="2"
-              hide-details="auto" bg-color="white" rounded="lg" />
+              hide-details="auto" bg-color="white" rounded="lg"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openConvHw('address')" />
           </div>
           <div class="md:col-span-2">
             <label class="crm-label">{{ $t('leads.note') }}</label>
             <v-textarea v-model="convertForm.note" variant="outlined" density="comfortable" rows="2"
-              hide-details="auto" bg-color="white" rounded="lg" />
+              hide-details="auto" bg-color="white" rounded="lg"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openConvHw('note')" />
           </div>
         </div>
       </v-card-text>
@@ -306,12 +313,17 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <HandwritingDialog v-model="noteHwOpen" :label="noteHwLabel" @insert="applyNoteHw" />
+  <HandwritingDialog v-model="convOpen" :label="convLabel" :numeric="convNumeric" @insert="applyConvHw" />
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import Clock from '~/components/icons/Clock.vue'
 import LeadFormDialog from '~/components/LeadFormDialog.vue'
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 import { useLeads } from '~/composables/useLeads'
 import { useLeadFormDialog } from '~/composables/useLeadFormDialog'
 import { useEventBus } from '~/composables/useEventBus'
@@ -356,6 +368,30 @@ const convertForm = reactive({
   address: '',
   maritalStatus: '',
   note: '',
+})
+
+const noteHwOpen = ref(false)
+const noteHwLabel = ref('')
+const noteHwCallback = ref<((text: string) => void) | null>(null)
+
+function openNoteHw(label: string, callback: (text: string) => void) {
+  noteHwLabel.value = label
+  noteHwCallback.value = callback
+  noteHwOpen.value = true
+}
+function applyNoteHw(text: string) { noteHwCallback.value?.(text) }
+
+const {
+  handwritingOpen: convOpen, handwritingLabel: convLabel, handwritingNumeric: convNumeric,
+  openHandwriting: openConvHw, applyHandwriting: applyConvHw,
+} = useHandwritingFields({
+  fieldLabels: {
+    insuranceType: t('leads.insuranceType'),
+    maritalStatus: t('leads.maritalStatus'),
+    address: t('leads.address'),
+    note: t('leads.note'),
+  },
+  target: convertForm,
 })
 
 const TRANSITIONS: Record<LeadStatus, LeadStatus[]> = {

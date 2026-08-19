@@ -189,7 +189,8 @@
         </div>
         <div class="!p-8 !space-y-5">
           <v-text-field v-model="itemForm.name" variant="outlined" density="comfortable"
-            :label="$t('consumables.itemNameLabel')" hide-details="auto" />
+            :label="$t('consumables.itemNameLabel')" hide-details="auto"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('name')" />
           <div v-if="editingItem" class="!flex !items-center !justify-between !gap-3 !p-4 !bg-slate-50 dark:!bg-slate-800/50 !rounded-xl">
             <span class="!text-sm !font-semibold">{{ $t('consumables.inactive') }}</span>
             <v-switch v-model="itemForm.is_active" color="indigo" hide-details />
@@ -205,6 +206,8 @@
         </div>
       </div>
     </v-dialog>
+
+    <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
   </UiPageContainer>
 </template>
 
@@ -213,6 +216,8 @@ import { ref, computed, watch, onMounted } from 'vue'
 import moment from 'moment-jalaali'
 import Plus from '~/components/icons/Plus.vue'
 import { useApi } from '~/composables/useApi'
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 interface ReportRow {
   id: string
@@ -391,6 +396,14 @@ const itemDialog = ref(false)
 const savingItem = ref(false)
 const editingItem = ref<ReportRow | null>(null)
 const itemForm = ref<{ name: string; is_active: boolean }>({ name: '', is_active: true })
+
+const { handwritingOpen, handwritingLabel, handwritingNumeric, openHandwriting, applyHandwriting } =
+  useHandwritingFields({
+    fieldLabels: {
+      name: t('consumables.itemNameLabel'),
+    },
+    target: itemForm,
+  })
 
 function openAddItem() {
   editingItem.value = null

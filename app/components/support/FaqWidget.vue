@@ -20,7 +20,7 @@
     <!-- Chat Dialog -->
     <transition name="chat-slide">
       <div v-if="isOpen"
-        class="absolute bottom-20 left-0 w-[380px] max-h-[550px] rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-900 flex flex-col overflow-hidden"
+        class="absolute bottom-20 left-0 w-[380px] rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-900 flex flex-col overflow-hidden"
         :class="locale === 'fa' ? 'origin-bottom-left' : 'origin-bottom-right'">
         <!-- Header -->
         <div class="flex items-center gap-3 bg-indigo-600 px-5 py-4 text-white">

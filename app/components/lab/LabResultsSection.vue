@@ -256,7 +256,8 @@
                   t('labResults.testName') }}</label>
                 <v-combobox v-model="form.test_name" variant="outlined" density="compact" :items="commonTestNames"
                   :rules="[v => !!v || t('labResults.testNameRequired')]" hide-details="auto" class="custom-v-input"
-                  color="#18181b" base-color="#e4e4e7" />
+                  color="#18181b" base-color="#e4e4e7"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('labResults.testName'), false, (text) => form.test_name = text)" />
               </div>
 
               <div>
@@ -279,14 +280,16 @@
                 <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{
                   t('labResults.unit') }}</label>
                 <v-text-field v-model="form.unit" variant="outlined" density="compact" hide-details="auto"
-                  placeholder="e.g. mIU/L" class="custom-v-input !font-mono" color="#18181b" base-color="#e4e4e7" />
+                  placeholder="e.g. mIU/L" class="custom-v-input !font-mono" color="#18181b" base-color="#e4e4e7"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('labResults.unit'), false, (text) => form.unit = text)" />
               </div>
 
               <div>
                 <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{
                   t('labResults.refRange') }}</label>
                 <v-text-field v-model="form.reference_range" variant="outlined" density="compact" hide-details="auto"
-                  placeholder="e.g. 0.5 - 4.5" class="custom-v-input !font-mono" color="#18181b" base-color="#e4e4e7" />
+                  placeholder="e.g. 0.5 - 4.5" class="custom-v-input !font-mono" color="#18181b" base-color="#e4e4e7"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('labResults.refRange'), false, (text) => form.reference_range = text)" />
               </div>
 
               <div
@@ -314,7 +317,8 @@
                 <label class="!text-[10px] !font-bold !text-zinc-500 !mb-1.5 !block !uppercase !tracking-wider">{{
                   t('labResults.clinicalNotes') }}</label>
                 <v-textarea v-model="form.notes" variant="outlined" density="compact" rows="2" hide-details
-                  class="custom-v-input" color="#18181b" base-color="#e4e4e7" />
+                  class="custom-v-input" color="#18181b" base-color="#e4e4e7"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting(t('labResults.clinicalNotes'), false, (text) => form.notes = text)" />
               </div>
             </div>
           </v-form>
@@ -509,6 +513,8 @@
         </div>
       </div>
     </v-dialog>
+
+    <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
   </div>
 </template>
 
@@ -530,6 +536,7 @@ import Upload from '~/components/icons/Upload.vue'
 import UploadCloud from '~/components/icons/UploadCloud.vue'
 import File from '~/components/icons/File.vue'
 import Activity from '~/components/icons/Activity.vue'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const props = defineProps<{ patientId: string }>()
 
@@ -553,6 +560,22 @@ const entryMode = ref<'manual' | 'document'>('manual')
 const submitting = ref(false)
 const manualFormRef = ref<any>(null)
 const formDateError = ref('')
+
+const handwritingOpen = ref(false)
+const handwritingLabel = ref('')
+const handwritingNumeric = ref(false)
+const handwritingCallback = ref<((text: string) => void) | null>(null)
+
+function openHandwriting(label: string, numeric: boolean, callback: (text: string) => void) {
+  handwritingLabel.value = label
+  handwritingNumeric.value = numeric
+  handwritingCallback.value = callback
+  handwritingOpen.value = true
+}
+
+function applyHandwriting(text: string) {
+  handwritingCallback.value?.(text)
+}
 
 const trendDialog = ref(false)
 const trendData = ref<any[]>([])

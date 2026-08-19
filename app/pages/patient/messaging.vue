@@ -107,6 +107,7 @@
                   variant="outlined"
                   density="comfortable"
                   :placeholder="$t('patientMessaging.subjectPlaceholder')"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('subject')"
                   hide-details
                   class="bg-white!"
                   rounded="lg"
@@ -132,6 +133,7 @@
                   v-model="composeForm.body"
                   variant="outlined"
                   :placeholder="$t('patientMessaging.bodyPlaceholder')"
+                  append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('body')"
                   rows="6"
                   hide-details
                   class="bg-white!"
@@ -211,12 +213,16 @@
 
       </UiContentCard>
     </div>
-  </UiPageContainer>
-</template>
+    </UiPageContainer>
+
+    <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
+  </template>
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
 import moment from 'moment-jalaali'
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const { t } = useI18n()
 const { apiFetch } = useApi()
@@ -240,6 +246,15 @@ const composeForm = ref({
   body: '',
   priority: 'normal',
 })
+
+const { handwritingOpen, handwritingLabel, handwritingNumeric, openHandwriting, applyHandwriting } =
+  useHandwritingFields({
+    fieldLabels: {
+      subject: t('patientMessaging.subjectLabel'),
+      body: t('patientMessaging.bodyLabel'),
+    },
+    target: composeForm,
+  })
 
 const priorityOptions = computed(() => [
   { title: t('patientMessaging.priorityNormal'), value: 'normal' },

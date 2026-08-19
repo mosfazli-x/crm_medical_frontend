@@ -277,14 +277,17 @@
         <div class="!p-8 !space-y-5">
           <div class="!grid !grid-cols-2 !gap-4">
             <v-text-field v-model="accountForm.code" variant="outlined" density="comfortable"
-              :label="$t('accounting.code')" :placeholder="$t('accounting.codePlaceholder')" hide-details="auto" />
+              :label="$t('accounting.code')" :placeholder="$t('accounting.codePlaceholder')" hide-details="auto"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openAccountHw('code')" />
             <v-select v-model="accountForm.type" :items="accountTypes" item-title="label" item-value="value"
               variant="outlined" density="comfortable" :label="$t('accounting.type')" hide-details="auto" />
           </div>
           <v-text-field v-model="accountForm.name" variant="outlined" density="comfortable"
-            :label="$t('accounting.accountName')" :placeholder="$t('accounting.namePlaceholder')" hide-details="auto" />
+            :label="$t('accounting.accountName')" :placeholder="$t('accounting.namePlaceholder')" hide-details="auto"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openAccountHw('name')" />
           <v-textarea v-model="accountForm.description" variant="outlined" density="comfortable"
-            :label="$t('common.notes')" rows="2" hide-details="auto" />
+            :label="$t('common.notes')" rows="2" hide-details="auto"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openAccountHw('description')" />
         </div>
         <div
           class="!px-8 !py-5 !bg-slate-50/50 dark:!bg-slate-900/50 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end !gap-3">
@@ -314,10 +317,12 @@
               :label="$t('accounting.date')" type="date" hide-details="auto" />
             <v-text-field v-model="journalForm.reference" variant="outlined" density="comfortable"
               :label="$t('accounting.reference')" :placeholder="$t('accounting.referencePlaceholder')"
-              hide-details="auto" />
+              hide-details="auto"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openJournalHw('reference')" />
           </div>
           <v-textarea v-model="journalForm.description" variant="outlined" density="comfortable"
-            :label="$t('accounting.description')" rows="2" hide-details="auto" />
+            :label="$t('accounting.description')" rows="2" hide-details="auto"
+            append-inner-icon="mdi-draw-pen" @click:append-inner="openJournalHw('description')" />
 
           <div class="!border-t !border-slate-100 dark:!border-slate-800 !pt-4">
             <div class="!flex !items-center !justify-between !mb-3">
@@ -421,6 +426,8 @@
         </div>
       </div>
     </v-dialog>
+    <HandwritingDialog v-model="accountOpen" :label="accountLabel" :numeric="accountNumeric" @insert="applyAccountHw" />
+    <HandwritingDialog v-model="journalOpen" :label="journalLabel" :numeric="journalNumeric" @insert="applyJournalHw" />
   </UiPageContainer>
 </template>
 
@@ -431,6 +438,8 @@ import Search from '~/components/icons/Search.vue'
 import TrashBin from '~/components/icons/TrashBin.vue'
 import { useApi } from '~/composables/useApi'
 import { useFormatting } from '~/composables/useFormatting'
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const { t } = useI18n()
 const { apiFetch } = useApi()
@@ -598,6 +607,25 @@ const accountOptions = computed(() =>
 const journalBalance = computed(() => {
   return journalForm.value.lines.reduce((sum, l) => sum + (Number(l.debit) - Number(l.credit)), 0)
 })
+
+const { handwritingOpen: accountOpen, handwritingLabel: accountLabel, handwritingNumeric: accountNumeric, openHandwriting: openAccountHw, applyHandwriting: applyAccountHw } =
+  useHandwritingFields({
+    fieldLabels: {
+      code: t('accounting.code'),
+      name: t('accounting.accountName'),
+      description: t('common.notes'),
+    },
+    target: accountForm,
+  })
+
+const { handwritingOpen: journalOpen, handwritingLabel: journalLabel, handwritingNumeric: journalNumeric, openHandwriting: openJournalHw, applyHandwriting: applyJournalHw } =
+  useHandwritingFields({
+    fieldLabels: {
+      reference: t('accounting.reference'),
+      description: t('accounting.description'),
+    },
+    target: journalForm,
+  })
 
 function openJournalDialog() {
   journalForm.value = {

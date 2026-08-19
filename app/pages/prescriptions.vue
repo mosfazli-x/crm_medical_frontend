@@ -187,19 +187,24 @@
         <div class="!px-6 !py-5 !space-y-4">
           <v-text-field v-model="form.medication_name" :label="t('prescriptions.form.medicationName')"
             :placeholder="t('prescriptions.form.medicationNamePlaceholder')" variant="outlined" density="compact"
-            :rules="[v => !!v || '']" />
+            :rules="[v => !!v || '']" append-inner-icon="mdi-draw-pen"
+            @click:append-inner="openHandwriting('medication_name')" />
           <div class="!grid !grid-cols-2 !gap-3">
             <v-text-field v-model="form.dosage" :label="t('prescriptions.dosage')"
               :placeholder="t('prescriptions.form.dosagePlaceholder')" variant="outlined" density="compact"
-              :rules="[v => !!v || '']" />
+              :rules="[v => !!v || '']" append-inner-icon="mdi-draw-pen"
+              @click:append-inner="openHandwriting('dosage')" />
             <v-text-field v-model="form.frequency" :label="t('prescriptions.frequency')"
-              :placeholder="t('prescriptions.form.frequencyPlaceholder')" variant="outlined" density="compact" />
+              :placeholder="t('prescriptions.form.frequencyPlaceholder')" variant="outlined" density="compact"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('frequency')" />
           </div>
           <div class="!grid !grid-cols-2 !gap-3">
             <v-text-field v-model="form.route" :label="t('prescriptions.route')"
-              :placeholder="t('prescriptions.form.routePlaceholder')" variant="outlined" density="compact" />
+              :placeholder="t('prescriptions.form.routePlaceholder')" variant="outlined" density="compact"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('route')" />
             <v-text-field v-model="form.duration" :label="t('prescriptions.duration')"
-              :placeholder="t('prescriptions.form.durationPlaceholder')" variant="outlined" density="compact" />
+              :placeholder="t('prescriptions.form.durationPlaceholder')" variant="outlined" density="compact"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('duration')" />
           </div>
           <div class="!grid !grid-cols-2 !gap-3">
             <v-text-field v-model="form.quantity" :label="t('prescriptions.quantity')"
@@ -211,7 +216,7 @@
           </div>
           <v-textarea v-model="form.instructions" :label="t('prescriptions.instructions')"
             :placeholder="t('prescriptions.form.instructionsPlaceholder')" variant="outlined" density="compact"
-            rows="2" />
+            rows="2" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('instructions')" />
           <div class="!grid !grid-cols-2 !gap-3">
             <v-text-field v-model="form.start_date" :label="t('prescriptions.startDate')" variant="outlined"
               density="compact" type="date" />
@@ -241,7 +246,8 @@
         <h3 class="!text-xs !font-bold !text-zinc-900 !mb-1.5">{{ t('prescriptions.discontinueTitle') }}</h3>
         <p class="!text-zinc-400 !text-[11px] !leading-relaxed">{{ t('prescriptions.disconfirmMessage') }}</p>
         <v-textarea v-model="discontinueReason" :placeholder="t('prescriptions.discontinueReasonPlaceholder')"
-          variant="outlined" density="compact" rows="2" class="!mt-4" />
+          variant="outlined" density="compact" rows="2" class="!mt-4" append-inner-icon="mdi-draw-pen"
+          @click:append-inner="discontinueReasonOpen = true" />
         <div class="!flex !justify-center !gap-2 !mt-4">
           <button @click="discontinueDialog = false"
             class="!flex-1 !px-4 !py-2 !bg-zinc-100 hover:!bg-zinc-200 !text-zinc-600 !text-xs !font-semibold !rounded-xl !transition-colors">{{
@@ -277,11 +283,17 @@
       </div>
     </v-dialog>
 
-  </UiPageContainer>
+  <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric"
+    @insert="applyHandwriting" />
+  <HandwritingDialog v-model="discontinueReasonOpen" :label="discontinueReasonLabel"
+    @insert="(text) => discontinueReason = text" />
+</UiPageContainer>
 </template>
 
 <script setup lang="ts">
 import Plus from '~/components/icons/Plus.vue'
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const { t } = useI18n()
 const { apiFetch } = useApi()
@@ -321,6 +333,22 @@ const form = ref({
   start_date: '',
   end_date: '',
 })
+
+const { handwritingOpen, handwritingLabel, handwritingNumeric, openHandwriting, applyHandwriting } =
+  useHandwritingFields({
+    fieldLabels: {
+      medication_name: t('prescriptions.form.medicationName'),
+      dosage: t('prescriptions.dosage'),
+      frequency: t('prescriptions.frequency'),
+      route: t('prescriptions.route'),
+      duration: t('prescriptions.duration'),
+      instructions: t('prescriptions.instructions'),
+    },
+    target: form,
+  })
+
+const discontinueReasonOpen = ref(false)
+const discontinueReasonLabel = t('prescriptions.discontinueReasonPlaceholder')
 
 function formatJalaliDate(date: string | null) {
   if (!date) return '---'

@@ -13,13 +13,15 @@
           <div>
             <label class="crm-label">{{ t('schedule.form.title') }} *</label>
             <v-text-field v-model="form.title" variant="outlined" density="comfortable" hide-details
-              :error="!!errors.title" :disabled="readonly" />
+              :error="!!errors.title" :disabled="readonly" append-inner-icon="mdi-draw-pen"
+              @click:append-inner="openHandwriting('title')" />
             <p v-if="errors.title" class="text-xs text-red-500 mt-1">{{ errors.title }}</p>
           </div>
           <div>
             <label class="crm-label">{{ t('schedule.form.description') }}</label>
             <v-textarea v-model="form.description" variant="outlined" density="comfortable" rows="2" hide-details
-              :disabled="readonly" />
+              :disabled="readonly" append-inner-icon="mdi-draw-pen"
+              @click:append-inner="openHandwriting('description')" />
           </div>
           <div>
             <label class="crm-label">{{ t('schedule.assignees') }} *</label>
@@ -64,7 +66,8 @@
           <div>
             <label class="crm-label">{{ t('schedule.form.notes') }}</label>
             <v-textarea v-model="form.notes" variant="outlined" density="comfortable" rows="2" hide-details
-              :disabled="readonly" />
+              :disabled="readonly" append-inner-icon="mdi-draw-pen"
+              @click:append-inner="openHandwriting('notes')" />
           </div>
         </div>
       </v-card-text>
@@ -79,11 +82,14 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+  <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, computed, watch } from 'vue'
 import type { ClinicTask, ScheduleAssignee, TaskPriority, TaskStatus } from '~/types/schedule'
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const props = defineProps<{
   modelValue: boolean
@@ -118,6 +124,15 @@ const form = reactive({
   spentHours: 0,
   notes: '',
 })
+const { handwritingOpen, handwritingLabel, handwritingNumeric, openHandwriting, applyHandwriting } =
+  useHandwritingFields({
+    fieldLabels: {
+      title: t('schedule.form.title'),
+      description: t('schedule.form.description'),
+      notes: t('schedule.form.notes'),
+    },
+    target: form,
+  })
 const errors = reactive<{ title?: string; assignees?: string }>({})
 const saving = ref(false)
 

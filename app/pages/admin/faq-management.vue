@@ -142,6 +142,7 @@
               rows="2"
               auto-grow
               class="mb-3"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('question_fa')"
             />
             <v-textarea
               v-model="form.answer_fa"
@@ -149,6 +150,7 @@
               rows="3"
               auto-grow
               class="mb-3"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('answer_fa')"
             />
             <v-textarea
               v-model="form.question_en"
@@ -156,6 +158,7 @@
               rows="2"
               auto-grow
               class="mb-3"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('question_en')"
             />
             <v-textarea
               v-model="form.answer_en"
@@ -163,6 +166,7 @@
               rows="3"
               auto-grow
               class="mb-3"
+              append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('answer_en')"
             />
             <v-select
               v-model="form.category"
@@ -202,6 +206,8 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+      <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
     </UiPageContainer>
   </div>
 </template>
@@ -212,6 +218,8 @@ definePageMeta({ layout: 'default', middleware: 'auth' })
 const { t } = useI18n()
 const { listFaq, createFaq, updateFaq, approveFaq, deleteFaq, getPendingApprovals } = useFaq()
 const { apiFetch } = useApi()
+import { useHandwritingFields } from '~/composables/useHandwritingFields'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 const nuxtApp = useNuxtApp()
 
 const activeTab = ref('faq')
@@ -238,6 +246,17 @@ const form = ref({
   answer_en: '',
   category: 'general',
 })
+
+const { handwritingOpen, handwritingLabel, handwritingNumeric, openHandwriting, applyHandwriting } =
+  useHandwritingFields({
+    fieldLabels: {
+      question_fa: t('support.admin.questionFa'),
+      answer_fa: t('support.admin.answerFa'),
+      question_en: t('support.admin.questionEn'),
+      answer_en: t('support.admin.answerEn'),
+    },
+    target: form,
+  })
 
 const categories = [
   { value: 'general', label: 'عمومی' },
