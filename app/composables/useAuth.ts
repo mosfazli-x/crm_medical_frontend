@@ -130,7 +130,18 @@ export const useAuth = () => {
     }
   }
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      if (token.value) {
+        await $fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token.value}` },
+          baseURL: useRuntimeConfig().public.apiBase,
+        })
+      }
+    } catch {
+      // Silently fail - still proceed with local logout
+    }
     token.value = null
     user.value = null
     if (process.client) {

@@ -89,6 +89,9 @@ src="../assets/images/dr-hosseini-cutout.png" alt="Dr. Hasti Hosseini, clinic di
 
     </div>
 
+    <!-- ==================== SITELINKS ==================== -->
+    <LandingSitelinks />
+
     <!-- ==================== FOOTER ==================== -->
     <footer class="footer anim-soft" style="animation-delay: 3600ms">
       <span>{{ t('aestheticLanding.footer.consultations') }}</span>
@@ -111,7 +114,7 @@ const railItems = computed(() => [
   { key: 'booking', href: '/booking', num: t('aestheticLanding.rail.booking.num'), title: t('aestheticLanding.rail.booking.title'), sub: t('aestheticLanding.rail.booking.sub'), delay: '2900ms' },
   { key: 'login', href: '/auth/login', num: t('aestheticLanding.rail.login.num'), title: t('aestheticLanding.rail.login.title'), sub: t('aestheticLanding.rail.login.sub'), delay: '3030ms' },
   { key: 'tutorials', href: '#', num: t('aestheticLanding.rail.tutorials.num'), title: t('aestheticLanding.rail.tutorials.title'), sub: t('aestheticLanding.rail.tutorials.sub'), delay: '3160ms' },
-  { key: 'blog', href: '#', num: t('aestheticLanding.rail.blog.num'), title: t('aestheticLanding.rail.blog.title'), sub: t('aestheticLanding.rail.blog.sub'), delay: '3290ms' },
+  { key: 'blog', href: '/blog', num: t('aestheticLanding.rail.blog.num'), title: t('aestheticLanding.rail.blog.title'), sub: t('aestheticLanding.rail.blog.sub'), delay: '3290ms' },
   { key: 'about', href: '/about', num: t('aestheticLanding.rail.about.num'), title: t('aestheticLanding.rail.about.title'), sub: t('aestheticLanding.rail.about.sub'), delay: '3420ms' },
 ])
 

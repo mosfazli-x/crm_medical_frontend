@@ -182,7 +182,7 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ middleware: 'auth', roles: ['admin_doctor'] })
+definePageMeta({ roles: ['admin_doctor'] })
 
 const { t } = useI18n()
 const { apiFetch } = useApi()

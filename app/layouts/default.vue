@@ -183,7 +183,7 @@
 
           <v-menu offset-y :close-on-content-click="true">
             <template #activator="{ props }">
-              <v-btn v-bind="props" icon variant="text" size="small" class="!text-[#6b7280]">
+              <v-btn v-bind="props" icon variant="text" size="small" class="!text-[#9ca3af]">
                 <Globe class="w-[18px] h-[18px]" />
               </v-btn>
             </template>
@@ -359,6 +359,7 @@ const userInitial = computed(() => {
 const ALL_MENUS = computed(() => [
   { title: t('dashboard.title'), to: '/dashboard', icon: HomeAngle, roles: ['all'], group: 'main' },
   { title: t('myProfile.title'), to: '/my-profile', icon: Profile, roles: ['all'], group: 'main' },
+  { title: t('mySessions.title'), to: '/my-sessions', icon: ShieldCheck, roles: ['all'], group: 'main' },
   { title: t('calendar.title'), to: '/calendar', icon: Calendar, roles: ['admin_doctor', 'doctor'], group: 'clinical' },
   { title: t('scheduling.title'), to: '/scheduling', icon: Clock, roles: ['admin_doctor', 'doctor'], group: 'clinical' },
   { title: t('appointments.title'), to: '/appointments', icon: Grid, roles: ['admin_doctor', 'doctor'], group: 'clinical' },
@@ -379,7 +380,10 @@ const ALL_MENUS = computed(() => [
   { title: t('adminSchedule.title'), to: '/admin/schedule', icon: Clock, roles: ['admin_doctor'], group: 'management' },
   { title: t('adminSettings.title'), to: '/admin/settings', icon: Settings, roles: ['admin_doctor'], group: 'management' },
   { title: t('auditLogs.title'), to: '/admin/audit', icon: AddClipboard, roles: ['admin_doctor'], group: 'management' },
+  { title: t('loginHistory.adminTitle'), to: '/admin/login-history', icon: ShieldCheck, roles: ['admin_doctor'], group: 'management' },
   { title: t('support.admin.title'), to: '/admin/faq-management', icon: FaqIcon, roles: ['admin_doctor'], group: 'management' },
+  { title: t('blog.admin.title'), to: '/admin/blog', icon: FileText, roles: ['admin_doctor'], group: 'management' },
+  { title: t('blog.admin.commentsTitle'), to: '/admin/blog/comments', icon: ChatDots, roles: ['admin_doctor'], group: 'management' },
   { title: t('billing.title'), to: '/billing', icon: Wallet, roles: ['admin_doctor'], group: 'finance' },
   { title: t('inventory.title'), to: '/inventory', icon: Box, roles: ['admin_doctor', 'pharmacy'], group: 'finance' },
   { title: t('accounting.title'), to: '/accounting', icon: BookOpen, roles: ['admin_doctor'], group: 'finance' },

@@ -213,7 +213,7 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default', middleware: 'auth' })
+definePageMeta({ layout: 'default' })
 
 const { t } = useI18n()
 const { listFaq, createFaq, updateFaq, approveFaq, deleteFaq, getPendingApprovals } = useFaq()
