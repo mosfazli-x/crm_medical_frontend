@@ -420,7 +420,7 @@ a {
 
 .anim-orb {
   background: radial-gradient(circle,
-      color-mix(in oklab, var(--[#FFD543]) 35%, transparent),
+      color-mix(in oklab, #FFD543 35%, transparent),
       transparent 70%);
   will-change: transform;
   animation: orb-float 26s cubic-bezier(0.45, 0, 0.55, 1) infinite;
@@ -463,7 +463,7 @@ a {
   font-size: 0.65rem;
   letter-spacing: 0.45em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--[#FFD543]) 80%, transparent);
+  color: color-mix(in oklab, #FFD543 80%, transparent);
 }
 
 .about-hero-title {
@@ -550,7 +550,7 @@ a {
    clinical precision of the brand without leaning on decorative gradients. */
 
 .vital-divider {
-  color: color-mix(in oklab, var(--[#FFD543]) 55%, transparent);
+  color: color-mix(in oklab, #FFD543 55%, transparent);
 }
 
 .vital-divider__path {
@@ -598,7 +598,7 @@ a {
 }
 
 .card-3d:hover {
-  border-color: color-mix(in oklab, var(--[#FFD543]) 40%, transparent);
+  border-color: color-mix(in oklab, #FFD543 40%, transparent);
   box-shadow:
     0 30px 60px -20px color-mix(in oklab, var(--ink) 95%, transparent),
     inset 0 1px 0 color-mix(in oklab, var(--lightcyan) 20%, transparent);
