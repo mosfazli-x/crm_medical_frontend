@@ -137,7 +137,12 @@
               @click="openPatientProfile(patient)"
             >
               <td class="crm-table-primary">{{ patient.firstName }} {{ patient.lastName }}</td>
-              <td class="font-mono tracking-wider">{{ patient.nationalId }}</td>
+              <td class="font-mono tracking-wider">
+                {{ patient.nationalId }}
+                <span v-if="patient.isForeign" class="crm-badge crm-badge-blue !ml-1 !text-[11px] font-sans not-italic">
+                  {{ countryName(patient.nationality, 'fa') || patient.nationality || 'خارجی' }}
+                </span>
+              </td>
               <td class="font-mono tracking-wider crm-ltr">{{ patient.phone || '-' }}</td>
               <td>
                 <div class="flex items-center gap-1.5">
@@ -284,6 +289,7 @@ import TrashBin from '~/components/icons/TrashBin.vue'
 import { usePatientFormDialog } from '~/composables/usePatientFormDialog'
 import { useEventBus } from '~/composables/useEventBus'
 import type { PatientListItem, PatientProfile } from '~/types/patient'
+import { countryName } from '~/composables/useCountries'
 
 const { t } = useI18n()
 
@@ -454,6 +460,7 @@ const profileFields = computed(() => {
   const p = selectedProfile.value
   return [
     { label: t('patients.phoneLabel'), value: p.phone || t('patients.notRegistered'), ltr: true },
+    { label: t('patients.nationalityLabel'), value: p.isForeign ? (countryName(p.nationality, 'fa') || p.nationality || '-') : '-', ltr: false },
     { label: t('patients.birthDateLabel'), value: formatGregorianDate(p.birthDate) + (p.birthDateExact === false ? ` (${t('patients.approxDob')})` : '') },
     { label: t('patients.maritalStatusLabel'), value: getMaritalLabel(p.maritalStatus) || t('patients.unknown') },
     { label: t('patients.registrationDateLabel'), value: formatJalaliDate(p.createdAt) },

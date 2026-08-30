@@ -44,16 +44,6 @@ const links = computed(() => [
 <template>
   <section class="sitelinks">
     <div class="sitelinks__inner">
-      <header class="sitelinks__header">
-        <span class="sitelinks__eyebrow">
-          <span class="sitelinks__eyebrow-rule" />
-          {{ t('sitelinks.eyebrow') }}
-          <span class="sitelinks__eyebrow-rule" />
-        </span>
-        <h2 class="sitelinks__heading">{{ t('sitelinks.heading') }}</h2>
-        <p class="sitelinks__sub">{{ t('sitelinks.sub') }}</p>
-      </header>
-
       <nav :aria-label="t('sitelinks.ariaLabel')" class="sitelinks__grid">
         <NuxtLink
           v-for="link in links"
@@ -119,54 +109,12 @@ const links = computed(() => [
 .sitelinks {
   position: relative;
   z-index: 10;
-  padding: 5rem 1.5rem;
+  padding: 3.5rem 1.5rem 5rem;
 }
 
 .sitelinks__inner {
   max-width: 1100px;
   margin: 0 auto;
-}
-
-/* ─── Header ─────────────────────────────────────── */
-
-.sitelinks__header {
-  text-align: center;
-  margin-bottom: 3.5rem;
-}
-
-.sitelinks__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 0.6rem;
-  letter-spacing: 0.45em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--iceblue) 60%, transparent);
-  margin-bottom: 1.25rem;
-}
-
-.sitelinks__eyebrow-rule {
-  height: 1px;
-  width: 2.5rem;
-  background: color-mix(in oklab, var(--iceblue) 35%, transparent);
-}
-
-.sitelinks__heading {
-  font-family: var(--font-display);
-  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
-  font-weight: 300;
-  color: var(--lightcyan);
-  margin: 0 0 0.75rem;
-  letter-spacing: -0.01em;
-  line-height: 1.15;
-}
-
-.sitelinks__sub {
-  font-size: 0.9rem;
-  color: color-mix(in oklab, var(--periwinkle) 65%, transparent);
-  max-width: 28rem;
-  margin: 0 auto;
-  line-height: 1.6;
 }
 
 /* ─── Grid ───────────────────────────────────────── */
@@ -325,7 +273,7 @@ const links = computed(() => [
 
 @media (max-width: 639px) {
   .sitelinks {
-    padding: 3rem 1rem;
+    padding: 2.5rem 1rem 3rem;
   }
 
   .sitelinks__card {

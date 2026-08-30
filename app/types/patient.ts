@@ -219,6 +219,8 @@ export interface PatientProfile {
     first_name: string
     last_name: string
     national_id: string
+    is_foreign?: boolean
+    nationality?: string
     insurance_code?: string
     insurance_type?: string
     phone?: string
@@ -274,6 +276,8 @@ export interface PatientListItem {
   firstName: string | null
   lastName: string | null
   nationalId: string | null
+  isForeign: boolean | null
+  nationality: string | null
   phone: string | null
   birthDate: string | null
   birthDateExact: boolean | null

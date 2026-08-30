@@ -89,9 +89,6 @@ src="../assets/images/dr-hosseini-cutout.png" alt="Dr. Hasti Hosseini, clinic di
 
     </div>
 
-    <!-- ==================== SITELINKS ==================== -->
-    <LandingSitelinks />
-
     <!-- ==================== FOOTER ==================== -->
     <footer class="footer anim-soft" style="animation-delay: 3600ms">
       <span>{{ t('aestheticLanding.footer.consultations') }}</span>

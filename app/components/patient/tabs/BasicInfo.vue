@@ -12,7 +12,47 @@
                     density="comfortable" append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('last_name')" />
             </v-col>
             <v-col cols="12" md="6">
-                <v-text-field v-model="form.national_id" :label="$t('basicInfo.nationalId') + ' *'" variant="outlined" density="comfortable"
+                <div class="rounded-lg border border-slate-200 dark:border-slate-600 p-3 mb-2">
+                    <v-checkbox v-model="form.is_foreign" :label="$t('basicInfo.foreignToggle')" density="compact"
+                        color="#4F46E5" hide-details class="!mt-0" />
+                </div>
+                <template v-if="form.is_foreign">
+                    <v-autocomplete v-model="form.nationality" :items="countryOptions" item-title="name"
+                        item-value="code" :label="$t('basicInfo.nationality') + ' *'" variant="outlined"
+                        density="comfortable" class="mb-2" prepend-inner-icon="mdi-earth" clearable
+                        :placeholder="$t('basicInfo.nationalitySearch')" :filter="countryFilter">
+                        <template v-slot:selection="{ item }">
+                            <div class="flex items-center gap-2">
+                                <img v-if="iconFor(item.value)" :src="iconFor(item.value)" alt="" class="w-5 h-3.5 object-contain" />
+                                <span>{{ item.title }}</span>
+                            </div>
+                        </template>
+                        <template v-slot:item="{ props, item }">
+                            <v-list-item v-bind="props" class="gap-2 flex">
+                                <template v-slot:prepend>
+                                    <img v-if="iconFor(item.value)" :src="iconFor(item.value)" alt="" class="w-5 h-3.5 object-contain" />
+                                </template>
+                                <template v-slot:title>
+                                    <span class="text-sm font-semibold">{{ item.title }}</span>
+                                </template>
+                                <template v-slot:subtitle>
+                                    <span class="text-xs text-slate-500! dark:text-slate-400!">{{ isFa ? item.raw.nameEn : item.raw.nameFa }}</span>
+                                </template>
+                            </v-list-item>
+                        </template>
+                        <template v-slot:no-data>
+                            <div class="pa-4 text-center text-sm text-slate-500 dark:text-slate-400">
+                                {{ $t('basicInfo.nationalityNotFound') }}
+                            </div>
+                        </template>
+                    </v-autocomplete>
+                    <v-text-field v-model="form.national_id"
+                        :label="$t('basicInfo.identificationCode') + ' *'" variant="outlined" density="comfortable"
+                        prepend-inner-icon="mdi-card-account-details-outline" append-inner-icon="mdi-draw-pen"
+                        maxlength="40"
+                        @click:append-inner="openHandwriting('national_id', false)" />
+                </template>
+                <v-text-field v-else v-model="form.national_id" :label="$t('basicInfo.nationalId') + ' *'" variant="outlined" density="comfortable"
                     prepend-inner-icon="mdi-card-account-details-outline" append-inner-icon="mdi-draw-pen" maxlength="10" inputmode="numeric"
                     :rules="[nationalCodeRule]" @click:append-inner="openHandwriting('national_id', true)" />
             </v-col>
@@ -85,14 +125,38 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import moment from 'moment-jalaali'
 import { INSURANCE_TYPE_VALUES } from '~/types/insurance'
 import HandwritingDialog from '~/components/HandwritingDialog.vue'
-const { t } = useI18n()
+import { useCountries } from '~/composables/useCountries'
+const { t, locale } = useI18n()
 
 const form = defineModel<Record<string, unknown>>({ required: true })
 const config = useRuntimeConfig()
+
+const { COUNTRIES, countryOptions, iconFor, resolveFlags } = useCountries()
+
+const isFa = computed(() => locale.value === 'fa')
+
+const normalizeSearch = (s: string) =>
+    s
+        .toLowerCase()
+        .replace(/[\u0623\u0625\u0622]/g, '\u0627')
+        .replace(/\u0629/g, '\u0647')
+        .replace(/[\u064A\u0649]/g, '\u06CC')
+        .replace(/\u0643/g, '\u06A9')
+        .replace(/\s+/g, ' ')
+        .trim()
+
+const countryFilter = (item: { title?: string; raw?: { searchText?: string } }, queryText: string, itemText: string) => {
+    if (!queryText) return true
+    const q = normalizeSearch(queryText)
+    const haystack = normalizeSearch(
+        `${itemText} ${item.title ?? ''} ${item.raw?.searchText ?? ''}`,
+    )
+    return haystack.includes(q)
+}
 
 const handwritingOpen = ref(false)
 const handwritingTarget = ref<string | null>(null)
@@ -259,6 +323,10 @@ const nationalCodeRule = (value: string) => {
         ? true
         : t('basicInfo.invalidNationalId')
 }
+
+onMounted(() => {
+    resolveFlags(COUNTRIES.map((c) => c.code))
+})
 </script>
 
 <style>

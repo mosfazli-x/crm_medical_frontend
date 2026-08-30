@@ -115,6 +115,8 @@ const form = reactive({
     first_name: '',
     last_name: '',
     national_id: '',
+    is_foreign: false,
+    nationality: '',
     insurance_code: '',
     insurance_type: '',
     birth_date: null as string | null,
@@ -158,6 +160,8 @@ const submitForm = async () => {
             first_name: form.first_name || '',
             last_name: form.last_name || '',
             national_id: form.national_id || '',
+            is_foreign: form.is_foreign,
+            nationality: form.is_foreign ? (form.nationality || null) : null,
             insurance_code: form.insurance_code || null,
             insurance_type: form.insurance_type || null,
             birth_date: form.birth_date || null,
@@ -311,6 +315,8 @@ function resetForm() {
     form.first_name = ''
     form.last_name = ''
     form.national_id = ''
+    form.is_foreign = false
+    form.nationality = ''
     form.insurance_code = ''
     form.insurance_type = ''
     form.birth_date = null
@@ -352,6 +358,8 @@ function fillForm(data: any) {
     form.first_name = info.firstName ?? info.first_name ?? ''
     form.last_name = info.lastName ?? info.last_name ?? ''
     form.national_id = info.nationalId ?? info.national_id ?? ''
+    form.is_foreign = Boolean(info.is_foreign ?? info.isForeign ?? false)
+    form.nationality = info.nationality ?? ''
     form.insurance_code = info.insuranceCode ?? info.insurance_code ?? ''
     form.insurance_type = info.insuranceType ?? info.insurance_type ?? ''
     form.birth_date = info.birthDate ?? info.birth_date ?? null

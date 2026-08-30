@@ -12,6 +12,9 @@
           <h2 class="text-xl font-bold text-gray-900">{{ patient.first_name }} {{ patient.last_name }}</h2>
           <div class="flex items-center gap-3 mt-1 text-sm text-gray-500">
             <span>{{ $t('patientProfile.nationalId') }}: <span class="font-medium text-gray-700">{{ patient.national_id }}</span></span>
+            <span v-if="patient.is_foreign || patient.isForeign" class="flex items-center gap-1.5 bg-slate-100 rounded-full px-2 py-0.5 text-xs">
+              <span class="font-medium text-gray-700">{{ countryName(patient.nationality, 'fa') || patient.nationality }}</span>
+            </span>
             <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
             <span v-if="insuranceInfo" class="flex items-center gap-1.5">
               <img :src="insuranceInfo.logo" :alt="insuranceInfo.label" class="w-5 h-5 object-contain" />
@@ -108,6 +111,7 @@
 import { computed } from 'vue'
 import { usePatientFormDialog } from '~/composables/usePatientFormDialog'
 import { getInsuranceInfo } from '~/types/insurance'
+import { countryName } from '~/composables/useCountries'
 const { t } = useI18n()
 
 // دریافت اطلاعات بیمار به عنوان پراپ از کامپوننت والد (مثلاً لیست بیماران)

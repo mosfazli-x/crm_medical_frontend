@@ -27,6 +27,10 @@
               <h1 class="text-2xl font-extrabold text-slate-800">{{ basicInfo.first_name }} {{ basicInfo.last_name }}</h1>
               <div class="flex flex-wrap items-center gap-3 mt-1 text-sm text-slate-500">
                 <span class="font-mono tracking-wider">{{ basicInfo.national_id }}</span>
+                <span v-if="basicInfo.is_foreign" class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 rounded-full px-2.5 py-0.5">
+                  <img v-if="countryFlag" :src="countryFlag" alt="" class="w-5 h-3.5 object-contain" />
+                  <span class="font-medium text-slate-700 dark:text-slate-300">{{ countryName(basicInfo.nationality, 'fa') || basicInfo.nationality }}</span>
+                </span>
                 <span class="w-1 h-1 bg-slate-300 rounded-full" />
                 <span dir="ltr">{{ basicInfo.phone || '---' }}</span>
                 <span class="w-1 h-1 bg-slate-300 rounded-full" />
@@ -194,6 +198,7 @@ import { useRoute } from 'vue-router'
 import AttachmentsTab from '~/components/patient/tabs/Attachments.vue'
 import PregnancyHistoryTab from '~/components/patient/tabs/PregnancyHistory.vue'
 import TimelineTab from '~/components/patient/tabs/TimelineTab.vue'
+import { loadFlagSvg, countryName } from '~/composables/useCountries'
 
 // Initialize composable - unified entry point
 const route = useRoute()
@@ -235,6 +240,17 @@ watch(patientId, (newId) => {
 // Legacy State (for gradual migration)
 // ─────────────────────────────────────────────────────────────
 const activeTab = ref('reproductive')
+
+// Nationality / country flag for foreign patients
+const countryFlag = ref('')
+watch(
+    () => basicInfo.value?.nationality,
+    async (code) => {
+        countryFlag.value = ''
+        if (code) countryFlag.value = await loadFlagSvg(code)
+    },
+    { immediate: true },
+)
 
 // Loading states
 const reproSaving = ref(false)
