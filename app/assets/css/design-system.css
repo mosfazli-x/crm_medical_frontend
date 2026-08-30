@@ -1934,8 +1934,8 @@
 .scale-in {
   opacity: 0 !important;
   transform: scale(0.95) !important;
-  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important,
-              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transform: 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .scale-in.visible {
@@ -1947,8 +1947,8 @@
 .slide-in-right {
   opacity: 0 !important;
   transform: translateX(20px) !important;
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important,
-              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transform: 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .slide-in-right.visible {
@@ -1960,8 +1960,8 @@
 .slide-in-left {
   opacity: 0 !important;
   transform: translateX(-20px) !important;
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important,
-              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transform: 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .slide-in-left.visible {
