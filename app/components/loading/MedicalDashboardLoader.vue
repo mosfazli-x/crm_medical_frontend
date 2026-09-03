@@ -1,26 +1,25 @@
 ﻿<template>
   <Transition name="loader-exit" @after-leave="$emit('finished')">
     <div v-if="rendered" :dir="isRtl ? 'rtl' : 'ltr'"
-      class="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden dark:bg-slate-950 bg-white"
+      class="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#222831]"
       role="status" aria-live="polite" :aria-label="translatedStatuses[currentIndex]">
       <div ref="threeContainer" class="absolute inset-0 pointer-events-none"></div>
+
+      <div class="absolute inset-0 bg-gradient-to-b from-[#222831]/60 via-transparent to-[#222831]/95"></div>
       <div
-        class="absolute inset-0 bg-gradient-to-b dark:from-slate-950/50 dark:via-transparent dark:to-slate-950/90 from-white/40 via-transparent to-white/80">
+        class="absolute inset-0 bg-[radial-gradient(90%_70%_at_18%_88%,rgba(0,173,181,0.14),transparent_65%)]">
       </div>
-      <div
-        class="absolute inset-0 bg-gradient-to-r dark:from-slate-950/30 dark:via-transparent dark:to-slate-950/30 from-white/20 via-transparent to-white/20">
-      </div>
+
       <div ref="cardRef"
-        class="relative z-10 flex flex-col w-[min(88vw,400px)] rounded-3xl border dark:border-white/[0.06] border-slate-200/80 dark:bg-slate-900/60 bg-white/80 shadow-2xl dark:shadow-indigo-500/10 shadow-indigo-200/50 overflow-hidden"
+        class="relative z-10 flex flex-col w-[min(88vw,400px)] rounded-3xl border border-[#4A505A]/60 bg-[#2B3138]/80 shadow-2xl shadow-black/50 overflow-hidden"
         style="backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);">
         <div class="flex flex-col items-center gap-8 w-full px-8 py-10">
           <div ref="logoRef" class="flex items-center gap-3">
             <div class="relative flex-shrink-0">
-              <img src="../../assets/images/hastihoseinilogoBlack.png" class="h-11">
-              <div class="absolute -inset-1 rounded-xl bg-indigo-500/10 blur-md -z-10"></div>
+              <img src="../../assets/images/hastihoseinilogo.png" class="h-11">
+              <div class="absolute -inset-1 rounded-xl bg-[#00ADB5]/10 blur-md -z-10"></div>
             </div>
-            <span class="text-md font-bold tracking-tight dark:text-slate-100/90 text-slate-800">{{ resolvedClinicName
-            }}</span>
+            <span class="text-md font-bold tracking-tight text-[#EEEEEE]/90">{{ resolvedClinicName }}</span>
           </div>
 
           <div class="w-full">
@@ -29,25 +28,25 @@
 
           <div ref="statusRef" class="flex flex-col items-center gap-1">
             <Transition name="status-fade" mode="out-in">
-              <p :key="currentIndex" class="text-sm font-medium text-center dark:text-slate-300/90 text-slate-600">
-                <span class="text-indigo-400">âœ¦</span>
+              <p :key="currentIndex" class="text-sm font-medium text-center text-[#B8BDC5]">
+                <span class="text-[#00ADB5] mr-1 inline-block">✦</span>
                 {{ translatedStatuses[currentIndex] }}
               </p>
             </Transition>
             <div class="flex gap-1.5 mt-1" :class="isRtl ? 'flex-row-reverse' : ''">
               <span v-for="i in translatedStatuses.length" :key="i" class="h-1 rounded-full transition-all duration-500"
                 :class="i - 1 === currentIndex
-                  ? 'w-5 bg-indigo-400'
+                  ? 'w-5 bg-[#00ADB5]'
                   : i - 1 < currentIndex
-                    ? 'w-1.5 bg-indigo-400/40'
-                    : 'w-1.5 dark:bg-slate-600/50 bg-slate-300/70'" />
+                    ? 'w-1.5 bg-[#00ADB5]/40'
+                    : 'w-1.5 bg-[#4A505A]/70'" />
             </div>
           </div>
         </div>
 
         <div class="h-[3px] transition-all duration-500 ease-out" :style="{
           width: progress + '%',
-          background: 'linear-gradient(90deg, #818cf8, #A2D2FF, #CDB4DB)',
+          background: 'linear-gradient(90deg, #00ADB5, #39C6D6, #0E7C82)',
         }" />
       </div>
     </div>
@@ -55,11 +54,12 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useLang()
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import * as THREE from 'three'
 import gsap from 'gsap'
+const { locale } = useI18n()
 import { useLoadingSequence } from '~/composables/useLoadingSequence'
-import ClinicLogo from '~/components/icons/ClinicLogo.vue'
 
 const props = withDefaults(defineProps<{
   show: boolean
@@ -70,10 +70,8 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{ (e: 'finished'): void }>()
 
-const { t, locale } = useI18n()
 
 const resolvedClinicName = computed(() => props.clinicName || t('landing.loading.clinicName'))
-const { isDark } = useThemeMode()
 
 const isRtl = computed(() => locale.value === 'fa')
 
@@ -114,25 +112,25 @@ let resizeObs: ResizeObserver | null = null
 let mouseX = 0
 let mouseY = 0
 
-const COLORS = { primary: '#A2D2FF', secondary: '#818cf8', accent: '#CDB4DB' }
+// Teal accent family — matches the navy/teal landing palette.
+const COLORS = { primary: '#00ADB5', secondary: '#39C6D6', accent: '#6EE7B7' }
 
 function applyThemeToScene() {
   if (!scene) return
-  const dark = isDark.value
   if (dnaGroup) {
     dnaGroup.children.forEach((child) => {
       if (child instanceof THREE.Points) {
-        ; (child.material as THREE.Material).opacity = dark ? 0.9 : 0.7
+        ; (child.material as THREE.Material).opacity = 0.9
       } else if (child instanceof THREE.LineSegments) {
-        ; (child.material as THREE.Material).opacity = dark ? 0.25 : 0.35
+        ; (child.material as THREE.Material).opacity = 0.3
       }
     })
   }
   if (particleSystem) {
-    ; (particleSystem.material as THREE.Material).opacity = dark ? 0.4 : 0.35
+    ; (particleSystem.material as THREE.Material).opacity = 0.4
   }
   if (networkLines) {
-    ; (networkLines.material as THREE.Material).opacity = dark ? 0.06 : 0.12
+    ; (networkLines.material as THREE.Material).opacity = 0.12
   }
 }
 
@@ -178,7 +176,7 @@ function createDNA(): THREE.Group {
   const lMat = new THREE.LineBasicMaterial({
     color: COLORS.secondary,
     transparent: true,
-    opacity: 0.25,
+    opacity: 0.3,
   })
   group.add(new THREE.LineSegments(lGeo, lMat))
 
@@ -221,7 +219,7 @@ function createParticles(): { points: THREE.Points; lines: THREE.LineSegments } 
   const lMat = new THREE.LineBasicMaterial({
     color: COLORS.accent,
     transparent: true,
-    opacity: 0.06,
+    opacity: 0.12,
   })
   const lines = new THREE.LineSegments(lGeo, lMat)
   return { points, lines }
@@ -245,12 +243,12 @@ function initScene() {
   renderer.toneMappingExposure = 0.6
   c.appendChild(renderer.domElement)
 
-  const ambient = new THREE.AmbientLight(0x4444aa, 0.4)
+  const ambient = new THREE.AmbientLight(0x3ee8c6, 0.5)
   scene.add(ambient)
-  const key = new THREE.DirectionalLight(0xccddff, 1.5)
+  const key = new THREE.DirectionalLight(0x00adb5, 1.6)
   key.position.set(2, 3, 4)
   scene.add(key)
-  const fill = new THREE.DirectionalLight(0x8888ff, 0.5)
+  const fill = new THREE.DirectionalLight(0x6ee7b7, 0.5)
   fill.position.set(-3, 1, -2)
   scene.add(fill)
 
@@ -361,7 +359,7 @@ onMounted(async () => {
     if (!reduced) animate()
     else if (renderer && scene && camera) renderer.render(scene, camera)
   } catch {
-    // fallback â€” scene stays dark, card still works
+    // fallback — scene stays dark, card still works
   }
 
   initAnimations()
@@ -384,10 +382,6 @@ onMounted(async () => {
       path: '/lottie/clone.json',
     })
   }
-})
-
-watch(isDark, () => {
-  applyThemeToScene()
 })
 
 onBeforeUnmount(() => {

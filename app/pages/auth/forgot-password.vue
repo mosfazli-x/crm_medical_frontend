@@ -110,11 +110,7 @@ definePageMeta({ layout: false })
 .auth-label {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #334155;
-}
-
-:global([data-theme="dark"]) .auth-label {
-  color: #cbd5e1;
+  color: #d7dbe1;
 }
 
 .auth-input-wrap {
@@ -126,7 +122,7 @@ definePageMeta({ layout: false })
 .auth-input-icon {
   position: absolute;
   right: 0.875rem;
-  color: #94a3b8;
+  color: #B8BDC5;
   display: flex;
   align-items: center;
   pointer-events: none;
@@ -141,25 +137,25 @@ definePageMeta({ layout: false })
   font-size: 0.875rem;
   font-weight: 500;
   font-family: var(--font-body);
-  color: #0f172a;
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
+  color: #EEEEEE;
+  background: #2B3138;
+  border: 1.5px solid #4A505A;
   border-radius: 0.75rem;
   outline: none;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .auth-input::placeholder {
-  color: #94a3b8;
+  color: #8E96A1;
 }
 
 .auth-input:focus {
-  border-color: #CDB4DB;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: #00ADB5;
+  box-shadow: 0 0 0 3px rgba(0, 173, 181, 0.2);
 }
 
 .auth-input-wrap:focus-within .auth-input-icon {
-  color: #CDB4DB;
+  color: #00ADB5;
 }
 
 .auth-input--ltr {
@@ -175,16 +171,16 @@ definePageMeta({ layout: false })
 .auth-error {
   font-size: 0.75rem;
   font-weight: 500;
-  color: #ef4444;
+  color: #f87171;
 }
 
 .auth-field--error .auth-input {
-  border-color: #ef4444;
+  border-color: #f87171;
 }
 
 .auth-field--error .auth-input:focus {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  border-color: #f87171;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.12);
 }
 
 .auth-err-enter-active {
@@ -211,20 +207,20 @@ definePageMeta({ layout: false })
   font-size: 0.9375rem;
   font-weight: 700;
   font-family: var(--font-body);
-  color: #ffffff;
-  background: linear-gradient(135deg, #CDB4DB, #A2D2FF);
+  color: #222831;
+  background: linear-gradient(135deg, #00ADB5, #39C6D6);
   border: none;
   border-radius: 0.75rem;
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25), 0 1px 2px rgba(79, 70, 229, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 173, 181, 0.3), 0 1px 2px rgba(0, 173, 181, 0.2);
 }
 
 .auth-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.35);
-  background: linear-gradient(135deg, #5551E8, #6D70F5);
+  box-shadow: 0 4px 16px rgba(0, 173, 181, 0.4);
+  background: linear-gradient(135deg, #39C6D6, #4FD6E4);
 }
 
 .auth-btn:active:not(:disabled) {
@@ -250,8 +246,8 @@ definePageMeta({ layout: false })
   position: absolute;
   width: 1.25rem;
   height: 1.25rem;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: #fff;
+  border: 2px solid rgba(34, 40, 49, 0.3);
+  border-top-color: #222831;
   border-radius: 50%;
   animation: authSpin 0.6s linear infinite;
 }
@@ -264,22 +260,18 @@ definePageMeta({ layout: false })
   text-align: center;
   margin-top: 1.75rem;
   font-size: 0.8125rem;
-  color: #64748b;
-}
-
-:global([data-theme="dark"]) .auth-footer {
-  color: #94a3b8;
+  color: #B8BDC5;
 }
 
 .auth-footer__link {
   font-weight: 700;
-  color: #CDB4DB;
+  color: #00ADB5;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .auth-footer__link:hover {
-  color: #A2D2FF;
+  color: #39C6D6;
   text-decoration: underline;
 }
 </style>

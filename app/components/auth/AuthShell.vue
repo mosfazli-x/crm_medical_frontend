@@ -1,12 +1,11 @@
 <script setup lang="ts">
 /**
- * AuthShell — Premium split-screen auth layout.
+ * AuthShell — Premium split-screen auth layout (navy/teal palette).
  *
- * Left: animated hero with gradient mesh, floating orbs, brand messaging.
+ * Left: animated hero with teal glow mesh, floating orbs, brand messaging.
  * Right: clean glass card with form slot.
  * Mobile: hero condensed to strip, form full-width.
  */
-import ClinicLogo from '~/components/icons/ClinicLogo.vue'
 const { t, locale } = useI18n()
 
 const isRtl = computed(() => locale.value === 'fa')
@@ -15,90 +14,102 @@ defineProps<{
   title: string
   subtitle?: string
 }>()
+
+const dir = computed(() => (locale.value === 'fa' ? 'rtl' : 'ltr'))
 </script>
 
 <template>
-  <v-locale-provider rtl>
-    <div class="auth-shell" dir="rtl">
-      <!-- ═══ Hero Panel (left on desktop, hidden on mobile) ═══ -->
-      <div class="auth-hero" aria-hidden="true">
-        <!-- Gradient mesh background -->
-        <div class="auth-hero__mesh" />
-        <!-- Grid overlay -->
-        <div class="auth-hero__grid" />
-        <!-- Floating orbs -->
-        <div class="auth-hero__orb auth-hero__orb--1" />
-        <div class="auth-hero__orb auth-hero__orb--2" />
-        <div class="auth-hero__orb auth-hero__orb--3" />
-        <!-- Vignette -->
-        <div class="auth-hero__vignette" />
+  <!-- Locale dir is driven by the page routing; keep a neutral layout that responds to [dir] -->
+  <div class="auth-shell" :dir="dir">
+    <!-- ═══ Hero Panel (left on desktop, hidden on mobile) ═══ -->
+    <div class="auth-hero" aria-hidden="true">
+      <!-- Teal glow mesh -->
+      <div class="auth-hero__mesh" />
+      <!-- Scientific grid overlay -->
+      <div class="auth-hero__grid" />
+      <!-- Floating orbs -->
+      <div class="auth-hero__orb auth-hero__orb--1" />
+      <div class="auth-hero__orb auth-hero__orb--2" />
+      <div class="auth-hero__orb auth-hero__orb--3" />
+      <!-- Vignette -->
+      <div class="auth-hero__vignette" />
 
-        <!-- Hero content -->
-        <div class="auth-hero__content">
-          <div class="auth-hero__logo-wrap">
-            <div class="auth-hero__logo-icon">
-              <img src="../../assets/images/hastihoseinilogo.png" class="auth-hero__logo-svg">
-            </div>
-          </div>
-          <h1 class="auth-hero__title">{{ t('auth.hero.title') }}</h1>
-          <p class="auth-hero__tagline">{{ t('auth.hero.tagline') }}</p>
-          <div class="auth-hero__features">
-            <div class="auth-hero__feature">
-              <span class="auth-hero__feature-dot" />
-              <span>{{ t('auth.hero.feature1') }}</span>
-            </div>
-            <div class="auth-hero__feature">
-              <span class="auth-hero__feature-dot" />
-              <span>{{ t('auth.hero.feature2') }}</span>
-            </div>
-            <div class="auth-hero__feature">
-              <span class="auth-hero__feature-dot" />
-              <span>{{ t('auth.hero.feature3') }}</span>
-            </div>
+      <!-- Hero content -->
+      <div class="auth-hero__content">
+        <div class="auth-hero__logo-wrap">
+          <div class="auth-hero__logo-icon">
+            <img src="../../assets/images/hastihoseinilogo.png" class="auth-hero__logo-svg" alt="">
           </div>
         </div>
-      </div>
-
-      <!-- ═══ Form Panel ═══ -->
-      <div class="auth-form-panel">
-        <!-- Mobile-only compact header -->
-        <div class="auth-mobile-header">
-          <div class="auth-mobile-logo">
-            <img src="../../assets/images/hastihoseinilogo.png" class="auth-mobile-logo-svg">
+        <h1 class="auth-hero__title">{{ t('auth.hero.title') }}</h1>
+        <p class="auth-hero__tagline">{{ t('auth.hero.tagline') }}</p>
+        <div class="auth-hero__features">
+          <div class="auth-hero__feature">
+            <span class="auth-hero__feature-dot" />
+            <span>{{ t('auth.hero.feature1') }}</span>
           </div>
-          <span class="auth-mobile-brand">{{ t('auth.hero.title') }}</span>
-        </div>
-
-        <div class="auth-form-wrap">
-          <div class="auth-card">
-            <div class="auth-card__header">
-              <h2 class="auth-card__title">{{ title }}</h2>
-              <p v-if="subtitle" class="auth-card__subtitle">{{ subtitle }}</p>
-            </div>
-            <slot />
+          <div class="auth-hero__feature">
+            <span class="auth-hero__feature-dot" />
+            <span>{{ t('auth.hero.feature2') }}</span>
           </div>
-          <NuxtLink to="/" class="auth-back-link">
-            <svg class="auth-back-link__icon" :class="{ 'auth-back-link__icon--rtl': isRtl }" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M15 10H5M9 6l-4 4 4 4" />
-            </svg>
-            <span>{{ t('auth.backToHome') }}</span>
-          </NuxtLink>
+          <div class="auth-hero__feature">
+            <span class="auth-hero__feature-dot" />
+            <span>{{ t('auth.hero.feature3') }}</span>
+          </div>
         </div>
       </div>
     </div>
-  </v-locale-provider>
+
+    <!-- ═══ Form Panel ═══ -->
+    <div class="auth-form-panel">
+      <!-- Mobile-only compact header -->
+      <div class="auth-mobile-header">
+        <div class="auth-mobile-logo">
+          <img src="../../assets/images/hastihoseinilogo.png" class="auth-mobile-logo-svg" alt="">
+        </div>
+        <span class="auth-mobile-brand">{{ t('auth.hero.title') }}</span>
+      </div>
+
+      <div class="auth-form-wrap">
+        <div class="auth-card">
+          <div class="auth-card__header">
+            <h2 class="auth-card__title">{{ title }}</h2>
+            <p v-if="subtitle" class="auth-card__subtitle">{{ subtitle }}</p>
+          </div>
+          <slot />
+        </div>
+        <NuxtLink to="/" class="auth-back-link">
+          <svg class="auth-back-link__icon" :class="{ 'auth-back-link__icon--rtl': isRtl }" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 10H5M9 6l-4 4 4 4" />
+          </svg>
+          <span>{{ t('auth.backToHome') }}</span>
+        </NuxtLink>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
 /* ═══════════════════════════════════════════
-   Auth Shell — Premium Split Layout
+   Auth Shell — Premium Split Layout (navy/teal)
    ═══════════════════════════════════════════ */
 
 .auth-shell {
+  --auth-background: #222831;
+  --auth-foreground: #EEEEEE;
+  --auth-primary: #00ADB5;
+  --auth-primary-hover: #39C6D6;
+  --auth-card: #393E46;
+  --auth-card-raised: #2B3138;
+  --auth-muted: #B8BDC5;
+  --auth-border: #4A505A;
+
   display: flex;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #060a13;
+  background: var(--auth-background);
+  color: var(--auth-foreground);
+  font-family: var(--font-body, ui-sans-serif, system-ui, sans-serif);
 }
 
 /* ── Hero Panel ── */
@@ -110,7 +121,9 @@ defineProps<{
   justify-content: center;
   width: 50%;
   overflow: hidden;
-  background: linear-gradient(160deg, #060a13 0%, #0c1424 40%, #0f1a36 100%);
+  background:
+    radial-gradient(60rem 40rem at 80% 0%, color-mix(in oklab, var(--auth-primary) 12%, transparent), transparent 60%),
+    linear-gradient(160deg, #161c24 0%, #1b232e 45%, #222831 100%);
 }
 
 @media (min-width: 1024px) {
@@ -119,43 +132,40 @@ defineProps<{
   }
 }
 
-/* Gradient mesh */
+/* Teal glow mesh */
 .auth-hero__mesh {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 30% 40%, rgba(59, 130, 246, 0.12) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 50% at 70% 60%, rgba(34, 211, 238, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 70% 40% at 50% 80%, rgba(129, 140, 248, 0.06) 0%, transparent 50%);
+    radial-gradient(ellipse 70% 55% at 30% 35%, color-mix(in oklab, var(--auth-primary) 22%, transparent) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 70% 65%, color-mix(in oklab, var(--auth-primary-hover) 14%, transparent) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 40% at 50% 15%, color-mix(in oklab, var(--auth-primary) 8%, transparent) 0%, transparent 55%);
   animation: authMeshDrift 20s ease-in-out infinite;
 }
 
 @keyframes authMeshDrift {
-
   0%,
   100% {
     transform: scale(1) translate(0, 0);
   }
-
   33% {
     transform: scale(1.03) translate(1%, -0.5%);
   }
-
   66% {
     transform: scale(0.98) translate(-0.5%, 1%);
   }
 }
 
-/* Grid overlay */
+/* Scientific grid overlay */
 .auth-hero__grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+    linear-gradient(color-mix(in oklab, var(--auth-primary) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--auth-primary) 8%, transparent) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 75%);
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 /* Floating orbs */
@@ -171,7 +181,7 @@ defineProps<{
   height: 320px;
   top: 15%;
   left: 20%;
-  background: rgba(59, 130, 246, 0.15);
+  background: color-mix(in oklab, var(--auth-primary) 20%, transparent);
   animation: authOrbFloat1 18s ease-in-out infinite;
 }
 
@@ -180,7 +190,7 @@ defineProps<{
   height: 240px;
   bottom: 20%;
   right: 15%;
-  background: rgba(34, 211, 238, 0.12);
+  background: color-mix(in oklab, var(--auth-primary-hover) 16%, transparent);
   animation: authOrbFloat2 22s ease-in-out infinite;
 }
 
@@ -189,53 +199,44 @@ defineProps<{
   height: 180px;
   top: 60%;
   left: 60%;
-  background: rgba(129, 140, 248, 0.1);
+  background: color-mix(in oklab, var(--auth-primary) 12%, transparent);
   animation: authOrbFloat3 16s ease-in-out infinite;
 }
 
 @keyframes authOrbFloat1 {
-
   0%,
   100% {
     transform: translate(0, 0) scale(1);
   }
-
   25% {
     transform: translate(20px, -30px) scale(1.05);
   }
-
   50% {
     transform: translate(-15px, 20px) scale(0.95);
   }
-
   75% {
     transform: translate(10px, 10px) scale(1.02);
   }
 }
 
 @keyframes authOrbFloat2 {
-
   0%,
   100% {
     transform: translate(0, 0) scale(1);
   }
-
   33% {
     transform: translate(-25px, 15px) scale(1.08);
   }
-
   66% {
     transform: translate(15px, -20px) scale(0.96);
   }
 }
 
 @keyframes authOrbFloat3 {
-
   0%,
   100% {
     transform: translate(0, 0) scale(1);
   }
-
   50% {
     transform: translate(-20px, -25px) scale(1.1);
   }
@@ -245,7 +246,7 @@ defineProps<{
 .auth-hero__vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 60% 50% at 50% 50%, transparent 20%, rgba(6, 10, 19, 0.5) 100%);
+  background: radial-gradient(ellipse 60% 50% at 50% 50%, transparent 20%, rgba(6, 10, 19, 0.45) 100%);
 }
 
 /* Hero content */
@@ -263,7 +264,6 @@ defineProps<{
     transform: translateY(24px);
     filter: blur(8px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -276,34 +276,35 @@ defineProps<{
 }
 
 .auth-hero__logo-icon {
-  width: 72px;
-  height: 72px;
+  width: 76px;
+  height: 76px;
   margin: 0 auto;
-  border-radius: 20px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(34, 211, 238, 0.15));
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--auth-primary) 26%, transparent), color-mix(in oklab, var(--auth-primary-hover) 16%, transparent));
+  border: 1px solid color-mix(in oklab, var(--auth-primary) 35%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(20px);
+  box-shadow: 0 0 40px -8px color-mix(in oklab, var(--auth-primary) 45%, transparent);
 }
 
 .auth-hero__logo-svg {
-  width: 75px;
+  width: 76px;
 }
 
 .auth-hero__title {
-  font-family: var(--font-display);
+  font-family: var(--font-display, ui-serif, Georgia, serif);
   font-size: 2rem;
-  font-weight: 800;
-  color: #f1f5f9;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: var(--auth-foreground);
+  letter-spacing: -0.02em;
   margin-bottom: 0.5rem;
 }
 
 .auth-hero__tagline {
   font-size: 1rem;
-  color: #94a3b8;
+  color: var(--auth-muted);
   font-weight: 500;
   margin-bottom: 3rem;
 }
@@ -319,7 +320,7 @@ defineProps<{
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #cbd5e1;
+  color: #d7dbe1;
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -328,9 +329,9 @@ defineProps<{
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #22d3ee);
+  background: linear-gradient(135deg, var(--auth-primary), var(--auth-primary-hover));
   flex-shrink: 0;
-  box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 0 12px color-mix(in oklab, var(--auth-primary) 60%, transparent);
 }
 
 /* ── Form Panel ── */
@@ -340,7 +341,9 @@ defineProps<{
   flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #f8fafc;
+  background:
+    radial-gradient(40rem 30rem at 100% -10%, color-mix(in oklab, var(--auth-primary) 8%, transparent), transparent 60%),
+    var(--auth-background);
 }
 
 @media (min-width: 1024px) {
@@ -350,30 +353,13 @@ defineProps<{
   }
 }
 
-:global(.dark) .auth-form-panel,
-.auth-form-panel:where(.dark *) {
-  background: #0a0e1a;
-}
-
-/* Dark mode detection via class on shell */
-.auth-shell :deep(.auth-form-panel) {
-  background: #f8fafc;
-}
-
-/* We'll handle dark mode via data-theme on html */
-@media (prefers-color-scheme: dark) {
-  .auth-form-panel {
-    background: #0a0e1a;
-  }
-}
-
 /* Mobile header */
 .auth-mobile-header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid var(--auth-border);
 }
 
 @media (min-width: 1024px) {
@@ -385,23 +371,24 @@ defineProps<{
 .auth-mobile-logo {
   width: 36px;
   height: 36px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #3b82f6, #A2D2FF);
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--auth-primary), var(--auth-primary-hover));
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .auth-mobile-logo-svg {
-  width: 40px;
+  width: 38px;
 }
 
 .auth-mobile-brand {
-  font-family: var(--font-display);
-  font-weight: 800;
+  font-family: var(--font-display, ui-serif, Georgia, serif);
+  font-weight: 700;
   font-size: 1rem;
-  color: #0f172a;
+  color: var(--auth-foreground);
   letter-spacing: -0.02em;
 }
 
@@ -429,7 +416,7 @@ defineProps<{
   gap: 0.5rem;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--auth-muted);
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 9999px;
@@ -437,8 +424,8 @@ defineProps<{
 }
 
 .auth-back-link:hover {
-  color: #3b82f6;
-  background: rgba(59, 130, 246, 0.08);
+  color: var(--auth-primary-hover);
+  background: color-mix(in oklab, var(--auth-primary) 12%, transparent);
 }
 
 .auth-back-link__icon {
@@ -460,27 +447,18 @@ defineProps<{
   transform: scaleX(-1) translateX(2px);
 }
 
-:global([data-theme="dark"]) .auth-back-link {
-  color: #94a3b8;
-}
-
-:global([data-theme="dark"]) .auth-back-link:hover {
-  color: #60a5fa;
-  background: rgba(96, 165, 250, 0.1);
-}
-
 /* ── Glass Card ── */
 .auth-card {
   width: 100%;
   max-width: 26rem;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: color-mix(in oklab, var(--auth-card-raised) 88%, transparent);
+  border: 1px solid var(--auth-border);
   border-radius: 1.25rem;
   padding: 2.5rem 2rem;
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 4px 16px rgba(0, 0, 0, 0.04),
-    0 16px 48px rgba(0, 0, 0, 0.06);
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 8px 24px rgba(0, 0, 0, 0.28),
+    0 24px 64px rgba(0, 0, 0, 0.32);
   backdrop-filter: blur(20px);
   animation: authCardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
@@ -491,7 +469,6 @@ defineProps<{
     transform: translateY(20px) scale(0.98);
     filter: blur(4px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -505,36 +482,6 @@ defineProps<{
   }
 }
 
-/* Dark mode card */
-:global([data-theme="light"]) .auth-card,
-.auth-card {
-  background: rgba(255, 255, 255, 0.92);
-  border-color: rgba(0, 0, 0, 0.06);
-  color: #0f172a;
-}
-
-:global([data-theme="dark"]) .auth-form-panel {
-  background: #0a0e1a;
-}
-
-:global([data-theme="dark"]) .auth-card {
-  background: rgba(18, 24, 38, 0.85);
-  border-color: rgba(255, 255, 255, 0.06);
-  color: #f1f5f9;
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.2),
-    0 4px 16px rgba(0, 0, 0, 0.2),
-    0 16px 48px rgba(0, 0, 0, 0.3);
-}
-
-:global([data-theme="dark"]) .auth-mobile-header {
-  border-bottom-color: rgba(255, 255, 255, 0.06);
-}
-
-:global([data-theme="dark"]) .auth-mobile-brand {
-  color: #f1f5f9;
-}
-
 /* Card header */
 .auth-card__header {
   text-align: center;
@@ -542,25 +489,17 @@ defineProps<{
 }
 
 .auth-card__title {
-  font-family: var(--font-display);
+  font-family: var(--font-display, ui-serif, Georgia, serif);
   font-size: 1.5rem;
-  font-weight: 800;
-  color: #0f172a;
-  letter-spacing: -0.025em;
+  font-weight: 700;
+  color: var(--auth-foreground);
+  letter-spacing: -0.02em;
   margin-bottom: 0.5rem;
-}
-
-:global([data-theme="dark"]) .auth-card__title {
-  color: #f1f5f9;
 }
 
 .auth-card__subtitle {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--auth-muted);
   font-weight: 500;
-}
-
-:global([data-theme="dark"]) .auth-card__subtitle {
-  color: #94a3b8;
 }
 </style>

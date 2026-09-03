@@ -104,13 +104,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-
 definePageMeta({ layout: false })
 
 const messages = {
   en: {
     brand: 'Hasti Hoseini Clinic',
+    metaTitle: 'Hasti Hoseini Clinic — A New Experience in Modern Medicine',
+    metaDescription: 'Appointments, training and trusted guidance — thoughtfully arranged, never overwhelming.',
     est: 'Est. 2026',
     eyebrow: "Women's care & learning",
     title: 'A New Experience',
@@ -128,6 +128,8 @@ const messages = {
   },
   fa: {
     brand: 'کلینیک هستی حسینی',
+    metaTitle: 'کلینیک هستی حسینی — تجربه‌ای نوین در طب مدرن',
+    metaDescription: 'تجربه‌ای متفاوت از پزشکی زیبایی بانوان',
     est: 'تأسیس ۲۰۲۶',
     eyebrow: 'مراقبت و آموزش بانوان',
     title: 'تجربه‌ای نوین',
@@ -157,6 +159,20 @@ const t = (key: string): string => {
   const dict = messages[locale.value] as Record<string, unknown>
   return key.split('.').reduce<unknown>((acc, part) => (acc as Record<string, unknown>)?.[part], dict) as string ?? key
 }
+
+const metaTitle = computed(() => t('metaTitle'))
+const metaDescription = computed(() => t('metaDescription'))
+const ogTitle = computed(() => metaTitle.value)
+const ogDescription = computed(() => metaDescription.value)
+
+useSeoMeta({
+  title: metaTitle,
+  description: metaDescription,
+  ogTitle,
+  ogDescription,
+  ogType: 'website',
+  ogImage: '/images/hero-poster.jpg',
+})
 
 function toggleLang() {
   const next: Locale = locale.value === 'fa' ? 'en' : 'fa'
