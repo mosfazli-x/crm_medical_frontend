@@ -159,7 +159,7 @@
           <div class="text-center py-4">
             <div
               class="w-20 h-20 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center mx-auto mb-4">
-              <v-icon size="36" color="#4F46E5">mdi-account-outline</v-icon>
+              <v-icon size="36" color="#CDB4DB">mdi-account-outline</v-icon>
             </div>
             <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">{{ user?.fullName || $t('staff.name') }}</h3>
             <p class="text-sm text-slate-500 mt-1">{{ todayStatus }}</p>
@@ -182,7 +182,7 @@
                 <p class="text-xs text-slate-500 mb-2">{{ $t('attendance.todaySessionsLabel') }}</p>
                 <div v-for="(s, i) in todayRecord.sessions" :key="i"
                   class="flex items-center gap-2 text-xs font-mono text-slate-600 mb-1">
-                  <v-icon size="14" color="#4F46E5">mdi-clock-outline</v-icon>
+                  <v-icon size="14" color="#CDB4DB">mdi-clock-outline</v-icon>
                   {{ formatSessionTime(s.checkInTime) }} - {{ formatSessionTime(s.checkOutTime) || '...' }}
                 </div>
                 <div v-if="!todayRecord.sessions?.length" class="text-xs text-slate-400">{{ $t('attendance.noSessionsYet') }}</div>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <Transition name="loader-exit" @after-leave="$emit('finished')">
     <div v-if="rendered" :dir="isRtl ? 'rtl' : 'ltr'"
       class="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden dark:bg-slate-950 bg-white"
@@ -30,7 +30,7 @@
           <div ref="statusRef" class="flex flex-col items-center gap-1">
             <Transition name="status-fade" mode="out-in">
               <p :key="currentIndex" class="text-sm font-medium text-center dark:text-slate-300/90 text-slate-600">
-                <span class="text-indigo-400">✦</span>
+                <span class="text-indigo-400">âœ¦</span>
                 {{ translatedStatuses[currentIndex] }}
               </p>
             </Transition>
@@ -47,7 +47,7 @@
 
         <div class="h-[3px] transition-all duration-500 ease-out" :style="{
           width: progress + '%',
-          background: 'linear-gradient(90deg, #818cf8, #6366f1, #4F46E5)',
+          background: 'linear-gradient(90deg, #818cf8, #A2D2FF, #CDB4DB)',
         }" />
       </div>
     </div>
@@ -114,7 +114,7 @@ let resizeObs: ResizeObserver | null = null
 let mouseX = 0
 let mouseY = 0
 
-const COLORS = { primary: '#6366f1', secondary: '#818cf8', accent: '#4F46E5' }
+const COLORS = { primary: '#A2D2FF', secondary: '#818cf8', accent: '#CDB4DB' }
 
 function applyThemeToScene() {
   if (!scene) return
@@ -361,7 +361,7 @@ onMounted(async () => {
     if (!reduced) animate()
     else if (renderer && scene && camera) renderer.render(scene, camera)
   } catch {
-    // fallback — scene stays dark, card still works
+    // fallback â€” scene stays dark, card still works
   }
 
   initAnimations()

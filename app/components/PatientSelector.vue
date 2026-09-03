@@ -334,7 +334,7 @@ onUnmounted(() => {
 .selected-chip-meta {
   font-size: 0.6875rem;
   font-weight: 500;
-  color: #6366f1;
+  color: #A2D2FF;
   font-family: 'Courier New', monospace;
   background: rgba(99, 102, 241, 0.08);
   padding: 0.125rem 0.375rem;
@@ -347,7 +347,7 @@ onUnmounted(() => {
   border-radius: 0.375rem;
   border: none;
   background: rgba(79, 70, 229, 0.12);
-  color: #6366f1;
+  color: #A2D2FF;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -383,11 +383,11 @@ onUnmounted(() => {
   border-color: #3a3d47;
 }
 .input-wrapper.focused {
-  border-color: #4F46E5;
+  border-color: #CDB4DB;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
 }
 .dark .input-wrapper.focused {
-  border-color: #6366f1;
+  border-color: #A2D2FF;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
 }
 .input-wrapper.open {
@@ -441,7 +441,7 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 .input-clear:hover {
-  color: #6366f1;
+  color: #A2D2FF;
   background: rgba(99, 102, 241, 0.08);
 }
 .input-chevron {
@@ -555,7 +555,7 @@ onUnmounted(() => {
 .result-avatar-text {
   font-size: 0.625rem;
   font-weight: 700;
-  color: #4F46E5;
+  color: #CDB4DB;
   letter-spacing: 0.05em;
 }
 .dark .result-avatar-text {

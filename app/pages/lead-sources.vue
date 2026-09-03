@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <UiPageContainer>
     <UiPageHeader :title="$t('leadSources.title')" :subtitle="$t('leadSources.subtitle')">
       <template #actions>
@@ -33,7 +33,7 @@
           <span class="text-xs font-bold text-slate-700 dark:text-slate-200 tracking-wide">{{ $t('leadSources.sourceCount', { count: sources.length }) }}</span>
           <div class="flex items-center gap-2">
             <span class="text-xs font-medium text-slate-600 dark:text-slate-300">{{ $t('leadSources.showInactive') }}</span>
-            <v-switch v-model="showInactive" color="#4F46E5" hide-details density="compact" @update:model-value="fetchSources" />
+            <v-switch v-model="showInactive" color="#CDB4DB" hide-details density="compact" @update:model-value="fetchSources" />
           </div>
         </div>
 
@@ -149,7 +149,7 @@
               </v-col>
 
               <v-col cols="12" md="6" class="py-2 d-flex align-center">
-                <v-switch v-model="form.isActive" color="#4F46E5" :label="$t('leadSources.active')" hide-details />
+                <v-switch v-model="form.isActive" color="#CDB4DB" :label="$t('leadSources.active')" hide-details />
               </v-col>
             </v-row>
           </v-form>
@@ -161,7 +161,7 @@
             {{ $t('common.cancel') }}
           </v-btn>
           <v-spacer />
-          <v-btn variant="flat" color="#4F46E5" size="large" :loading="saving"
+          <v-btn variant="flat" color="#CDB4DB" size="large" :loading="saving"
             class="px-8 font-bold rounded-lg shadow-md shadow-electric-sapphire/30 hover:bg-electric-sapphire/80!" @click="saveSource">
             {{ editingId ? $t('leadSources.saveChanges') : $t('leadSources.createSource') }}
           </v-btn>
@@ -225,7 +225,7 @@ const deletingItem = ref<LeadSource | null>(null)
 const formRef = ref<any>(null)
 
 const colorPalette = [
-  '#3B82F6', '#6366F1', '#8B5CF6', '#A855F7',
+  '#3B82F6', '#A2D2FF', '#8B5CF6', '#A855F7',
   '#EC4899', '#EF4444', '#F97316', '#EAB308',
   '#22C55E', '#14B8A6', '#06B6D4', '#0EA5E9',
 ]

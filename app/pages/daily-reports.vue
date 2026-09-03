@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <UiPageContainer>
     <UiPageHeader :title="t('dailyReports.title')" :subtitle="t('dailyReports.subtitle')" />
 
@@ -20,7 +20,7 @@
           <label class="crm-label !mb-1.5">{{ t('dailyReports.selectDate') }}</label>
           <div class="relative h-[56px] border rounded-xl overflow-hidden bg-white dark:bg-[#0f1115]">
             <PersianDatetimePicker v-model="form.reportDate" type="date" :placeholder="t('dailyReports.selectDate')"
-              display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#4F46E5" auto-submit clearable custom-input />
+              display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#CDB4DB" auto-submit clearable custom-input />
           </div>
         </div>
         <div>
@@ -182,7 +182,7 @@
                   <div v-if="report.visitTypes?.length" class="!flex !flex-wrap !gap-1">
                     <span v-for="vt in report.visitTypes" :key="vt" class="crm-badge crm-badge-blue">{{ vt }}</span>
                   </div>
-                  <span v-else class="!text-slate-400">—</span>
+                  <span v-else class="!text-slate-400">â€”</span>
                 </td>
                 <td>
                   <div v-if="report.procedures?.length" class="!flex !flex-wrap !gap-1">
@@ -191,7 +191,7 @@
                     <span v-if="report.otherProcedureText" class="!text-xs !text-slate-500 !block !mt-1">{{
                       report.otherProcedureText }}</span>
                   </div>
-                  <span v-else class="!text-slate-400">—</span>
+                  <span v-else class="!text-slate-400">â€”</span>
                 </td>
                 <td class="!font-bold !font-mono" dir="ltr">{{ formatPrice(report.feeCollected || '') }}</td>
                 <td>
@@ -218,7 +218,7 @@
           <div class="!flex !flex-wrap !items-center !justify-between !gap-3 !w-full">
             <h2 class="crm-card-title">{{ t('dailyReports.visitTypes') }}</h2>
             <div class="!flex !items-center !gap-3">
-              <v-switch v-model="includeInactive" color="#4F46E5" hide-details density="compact"
+              <v-switch v-model="includeInactive" color="#CDB4DB" hide-details density="compact"
                 :label="t('dailyReports.includeInactive')" />
               <button class="crm-btn crm-btn-primary" @click="openVisitTypeDialog()">
                 <Icon name="lucide:plus" class="!w-4 !h-4" />
@@ -250,7 +250,7 @@
             <tbody>
               <tr v-for="vt in visitTypeList" :key="vt.id">
                 <td class="!font-bold">{{ vt.name }}</td>
-                <td class="!text-sm !text-slate-500">{{ vt.description || '—' }}</td>
+                <td class="!text-sm !text-slate-500">{{ vt.description || 'â€”' }}</td>
                 <td class="!font-mono" dir="ltr">{{ formatPrice(vt.price || '') }}</td>
                 <td>
                   <span class="!inline-block !w-5 !h-5 !rounded-full !border !border-slate-200"
@@ -887,7 +887,7 @@ const emptyVisitTypeForm = () => ({
   name: '',
   description: '',
   price: null as number | null,
-  color: '#4F46E5',
+  color: '#CDB4DB',
 })
 
 const visitTypeForm = ref(emptyVisitTypeForm())
@@ -913,7 +913,7 @@ const openVisitTypeDialog = (visitType?: DailyReportVisitType) => {
       name: visitType.name,
       description: visitType.description || '',
       price: visitType.price != null ? Number(visitType.price) : null,
-      color: visitType.color || '#4F46E5',
+      color: visitType.color || '#CDB4DB',
     }
     : emptyVisitTypeForm()
   visitTypeDialog.value = true

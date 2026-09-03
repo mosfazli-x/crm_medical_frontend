@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <UiPageContainer>
     <UiPageHeader :title="$t('leads.title')" :subtitle="$t('leads.subtitle')">
       <template #actions>
@@ -13,7 +13,7 @@
         <div class="flex items-center justify-between mb-3">
           <span class="text-xs font-bold text-slate-500 dark:text-slate-400">{{ $t('leads.stats.total') }}</span>
           <span class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/20 flex items-center justify-center">
-            <v-icon size="18" color="#4F46E5">mdi-account-outline</v-icon>
+            <v-icon size="18" color="#CDB4DB">mdi-account-outline</v-icon>
           </span>
         </div>
         <p class="text-2xl font-extrabold text-slate-800 dark:text-slate-100">{{ summary?.totalLeads ?? 0 }}</p>
@@ -236,7 +236,7 @@
         <span class="text-xs text-slate-500 font-medium">
           {{ $t('leads.showing', { from: (pagination.page - 1) * pagination.limit + 1, to: Math.min(pagination.page * pagination.limit, pagination.total), total: pagination.total }) }}
         </span>
-        <v-pagination v-model="pagination.page" :length="pagination.totalPages" density="compact" color="#4F46E5"
+        <v-pagination v-model="pagination.page" :length="pagination.totalPages" density="compact" color="#CDB4DB"
           :total-visible="4" @update:model-value="fetchLeads" />
       </div>
     </UiContentCard>
@@ -363,7 +363,7 @@ async function fetchSummary() {
     const res = await getSummary()
     if (res.success) summary.value = res.data
   } catch {
-    // silent – cards stay at 0
+    // silent â€“ cards stay at 0
   }
 }
 

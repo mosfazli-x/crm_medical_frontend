@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <UiPageContainer>
     <UiPageHeader :title="$t('scheduling.title')">
       <template #actions>
@@ -90,7 +90,7 @@
         <v-card-actions class="px-6 pb-6 pt-2 flex gap-3 bg-white dark:bg-slate-800">
           <v-btn variant="text" color="slate-600" class="dark:text-slate-400" @click="closeAddDialog">{{ $t('common.cancel') }}</v-btn>
           <v-spacer />
-          <v-btn variant="flat" color="#4F46E5" :loading="saving" @click="submitNewRange">{{ $t('common.save') }}</v-btn>
+          <v-btn variant="flat" color="#CDB4DB" :loading="saving" @click="submitNewRange">{{ $t('common.save') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

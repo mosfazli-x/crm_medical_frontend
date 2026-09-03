@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="max-w-6xl mx-auto space-y-6">
     <div class="bg-white p-6 shadow-sm rounded-2xl border border-slate-100">
       <h4 class="text-base font-bold text-slate-800 mb-6 flex items-center gap-2 py-3 px-2 border-b border-slate-100">
@@ -38,7 +38,7 @@
                        @click="viewFile(file, cat.key)"
                        :title="t('attachments.viewFile')" />
 
-                <v-btn icon="mdi-download-outline" variant="text" color="#4F46E5" density="compact" size="small"
+                <v-btn icon="mdi-download-outline" variant="text" color="#CDB4DB" density="compact" size="small"
                        :loading="loadingDownload.has(file.id)"
                        @click="downloadFile(file, cat.key)"
                        :title="t('attachments.downloadFile')" />
@@ -114,7 +114,7 @@ const loadingDownload = reactive(new Set<string>())
 const categories = [
   { key: 'ultrasound', titleKey: 'attachments.categories.ultrasound', icon: 'mdi-camera-iris', color: 'purple-darken-1', accept: 'image/*,application/pdf' },
   { key: 'lab', titleKey: 'attachments.categories.lab', icon: 'mdi-flask-outline', color: 'teal-darken-1', accept: '.pdf,.jpg,.jpeg,.png' },
-  { key: 'prescription', titleKey: 'attachments.categories.prescription', icon: 'mdi-prescription', color: '#4F46E5', accept: 'image/*,application/pdf' },
+  { key: 'prescription', titleKey: 'attachments.categories.prescription', icon: 'mdi-prescription', color: '#CDB4DB', accept: 'image/*,application/pdf' },
   { key: 'patientFiles', titleKey: 'attachments.categories.patientFiles', icon: 'mdi-folder-multiple-outline', color: 'amber-darken-1', accept: 'image/*,application/pdf' }
 ]
 

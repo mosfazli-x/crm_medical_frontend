@@ -48,7 +48,7 @@
                                 <span class="text-red-500">{{ $t('calendar.required') }}</span></label>
                             <div class="relative h-[48px] border rounded overflow-hidden w-full">
                                 <PersianDatetimePicker v-model="newVisit.start" type="datetime"
-                                    display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4F46E5"
+                                    display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#CDB4DB"
                                     auto-submit custom-input class="w-full" />
                             </div>
                         </v-col>
@@ -59,7 +59,7 @@
                             }}</label>
                             <div class="relative h-[48px] border rounded overflow-hidden w-full">
                                 <PersianDatetimePicker v-model="newVisit.end" type="datetime"
-                                    display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#4F46E5"
+                                    display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#CDB4DB"
                                     auto-submit custom-input class="w-full" />
                             </div>
                         </v-col>
@@ -108,7 +108,7 @@
                         {{ $t('common.cancel') }}
                     </v-btn>
 
-                    <v-btn color="#4F46E5" variant="flat" size="large"
+                    <v-btn color="#CDB4DB" variant="flat" size="large"
                         class="px-8 w-full md:w-auto font-medium tracking-wide rounded-lg shadow-md shadow-periwinkle hover:opacity-85"
                         :loading="saving" @click="saveVisit">
                         {{ isEditMode ? $t('calendar.saveChanges') : $t('calendar.registerVisit') }}
@@ -466,15 +466,15 @@ useSeoMeta({
 
 /* حالت اکتیو برای روز */
 :deep(.fc-button-active) {
-    background-color: #4F46E5 !important;
-    border-color: #4F46E5 !important;
+    background-color: #CDB4DB !important;
+    border-color: #CDB4DB !important;
     color: white !important;
 }
 
 /* رفع مشکل: حالت اکتیو برای شب (اولویت بالاتر برای جلوگیری از خنثی شدن) */
 .dark :deep(.fc-button-active) {
-    background-color: #4F46E5 !important;
-    border-color: #4F46E5 !important;
+    background-color: #CDB4DB !important;
+    border-color: #CDB4DB !important;
     color: #ffffff !important;
     box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25) !important;
 }
@@ -538,7 +538,7 @@ useSeoMeta({
 
 /* تغییر رنگ متن هدر روز جاری در حالت شب */
 .dark :deep(.fc-day-today .fc-col-header-cell-cushion) {
-    color: #6366F1 !important;
+    color: #A2D2FF !important;
     font-weight: 800;
 }
 
@@ -715,10 +715,10 @@ useSeoMeta({
 /* استایل زیبای کارت رویدادها */
 :deep(.fc-event) {
     border: none;
-    border-right: 3px solid #4F46E5;
+    border-right: 3px solid #CDB4DB;
     /* خط کنار رویداد (RTL) */
     background-color: #E0E7FF;
-    color: #4F46E5;
+    color: #CDB4DB;
     border-radius: 6px;
     padding: 3px 6px;
     font-size: 0.8rem;
@@ -735,7 +735,7 @@ useSeoMeta({
 }
 
 .dark :deep(.fc-event) {
-    border-right-color: #6366F1;
+    border-right-color: #A2D2FF;
     background-color: #1e3a5f;
     color: #93c5fd;
 }
@@ -769,7 +769,7 @@ useSeoMeta({
 }
 
 :deep(.fc-daygrid-more-link) {
-    color: #4F46E5;
+    color: #CDB4DB;
     font-weight: 600;
 }
 
@@ -802,13 +802,13 @@ useSeoMeta({
 }
 
 :deep(.vpd-input-group input:focus) {
-    border-color: #4F46E5;
+    border-color: #CDB4DB;
     box-shadow: 0 0 0 3px #C7D2FE;
     outline: none;
 }
 
 .dark :deep(.vpd-input-group input:focus) {
-    border-color: #6366F1;
+    border-color: #A2D2FF;
     box-shadow: 0 0 0 3px #3b5a9a;
 }
 

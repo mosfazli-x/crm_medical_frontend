@@ -233,7 +233,7 @@ onBeforeUnmount(() => {
 }
 
 .tod-bg__video--active {
-  opacity: 1;
+  opacity: 0.5;
 }
 
 @media (prefers-reduced-motion: reduce) {

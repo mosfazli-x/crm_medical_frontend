@@ -1,776 +1,651 @@
 <template>
-  <main class="stage" :class="stagePhaseClass">
-
-    <LandingPreloader />
-
-    <!-- ==================== HERO BACKDROP ==================== -->
-    <div class="backdrop">
+  <div class="ln-shell" :dir="dir">
+    <!-- Time-of-day background video (shared with the aesthetic landing) -->
+    <div class="ln-backdrop" aria-hidden="true">
       <LandingTimeOfDayBackground />
-      <div class="backdrop__veil" />
-      <div class="backdrop__glow" />
-      <div class="backdrop__orb" />
-      <div class="backdrop__orb backdrop__orb--champagne" />
-      <div class="backdrop__grain" />
-      <div class="backdrop__vignette" />
+      <div class="ln-backdrop__veil" />
+      <div class="ln-backdrop__glow" />
     </div>
 
-    <!-- ==================== HEADER ==================== -->
-    <header class="masthead">
-      <span class="masthead__brand anim-soft" style="animation-delay: 2400ms">
-        <span class="masthead__name font-iran-sans">{{ t('aestheticLanding.brand.name') }}</span>
-        <span class="masthead__subtitle">{{ t('aestheticLanding.brand.subtitle') }}</span>
-      </span>
-      <span class="masthead__actions anim-soft" style="animation-delay: 2500ms">
-        <span class="masthead__tagline">{{ t('aestheticLanding.brand.tagline') }}</span>
-        <button type="button" class="masthead__lang" :aria-label="t('aestheticLanding.langToggle')" @click="toggleLang">
-          {{ t('aestheticLanding.langToggle') }}
+    <header class="ln-header">
+      <div class="ln-brand">
+        <span class="ln-mark" aria-hidden="true">
+        <img src="../assets/images/hastihoseinilogo.png" />
+        </span>
+        <span class="ln-wordmark font-bon font-medium">{{ t('brand') }}</span>
+      </div>
+      <div class="ln-header-right">
+        <button type="button" class="ln-lang" :aria-label="t('langLabel')" @click="toggleLang">
+          <span class="ln-lang-globe" aria-hidden="true">
+            <Icon name="lucide:globe" size="16" />
+          </span>
+          <span class="ln-lang-label">
+            <span class="ln-lang-name">{{ locale === 'fa' ? 'English' : 'فارسی' }}</span>
+            <span class="ln-lang-code">{{ locale === 'fa' ? 'EN' : 'FA' }}</span>
+          </span>
+          <span class="ln-lang-caret" aria-hidden="true">
+            <Icon name="lucide:chevron-down" size="14" />
+          </span>
         </button>
-        <LandingMusicControl />
-      </span>
+      </div>
     </header>
 
-    <!-- <figure
-      class="anim-portrait pointer-events-none absolute !start-[48%] bottom-5 z-[1] m-0 h-[62vh] opacity-95 sm:h-[74vh] lg:right-0 lg:h-[88vh] lg:opacity-100 lg:flex w-full">
-      <img
-src="../assets/images/dr-hosseini-cutout.png" alt="Dr. Hasti Hosseini, clinic director, in clinical whites"
-        class="portrait-mask h-full w-auto object-contain object-bottom"
-        style="filter:brightness(0.86) contrast(1.06) saturate(0.92) drop-shadow(0 40px 80px color-mix(in oklab, var(--ink) 70%, transparent))">
-    </figure> -->
-
-    <!-- ==================== CONTENT ==================== -->
-    <div class="layout overflow-hidden">
-
-      <section class="lead">
-
-        <h1 class="headline">
-          <span class="headline__line"><span class="headline__line-inner anim-line" style="animation-delay: 2550ms">{{
-            t('aestheticLanding.headline.line1') }}</span></span>
-          <span class="headline__line">
-            <span class="headline__line-inner anim-line !bg-clip-text !text-transparent !bg-gradient-to-r !from-amber-100 !via-amber-300 !to-amber-100"
-              :class="{ 'headline__line-inner--italic headline__line-inner--accent': !isRtl }"
-              style="animation-delay: 2700ms">{{ t('aestheticLanding.headline.line2') }}</span></span>
-        </h1>
-
-        <p class="lead__text anim-soft font-iran-sans" style="animation-delay: 3100ms">{{ t('aestheticLanding.intro') }}
+    <main class="ln-main">
+      <section class="ln-copy">
+        <p class="ln-eyebrow font-aria font-semibold">{{ t('eyebrow') }}</p>
+        <h1 class="ln-title font-bon font-bold">{{ t('title') }}<br><span class="gradient-text">{{ t('titleGradient') }}</span></h1>
+        <p class="ln-sub font-bon font-light">
+          {{ t('sub') }}
         </p>
-
-        <div class="tags anim-soft" style="animation-delay: 3300ms">
-          <span
-            class="!px-4 !py-2 !rounded-full !border !border-white/10 !bg-white/5 !backdrop-blur-md !text-xs !tracking-widest !uppercase !text-slate-300 font-iran-sans">{{
-              t('aestheticLanding.badges.certified') }}</span>
-          <span class="tags__sep" />
-          <span
-            class="!px-4 !py-2 !rounded-full !border !border-white/10 !bg-white/5 !backdrop-blur-md !text-xs !tracking-widest !uppercase !text-slate-300 font-iran-sans">{{
-              t('aestheticLanding.badges.privacy') }}</span>
-          <span class="tags__sep" />
-          <span
-            class="!px-4 !py-2 !rounded-full !border !border-white/10 !bg-white/5 !backdrop-blur-md !text-xs !tracking-widest !uppercase !text-slate-300 font-iran-sans">{{
-              t('aestheticLanding.badges.protocols') }}</span>
-        </div>
       </section>
 
-      <aside class="flex justify-center md:justify-end! align-middle items-center">
-        <nav :aria-label="t('aestheticLanding.navLabel')" class="w-full lg:w-7/11">
-          <ul class="rail">
-            <li v-for="item in railItems" :key="item.key" class="rail__item">
-              <a :href="item.href" class="rail__link anim-soft" :style="{ animationDelay: item.delay }"
-                @click="onRailClick($event, item.href)">
-                <span class="rail__num">{{ item.num }}</span>
-                <span class="rail__body">
-                  <span class="rail__title">{{ item.title }}</span>
-                  <span class="rail__sub">{{ item.sub }}</span>
-                </span>
-                <span aria-hidden="true" class="rail__line" />
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+      <nav class="ln-nav" aria-label="Main">
+        <NuxtLink to="/appointments" class="ln-card ln-card--primary">
+          <span class="ln-card-text">
+            <span class="ln-card-title font-bon">{{ t('nav.appointments.title') }}</span>
+            <span class="ln-card-sub">{{ t('nav.appointments.sub') }}</span>
+          </span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"
+            dir class="ln-arrow rtl:rotate-180 ltr:rotate-0">
+            <path d="M5 12h13M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </NuxtLink>
 
-    </div>
+        <NuxtLink to="/auth/login" class="ln-card">
+          <span class="ln-card-text">
+            <span class="ln-card-title font-bon">{{ t('nav.account.title') }}</span>
+            <span class="ln-card-sub">{{ t('nav.account.sub') }}</span>
+          </span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"
+            dir class="ln-arrow rtl:rotate-180 ltr:rotate-0">
+            <path d="M5 12h13M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </NuxtLink>
 
-    <!-- ==================== FOOTER ==================== -->
-    <footer class="footer anim-soft" style="animation-delay: 3600ms">
-      <span>{{ t('aestheticLanding.footer.consultations') }}</span>
-      <span class="footer__year">© 2026</span>
+        <NuxtLink to="/blog" class="ln-card">
+          <span class="ln-card-text">
+            <span class="ln-card-title font-bon">{{ t('nav.blog.title') }}</span>
+            <span class="ln-card-sub">{{ t('nav.blog.sub') }}</span>
+          </span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"
+            dir class="ln-arrow rtl:rotate-180 ltr:rotate-0">
+            <path d="M5 12h13M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </NuxtLink>
+
+        <NuxtLink to="/training" class="ln-card">
+          <span class="ln-card-text">
+            <span class="ln-card-title font-bon">{{ t('nav.training.title') }}</span>
+            <span class="ln-card-sub">{{ t('nav.training.sub') }}</span>
+          </span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"
+            dir class="ln-arrow rtl:rotate-180 ltr:rotate-0">
+            <path d="M5 12h13M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </NuxtLink>
+
+        <NuxtLink to="/about" class="ln-card">
+          <span class="ln-card-text">
+            <span class="ln-card-title font-bon">{{ t('nav.about.title') }}</span>
+            <span class="ln-card-sub">{{ t('nav.about.sub') }}</span>
+          </span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"
+            dir class="ln-arrow rtl:rotate-180 ltr:rotate-0">
+            <path d="M5 12h13M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </NuxtLink>
+      </nav>
+    </main>
+
+    <footer class="ln-footer">
+      <span>{{ t('brand') }}</span>
     </footer>
-
-  </main>
+  </div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'landing' })
+import { ref, computed } from 'vue'
 
-const { t, isRtl, toggleLang } = useLang()
+definePageMeta({ layout: false })
 
-const { phase } = useTimeOfDayBackground()
+const messages = {
+  en: {
+    brand: 'Hasti Hoseini Clinic',
+    est: 'Est. 2026',
+    eyebrow: "Women's care & learning",
+    title: 'A New Experience',
+    titleGradient: 'in Modern Medicine',
+    sub: 'Appointments, training and trusted guidance — thoughtfully arranged, never overwhelming.',
+    nav: {
+      appointments: { title: 'Book an Appointment', sub: 'Choose a time that suits you' },
+      account: { title: 'Login or Register', sub: 'Your personal space' },
+      blog: { title: 'Blog', sub: 'Notes, guides & stories' },
+      training: { title: 'Training', sub: 'Courses and workshops' },
+      about: { title: 'About Us', sub: 'Who we are' },
+    },
+    footerTagline: 'Care · Learning · Community',
+    langLabel: 'Switch language',
+  },
+  fa: {
+    brand: 'کلینیک هستی حسینی',
+    est: 'تأسیس ۲۰۲۶',
+    eyebrow: 'مراقبت و آموزش بانوان',
+    title: 'تجربه‌ای نوین',
+    titleGradient: 'در طب مدرن',
+    sub: 'تجربه‌ای متفاوت از پزشکی زیبایی بانوان',
+    nav: {
+      appointments: { title: 'رزرو نوبت', sub: 'زمانی را انتخاب کنید که مناسب شماست' },
+      account: { title: 'ورود یا ثبت‌نام', sub: 'فضای شخصی شما' },
+      blog: { title: 'وبلاگ', sub: 'یادداشت‌ها، راهنماها و داستان‌ها' },
+      training: { title: 'آموزش', sub: 'دوره‌ها و کارگاه‌ها' },
+      about: { title: 'درباره ما', sub: 'اینکه ما چه کسی هستیم' },
+    },
+    footerTagline: 'مراقبت · آموزش · جامعه',
+    langLabel: 'تغییر زبان',
+  },
+} as const
 
-const stagePhaseClass = computed(() => (phase.value ? `stage--${phase.value}` : ''))
+type Locale = keyof typeof messages
 
-const railItems = computed(() => [
-  { key: 'booking', href: '/booking', num: t('aestheticLanding.rail.booking.num'), title: t('aestheticLanding.rail.booking.title'), sub: t('aestheticLanding.rail.booking.sub'), delay: '2900ms' },
-  { key: 'login', href: '/auth/login', num: t('aestheticLanding.rail.login.num'), title: t('aestheticLanding.rail.login.title'), sub: t('aestheticLanding.rail.login.sub'), delay: '3030ms' },
-  { key: 'tutorials', href: '#', num: t('aestheticLanding.rail.tutorials.num'), title: t('aestheticLanding.rail.tutorials.title'), sub: t('aestheticLanding.rail.tutorials.sub'), delay: '3160ms' },
-  { key: 'blog', href: '/blog', num: t('aestheticLanding.rail.blog.num'), title: t('aestheticLanding.rail.blog.title'), sub: t('aestheticLanding.rail.blog.sub'), delay: '3290ms' },
-  { key: 'about', href: '/about', num: t('aestheticLanding.rail.about.num'), title: t('aestheticLanding.rail.about.title'), sub: t('aestheticLanding.rail.about.sub'), delay: '3420ms' },
-])
+const stored = useCookie<string>('i18n_lang', { sameSite: 'lax', maxAge: 60 * 60 * 24 * 365, path: '/' })
 
-function onRailClick(event: MouseEvent, href: string) {
-  if (href === '#') {
-    event.preventDefault()
-    return
-  }
-  if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return
-  event.preventDefault()
-  navigateTo(href)
+const locale = ref<Locale>(stored.value === 'fa' ? 'fa' : 'en')
+
+const dir = computed(() => (locale.value === 'fa' ? 'rtl' : 'ltr'))
+
+const t = (key: string): string => {
+  const dict = messages[locale.value] as Record<string, unknown>
+  return key.split('.').reduce<unknown>((acc, part) => (acc as Record<string, unknown>)?.[part], dict) as string ?? key
 }
 
-const metaTitle = computed(() => t('aestheticLanding.metaTitle'))
-const metaDescription = computed(() => t('aestheticLanding.metaDescription'))
-const ogTitle = computed(() => t('aestheticLanding.ogTitle'))
-const ogDescription = computed(() => t('aestheticLanding.ogDescription'))
+function toggleLang() {
+  const next: Locale = locale.value === 'fa' ? 'en' : 'fa'
+  locale.value = next
+  stored.value = next
+  if (typeof document !== 'undefined') {
+    document.documentElement.dir = next === 'fa' ? 'rtl' : 'ltr'
+    document.documentElement.lang = next
+  }
+}
 
-useSeoMeta({
-  title: metaTitle,
-  description: metaDescription,
-  ogTitle,
-  ogDescription,
-  ogType: 'website',
-  ogImage: '/images/hero-poster.jpg',
+useHead({
+  htmlAttrs: { lang: locale, dir },
+  link: [
+    {
+      rel: 'preconnect',
+      href: 'https://fonts.googleapis.com',
+    },
+    {
+      rel: 'preconnect',
+      href: 'https://fonts.gstatic.com',
+      crossorigin: '',
+    },
+    {
+      rel: 'stylesheet',
+      href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
+    },
+  ],
 })
 </script>
 
 <style scoped>
-/* ==================== STAGE ==================== */
+/* ── LadiesNeeds landing — self-contained design (not tied to CRM tokens) ── */
+.ln-shell {
+  --ln-background: #222831;
+  --ln-foreground: #EEEEEE;
 
-.stage {
-  position: relative;
+  --ln-primary: #00ADB5;
+  --ln-primary-foreground: #222831;
+
+  --ln-accent: #00ADB5;
+
+  --ln-card: #393E46;
+  --ln-muted-foreground: #B8BDC5;
+  --ln-border: #4A505A;
+
+  --ln-font-display: 'Fraunces', ui-serif, Georgia, serif;
+  --ln-font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  min-height: 100dvh;
-  width: 100%;
-  overflow-x: hidden;
-  background: var(--ink);
-  color: var(--lightcyan);
-  color-scheme: dark;
-  font-family: var(--font-sans);
-  font-weight: 400;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  position: relative;
+  isolation: isolate;
+  height: 100dvh;
+  overflow: hidden;
+
+  color: var(--ln-foreground);
+
+  background:
+    radial-gradient(
+      100% 80% at 85% 0%,
+      rgba(0, 173, 181, 0.10) 0%,
+      rgba(34, 40, 49, 0) 50%
+    ),
+    #0f151c;
 }
 
-/* Hairline matte frame — a quiet photographic edge around the whole stage */
-.stage::before {
-  content: "";
+/* ── Background video backdrop ── */
+.ln-backdrop {
   position: absolute;
-  inset: 0.75rem;
-  z-index: 40;
-  border: 1px solid var(--hairline);
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
   pointer-events: none;
 }
 
-a {
+.ln-backdrop__veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    color-mix(in oklab, var(--ln-background) 96%, transparent) 0%,
+    color-mix(in oklab, var(--ln-background) 82%, transparent) 45%,
+    color-mix(in oklab, var(--ln-background) 55%, transparent) 100%
+  );
+}
+
+.ln-backdrop__glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    110% 80% at 85% 0%,
+    color-mix(in oklab, var(--ln-accent) 14%, transparent),
+    transparent 60%
+  );
+}
+
+.ln-shell[dir='rtl'] {
+  --ln-font-display: 'bon', 'Vazirmatn', var(--ln-font-sans);
+  --ln-font-sans: 'bon', 'Vazirmatn', 'Manrope', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Font stack for all sections styled with `.font-bon`.
+   Persian (RTL) keeps the "bon" font via --ln-font-display,
+   while English (LTR) uses a dedicated Latin font (Fraunces).
+   `!important` overrides the global fonts.css `.font-bon { font-family: "bon" }`
+   rule that otherwise forces the Persian font onto English text. */
+.font-bon {
+  font-family: var(--ln-font-display) !important;
+}
+
+.ln-shell ::selection {
+  background: var(--ln-accent);
+  color: var(--ln-primary-foreground);
+}
+
+/* ── Header ── */
+.ln-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: max(1.25rem, 3vh) 5vw 0;
+}
+
+.ln-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.ln-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ln-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--ln-accent);
+}
+
+.ln-mark-svg {
+  width: 55%;
+  height: 55%;
+}
+
+.ln-wordmark {
+  font-size: 1.125rem;
+  letter-spacing: -0.025em;
+  color: var(--ln-foreground);
+}
+
+.ln-est {
+  display: none;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--ln-muted-foreground);
+}
+
+.ln-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.6rem 0.4rem 0.5rem;
+  border: 1px solid var(--ln-border);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--ln-card) 70%, transparent);
+  color: var(--ln-foreground);
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.ln-lang:hover {
+  border-color: color-mix(in oklab, var(--ln-accent) 50%, var(--ln-border));
+  color: var(--ln-accent);
+  transform: translateY(-1px);
+}
+
+.ln-lang:active {
+  transform: translateY(0);
+}
+
+.ln-lang:focus-visible {
+  outline: 2px solid var(--ln-accent);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+.ln-lang-globe {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--ln-accent) 14%, transparent);
+  color: var(--ln-accent);
+}
+
+.ln-lang-label {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  line-height: 1.1;
+}
+
+.ln-lang-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ln-foreground);
+}
+
+.ln-lang:hover .ln-lang-name {
+  color: var(--ln-accent);
+}
+
+.ln-lang-code {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ln-muted-foreground);
+}
+
+.ln-lang-caret {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline-start: 0.1rem;
+  color: var(--ln-muted-foreground);
+  transition: transform 0.2s ease, color 0.15s ease;
+}
+
+.ln-lang:hover .ln-lang-caret {
+  color: var(--ln-accent);
+  transform: translateY(1px);
+}
+
+/* ── Main ── */
+.ln-main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  min-height: 0;
+  gap: 4vh;
+  padding: 3vh 5vw;
+}
+
+.ln-copy {
+  /* max-width: 45ch; */
+}
+
+.ln-eyebrow {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.34em;
+  color: var(--ln-accent);
+  margin: 0;
+}
+
+.ln-title {
+  margin: 0;
+  margin-top: 3.5vh;
+  font-size: clamp(2.1rem, 6.2vw, 3.4rem);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--ln-foreground);
+}
+
+.ln-sub {
+  margin: 0;
+  margin-top: 1.8vh;
+  display: none;
+  font-size: 0.875rem;
+  line-height: 1.625;
+  color: var(--ln-muted-foreground);
+}
+
+/* ── Nav ── */
+.ln-nav {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2vh;
+}
+
+.ln-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: max(0.85rem, 1.6vh) 1.25rem;
+  border: 1px solid var(--ln-border);
+  border-radius: 0.5rem;
+  background: color-mix(in oklab, var(--ln-card) 70%, transparent);
+  color: var(--ln-foreground);
+  text-decoration: none;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ln-card:hover {
+  transform: translateY(-0.125rem);
+  border-color: color-mix(in oklab, var(--ln-accent) 50%, var(--ln-border));
+  box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.2);
+}
+
+.ln-card--primary {
+  background: var(--ln-primary);
+  border-color: transparent;
+  color: var(--ln-primary-foreground);
+  grid-column: 1 / -1;
+}
+
+.ln-card-text {
+  min-width: 0;
+}
+
+.ln-card-title {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1.05rem;
+  line-height: 1.25;
   color: inherit;
 }
 
-/* ==================== HERO BACKDROP ==================== */
+.ln-card--primary .ln-card-title {
+  color: var(--ln-primary-foreground);
+}
 
-.backdrop {
-  position: absolute;
-  inset: 0;
+.ln-card-sub {
+  display: none;
+  margin-top: 0.5rem;
   overflow: hidden;
-}
-
-.backdrop__veil {
-  position: absolute;
-  inset: 0;
-  opacity: 1;
-  transition: opacity 1.6s var(--ease-luxe);
-  background: linear-gradient(100deg,
-      color-mix(in oklab, var(--ink) 94%, transparent) 0%,
-      color-mix(in oklab, var(--ink) 70%, transparent) 42%,
-      color-mix(in oklab, var(--ink) 40%, transparent) 100%);
-}
-
-/* Let the time-of-day video set the mood — brighter scenes lift the veil so
-   more of the footage shows through, night keeps the full cinematic dark. */
-.stage--morning .backdrop__veil {
-  opacity: 0.72;
-}
-
-.stage--noon .backdrop__veil {
-  opacity: 0.76;
-}
-
-.stage--midday .backdrop__veil {
-  opacity: 0.84;
-}
-
-.stage--night .backdrop__veil {
-  opacity: 1;
-}
-
-.backdrop__glow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(110% 80% at 18% 88%,
-      color-mix(in oklab, var(--sapphire) 26%, transparent),
-      transparent 65%);
-}
-
-.backdrop__orb {
-  position: absolute;
-  top: -10rem;
-  right: -8rem;
-  width: 46vw;
-  height: 46vw;
-  border-radius: 50%;
-  opacity: 0.5;
-  filter: blur(80px);
-  background: radial-gradient(circle,
-      color-mix(in oklab, var(--cornflower) 55%, transparent),
-      transparent 70%);
-  will-change: transform;
-  animation: orb-float 22s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-}
-
-/* Warm champagne counter-orb — the single gold foil to the cool blues */
-.backdrop__orb--champagne {
-  top: auto;
-  right: auto;
-  bottom: -14rem;
-  left: -10rem;
-  width: 42vw;
-  height: 42vw;
-  opacity: 0.14;
-  filter: blur(100px);
-  background: radial-gradient(circle, var(--champagne), transparent 70%);
-  animation: orb-float 26s cubic-bezier(0.45, 0, 0.55, 1) infinite reverse;
-}
-
-/* Fine film grain — keeps the photographic depth from feeling synthetic */
-.backdrop__grain {
-  position: absolute;
-  inset: 0;
-  opacity: 0.05;
-  pointer-events: none;
-  mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-.backdrop__vignette {
-  position: absolute;
-  inset: 0;
-  box-shadow: inset 0 0 260px 80px var(--ink);
-}
-
-/* ==================== HEADER ==================== */
-
-.masthead {
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.5rem;
-  background: linear-gradient(to bottom,
-      color-mix(in oklab, var(--ink) 45%, transparent),
-      transparent);
-}
-
-.masthead__brand {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  line-height: 1;
-}
-
-.masthead__name {
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-  font-weight: 500;
-  letter-spacing: 0.32em;
-  color: var(--lightcyan);
-}
-
-.masthead__subtitle {
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 0.75rem;
-  letter-spacing: 0.42em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--champagne) 60%, transparent);
+  color: var(--ln-muted-foreground);
 }
 
-.masthead__tagline {
-  display: none;
-  font-size: 0.6rem;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--periwinkle) 60%, transparent);
+.ln-card--primary .ln-card-sub {
+  color: color-mix(in oklab, var(--ln-primary-foreground) 70%, transparent);
 }
 
-.masthead__actions {
-  display: flex;
-  align-items: center;
-  gap: 1.75rem;
+.ln-arrow {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.masthead__lang {
+.ln-card:hover .ln-arrow {
+  transform: translateX(0.25rem);
+}
+
+.ln-shell[dir='rtl'] .ln-card:hover .ln-arrow {
+  transform: translateX(0.5rem) ;
+}
+
+/* ── Footer ── */
+.ln-footer {
   position: relative;
-  font-family: var(--font-sans);
-  font-size: 0.6rem;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--periwinkle) 60%, transparent);
-  background: none;
-  border: 0;
-  padding: 0.25rem 0;
-  cursor: pointer;
-  transition: color 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.masthead__lang::after {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  bottom: -2px;
-  height: 1px;
-  background: var(--champagne);
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.masthead__lang:hover {
-  color: var(--champagne-bright);
-}
-
-.masthead__lang:hover::after,
-.masthead__lang:focus-visible::after {
-  transform: scaleX(1);
-}
-
-.masthead__lang:focus-visible {
-  outline: 1px dashed color-mix(in oklab, var(--champagne) 60%, transparent);
-  outline-offset: 4px;
-}
-
-/* ==================== LAYOUT ==================== */
-
-.layout {
-  position: relative;
-  z-index: 10;
-  flex: 1 0 auto;
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-  gap: 2.5rem;
-  padding: 6rem 1.5rem 5rem;
-}
-
-/* ==================== LEAD ==================== */
-
-.lead {
-  max-width: 50rem;
-}
-
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.75rem;
-  font-size: 0.6rem;
-  letter-spacing: 0.45em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--iceblue) 70%, transparent);
-}
-
-.eyebrow__rule {
-  height: 1px;
-  width: 2.5rem;
-  background: color-mix(in oklab, var(--iceblue) 50%, transparent);
-}
-
-.headline {
-  font-family: var(--font-display);
-  font-size: clamp(2.5rem, 5.4vw, 4.75rem);
-  line-height: 0.98;
-  font-weight: 300;
-  letter-spacing: -0.01em;
-  color: var(--lightcyan);
-}
-
-.headline__line {
-  display: block;
-  overflow: hidden;
-  font-weight: 700;
-}
-
-.headline__line-inner {
-  display: block;
-}
-
-.headline__line-inner--italic {
-  font-style: italic;
-}
-
-/* Champagne foil on the italic display line — the single warm accent */
-.headline__line-inner--accent {
-  background: linear-gradient(100deg,
-      var(--champagne) 0%,
-      var(--champagne-bright) 55%,
-      var(--champagne) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-.lead__text {
-  margin-top: 1rem;
-  max-width: 30rem;
-  font-size: 0.9rem;
-  line-height: 1.625;
-  letter-spacing: 0.06em;
-  color: color-mix(in oklab, var(--periwinkle) 85%, transparent);
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1.25rem;
-  row-gap: 0.75rem;
-  justify-content: space-between;
-  margin-top: 1rem;
-  font-size: 0.6rem;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--lightcyan) 60%, transparent);
-}
-
-.tags__sep {
-  height: 1px;
-  width: 1.5rem;
-  background: var(--border);
-}
-
-/* ==================== INDEX RAIL ==================== */
-
-.rail {
-  list-style: none;
-  background: linear-gradient(135deg,
-      color-mix(in oklab, var(--lightcyan) 9%, transparent),
-      transparent 60%);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  backdrop-filter: blur(20px) saturate(1.4);
-  border: 1px solid color-mix(in oklab, var(--border) 45%, transparent);
-  border-radius: 10px;
-  box-shadow:
-    0 24px 60px -32px color-mix(in oklab, var(--ink) 90%, transparent),
-    inset 0 1px 0 color-mix(in oklab, var(--lightcyan) 12%, transparent);
-  padding: 0.5rem 1.25rem;
-}
-
-.rail__item {
-  border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
-}
-
-.rail__item:last-child {
-  border-bottom: 0;
-}
-
-.rail__link {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 0.75rem 0;
-  text-decoration: none;
-  transition: padding-inline-start 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    color 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.rail__link:hover {
-  padding-inline-start: 0.75rem;
-}
-
-.rail__link:focus-visible {
-  outline: 1px dashed color-mix(in oklab, var(--champagne) 60%, transparent);
-  outline-offset: 6px;
-}
-
-.rail__num {
-  font-family: var(--font-sans);
-  font-size: 0.6rem;
-  letter-spacing: 0.3em;
-  font-variant-numeric: tabular-nums;
-  color: color-mix(in oklab, var(--iceblue) 60%, transparent);
-  transition: color 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.rail__link:hover .rail__num {
-  color: var(--champagne-bright);
-}
-
-.rail__body {
-  flex: 1;
-}
-
-.rail__title {
-  font-family: var(--font-display);
-  display: block;
-  font-size: 1.375rem;
-  line-height: 1;
-  font-weight: 300;
-  letter-spacing: 0.025em;
-  color: var(--lightcyan);
-  transition: color 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.rail__link:hover .rail__title {
-  color: var(--periwinkle);
-}
-
-.rail__sub {
-  display: block;
-  margin-top: 0.25rem;
-  max-height: 0;
-  overflow: hidden;
-  font-size: 0.6rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--periwinkle) 50%, transparent);
-  opacity: 0;
-  transition: max-height 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.rail__link:hover .rail__sub {
-  max-height: 1.5rem;
-  opacity: 1;
-}
-
-.rail__line {
-  width: 1.5rem;
-  height: 1px;
-  background: var(--iceblue);
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.rail__link:hover .rail__line {
-  transform: scaleX(1);
-}
-
-/* ==================== FOOTER ==================== */
-
-.footer {
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  z-index: 20;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 1.5rem;
-  font-size: 0.55rem;
-  letter-spacing: 0.35em;
+  padding: max(1rem, 2.5vh) 5vw;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--periwinkle) 50%, transparent);
-  background: linear-gradient(to top,
-      color-mix(in oklab, var(--ink) 45%, transparent),
-      transparent);
+  letter-spacing: 0.24em;
+  color: var(--ln-muted-foreground);
 }
 
-.footer__year {
+.ln-footer span+span {
   display: none;
 }
 
-/* ==================== ENTRANCE ANIMATIONS ==================== */
+/* ── sm (>=640px) ── */
+@media (min-width: 40rem) {
 
-.anim-soft {
-  will-change: transform, opacity;
-  animation: 1.4s cubic-bezier(0.16, 1, 0.3, 1) both soft-in;
-}
-
-.anim-line {
-  will-change: transform, opacity;
-  animation: 1.5s cubic-bezier(0.16, 1, 0.3, 1) both line-rise;
-}
-
-.anim-rule {
-  transform-origin: 0;
-  will-change: transform;
-  animation: 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards rule-draw;
-}
-
-@keyframes soft-in {
-  0% {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes line-rise {
-  0% {
-    opacity: 0;
-    filter: blur(6px);
-    transform: translateY(110%) rotate(2deg);
-  }
-
-  100% {
-    opacity: 1;
-    filter: blur(0);
-    transform: translate(0) rotate(0);
-  }
-}
-
-@keyframes rule-draw {
-  0% {
-    transform: scaleX(0);
-  }
-
-  100% {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes orb-float {
-  0% {
-    transform: translate(0) scale(1);
-  }
-
-  50% {
-    transform: translate(2%, -3%) scale(1.08);
-  }
-
-  100% {
-    transform: translate(0) scale(1);
-  }
-}
-
-/* ==================== RESPONSIVE ==================== */
-
-@media (min-width: 640px) {
-  .masthead {
-    padding: 2rem 3rem;
-  }
-
-  .masthead__tagline {
+  .ln-est,
+  .ln-sub,
+  .ln-card-sub,
+  .ln-footer span+span {
     display: block;
   }
 
-  .layout {
-    padding: 6rem 3rem 5rem;
+  .ln-nav {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
 
-  .rail {
-    padding: 0.75rem 2.75rem;
-  }
-
-  .rail__link {
-    gap: 1.5rem;
-    padding: 1rem 0;
-  }
-
-  .rail__title {
-    font-size: 1.625rem;
-  }
-
-  .footer {
-    padding: 1.25rem 3rem;
-  }
-
-  .footer__year {
-    display: block;
+  .ln-card--primary {
+    grid-column: span 2;
   }
 }
 
-@media (min-width: 1024px) {
-  .layout {
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 5rem;
-    padding: 0 3rem;
+/* ── lg (>=1024px) ── */
+@media (min-width: 64rem) {
+  .ln-header {
+    padding-top: max(1.25rem, 3vh);
   }
 
-  .rail-wrap {
-    padding-inline-start: 1.5rem;
+  .ln-main {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+    gap: 5vw;
+  }
+
+  .ln-nav {
+    gap: 1rem;
+  }
+
+  .ln-title {
+    font-size: clamp(2.6rem, 4vw, 4.2rem);
+  }
+
+  .ln-sub {
+    font-size: 1rem;
   }
 }
 
-/* ==================== REDUCED MOTION ==================== */
-
-@media (prefers-reduced-motion: reduce) {
-
-  .anim-soft,
-  .anim-line,
-  .anim-rule,
-  .backdrop__orb {
-    animation: none !important;
-    will-change: auto;
-  }
-}
-</style>
-
-<style>
-/* ==================== RTL / PERSIAN TYPOGRAPHY ==================== */
-/*
-  Persian glyphs must not be letter-spaced (it breaks the joining script),
-  and need a taller line-height than the English display sizes. The shell
-  (.landing-shell) lives in the layout, so these global rules key off its
-  dir attribute, scoped under .stage to beat the scoped base rules.
-*/
-
-.landing-shell[dir="rtl"] .stage .masthead__name,
-.landing-shell[dir="rtl"] .stage .masthead__subtitle,
-.landing-shell[dir="rtl"] .stage .masthead__tagline,
-.landing-shell[dir="rtl"] .stage .eyebrow,
-.landing-shell[dir="rtl"] .stage .lead__text,
-.landing-shell[dir="rtl"] .stage .tags,
-.landing-shell[dir="rtl"] .stage .rail__num,
-.landing-shell[dir="rtl"] .stage .rail__sub,
-.landing-shell[dir="rtl"] .stage .footer {
-  letter-spacing: 0;
-}
-
-.landing-shell[dir="rtl"] .stage .masthead__lang::after {
-  transform-origin: left;
-}
-
-.landing-shell[dir="rtl"] .stage .headline {
-  line-height: 1.3;
-  letter-spacing: 0;
-}
-
-.landing-shell[dir="rtl"] .stage .rail__title {
-  line-height: 1.3;
-  letter-spacing: 0;
-}
-
-.landing-shell[dir="rtl"] .stage .rail__line {
-  transform-origin: left;
-}
-
-.landing-shell[dir="rtl"] .stage .eyebrow__rule {
-  transform-origin: 100% 50%;
-}
-
-@media (max-width: 639px) {
-  .landing-shell[dir="rtl"] .stage .rail__link {
-    padding: 0.6rem 0;
+/* ── 2xl (>=1536px) ── */
+@media (min-width: 96rem) {
+  .ln-mark {
+    width: 4rem;
+    height: 4rem;
   }
 
-  .landing-shell[dir="rtl"] .stage .rail__title {
+  .ln-wordmark {
+    font-size: 1.875rem;
+  }
+
+  .ln-est {
+    font-size: 1rem;
+  }
+
+  .ln-eyebrow {
     font-size: 1.125rem;
-    line-height: 1.25;
+  }
+
+  .ln-title {
+    font-size: clamp(4rem, 4.4vw, 6.5rem);
+  }
+
+  .ln-sub {
+    font-size: 1.5rem;
+  }
+
+  .ln-card {
+    gap: 1.5rem;
+    padding: 2rem 2.25rem;
+  }
+
+  .ln-card-title {
+    font-size: 1.875rem;
+  }
+
+  .ln-card-sub {
+    font-size: 1.125rem;
+  }
+
+  .ln-arrow {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .ln-footer {
+    font-size: 0.875rem;
   }
 }
 </style>

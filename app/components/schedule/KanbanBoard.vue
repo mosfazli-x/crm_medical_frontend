@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="flex gap-4 overflow-x-auto pb-4 board-scroll">
     <div v-for="col in columns" :key="col.status"
       class="flex-1 min-w-[280px] max-w-[340px] shrink-0 rounded-2xl border transition-colors schedule-column"
@@ -108,6 +108,6 @@ const onDrop = (status: string) => {
 }
 .schedule-add-btn:hover {
   color: #fff;
-  background: #6366f1;
+  background: #A2D2FF;
 }
 </style>

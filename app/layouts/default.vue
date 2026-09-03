@@ -1,10 +1,10 @@
-<template>
+﻿<template>
   <v-locale-provider :rtl="locale === 'fa'">
     <ClinicLoadingScreen :show="isLoading" />
 
     <v-app v-if="!isLoading" class="!bg-[#f0f2f5] dark:!bg-[#0f1117] transition-colors duration-300 relative">
       <transition name="fade">
-        <v-progress-linear v-if="apiLoading" indeterminate color="#4F46E5" height="2"
+        <v-progress-linear v-if="apiLoading" indeterminate color="#CDB4DB" height="2"
           class="!fixed !top-0 !left-0 !right-0 !z-[9999] !m-0" />
       </transition>
 
@@ -31,12 +31,12 @@
           <!-- Compact (rail) navigation: icon-only -->
           <nav v-if="isCompact" key="compact" class="mt-3 px-2 flex flex-col items-center gap-1">
             <NuxtLink v-for="item in allVisibleItems" :key="item.to" :to="item.to" :title="item.title"
-              class="flex h-9 w-9 items-center justify-center rounded-xl outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#4F46E5]/40"
+              class="flex h-9 w-9 items-center justify-center rounded-xl outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#CDB4DB]/40"
               :class="isActive(item.to)
                 ? 'bg-[#EEF2FF] dark:bg-[#1e1b4b]/50'
                 : 'hover:bg-[#f9fafb] dark:hover:bg-[#1e2028]'">
               <component :is="item.icon" class="h-[18px] w-[18px] transition-colors duration-200"
-                :class="isActive(item.to) ? 'fill-[#4F46E5] dark:fill-[#818cf8]' : 'fill-[#9ca3af]'" />
+                :class="isActive(item.to) ? 'fill-[#CDB4DB] dark:fill-[#818cf8]' : 'fill-[#9ca3af]'" />
             </NuxtLink>
           </nav>
 
@@ -46,7 +46,7 @@
             <div class="flex flex-col gap-1">
             <template v-for="group in visibleGroups" :key="group.key">
               <button type="button" @click="toggleGroup(group.key)"
-                class="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2! text-start outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#4F46E5]/40"
+                class="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2! text-start outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#CDB4DB]/40"
                 :class="isGroupOpen(group.key)
                   ? 'bg-[#EEF2FF] dark:bg-[#1e1b4b]/40'
                   : 'hover:bg-[#f9fafb] dark:hover:bg-[#1e2028]'"
@@ -58,12 +58,12 @@
                     ? 'bg-[#E0E7FF] dark:bg-[#312e81]/50'
                     : 'bg-[#f3f4f6] dark:bg-[#1e2028]'">
                   <component :is="group.icon" class="h-[18px] w-[18px] transition-colors duration-200"
-                    :class="isGroupOpen(group.key) ? 'fill-[#4F46E5] dark:fill-[#818cf8]' : 'fill-[#9ca3af]'" />
+                    :class="isGroupOpen(group.key) ? 'fill-[#CDB4DB] dark:fill-[#818cf8]' : 'fill-[#9ca3af]'" />
                 </span>
 
                 <span class="flex-1 truncate text-[13px] font-semibold transition-colors duration-200"
                   :class="isGroupOpen(group.key)
-                    ? 'text-[#4F46E5] dark:text-[#a5b4fc]'
+                    ? 'text-[#CDB4DB] dark:text-[#a5b4fc]'
                     : 'text-[#374151] dark:text-[#cbd5e1]'">
                   {{ group.label }}
                 </span>
@@ -71,13 +71,13 @@
                 <span
                   class="shrink-0 rounded-full px-2 pt-1 pb-0.5! text-[10px] font-bold leading-none transition-colors duration-200"
                   :class="isGroupOpen(group.key)
-                    ? 'bg-[#C7D2FE] text-[#4338CA] dark:bg-[#312e81] dark:text-[#c7d2fe]'
+                    ? 'bg-[#C7D2FE] text-[#B790C9] dark:bg-[#312e81] dark:text-[#c7d2fe]'
                     : 'bg-[#f3f4f6] text-[#9ca3af] dark:bg-[#1e2028] dark:text-[#6b7280]'">
                   {{ group.items.length }}
                 </span>
 
                 <AltArrowLeft class="h-3.5 w-3.5 shrink-0 fill-[#9ca3af] transition-transform duration-300"
-                  :class="isGroupOpen(group.key) ? 'rotate-90 fill-[#4F46E5] dark:fill-[#818cf8]' : ''" />
+                  :class="isGroupOpen(group.key) ? 'rotate-90 fill-[#CDB4DB] dark:fill-[#818cf8]' : ''" />
               </button>
 
               <transition name="accordion" @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter"
@@ -89,16 +89,16 @@
                       :class="isGroupOpen(group.key) ? 'bg-[#c7d2fe] dark:bg-[#312e81]' : ''" />
                     <nav class="space-y-1 pb-1 pe-1">
                       <NuxtLink v-for="item in group.items" :key="item.to" :to="item.to"
-                        class="group/item relative flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#4F46E5]/40"
+                        class="group/item relative flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#CDB4DB]/40"
                         :class="isActive(item.to)
-                          ? 'bg-[#EEF2FF] font-semibold text-[#4F46E5] dark:bg-[#1e1b4b]/50 dark:text-[#a5b4fc]'
+                          ? 'bg-[#EEF2FF] font-semibold text-[#CDB4DB] dark:bg-[#1e1b4b]/50 dark:text-[#a5b4fc]'
                           : 'text-[#6b7280] hover:bg-[#f9fafb] hover:text-[#111827] dark:text-[#9ca3af] dark:hover:bg-[#1e2028] dark:hover:text-[#e5e7eb]'">
                         <span aria-hidden="true"
-                          class="pointer-events-none absolute inset-y-2 start-0 w-0.5 rounded-full bg-[#4F46E5] opacity-0 transition-opacity duration-200"
+                          class="pointer-events-none absolute inset-y-2 start-0 w-0.5 rounded-full bg-[#CDB4DB] opacity-0 transition-opacity duration-200"
                           :class="isActive(item.to) ? 'opacity-100 dark:bg-[#818cf8]' : ''" />
                         <span class="flex w-5 shrink-0 items-center justify-center">
                           <component :is="item.icon" class="h-[18px] w-[18px] transition-colors duration-200"
-                            :class="isActive(item.to) ? 'fill-[#4F46E5] dark:fill-[#818cf8]' : 'fill-[#9ca3af]'" />
+                            :class="isActive(item.to) ? 'fill-[#CDB4DB] dark:fill-[#818cf8]' : 'fill-[#9ca3af]'" />
                         </span>
                         <span class="truncate">{{ item.title }}</span>
                       </NuxtLink>
@@ -119,7 +119,7 @@
               :class="isCompact ? 'justify-center' : ''">
               <div
                 class="w-8 h-8 rounded-lg bg-[#EEF2FF] dark:bg-[#1e1b4b]/50 flex items-center justify-center shrink-0">
-                <span class="text-[#4F46E5] dark:text-[#818cf8] font-bold text-xs">{{ userInitial }}</span>
+                <span class="text-[#CDB4DB] dark:text-[#818cf8] font-bold text-xs">{{ userInitial }}</span>
               </div>
               <template v-if="!isCompact">
                 <div class="flex-1 min-w-0 overflow-hidden">
@@ -191,7 +191,7 @@
               class="!py-1 !rounded-lg !border !border-[#e5e7eb] dark:!border-[#2a2c36] !bg-white dark:!bg-[#1e2028] min-w-[140px]">
               <v-list-item v-for="lang in languages" :key="lang.code" @click="switchLanguage(lang.code)"
                 :active="locale === lang.code"
-                active-class="!bg-[#EEF2FF] dark:!bg-[#1e1b4b]/50 !text-[#4F46E5] dark:!text-[#818cf8]"
+                active-class="!bg-[#EEF2FF] dark:!bg-[#1e1b4b]/50 !text-[#CDB4DB] dark:!text-[#818cf8]"
                 class="!rounded-md !mx-1 !my-0.5">
                 <template #prepend>
                   <span class="text-base mr-0">{{ lang.flag }}</span>
@@ -270,8 +270,8 @@ const showTutorial = async () => {
 }
 
 const languages = [
-  { code: 'fa' as const, label: t('layout.langFa'), flag: '🇮🇷' },
-  { code: 'en' as const, label: t('layout.langEn'), flag: '🇬🇧' },
+  { code: 'fa' as const, label: t('layout.langFa'), flag: 'ðŸ‡®ðŸ‡·' },
+  { code: 'en' as const, label: t('layout.langEn'), flag: 'ðŸ‡¬ðŸ‡§' },
 ]
 
 const switchLanguage = async (code: 'fa' | 'en') => {

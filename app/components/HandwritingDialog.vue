@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <v-dialog
         :model-value="isOpen" max-width="560" persistent transition="dialog-bottom-transition"
         @update:model-value="val => !val && close()">
@@ -7,7 +7,7 @@
                 <div>
                     <h2 class="crm-dialog-title text-xl!">{{ $t('handwriting.title') }}</h2>
                     <span class="text-xs text-slate-500 dark:text-slate-400 mt-1 block font-normal">
-                        {{ label }} — {{ $t('handwriting.subtitle') }}
+                        {{ label }} â€” {{ $t('handwriting.subtitle') }}
                     </span>
                 </div>
                 <v-btn icon variant="text" size="small" class="text-slate-400 hover:text-slate-800" @click="close">
@@ -41,7 +41,7 @@
                 </p>
 
                 <div v-if="isConverting" class="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                    <v-progress-circular indeterminate size="18" width="2" color="#4F46E5" />
+                    <v-progress-circular indeterminate size="18" width="2" color="#CDB4DB" />
                     <span>{{ $t('handwriting.converting') }}</span>
                 </div>
 

@@ -1,11 +1,11 @@
-<template>
+﻿<template>
   <v-dialog :model-value="modelValue" @update:model-value="$emit('update:modelValue', $event)" max-width="640" class="backdrop-blur-sm">
     <v-card class="rounded-2xl overflow-hidden" elevation="4">
       <!-- Header -->
       <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-700">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-lg bg-light-cyan dark:bg-electric-sapphire/20 flex items-center justify-center">
-            <v-icon size="18" color="#4F46E5">mdi-account-search</v-icon>
+            <v-icon size="18" color="#CDB4DB">mdi-account-search</v-icon>
           </div>
           <h2 class="text-base font-bold text-slate-800 dark:text-slate-100">{{ t('patientSearch.title') }}</h2>
         </div>
@@ -34,7 +34,7 @@
       <div class="px-6 pb-5 min-h-[200px]">
         <!-- Loading State -->
         <div v-if="searching" class="flex flex-col items-center justify-center py-14">
-          <v-progress-circular indeterminate size="28" width="3" color="#4F46E5" />
+          <v-progress-circular indeterminate size="28" width="3" color="#CDB4DB" />
           <p class="mt-4 text-xs font-medium text-slate-400 dark:text-slate-500">{{ t('patientSearch.searching') }}</p>
         </div>
 
@@ -52,7 +52,7 @@
             >
               <!-- Avatar -->
               <div class="w-10 h-10 rounded-full bg-gradient-to-br from-light-cyan dark:from-electric-sapphire/20 to-periwinkle dark:to-electric-sapphire/50 flex items-center justify-center shrink-0 mt-0.5">
-                <v-icon size="20" color="#4F46E5">mdi-account</v-icon>
+                <v-icon size="20" color="#CDB4DB">mdi-account</v-icon>
               </div>
 
               <!-- Patient Info -->
@@ -90,7 +90,7 @@
 
               <!-- Select Button (appears on hover) -->
               <div class="shrink-0 self-center opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-2 group-hover:translate-x-0">
-                <v-btn variant="flat" color="#4F46E5" size="x-small" class="font-bold text-xs px-3" elevation="0">
+                <v-btn variant="flat" color="#CDB4DB" size="x-small" class="font-bold text-xs px-3" elevation="0">
                   {{ t('patientSearch.select') }}
                 </v-btn>
               </div>
@@ -110,7 +110,7 @@
         <!-- Initial Hint -->
         <div v-else class="flex flex-col items-center justify-center py-14">
           <div class="w-14 h-14 rounded-2xl bg-light-cyan dark:bg-electric-sapphire/20 border border-periwinkle dark:border-electric-sapphire/50 flex items-center justify-center mb-4">
-            <v-icon size="28" color="#6366F1">mdi-account-search-outline</v-icon>
+            <v-icon size="28" color="#A2D2FF">mdi-account-search-outline</v-icon>
           </div>
           <p class="text-sm font-bold text-slate-600 dark:text-slate-300">{{ t('patientSearch.initialTitle') }}</p>
           <p class="text-xs text-slate-400 dark:text-slate-500 mt-1.5 text-center max-w-xs leading-relaxed">

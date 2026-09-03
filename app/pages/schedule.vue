@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <UiPageContainer>
     <UiPageHeader :title="$t('schedule.title')" :subtitle="$t('schedule.subtitle')">
       <template #actions>
@@ -25,7 +25,7 @@
 
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
       <UiStatCard :label="$t('schedule.totalTasks')" :value="stats.total">
-        <template #icon><v-icon size="24" color="#4F46E5">mdi-clipboard-text-outline</v-icon></template>
+        <template #icon><v-icon size="24" color="#CDB4DB">mdi-clipboard-text-outline</v-icon></template>
       </UiStatCard>
       <UiStatCard :label="$t('schedule.pendingTasks')" :value="stats.pending" valueClass="!text-amber-600">
         <template #icon><v-icon size="24" color="#D97706">mdi-clock-outline</v-icon></template>
@@ -55,7 +55,7 @@
           </div>
           <div class="w-full md:w-auto flex flex-wrap items-center gap-x-4 gap-y-2 justify-center align-middle">
             <v-switch v-if="isAdmin" v-model="assignedToMe" hide-details :label="$t('schedule.myTasks')"
-              color="#4F46E5" density="compact" inset />
+              color="#CDB4DB" density="compact" inset />
             <v-btn v-if="filtersActive" variant="text" size="small" color="#EF4444" class="!font-semibold"
               @click="resetFilters">
               <v-icon start size="15">mdi-filter-remove-outline</v-icon>
@@ -212,7 +212,7 @@
 
           <div v-if="tasks.length > perPage" class="flex items-center justify-between mt-4 px-2!">
             <span class="text-xs text-slate-400">
-              {{ (currentPage - 1) * perPage + 1 }}–{{ Math.min(currentPage * perPage, tasks.length) }} / {{
+              {{ (currentPage - 1) * perPage + 1 }}â€“{{ Math.min(currentPage * perPage, tasks.length) }} / {{
                 tasks.length }}
             </span>
             <div class="flex items-center gap-2">
@@ -304,7 +304,7 @@ const dueOptions = computed(() => [
 ])
 
 const assigneeFilterOptions = computed(() =>
-  assignees.value.map((a) => ({ label: [a.fullName, a.position].filter(Boolean).join(' — '), value: a.id })),
+  assignees.value.map((a) => ({ label: [a.fullName, a.position].filter(Boolean).join(' â€” '), value: a.id })),
 )
 
 const filtersActive = computed(() =>
@@ -337,25 +337,7 @@ const pagedTasks = computed(() => {
 
 const statusLabel = (s: string) => t(`schedule.statuses.${s}`) || s
 
-const isOverdue = (task: ClinicTask) =>
-  !!task.dueDate && task.dueDate < today && task.status !== 'done' && task.status !== 'cancelled'
-
-const avatarColor = (id: string) => {
-  const palette = ['#6366F1', '#0EA5E9', '#8B5CF6', '#F59E0B', '#10B981', '#F43F5E']
-  let hash = 0
-  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0
-  return palette[hash % palette.length]
-}
-
-const assigneeInitials = (a: { fullName: string | null; phone: string }) => {
-  const name = (a.fullName || '').trim()
-  if (!name) return (a.phone || '').slice(-2)
-  const parts = name.split(/\s+/)
-  return parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.slice(0, 2).toUpperCase()
-}
-
-const assigneeLabel = (a: { fullName: string | null; position: string | null }) =>
-  [a.fullName, a.position].filter(Boolean).join(' — ')
+const { isOverdue, avatarColor, assigneeInitials, assigneeLabel } = useHelpers()
 
 const fetchTasks = async () => {
   loading.value = true
@@ -475,14 +457,14 @@ useSeoMeta({ title: t('schedule.titleSeo') })
 .crm-filter-bar {
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid #f3f4f6;
-  background-color: rgba(248, 250, 252, 0.4);
+  gap: var(--spacing-3-5);
+  padding: var(--spacing-4) var(--spacing-5);
+  border-bottom: 1px solid var(--color-border-subtle);
+  background-color: var(--color-surface-muted);
 }
 
 .dark .crm-filter-bar {
-  border-bottom-color: #1e2028;
+  border-bottom-color: var(--color-border);
   background-color: rgba(30, 32, 40, 0.3);
 }
 
@@ -491,13 +473,13 @@ useSeoMeta({ title: t('schedule.titleSeo') })
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: var(--spacing-3);
 }
 
 .crm-filter-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.875rem;
+  gap: var(--spacing-3-5);
 }
 
 .crm-filter-search {
@@ -528,27 +510,29 @@ useSeoMeta({ title: t('schedule.titleSeo') })
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   padding: 6px 12px;
   font-size: 12px;
-  font-weight: 600;
-  color: rgb(100 116 139);
-  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  transition: background var(--duration-fast) var(--ease-default),
+              color var(--duration-fast) var(--ease-default),
+              box-shadow var(--duration-fast) var(--ease-default);
   cursor: pointer;
 }
 
 .dark .view-toggle-btn {
-  color: rgb(148 163 184);
+  color: var(--color-slate-400);
 }
 
 .view-toggle-active {
-  background: #fff;
-  color: #4f46e5;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-xs);
 }
 
 .dark .view-toggle-active {
-  background: rgb(51 65 85);
-  color: rgb(129 140 248);
+  background: var(--color-slate-700);
+  color: var(--color-indigo-400);
 }
 </style>

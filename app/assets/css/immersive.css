@@ -2635,7 +2635,7 @@ a.imm-contact-item:hover .imm-contact-item-icon {
   background: linear-gradient(135deg,
       #2563eb 0%,
       #0891b2 25%,
-      #6366f1 50%,
+      #A2D2FF 50%,
       #0891b2 75%,
       #2563eb 100%);
   background-size: 200% 200%;
@@ -2830,7 +2830,7 @@ a.imm-contact-item:hover .imm-contact-item-icon {
 }
 
 [data-theme="light"] .imm-doctor-card--indigo {
-  --doctor-accent: #6366f1;
+  --doctor-accent: #A2D2FF;
   --doctor-accent-glow: rgba(99, 102, 241, 0.1);
   --doctor-accent-soft: rgba(99, 102, 241, 0.06);
 }
@@ -3036,7 +3036,7 @@ a.imm-contact-item:hover .imm-contact-item-icon {
 
 [data-theme="light"] .imm-service-icon--indigo {
   background: rgba(99, 102, 241, 0.1);
-  color: #6366f1;
+  color: #A2D2FF;
 }
 
 [data-theme="light"] .imm-service-icon--sky {
@@ -3063,7 +3063,7 @@ a.imm-contact-item:hover .imm-contact-item-icon {
 }
 
 [data-theme="light"] .imm-service-bar--indigo {
-  background: #6366f1;
+  background: #A2D2FF;
 }
 
 [data-theme="light"] .imm-service-bar--sky {

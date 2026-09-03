@@ -24,7 +24,7 @@
         </div>
 
         <div v-if="loading" class="text-center py-8">
-          <v-progress-circular indeterminate color="#4F46E5" size="32" />
+          <v-progress-circular indeterminate color="#CDB4DB" size="32" />
         </div>
 
         <div v-else class="space-y-6 px-10! py-3!">
@@ -60,7 +60,7 @@
             <div class="flex gap-4 justify-between align-middle items-center">
               <v-text-field v-model="newCredit" type="number" min="0" :label="$t('adminSettings.smsCount')" variant="outlined"
                 density="compact" hide-details="auto" class="max-w-xs" bg-color="white" />
-              <v-btn color="#4F46E5" variant="flat" size="small" class="rounded-lg px-6"
+              <v-btn color="#CDB4DB" variant="flat" size="small" class="rounded-lg px-6"
                 :disabled="saving || newCredit === ''" :loading="saving" @click="saveCredit">
                 {{ $t('common.save') }}
               </v-btn>
@@ -83,7 +83,7 @@
                 <p class="text-sm font-medium text-slate-700">{{ $t('adminSettings.smsSending') }}</p>
                 <p class="text-xs text-slate-400">{{ $t('adminSettings.smsSendingDesc') }}</p>
               </div>
-              <v-switch v-model="smsEnabled" color="#4F46E5" density="compact" hide-details :loading="savingEnabled"
+              <v-switch v-model="smsEnabled" color="#CDB4DB" density="compact" hide-details :loading="savingEnabled"
                 @update:model-value="(val: any) => toggleSmsEnabled(val === true)" />
             </div>
           </div>
@@ -119,7 +119,7 @@
               <!-- SMS toggle -->
               <div v-if="event.channels.includes('sms')" class="flex items-center gap-2">
                 <v-icon icon="mdi-cellphone" size="16" class="text-slate-400" />
-                <v-switch v-model="event.sms" color="#4F46E5" density="compact" hide-details
+                <v-switch v-model="event.sms" color="#CDB4DB" density="compact" hide-details
                   :disabled="event.critical && event.key === 'auth_otp'"
                   @update:model-value="(val: any) => toggleEvent(event.key, 'sms', val === true)" />
               </div>
@@ -127,7 +127,7 @@
               <!-- Telegram toggle -->
               <div v-if="event.channels.includes('telegram')" class="flex items-center gap-2">
                 <v-icon icon="mdi-telegram" size="16" class="text-blue-400" />
-                <v-switch v-model="event.telegram" color="#4F46E5" density="compact" hide-details
+                <v-switch v-model="event.telegram" color="#CDB4DB" density="compact" hide-details
                   @update:model-value="(val: any) => toggleEvent(event.key, 'telegram', val === true)" />
               </div>
             </div>

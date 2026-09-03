@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <UiPageContainer>
     <UiPageHeader :title="$t('visitTypes.title')" :subtitle="$t('visitTypes.subtitle')">
       <template #actions>
@@ -140,7 +140,7 @@
               </v-col>
 
               <v-col cols="12" md="6" class="py-2 d-flex align-center">
-                <v-switch v-model="form.isActive" color="#4F46E5" :label="$t('visitTypes.active')" hide-details />
+                <v-switch v-model="form.isActive" color="#CDB4DB" :label="$t('visitTypes.active')" hide-details />
               </v-col>
             </v-row>
           </v-form>
@@ -152,7 +152,7 @@
             {{ $t('common.cancel') }}
           </v-btn>
           <v-spacer />
-          <v-btn variant="flat" color="#4F46E5" size="large" :loading="saving"
+          <v-btn variant="flat" color="#CDB4DB" size="large" :loading="saving"
             class="px-8 font-bold rounded-lg shadow-md shadow-electric-sapphire/30 hover:bg-electric-sapphire/80!" @click="saveVisitType">
             {{ editingId ? $t('visitTypes.saveChanges') : $t('visitTypes.createType') }}
           </v-btn>
@@ -193,6 +193,7 @@ import Clock from '~/components/icons/Clock.vue'
 import TrashBin from '~/components/icons/TrashBin.vue'
 
 const { t } = useI18n()
+const { formatPrice } = useFormatting()
 const { apiFetch } = useApi()
 const { user } = useAuth()
 const { $toast } = useNuxtApp()
@@ -218,7 +219,7 @@ const deletingItem = ref<VisitType | null>(null)
 const formRef = ref<any>(null)
 
 const colorPalette = [
-  '#3B82F6', '#6366F1', '#8B5CF6', '#A855F7',
+  '#3B82F6', '#A2D2FF', '#8B5CF6', '#A855F7',
   '#EC4899', '#EF4444', '#F97316', '#EAB308',
   '#22C55E', '#14B8A6', '#06B6D4', '#0EA5E9',
 ]
@@ -260,10 +261,6 @@ function openEditDialog(vt: VisitType) {
 function confirmDelete(vt: VisitType) {
   deletingItem.value = vt
   deleteDialog.value = true
-}
-
-function formatPrice(price: number) {
-  return price.toLocaleString('fa-IR') + ' ' + t('common.toman')
 }
 
 async function fetchVisitTypes() {

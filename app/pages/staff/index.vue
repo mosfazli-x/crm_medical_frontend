@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <UiPageContainer>
     <UiPageHeader :title="$t('staff.title')" :subtitle="$t('staff.subtitle')">
       <template #actions>
@@ -12,7 +12,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <UiStatCard :label="$t('staff.totalStaff')" :value="staffList.length">
         <template #icon>
-          <v-icon size="24" color="#4F46E5">mdi-account-group-outline</v-icon>
+          <v-icon size="24" color="#CDB4DB">mdi-account-group-outline</v-icon>
         </template>
       </UiStatCard>
       <UiStatCard :label="$t('staff.activeStaff')" :value="activeCount" valueClass="!text-emerald-600">
@@ -129,7 +129,7 @@
       </div>
 
       <div v-if="loading" class="crm-loading">
-        <v-progress-circular indeterminate size="48" color="#4F46E5" />
+        <v-progress-circular indeterminate size="48" color="#CDB4DB" />
         <p class="crm-loading-text">{{ $t('common.loading') }}</p>
       </div>
 

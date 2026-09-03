@@ -156,13 +156,13 @@ definePageMeta({ layout: false })
 .auth-link-sm {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #4F46E5;
+  color: #CDB4DB;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .auth-link-sm:hover {
-  color: #6366f1;
+  color: #A2D2FF;
   text-decoration: underline;
 }
 
@@ -204,14 +204,14 @@ definePageMeta({ layout: false })
 }
 
 .auth-input:focus {
-  border-color: #4F46E5;
+  border-color: #CDB4DB;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
   background: #ffffff;
 }
 
 .auth-input:focus + .auth-input-icon,
 .auth-input-wrap:focus-within .auth-input-icon {
-  color: #4F46E5;
+  color: #CDB4DB;
 }
 
 .auth-input--ltr {
@@ -308,7 +308,7 @@ definePageMeta({ layout: false })
   font-weight: 700;
   font-family: var(--font-body);
   color: #ffffff;
-  background: linear-gradient(135deg, #4F46E5, #6366F1);
+  background: linear-gradient(135deg, #CDB4DB, #A2D2FF);
   border: none;
   border-radius: 0.75rem;
   cursor: pointer;
@@ -372,14 +372,14 @@ definePageMeta({ layout: false })
 
 .auth-footer__link {
   font-weight: 700;
-  color: #4F46E5;
+  color: #CDB4DB;
   text-decoration: none;
   margin-inline-start: 0.25rem;
   transition: color 0.2s;
 }
 
 .auth-footer__link:hover {
-  color: #6366f1;
+  color: #A2D2FF;
   text-decoration: underline;
 }
 

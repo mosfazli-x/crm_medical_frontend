@@ -1,11 +1,11 @@
-<template>
+﻿<template>
   <NuxtLayout>
     <Toaster :toastOptions="{
       style: { fontFamily: 'IRANSansX', direction: 'rtl', gap: '12px' },
       class: 'toast',
       descriptionClass: 'my-toast-description'
     }" richColors position="top-right" :close-button=true closeButtonPosition="top-left" />
-    <NuxtLoadingIndicator color="#4F46E5" :height="3"/>
+    <NuxtLoadingIndicator color="#CDB4DB" :height="3"/>
     <NuxtPage />
   </NuxtLayout>
 </template>

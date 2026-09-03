@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-dialog :model-value="isOpen" @update:model-value="val => !val && close()" max-width="900" persistent scrollable
     transition="dialog-bottom-transition" @keydown.esc="close">
     <v-card class="crm-dialog overflow-hidden!" elevation="0">
@@ -17,7 +17,7 @@
       </div>
 
       <div class="px-8 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800!">
-        <v-tabs v-model="activeTab" color="#4F46E5" bg-color="transparent" height="56">
+        <v-tabs v-model="activeTab" color="#CDB4DB" bg-color="transparent" height="56">
           <v-tab value="basic" class="text-sm text-slate-700! dark:text-slate-300! font-medium">{{ t('leads.tabs.basic') }}</v-tab>
           <v-tab value="attribution" class="text-sm text-slate-700! dark:text-slate-300! font-medium">{{ t('leads.tabs.attribution') }}</v-tab>
           <v-tab value="details" class="text-sm text-slate-700! dark:text-slate-300! font-medium">{{ t('leads.tabs.details') }}</v-tab>
@@ -110,7 +110,7 @@
                   append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('referrerUrl')" />
               </div>
               <div class="md:col-span-2">
-                <v-switch v-model="form.marketingConsent" color="#4F46E5" :label="t('leads.marketingConsent')"
+                <v-switch v-model="form.marketingConsent" color="#CDB4DB" :label="t('leads.marketingConsent')"
                   hide-details />
               </div>
             </div>
@@ -164,7 +164,7 @@
                   :placeholder="t('leads.tagsPlaceholder')" hide-details="auto" bg-color="white" rounded="lg"
                   @keydown="onTagKeydown">
                   <template #append-inner>
-                    <v-btn icon size="small" variant="text" color="#4F46E5" @click="addTag">
+                    <v-btn icon size="small" variant="text" color="#CDB4DB" @click="addTag">
                       <Plus class="w-4 h-4" />
                     </v-btn>
                   </template>
@@ -344,7 +344,7 @@ async function loadOptions() {
     if (servicesRes.success) services.value = servicesRes.data
     if (doctorsRes.success) doctors.value = doctorsRes.data
   } catch {
-    // silent – selects will simply be empty
+    // silent â€“ selects will simply be empty
   }
 
   if (userId.value) {
@@ -361,7 +361,7 @@ async function loadOptions() {
       const staffRes = await apiFetch<{ success: boolean; data: any[] }>('/api/staff')
       if (staffRes.success) staff.value = staffRes.data
     } catch {
-      // silent – staff select will be empty for non-admin
+      // silent â€“ staff select will be empty for non-admin
     }
   }
 }

@@ -386,7 +386,7 @@ defineProps<{
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  background: linear-gradient(135deg, #3b82f6, #A2D2FF);
   display: flex;
   align-items: center;
   justify-content: center;

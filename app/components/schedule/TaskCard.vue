@@ -18,7 +18,7 @@
         <template v-if="task.assignees.length">
           <div v-for="a in task.assignees.slice(0, 3)" :key="a.id" :title="assigneeLabel(a)"
             class="schedule-avatar" :style="{ background: avatarColor(a.id) }">
-            {{ initials(a) }}
+            {{ assigneeInitials(a) }}
           </div>
           <span v-if="task.assignees.length > 3" class="text-[10px] text-slate-400 mr-1">
             +{{ task.assignees.length - 3 }}
@@ -54,28 +54,9 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { priorityClass, priorityLabel } = useStatusBadge()
 const { formatJalaliDateShort, formatMinutes, todayJalali } = useFormatting()
+const { assigneeInitials, avatarColor, isOverdue, assigneeLabel } = useHelpers()
 
 const today = todayJalali()
-
-const isOverdue = (task: ClinicTask) =>
-  !!task.dueDate && task.dueDate < today && task.status !== 'done' && task.status !== 'cancelled'
-
-const initials = (a: { fullName: string | null; phone: string }) => {
-  const name = (a.fullName || '').trim()
-  if (!name) return (a.phone || '').slice(-2)
-  const parts = name.split(/\s+/)
-  return parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.slice(0, 2).toUpperCase()
-}
-
-const avatarColor = (id: string) => {
-  const palette = ['#6366F1', '#0EA5E9', '#8B5CF6', '#F59E0B', '#10B981', '#F43F5E']
-  let hash = 0
-  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0
-  return palette[hash % palette.length]
-}
-
-const assigneeLabel = (a: { fullName: string | null; position: string | null }) =>
-  [a.fullName, a.position].filter(Boolean).join(' — ')
 
 const onDragStart = (e: DragEvent) => {
   emit('drag-start', props.task.id, e)
@@ -84,25 +65,27 @@ const onDragStart = (e: DragEvent) => {
 
 <style scoped>
 .schedule-card {
-  background: #fff;
-  border: 1px solid rgb(226 232 240 / 0.8);
-  border-radius: 0.75rem;
-  padding: 0.75rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-3);
   cursor: grab;
   user-select: none;
-  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+  transition: box-shadow var(--duration-fast) var(--ease-default),
+              transform var(--duration-fast) var(--ease-default),
+              border-color var(--duration-fast) var(--ease-default);
 }
 .dark .schedule-card {
-  background: rgb(30 41 59 / 0.7);
-  border-color: rgb(51 65 85 / 0.6);
+  background: var(--color-blue-grey);
+  border-color: var(--color-border);
 }
 .schedule-card:hover {
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-  border-color: rgb(199 210 254);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-indigo-200);
   transform: translateY(-2px);
 }
 .dark .schedule-card:hover {
-  border-color: rgb(99 102 241 / 0.4);
+  border-color: rgba(99, 102, 241, 0.4);
 }
 .schedule-card:active {
   cursor: grabbing;
@@ -110,16 +93,16 @@ const onDragStart = (e: DragEvent) => {
 .schedule-avatar {
   width: 24px;
   height: 24px;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 0 2px #fff;
+  box-shadow: 0 0 0 2px var(--color-surface);
 }
 .dark .schedule-avatar {
-  box-shadow: 0 0 0 2px rgb(30 41 59);
+  box-shadow: 0 0 0 2px var(--color-blue-grey);
 }
 </style>

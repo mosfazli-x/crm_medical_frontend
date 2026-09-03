@@ -504,6 +504,7 @@ import { useApi } from '~/composables/useApi'
 import { useHandwritingFields } from '~/composables/useHandwritingFields'
 import HandwritingDialog from '~/components/HandwritingDialog.vue'
 const { t } = useI18n()
+const { formatPrice } = useFormatting()
 // از آنجایی که Nuxt 3 اتوماتیک Icon را import میکند نیاز به ایمپورت دستی نیست، اما مطمئن شوید @nuxt/icon نصب است.
 
 const { apiFetch } = useApi()
@@ -882,12 +883,6 @@ async function fetchPatientBalance() {
 }
 
 // ==================== Helpers ====================
-function formatPrice(value: number | string | undefined | null): string {
-  const num = Number(value) || 0
-  const separated = new Intl.NumberFormat('en-US').format(num)
-  return `${separated} ${t('common.toman')}`
-}
-
 function formatJalaliDate(date: string | null | undefined): string {
   if (!date) return '---'
   return new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(date))

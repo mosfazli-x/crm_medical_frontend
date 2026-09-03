@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         <div class="bg-white dark:bg-slate-800! border border-slate-200 rounded p-5 shadow-sm col-span-1 md:col-span-2">
@@ -28,7 +28,7 @@
         <div class="bg-white dark:bg-slate-800! border border-slate-200 rounded p-5 shadow-sm">
             <div class="flex justify-between items-center border-b border-slate-100 py-2 mb-3 px-2">
                 <h3 class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                    <v-icon icon="mdi-pill" color="#4F46E5" size="small" /> {{ t('medicalHistory.currentMedications') }}
+                    <v-icon icon="mdi-pill" color="#CDB4DB" size="small" /> {{ t('medicalHistory.currentMedications') }}
                 </h3>
                 <v-btn variant="tonal" color="black" size="small" prepend-icon="mdi-plus" class="rounded-lg bg-slate-100! dark:bg-slate-400! hover:opacity-80" 
                     @click="form.medications.push({ name: '', dosage: '' })">{{ t('common.add') }}</v-btn>

@@ -2,7 +2,7 @@
     <UiPageContainer>
         <UiPageHeader :title="$t('users.title')" :subtitle="$t('users.subtitle')">
             <template #actions>
-                <v-tabs v-model="statusTab" color="#4F46E5" bg-color="transparent" class="w-full md:w-auto">
+                <v-tabs v-model="statusTab" color="#CDB4DB" bg-color="transparent" class="w-full md:w-auto">
                 <v-tab value="all" class="text-sm font-semibold tracking-wide">
                     {{ $t('users.all') }} ({{ users.length }})
                 </v-tab>
@@ -127,7 +127,7 @@
             </div>
 
             <div v-if="loading" class="flex flex-col items-center justify-center p-16!">
-                <v-progress-circular indeterminate size="48" color="#4F46E5" />
+                <v-progress-circular indeterminate size="48" color="#CDB4DB" />
                 <p class="mt-4 text-sm font-medium text-slate-500 dark:text-slate-300">{{ $t('users.loading') }}</p>
             </div>
 
@@ -175,7 +175,7 @@
                                 type="number" variant="outlined" density="comfortable"
                                 :hint="$t('users.sortOrderHint')" persistent-hint />
                         </div>
-                        <v-switch v-model="profileForm.showOnLanding" color="#4F46E5"
+                        <v-switch v-model="profileForm.showOnLanding" color="#CDB4DB"
                             :label="$t('users.showOnLanding')" :hint="$t('users.showOnLandingHint')"
                             persistent-hint inset />
                         <div class="flex items-center gap-4">
@@ -197,7 +197,7 @@
                         {{ $t('common.cancel') }}
                     </v-btn>
                     <v-spacer />
-                    <v-btn :loading="profileSaving" color="#4F46E5" @click="saveDoctorProfile">
+                    <v-btn :loading="profileSaving" color="#CDB4DB" @click="saveDoctorProfile">
                         <v-icon start>mdi-content-save-outline</v-icon>
                         {{ $t('users.saveProfile') }}
                     </v-btn>

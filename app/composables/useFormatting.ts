@@ -39,8 +39,8 @@ export const useFormatting = () => {
     })
   }
 
-  const formatPrice = (amount: number | string) => {
-    const num = typeof amount === 'string' ? parseFloat(amount) : amount
+  const formatPrice = (amount: number | string | null | undefined) => {
+    const num = typeof amount === 'string' ? parseFloat(amount) : amount ?? NaN
     if (isNaN(num)) return isFa.value ? '۰' : '0'
     const formatted = new Intl.NumberFormat(isFa.value ? 'fa-IR' : 'en-US').format(num)
     return formatted + ' ' + t('common.toman')

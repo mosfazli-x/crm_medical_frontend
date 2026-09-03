@@ -201,7 +201,7 @@ const newNote = ref({
 })
 
 const typeFilters = [
-  { value: 'visit', label: 'ویزیت', color: '#4F46E5' },
+  { value: 'visit', label: 'ویزیت', color: '#CDB4DB' },
   { value: 'appointment', label: 'نوبت', color: '#7C3AED' },
   { value: 'prescription', label: 'نسخه', color: '#059669' },
   { value: 'lab_result', label: 'آزمایش', color: '#2563EB' },

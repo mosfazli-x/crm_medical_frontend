@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <UiPageContainer>
     <UiPageHeader :title="$t('adminSchedule.title')" :subtitle="$t('adminSchedule.subtitle')">
       <template #actions>
@@ -139,7 +139,7 @@
         <v-card-text class="px-6 pb-2">
           <div class="text-sm text-slate-500 dark:text-slate-400 mb-4">
             {{ $t('scheduling.day') }} <span class="font-bold text-slate-700 dark:text-slate-200">{{ selectedDoctor?.fullName }}</span>
-            — {{ $t('scheduling.day') }} <span class="font-bold text-slate-700 dark:text-slate-200">{{ selectedDayName }}</span>
+            â€” {{ $t('scheduling.day') }} <span class="font-bold text-slate-700 dark:text-slate-200">{{ selectedDayName }}</span>
           </div>
           <v-row>
             <v-col cols="6">
@@ -157,7 +157,7 @@
         <v-card-actions class="px-6 pb-6 pt-2 flex gap-3 bg-white dark:bg-slate-800">
           <v-btn variant="text" color="slate-600" class="dark:text-slate-400" @click="closeAddDialog">{{ $t('common.cancel') }}</v-btn>
           <v-spacer />
-          <v-btn variant="flat" color="#4F46E5" :loading="saving" @click="submitNewRange">{{ $t('common.save') }}</v-btn>
+          <v-btn variant="flat" color="#CDB4DB" :loading="saving" @click="submitNewRange">{{ $t('common.save') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -170,7 +170,7 @@
         <v-card-text class="px-6 pb-2">
           <div class="text-sm text-slate-500 dark:text-slate-400 mb-4">
             {{ $t('scheduling.day') }} <span class="font-bold text-slate-700 dark:text-slate-200">{{ selectedDoctor?.fullName }}</span>
-            — {{ $t('scheduling.day') }} <span class="font-bold text-slate-700 dark:text-slate-200">{{ editDayName }}</span>
+            â€” {{ $t('scheduling.day') }} <span class="font-bold text-slate-700 dark:text-slate-200">{{ editDayName }}</span>
           </div>
           <v-row>
             <v-col cols="6">
@@ -192,7 +192,7 @@
           </v-btn>
           <v-spacer />
           <v-btn variant="text" color="slate-600" class="dark:text-slate-400" @click="closeEditDialog">{{ $t('common.cancel') }}</v-btn>
-          <v-btn variant="flat" color="#4F46E5" :loading="saving" @click="submitEditRange">{{ $t('common.save') }}</v-btn>
+          <v-btn variant="flat" color="#CDB4DB" :loading="saving" @click="submitEditRange">{{ $t('common.save') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

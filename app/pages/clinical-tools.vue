@@ -794,14 +794,14 @@ useSeoMeta({ title: t('clinicalTools.title') + ' | ' + t('seo.clinicSystem') })
 .crm-info-box-icon {
   width: 1.25rem !important;
   height: 1.25rem !important;
-  color: #4F46E5 !important;
+  color: #CDB4DB !important;
   flex-shrink: 0 !important;
   margin-top: 0.125rem !important;
 }
 
 .crm-info-box-text {
   font-size: 0.875rem !important;
-  color: #4F46E5 !important;
+  color: #CDB4DB !important;
   font-weight: 700 !important;
   line-height: 1.6 !important;
   margin: 0 !important;
