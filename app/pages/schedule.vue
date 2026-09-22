@@ -25,7 +25,7 @@
 
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
       <UiStatCard :label="$t('schedule.totalTasks')" :value="stats.total">
-        <template #icon><v-icon size="24" color="#CDB4DB">mdi-clipboard-text-outline</v-icon></template>
+        <template #icon><v-icon size="24" color="#00ADB5">mdi-clipboard-text-outline</v-icon></template>
       </UiStatCard>
       <UiStatCard :label="$t('schedule.pendingTasks')" :value="stats.pending" valueClass="!text-amber-600">
         <template #icon><v-icon size="24" color="#D97706">mdi-clock-outline</v-icon></template>
@@ -55,7 +55,7 @@
           </div>
           <div class="w-full md:w-auto flex flex-wrap items-center gap-x-4 gap-y-2 justify-center align-middle">
             <v-switch v-if="isAdmin" v-model="assignedToMe" hide-details :label="$t('schedule.myTasks')"
-              color="#CDB4DB" density="compact" inset />
+              color="#00ADB5" density="compact" inset />
             <v-btn v-if="filtersActive" variant="text" size="small" color="#EF4444" class="!font-semibold"
               @click="resetFilters">
               <v-icon start size="15">mdi-filter-remove-outline</v-icon>
@@ -533,6 +533,6 @@ useSeoMeta({ title: t('schedule.titleSeo') })
 
 .dark .view-toggle-active {
   background: var(--color-slate-700);
-  color: var(--color-indigo-400);
+  color: var(--color-teal-400);
 }
 </style>

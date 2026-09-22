@@ -285,7 +285,7 @@ const sourceColor = (source: string) => {
   switch (source) {
     case 'manual': return 'blue'
     case 'gemini': return 'purple'
-    case 'groq': return 'indigo'
+    case 'groq': return 'teal'
     case 'user_confirmed': return 'green'
     case 'approved': return 'teal'
     default: return 'grey'

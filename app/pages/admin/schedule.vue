@@ -71,7 +71,7 @@
                       <div class="flex items-center justify-center gap-1">
                         <span>{{ day.name }}</span>
                         <button @click="openAddRange(day.dayOfWeek)"
-                          class="w-5 h-5 rounded-full bg-periwinkle dark:bg-indigo-600/20 hover:bg-baby-blue-ice dark:hover:bg-indigo-500/40 text-electric-sapphire dark:text-indigo-400 flex items-center justify-center text-xs font-bold transition-colors">
+                          class="w-5 h-5 rounded-full bg-periwinkle dark:bg-teal-600/20 hover:bg-baby-blue-ice dark:hover:bg-teal-500/40 text-electric-sapphire dark:text-teal-400 flex items-center justify-center text-xs font-bold transition-colors">
                           +
                         </button>
                       </div>
@@ -100,7 +100,7 @@
             <div class="mt-4 flex items-center gap-4 text-xs text-slate-400 dark:text-slate-500 py-2 px-2">
               <div class="flex items-center gap-1">
                 <div
-                  class="w-4 h-4 rounded bg-periwinkle dark:bg-indigo-600/30 border border-periwinkle/50 dark:border-indigo-500/40">
+                  class="w-4 h-4 rounded bg-periwinkle dark:bg-teal-600/30 border border-periwinkle/50 dark:border-teal-500/40">
                 </div>
                 <span>{{ $t('scheduling.activeRange') }}</span>
               </div>
@@ -157,7 +157,7 @@
         <v-card-actions class="px-6 pb-6 pt-2 flex gap-3 bg-white dark:bg-slate-800">
           <v-btn variant="text" color="slate-600" class="dark:text-slate-400" @click="closeAddDialog">{{ $t('common.cancel') }}</v-btn>
           <v-spacer />
-          <v-btn variant="flat" color="#CDB4DB" :loading="saving" @click="submitNewRange">{{ $t('common.save') }}</v-btn>
+          <v-btn variant="flat" color="#00ADB5" :loading="saving" @click="submitNewRange">{{ $t('common.save') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -192,7 +192,7 @@
           </v-btn>
           <v-spacer />
           <v-btn variant="text" color="slate-600" class="dark:text-slate-400" @click="closeEditDialog">{{ $t('common.cancel') }}</v-btn>
-          <v-btn variant="flat" color="#CDB4DB" :loading="saving" @click="submitEditRange">{{ $t('common.save') }}</v-btn>
+          <v-btn variant="flat" color="#00ADB5" :loading="saving" @click="submitEditRange">{{ $t('common.save') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -402,7 +402,7 @@ function getCellClasses(dayOfWeek: number, time: string) {
   const isSelected = rangeStart.value?.day === dayOfWeek
 
   if (inRange) {
-    return 'bg-periwinkle dark:bg-indigo-600/30 hover:bg-baby-blue-ice dark:hover:bg-indigo-500/40 border border-periwinkle/50 dark:border-indigo-500/30'
+    return 'bg-periwinkle dark:bg-teal-600/30 hover:bg-baby-blue-ice dark:hover:bg-teal-500/40 border border-periwinkle/50 dark:border-teal-500/30'
   }
   if (isSelected && !inRange) {
     return 'bg-yellow-100 dark:bg-yellow-950/40 hover:bg-yellow-200 dark:hover:bg-yellow-900/40 border border-yellow-200/50 dark:border-yellow-700/30'

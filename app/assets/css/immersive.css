@@ -1186,7 +1186,7 @@ html.lenis body {
   color: var(--imm-cyan);
 }
 
-.imm-service-icon--indigo {
+.imm-service-icon--teal {
   background: rgba(99, 102, 241, 0.12);
   color: #818cf8;
 }
@@ -1248,7 +1248,7 @@ html.lenis body {
   background: var(--imm-cyan);
 }
 
-.imm-service-bar--indigo {
+.imm-service-bar--teal {
   background: #818cf8;
 }
 
@@ -1349,7 +1349,7 @@ html.lenis body {
   --doctor-accent-soft: rgba(34, 211, 238, 0.07);
 }
 
-.imm-doctor-card--indigo {
+.imm-doctor-card--teal {
   --doctor-accent: #818cf8;
   --doctor-accent-glow: rgba(129, 140, 248, 0.13);
   --doctor-accent-soft: rgba(129, 140, 248, 0.07);
@@ -2829,7 +2829,7 @@ a.imm-contact-item:hover .imm-contact-item-icon {
   --doctor-accent-soft: rgba(8, 145, 178, 0.06);
 }
 
-[data-theme="light"] .imm-doctor-card--indigo {
+[data-theme="light"] .imm-doctor-card--teal {
   --doctor-accent: #A2D2FF;
   --doctor-accent-glow: rgba(99, 102, 241, 0.1);
   --doctor-accent-soft: rgba(99, 102, 241, 0.06);
@@ -3034,7 +3034,7 @@ a.imm-contact-item:hover .imm-contact-item-icon {
   color: #0891b2;
 }
 
-[data-theme="light"] .imm-service-icon--indigo {
+[data-theme="light"] .imm-service-icon--teal {
   background: rgba(99, 102, 241, 0.1);
   color: #A2D2FF;
 }
@@ -3062,7 +3062,7 @@ a.imm-contact-item:hover .imm-contact-item-icon {
   background: #0891b2;
 }
 
-[data-theme="light"] .imm-service-bar--indigo {
+[data-theme="light"] .imm-service-bar--teal {
   background: #A2D2FF;
 }
 

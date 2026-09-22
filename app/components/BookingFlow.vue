@@ -66,7 +66,7 @@
           <!-- مراحل ۱ و ۲: انتخاب سرویس و پزشک -->
           <div v-if="step === 0 || step === 1">
             <div v-if="loading" class="flex flex-col items-center justify-center py-20 gap-4">
-              <v-progress-circular indeterminate color="#CDB4DB" size="48" width="4" />
+              <v-progress-circular indeterminate color="#00ADB5" size="48" width="4" />
               <span class="text-slate-500 font-medium text-sm sm:text-base animate-pulse">{{ t('booking.servicesLoading') }}</span>
             </div>
 
@@ -115,11 +115,11 @@
                       <div class="flex items-center gap-4 min-w-0">
                         <div
                           class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm"
-                          :style="{ backgroundColor: (svc.doctors[0]?.color || '#CDB4DB') + '15' }"
+                          :style="{ backgroundColor: (svc.doctors[0]?.color || '#00ADB5') + '15' }"
                         >
                           <div
                             class="w-5 h-5 rounded-full shadow-inner"
-                            :style="{ backgroundColor: svc.doctors[0]?.color || '#CDB4DB' }"
+                            :style="{ backgroundColor: svc.doctors[0]?.color || '#00ADB5' }"
                           ></div>
                         </div>
                         <div class="min-w-0">
@@ -287,7 +287,7 @@
               </div>
 
               <div v-if="selectedJalaliDate && !fetchingSlots && availableSlots.length" class="my-2 flex justify-center">
-                <v-btn variant="flat" color="#CDB4DB" size="large"
+                <v-btn variant="flat" color="#00ADB5" size="large"
                   class="px-14 font-bold rounded-xl shadow-md shadow-electric-sapphire/30" :disabled="!selectedJalaliDate || !selectedVisitType"
                   @click="advanceFromDate">
                   {{ t('booking.continue') }}
@@ -299,7 +299,7 @@
             <div class="px-2" v-show="step === 3">
               <div class="flex items-center justify-between mb-4 px-2">
                 <h2 class="text-lg font-bold text-slate-800">{{ t('booking.selectTime') }}</h2>
-                <v-progress-circular v-if="fetchingSlots" indeterminate color="#CDB4DB" size="20" width="2" />
+                <v-progress-circular v-if="fetchingSlots" indeterminate color="#00ADB5" size="20" width="2" />
               </div>
 
               <div class="bg-light-cyan/40 border border-periwinkle/40 rounded-xl px-4 py-3 mb-6 flex items-center gap-3">
@@ -402,7 +402,7 @@
                         {{ t('booking.back') }}
                       </v-btn>
                     </div>
-                    <v-btn variant="flat" color="#CDB4DB" size="large" :loading="submitting"
+                    <v-btn variant="flat" color="#00ADB5" size="large" :loading="submitting"
                       class="px-10 font-bold rounded-lg shadow-md shadow-electric-sapphire/30" @click="bookAppointment">
                       {{ t('booking.confirmBooking') }}
                     </v-btn>
@@ -684,7 +684,7 @@ async function fetchServices() {
           description: d.description,
           durationMinutes: d.duration_minutes ?? d.durationMinutes ?? 30,
           price: d.price ?? null,
-          color: d.color || '#CDB4DB',
+          color: d.color || '#00ADB5',
         })),
       }))
     }

@@ -357,6 +357,7 @@ definePageMeta({ layout: false })
 .auth-footer {
   text-align: center;
   margin-top: 1.75rem;
+  padding: 0.5rem 0rem;
   font-size: 0.8125rem;
   color: #B8BDC5;
   animation: authCardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;

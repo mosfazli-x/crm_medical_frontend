@@ -18,8 +18,8 @@
         <UiContentCard title="اطلاعات شخصی" class="lg:col-span-1">
           <div class="space-y-4">
             <div class="flex items-center gap-4 mb-6">
-              <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
-                <span class="text-indigo-600 dark:text-indigo-400 font-bold text-2xl">{{ (staff.fullName || '').charAt(0) }}</span>
+              <div class="w-16 h-16 rounded-2xl bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center">
+                <span class="text-teal-600 dark:text-teal-400 font-bold text-2xl">{{ (staff.fullName || '').charAt(0) }}</span>
               </div>
               <div>
                 <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">{{ staff.fullName }}</h3>
@@ -61,9 +61,9 @@
               <div class="text-2xl font-bold text-slate-800 dark:text-slate-200">{{ attendanceStats.total }}</div>
               <div class="text-xs text-slate-500 mt-1">روز کاری</div>
             </div>
-            <div class="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-center">
-              <div class="text-2xl font-bold text-indigo-600" dir="ltr">{{ formatWorkedHours(attendanceStats.totalWorkedMinutes) }}</div>
-              <div class="text-xs text-indigo-600 mt-1">ساعات کاری</div>
+            <div class="p-4 rounded-xl bg-teal-50 dark:bg-teal-900/20 text-center">
+              <div class="text-2xl font-bold text-teal-600" dir="ltr">{{ formatWorkedHours(attendanceStats.totalWorkedMinutes) }}</div>
+              <div class="text-xs text-teal-600 mt-1">ساعات کاری</div>
             </div>
             <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-center">
               <div class="text-2xl font-bold text-emerald-600">{{ attendanceStats.present }}</div>
@@ -109,7 +109,7 @@
                       {{ statusLabel(record.status) }}
                     </span>
                   </td>
-                  <td class="px-4 py-3 text-sm font-mono text-indigo-600 font-semibold" dir="ltr">{{ formatWorkedHours(record.workedMinutes) }}</td>
+                  <td class="px-4 py-3 text-sm font-mono text-teal-600 font-semibold" dir="ltr">{{ formatWorkedHours(record.workedMinutes) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -126,11 +126,11 @@
             <div class="text-xs font-semibold text-slate-500 mb-2">{{ day }}</div>
             <div
               v-if="getScheduleForDay(idx)"
-              class="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800"
+              class="p-3 rounded-xl bg-teal-50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-800"
             >
-              <div class="text-xs font-bold text-indigo-700 dark:text-indigo-300">{{ getScheduleForDay(idx)?.startTime }}</div>
-              <div class="text-[10px] text-indigo-400 my-1">تا</div>
-              <div class="text-xs font-bold text-indigo-700 dark:text-indigo-300">{{ getScheduleForDay(idx)?.endTime }}</div>
+              <div class="text-xs font-bold text-teal-700 dark:text-teal-300">{{ getScheduleForDay(idx)?.startTime }}</div>
+              <div class="text-[10px] text-teal-400 my-1">تا</div>
+              <div class="text-xs font-bold text-teal-700 dark:text-teal-300">{{ getScheduleForDay(idx)?.endTime }}</div>
             </div>
             <div v-else class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
               <div class="text-xs text-slate-400">تعطیل</div>

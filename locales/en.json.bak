@@ -379,19 +379,6 @@
     "activeRange": "Active Range",
     "selecting": "Selecting",
     "clickInstruction": "Click on two points in a day to create a time range",
-    "subtitle": "Manage your weekly booking availability for patients",
-    "refresh": "Refresh schedule",
-    "gridTitle": "Weekly Working Hours",
-    "metricDays": "Active Days",
-    "metricRanges": "Time Ranges",
-    "metricHours": "Weekly Hours",
-    "editTitle": "Edit Time Range",
-    "rangeUpdated": "Time range updated successfully",
-    "rangeUpdateError": "Error updating time range",
-    "deleteTitle": "Delete Time Range",
-    "deleteConfirm": "Are you sure you want to remove this time range? Patients will no longer be able to book this window.",
-    "emptyTitle": "No working hours set yet",
-    "emptyDesc": "Patients can only book visits during active time ranges. Add your first range to start accepting bookings.",
     "addNewRange": "Add New Time Range",
     "day": "Day:",
     "startTime": "Start Time",
@@ -484,12 +471,7 @@
       "week": "Week",
       "day": "Day"
     },
-    "titleSeo": "Appointment Calendar | Management System",
-    "todayVisits": "Visits today",
-    "nextDays": "Next 7 days",
-    "nextVisit": "Next visit",
-    "noVisits": "No appointments yet",
-    "legendTitle": "Visit types"
+    "titleSeo": "Appointment Calendar | Management System"
   },
   "visitTypes": {
     "title": "Visit Types",
@@ -3101,9 +3083,6 @@
   "dailyReports": {
     "title": "Daily Reports",
     "subtitle": "Record and manage daily patient reports, procedures, and collections",
-    "filters": "Filters",
-    "refresh": "Refresh",
-    "visitTypesSubtitle": "Manage the visit types available when submitting daily reports",
     "reportsForDate": "Reports for {date}",
     "selectDate": "Report Date",
     "patient": "Patient",
@@ -3295,10 +3274,7 @@
     "fillNameRequired": "Enter an item name.",
     "monthHistory": "Month history",
     "month": "Month",
-    "emptyMonth": "No expenses recorded for this month yet.",
-    "recordedOf": "{recorded} of {total} items recorded",
-    "refresh": "Refresh",
-    "currentMonth": "Current month"
+    "emptyMonth": "No expenses recorded for this month yet."
   },
   "handwriting": {
     "title": "Handwriting input",
@@ -3859,17 +3835,17 @@
       "deletedSuccess": "Deleted successfully",
       "approvedSuccess": "Comment approved",
       "rejectedSuccess": "Comment rejected",
-      "error": "An error occurred",
-      "manageCategories": "Manage Categories",
-      "categoryNameFa": "Category Name (Persian)",
-      "categorySlug": "Category Slug",
-      "categorySlugHint": "URL-friendly identifier, e.g. dental-implants",
-      "addCategory": "Add Category",
-      "noCategories": "No categories yet",
-      "categoryCreated": "Category created",
-      "categoryDeleted": "Category deleted",
-      "close": "Close"
-    }
+    "error": "An error occurred",
+    "manageCategories": "Manage Categories",
+    "categoryNameFa": "Category Name (Persian)",
+    "categorySlug": "Category Slug",
+    "categorySlugHint": "URL-friendly identifier, e.g. dental-implants",
+    "addCategory": "Add Category",
+    "noCategories": "No categories yet",
+    "categoryCreated": "Category created",
+    "categoryDeleted": "Category deleted",
+    "close": "Close"
+  }
   },
   "sitelinks": {
     "eyebrow": "Quick Access",

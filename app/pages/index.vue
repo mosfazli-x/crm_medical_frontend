@@ -1,5 +1,8 @@
 <template>
-  <div class="ln-shell" :dir="dir">
+  <div class="ln-shell" :class="{ 'is-ready': loaderShown }" :dir="dir">
+    <!-- Cinematic curtain loader — draws the logo, then parts to reveal the page -->
+    <LandingCurtainLoader @finished="onLoaderFinished" />
+
     <!-- Time-of-day background video (shared with the aesthetic landing) -->
     <div class="ln-backdrop" aria-hidden="true">
       <LandingTimeOfDayBackground />
@@ -12,7 +15,7 @@
         <span class="ln-mark" aria-hidden="true">
         <img src="../assets/images/hastihoseinilogo.png" />
         </span>
-        <span class="ln-wordmark font-bon font-medium">{{ t('brand') }}</span>
+        <span class="ln-wordmark font-bon font-semibold">{{ t('brand') }}</span>
       </div>
       <div class="ln-header-right">
         <button type="button" class="ln-lang" :aria-label="t('langLabel')" @click="toggleLang">
@@ -153,6 +156,12 @@ const stored = useCookie<string>('i18n_lang', { sameSite: 'lax', maxAge: 60 * 60
 
 const locale = ref<Locale>(stored.value === 'fa' ? 'fa' : 'en')
 
+const loaderShown = ref(false)
+
+function onLoaderFinished() {
+  loaderShown.value = true
+}
+
 const dir = computed(() => (locale.value === 'fa' ? 'rtl' : 'ltr'))
 
 const t = (key: string): string => {
@@ -206,6 +215,34 @@ useHead({
 
 <style scoped>
 /* ── LadiesNeeds landing — self-contained design (not tied to CRM tokens) ── */
+
+/* Content stays hidden until the curtain loader hands over */
+.ln-header,
+.ln-main,
+.ln-footer {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.8s ease 0.05s,
+    transform 0.8s ease 0.05s;
+}
+
+.ln-shell.is-ready .ln-header,
+.ln-shell.is-ready .ln-main,
+.ln-shell.is-ready .ln-footer {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ln-header,
+  .ln-main,
+  .ln-footer {
+    transition: opacity 0.2s ease;
+    transform: none;
+  }
+}
+
 .ln-shell {
   --ln-background: #222831;
   --ln-foreground: #EEEEEE;
@@ -308,7 +345,7 @@ useHead({
 .ln-brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.25rem;
 }
 
 .ln-mark {
@@ -326,8 +363,8 @@ useHead({
 }
 
 .ln-wordmark {
-  font-size: 1.125rem;
-  letter-spacing: -0.025em;
+  font-size: 1rem;
+  letter-spacing: -0.1em;
   color: var(--ln-foreground);
 }
 
@@ -557,7 +594,7 @@ useHead({
   z-index: 1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: max(1rem, 2.5vh) 5vw;
   font-size: 0.68rem;
   text-transform: uppercase;

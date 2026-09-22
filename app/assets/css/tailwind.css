@@ -10,16 +10,6 @@
 @theme {
 
   /* ── Primitive Color Scale ── */
-  --color-indigo-50: #eef2ff;
-  --color-indigo-100: #e0e7ff;
-  --color-indigo-200: #c7d2fe;
-  --color-indigo-300: #a5b4fc;
-  --color-indigo-400: #818cf8;
-  --color-indigo-500: #A2D2FF;
-  --color-indigo-600: #CDB4DB;
-  --color-indigo-700: #B790C9;
-  --color-indigo-800: #3730a3;
-  --color-indigo-900: #312e81;
 
   --color-slate-50: #f8fafc;
   --color-slate-100: #f1f5f9;
@@ -214,9 +204,9 @@
   /* ── Landing Page Colors (legacy compat) ── */
   --color-electric-sapphire: var(--color-primary);
   --color-cornflower-blue: var(--color-primary-hover);
-  --color-baby-blue-ice: var(--color-indigo-400);
-  --color-periwinkle: var(--color-indigo-200);
-  --color-light-cyan: var(--color-indigo-100);
+  --color-baby-blue-ice: var(--color-teal-400);
+  --color-periwinkle: var(--color-teal-200);
+  --color-light-cyan: var(--color-teal-100);
   --color-dark-grey: #222831;
   --color-blue-grey: #393e46;
   --color-ink: #0B0C0E;

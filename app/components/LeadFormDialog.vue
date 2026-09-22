@@ -17,7 +17,7 @@
       </div>
 
       <div class="px-8 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800!">
-        <v-tabs v-model="activeTab" color="#CDB4DB" bg-color="transparent" height="56">
+        <v-tabs v-model="activeTab" color="#00ADB5" bg-color="transparent" height="56">
           <v-tab value="basic" class="text-sm text-slate-700! dark:text-slate-300! font-medium">{{ t('leads.tabs.basic') }}</v-tab>
           <v-tab value="attribution" class="text-sm text-slate-700! dark:text-slate-300! font-medium">{{ t('leads.tabs.attribution') }}</v-tab>
           <v-tab value="details" class="text-sm text-slate-700! dark:text-slate-300! font-medium">{{ t('leads.tabs.details') }}</v-tab>
@@ -110,7 +110,7 @@
                   append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('referrerUrl')" />
               </div>
               <div class="md:col-span-2">
-                <v-switch v-model="form.marketingConsent" color="#CDB4DB" :label="t('leads.marketingConsent')"
+                <v-switch v-model="form.marketingConsent" color="#00ADB5" :label="t('leads.marketingConsent')"
                   hide-details />
               </div>
             </div>
@@ -164,14 +164,14 @@
                   :placeholder="t('leads.tagsPlaceholder')" hide-details="auto" bg-color="white" rounded="lg"
                   @keydown="onTagKeydown">
                   <template #append-inner>
-                    <v-btn icon size="small" variant="text" color="#CDB4DB" @click="addTag">
+                    <v-btn icon size="small" variant="text" color="#00ADB5" @click="addTag">
                       <Plus class="w-4 h-4" />
                     </v-btn>
                   </template>
                 </v-text-field>
                 <div v-if="form.tags.length" class="flex flex-wrap gap-2 mt-3">
                   <span v-for="(tag, i) in form.tags" :key="tag"
-                    class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">
+                    class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full bg-teal-50 text-teal-600 border border-teal-100">
                     {{ tag }}
                     <button type="button" class="hover:text-red-500 transition-colors" @click="removeTag(i)">
                       <v-icon size="14">mdi-close</v-icon>

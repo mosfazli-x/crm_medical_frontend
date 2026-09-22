@@ -30,7 +30,7 @@ export const useHelpers = () => {
 
   const avatarColors = [
     '#A2D2FF', '#0EA5E9', '#8B5CF6', '#F59E0B',
-    '#10B981', '#F43F5E', '#CDB4DB', '#0891B2',
+    '#10B981', '#F43F5E', '#00ADB5', '#0891B2',
   ] as const
 
   const avatarColor = (id: string): string => {

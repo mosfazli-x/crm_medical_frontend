@@ -12,7 +12,7 @@
             :class="isLight ? 'bg-cyan-300/10' : 'bg-cyan-400/15'"></div>
           <div
             class="loader-orb loader-orb--3 absolute w-[400px] h-[400px] rounded-full blur-[90px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-            :class="isLight ? 'bg-indigo-300/8' : 'bg-indigo-400/10'"></div>
+            :class="isLight ? 'bg-teal-300/8' : 'bg-teal-400/10'"></div>
         </div>
 
         <!-- Grid pattern overlay -->

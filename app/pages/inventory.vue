@@ -5,9 +5,9 @@
     <!-- Summary Cards -->
     <div class="!grid !grid-cols-1 sm:!grid-cols-4 !gap-4 !pb-6">
       <UiStatCard :label="$t('inventory.totalProducts')" :value="String(summary?.totalProducts || 0)"
-        value-class="!text-indigo-600 dark:!text-indigo-400">
+        value-class="!text-teal-600 dark:!text-teal-400">
         <template #icon>
-          <Icon name="lucide:package" class="!w-5 !h-5 !text-indigo-400" />
+          <Icon name="lucide:package" class="!w-5 !h-5 !text-teal-400" />
         </template>
       </UiStatCard>
       <UiStatCard :label="$t('inventory.totalStockValue')" :value="summary?.totalStockValue ?? 0"
@@ -114,7 +114,7 @@
                       <Plus class="!w-4 !h-4" />
                     </button>
                     <button @click="editProduct(product)"
-                      class="!p-1.5 !text-slate-400 hover:!text-indigo-500 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/20 !rounded-lg">
+                      class="!p-1.5 !text-slate-400 hover:!text-teal-500 hover:!bg-teal-50 dark:hover:!bg-teal-900/20 !rounded-lg">
                       <Icon name="lucide:pencil" class="!w-4 !h-4" />
                     </button>
                   </div>
@@ -161,7 +161,7 @@
                 <td class="!font-bold">{{ cat.productCount }}</td>
                 <td class="!text-center">
                   <button @click="editCategory(cat)"
-                    class="!p-1.5 !text-slate-400 hover:!text-indigo-500 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/20 !rounded-lg">
+                    class="!p-1.5 !text-slate-400 hover:!text-teal-500 hover:!bg-teal-50 dark:hover:!bg-teal-900/20 !rounded-lg">
                     <Icon name="lucide:pencil" class="!w-4 !h-4" />
                   </button>
                 </td>
@@ -230,7 +230,7 @@
                 <td class="!text-xs !text-slate-500">
                   <template v-if="m.referenceType === 'patient_usage'">
                     <span
-                      class="!px-2 !py-0.5 !rounded-full !text-xs !font-semibold !bg-indigo-50 dark:!bg-indigo-900/10 !text-indigo-600 !border !border-indigo-200">
+                      class="!px-2 !py-0.5 !rounded-full !text-xs !font-semibold !bg-teal-50 dark:!bg-teal-900/10 !text-teal-600 !border !border-teal-200">
                       {{ $t('inventory.tabs.patientUsage') }}
                     </span>
                   </template>

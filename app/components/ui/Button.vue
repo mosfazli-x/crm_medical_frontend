@@ -117,12 +117,12 @@ defineEmits<{
 }
 
 .ui-btn--primary:hover:not(:disabled) {
-  background-color: var(--color-indigo-100);
+  background-color: var(--color-teal-100);
   border-color: rgba(79, 70, 229, 0.3);
 }
 
 .ui-btn--primary:active:not(:disabled) {
-  background-color: var(--color-indigo-200);
+  background-color: var(--color-teal-200);
 }
 
 .ui-btn--accent {

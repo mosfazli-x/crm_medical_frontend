@@ -473,8 +473,6 @@ onBeforeUnmount(() => {
   }
 }
 
-
-
 .loader-orb {
   animation: loader-drift 18s ease-in-out infinite;
 }

@@ -3,7 +3,7 @@ import { computed } from 'vue'
 const servicesData = [
   { icon: 'heart', titleKey: 'landing.services.cardiologyTitle', descKey: 'landing.services.cardiologyDesc', colorClass: 'blue' },
   { icon: 'shield', titleKey: 'landing.services.dermatologyTitle', descKey: 'landing.services.dermatologyDesc', colorClass: 'cyan' },
-  { icon: 'pulse', titleKey: 'landing.services.generalTitle', descKey: 'landing.services.generalDesc', colorClass: 'indigo' },
+  { icon: 'pulse', titleKey: 'landing.services.generalTitle', descKey: 'landing.services.generalDesc', colorClass: 'teal' },
   { icon: 'flask', titleKey: 'landing.services.labTitle', descKey: 'landing.services.labDesc', colorClass: 'sky' },
   { icon: 'clock', titleKey: 'landing.services.emergencyTitle', descKey: 'landing.services.emergencyDesc', colorClass: 'violet' },
   { icon: 'users', titleKey: 'landing.services.consultTitle', descKey: 'landing.services.consultDesc', colorClass: 'teal' },

@@ -7,7 +7,7 @@
         </div>
         <div class="crm-tool-card-titles">
           <h3 class="crm-card-title crm-tool-card-title">{{ title }}</h3>
-          <p v-if="subtitle" class="crm-page-subtitle crm-tool-card-subtitle">{{ subtitle }}</p>
+          <p v-if="subtitle" class="crm-page-subtitle crm-tool-card-subtitle rtl:dir-ltr">{{ subtitle }}</p>
         </div>
       </div>
       <slot />

@@ -3,7 +3,7 @@
     <!-- Selected patient chip -->
     <div v-if="selected && !isOpen" class="selected-chip" @click="openAndFocus">
       <div class="selected-chip-avatar">
-        <Icon name="lucide:user" class="!w-3.5 !h-3.5 !text-indigo-500" />
+        <Icon name="lucide:user" class="!w-3.5 !h-3.5 !text-teal-500" />
       </div>
       <div class="selected-chip-info">
         <span class="selected-chip-name">{{ selected.firstName }} {{ selected.lastName }}</span>
@@ -383,7 +383,7 @@ onUnmounted(() => {
   border-color: #3a3d47;
 }
 .input-wrapper.focused {
-  border-color: #CDB4DB;
+  border-color: #00ADB5;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
 }
 .dark .input-wrapper.focused {
@@ -555,7 +555,7 @@ onUnmounted(() => {
 .result-avatar-text {
   font-size: 0.625rem;
   font-weight: 700;
-  color: #CDB4DB;
+  color: #00ADB5;
   letter-spacing: 0.05em;
 }
 .dark .result-avatar-text {

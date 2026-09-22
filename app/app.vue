@@ -5,7 +5,7 @@
       class: 'toast',
       descriptionClass: 'my-toast-description'
     }" richColors position="top-right" :close-button=true closeButtonPosition="top-left" />
-    <NuxtLoadingIndicator color="#CDB4DB" :height="3"/>
+    <NuxtLoadingIndicator color="#00ADB5" :height="3"/>
     <NuxtPage />
   </NuxtLayout>
 </template>

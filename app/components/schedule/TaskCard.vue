@@ -81,7 +81,7 @@ const onDragStart = (e: DragEvent) => {
 }
 .schedule-card:hover {
   box-shadow: var(--shadow-lg);
-  border-color: var(--color-indigo-200);
+  border-color: var(--color-teal-200);
   transform: translateY(-2px);
 }
 .dark .schedule-card:hover {

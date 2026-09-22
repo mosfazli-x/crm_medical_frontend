@@ -18,7 +18,7 @@
             </div>
 
             <div class="px-8 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800!">
-                <v-tabs v-model="activeTab" color="#CDB4DB" bg-color="transparent" height="56">
+                <v-tabs v-model="activeTab" color="#00ADB5" bg-color="transparent" height="56">
                     <v-tab value="basic" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">{{ t('patientForm.tabs.basic') }}</v-tab>
                     <v-tab value="medical" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">{{ t('patientForm.tabs.medical') }}</v-tab>
                     <v-tab value="pregnancy" class="text-sm text-slate-700! dark:text-slate-300! focus:text-electric-sapphire! font-medium">{{ t('patientForm.tabs.pregnancy') }}</v-tab>

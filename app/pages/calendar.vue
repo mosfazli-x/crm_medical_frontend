@@ -1,167 +1,344 @@
 <template>
-    <UiPageContainer>
-        <UiPageHeader :title="$t('calendar.title')" />
+  <UiPageContainer class="relative! max-w-7xl! mx-auto!">
+    <!-- ─── Apple-style large-title header ─── -->
+    <header class="dash-head">
+      <div class="dash-head__copy">
+        <h1 class="dash-head__title">{{ t('calendar.title') }}</h1>
+        <p class="dash-head__date">{{ todayLong }}</p>
+      </div>
+      <div class="dash-head__actions">
+        <button type="button" class="cal-x" :disabled="calendarLoading" :aria-label="t('calendar.title')" @click="refreshCalendar">
+          <v-icon :size="18" :class="{ 'animate-spin!': calendarLoading }">mdi-refresh</v-icon>
+        </button>
+        <button type="button" class="asa-btn asa-btn--primary" @click="openCreateDialog">
+          <v-icon size="16">mdi-calendar-plus</v-icon>
+          <span class="hidden sm:inline!">{{ t('calendar.newVisit') }}</span>
+        </button>
+      </div>
+    </header>
 
-        <UiContentCard :class="{ 'dark': isDarkMode }">
-            <FullCalendar ref="calendarRef" :options="calendarOptions" />
-        </UiContentCard>
+    <!-- ─── Metrics ─── -->
+    <div class="cal-metrics">
+      <article class="asa-card cal-metric">
+        <span class="asa-tint asa-tint--teal"><v-icon size="20">mdi-calendar-today</v-icon></span>
+        <div class="cal-metric__copy">
+          <p class="cal-metric__value">{{ pn(todayCount) }}</p>
+          <p class="cal-metric__label">{{ t('calendar.todayVisits') }}</p>
+        </div>
+      </article>
+      <article class="asa-card cal-metric" style="animation-delay: 80ms">
+        <span class="asa-tint asa-tint--indigo"><v-icon size="20">mdi-calendar-week</v-icon></span>
+        <div class="cal-metric__copy">
+          <p class="cal-metric__value">{{ pn(weekCount) }}</p>
+          <p class="cal-metric__label">{{ t('calendar.nextDays') }}</p>
+        </div>
+      </article>
+      <article class="asa-card cal-metric" style="animation-delay: 160ms">
+        <span class="asa-tint asa-tint--green"><v-icon size="20">mdi-calendar-clock</v-icon></span>
+        <div class="cal-metric__copy">
+          <p class="cal-metric__value cal-metric__value--md">{{ nextVisitLabel }}</p>
+          <p class="cal-metric__label">{{ t('calendar.nextVisit') }}</p>
+        </div>
+      </article>
+    </div>
 
-        <v-dialog v-model="visitDialog" persistent scrollable :fullscreen="isMobile"
-            transition="dialog-bottom-transition" max-width="700px">
-            <v-card class="md:rounded-2xl shadow-2xl border-0 overflow-hidden bg-white dark:bg-slate-800">
-                <v-card-title
-                    class="bg-white dark:bg-slate-800! border-b border-slate-100 dark:border-slate-700 py-5 px-6 md:px-8">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">
-                            {{ isEditMode ? $t('calendar.editVisit') : $t('calendar.newVisit') }}
-                        </h2>
-                        <v-btn icon variant="text"
-                            class="text-slate-400 dark:text-slate-500 hover:text-slate-600 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600! rounded-full dark:fill-slate-300"
-                            @click="closeVisitDialog">
-                            <CloseCircle class="w-6 h-6" />
-                        </v-btn>
-                    </div>
-                </v-card-title>
+    <!-- ─── Calendar card ─── -->
+    <div class="asa-card cal-card">
+      <div class="cal-toolbar">
+        <div class="cal-nav">
+          <button type="button" class="asa-btn asa-btn--ghost asa-btn--sm cal-nav__ic" aria-label="previous" @click="calendarNav('prev')">
+            <v-icon size="16">{{ isFa ? 'mdi-chevron-right' : 'mdi-chevron-left' }}</v-icon>
+          </button>
+          <button type="button" class="asa-btn asa-btn--ghost asa-btn--sm" @click="calendarNav('today')">
+            {{ t('calendar.buttonText.today') }}
+          </button>
+          <button type="button" class="asa-btn asa-btn--ghost asa-btn--sm cal-nav__ic" aria-label="next" @click="calendarNav('next')">
+            <v-icon size="16">{{ isFa ? 'mdi-chevron-left' : 'mdi-chevron-right' }}</v-icon>
+          </button>
+        </div>
 
-                <v-card-text class="pt-6 px-6 md:pt-8 md:px-8 bg-slate-50/50 dark:bg-slate-800">
-                    <v-row>
-                        <v-col cols="12">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{
-                                $t('calendar.patient') }}
-                                <span class="text-red-500">{{ $t('calendar.required') }}</span></label>
-                            <v-autocomplete v-model="newVisit.patientId" :items="patients" item-title="fullName"
-                                item-value="id" :placeholder="$t('calendar.searchPatient')" variant="outlined"
-                                density="comfortable" prepend-inner-icon="mdi-account-search-outline" clearable
-                                class="dark:text-slate-300 dark:bg-slate-700 dark:border-slate-600" hide-details="auto"
-                                :loading="patientsLoading">
-                                <template v-slot:no-data>
-                                    <div class="pa-4 text-center text-slate-500 dark:text-slate-400 text-sm">
-                                        {{ patientsLoading ? $t('calendar.searching') : $t('calendar.noPatientFound') }}
-                                    </div>
-                                </template>
-                            </v-autocomplete>
-                        </v-col>
+        <div class="cal-range">
+          <p class="cal-range__primary">{{ rangeTitle }}</p>
+          <p class="cal-range__secondary" dir="ltr">{{ rangeTitleGreg }}</p>
+        </div>
 
-                        <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{
-                                $t('calendar.startTime') }}
-                                <span class="text-red-500">{{ $t('calendar.required') }}</span></label>
-                            <div class="relative h-[48px] border rounded overflow-hidden w-full">
-                                <PersianDatetimePicker v-model="newVisit.start" type="datetime"
-                                    display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#CDB4DB"
-                                    auto-submit custom-input class="w-full" />
-                            </div>
-                        </v-col>
+        <div class="asa-seg" role="tablist" :aria-label="t('calendar.title')">
+          <button type="button" class="asa-seg__btn" :class="{ 'asa-seg__btn--on': viewType === 'timeGridWeek' }" @click="setView('timeGridWeek')">{{ t('calendar.buttonText.week') }}</button>
+          <button type="button" class="asa-seg__btn" :class="{ 'asa-seg__btn--on': viewType === 'dayGridMonth' }" @click="setView('dayGridMonth')">{{ t('calendar.buttonText.month') }}</button>
+          <button type="button" class="asa-seg__btn" :class="{ 'asa-seg__btn--on': viewType === 'timeGridDay' }" @click="setView('timeGridDay')">{{ t('calendar.buttonText.day') }}</button>
+        </div>
+      </div>
 
-                        <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{
-                                $t('calendar.endTime')
-                            }}</label>
-                            <div class="relative h-[48px] border rounded overflow-hidden w-full">
-                                <PersianDatetimePicker v-model="newVisit.end" type="datetime"
-                                    display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss" color="#CDB4DB"
-                                    auto-submit custom-input class="w-full" />
-                            </div>
-                        </v-col>
+      <div v-if="!eventsLoadedOnce" class="cal-skel">
+        <div class="asa-skel" style="height: 3.25rem; border-radius: 0.75rem" />
+        <div class="asa-skel" style="height: 26rem; border-radius: 0.75rem" />
+      </div>
+      <FullCalendar v-else ref="calendarRef" :options="calendarOptions" />
 
-                        <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{
-                                $t('calendar.visitType')
-                            }}</label>
-                            <v-select v-model="newVisit.type" :items="visitTypes" variant="outlined"
-                                class="dark:text-slate-300 dark:bg-slate-700 dark:border-slate-600"
-                                density="comfortable" hide-details="auto" />
-                        </v-col>
+      <div class="cal-legend">
+        <p class="cal-legend__label">{{ t('calendar.legendTitle') }}</p>
+        <div class="cal-legend__items">
+          <span v-for="item in legend" :key="item.label" class="cal-legend__item">
+            <i class="cal-legend__dot" :style="{ backgroundColor: item.color }" />
+            <span>{{ item.label }}</span>
+          </span>
+        </div>
+      </div>
+    </div>
 
-                        <v-col cols="12" md="6">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{
-                                $t('common.status') }}</label>
-                            <v-select v-model="newVisit.status" :items="$t('calendar.statusOptions')"
-                                class="dark:text-slate-300 dark:bg-slate-700 dark:border-slate-600" variant="outlined"
-                                density="comfortable" hide-details="auto" />
-                        </v-col>
+    <!-- ─── Visit dialog ─── -->
+    <v-dialog v-model="visitDialog" persistent scrollable :fullscreen="isMobile" transition="dialog-bottom-transition" max-width="640px">
+      <v-card class="asa-dialog">
+        <div class="asa-dialog__head">
+          <div class="min-w-0!">
+            <h2 class="asa-dialog__title">{{ isEditMode ? t('calendar.editVisit') : t('calendar.newVisit') }}</h2>
+            <span class="asa-dialog__sub">{{ dialogSubtitle }}</span>
+          </div>
+          <button type="button" class="cal-x" aria-label="close" @click="closeVisitDialog">
+            <v-icon size="18">mdi-close</v-icon>
+          </button>
+        </div>
 
-                        <v-col cols="12">
-                            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 block">{{
-                                $t('calendar.doctorNotes')
-                            }}</label>
-                            <v-textarea v-model="newVisit.notes" :placeholder="$t('calendar.notesPlaceholder')"
-                                class="dark:text-slate-300 dark:bg-slate-700 dark:border-slate-600" variant="outlined"
-                                rows="3" density="comfortable" hide-details="auto"
-                                append-inner-icon="mdi-draw-pen" @click:append-inner="openVisitNotesHw(t('calendar.doctorNotes'), (text) => newVisit.notes = text)" />
-                        </v-col>
-                    </v-row>
-                </v-card-text>
+        <v-card-text class="asa-dialog__body">
+          <div class="pf-stack">
+            <div class="pf-field">
+              <span class="asa-field-label">{{ t('calendar.patient') }} <span class="text-red-500!">{{ t('calendar.required') }}</span></span>
+              <v-autocomplete v-model="newVisit.patientId" :items="patients" item-title="fullName" item-value="id"
+                :placeholder="t('calendar.searchPatient')" variant="solo" density="comfortable"
+                prepend-inner-icon="mdi-account-search-outline" clearable hide-details="auto" :loading="patientsLoading">
+                <template #no-data>
+                  <div class="pa-4 text-center text-sm" style="color: var(--asa-label-2)">
+                    {{ patientsLoading ? t('calendar.searching') : t('calendar.noPatientFound') }}
+                  </div>
+                </template>
+              </v-autocomplete>
+            </div>
 
-                <v-card-actions
-                    class="px-6 py-5 md:px-8 md:py-6 bg-white dark:bg-slate-800! border-t border-slate-100 dark:border-slate-700 flex flex-col-reverse md:flex-row gap-3">
-                    <v-btn v-if="isEditMode" color="red-darken-1" variant="text" size="large"
-                        class="w-full md:w-auto font-medium tracking-wide rounded-lg" @click="deleteVisit">
-                        {{ $t('calendar.deleteVisit') }}
-                    </v-btn>
+            <div class="cal-grid2">
+              <div class="pf-field">
+                <span class="asa-field-label">{{ t('calendar.startTime') }} <span class="text-red-500!">{{ t('calendar.required') }}</span></span>
+                <PersianDatetimePicker v-model="newVisit.start" type="datetime" display-format="jYYYY/jMM/jDD - HH:mm"
+                  format="YYYY-MM-DD HH:mm:ss" color="#00ADB5" auto-submit custom-input class="w-full" />
+              </div>
 
-                    <v-spacer class="hidden md:block" />
+              <div class="pf-field">
+                <span class="asa-field-label">{{ t('calendar.endTime') }}</span>
+                <PersianDatetimePicker v-model="newVisit.end" type="datetime" display-format="jYYYY/jMM/jDD - HH:mm"
+                  format="YYYY-MM-DD HH:mm:ss" color="#00ADB5" auto-submit custom-input class="w-full" />
+              </div>
 
-                    <v-btn color="slate-600" variant="tonal" size="large"
-                        class="w-full md:w-auto font-medium tracking-wide rounded-lg hover:bg-slate-200 hover:opacity-65 dark:hover:opacity-85 text-slate-800 dark:text-slate-200!"
-                        @click="closeVisitDialog">
-                        {{ $t('common.cancel') }}
-                    </v-btn>
+              <div class="pf-field">
+                <span class="asa-field-label">{{ t('calendar.visitType') }}</span>
+                <v-select v-model="newVisit.type" :items="visitTypes" variant="solo" density="comfortable" hide-details="auto" />
+              </div>
 
-                    <v-btn color="#CDB4DB" variant="flat" size="large"
-                        class="px-8 w-full md:w-auto font-medium tracking-wide rounded-lg shadow-md shadow-periwinkle hover:opacity-85"
-                        :loading="saving" @click="saveVisit">
-                        {{ isEditMode ? $t('calendar.saveChanges') : $t('calendar.registerVisit') }}
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
-    </UiPageContainer>
-    <HandwritingDialog v-model="visitNotesHwOpen" :label="visitNotesHwLabel" @insert="applyVisitNotesHw" />
+              <div class="pf-field">
+                <span class="asa-field-label">{{ t('common.status') }}</span>
+                <v-select v-model="newVisit.status" :items="statusOptions" variant="solo" density="comfortable" hide-details="auto" />
+              </div>
+            </div>
+
+            <div class="pf-field">
+              <span class="asa-field-label">{{ t('calendar.doctorNotes') }}</span>
+              <v-textarea v-model="newVisit.notes" :placeholder="t('calendar.notesPlaceholder')" variant="solo"
+                density="comfortable" rows="3" hide-details="auto" append-inner-icon="mdi-draw-pen"
+                @click:append-inner="openVisitNotesHw(t('calendar.doctorNotes'), (text) => (newVisit.notes = text))" />
+            </div>
+          </div>
+        </v-card-text>
+
+        <v-card-actions class="asa-dialog__foot">
+          <div class="d-flex flex-column-reverse! md:flex-row! gap-2! w-full!">
+            <button v-if="isEditMode" type="button" class="asa-btn asa-btn--rose" @click="openDeleteDialog">
+              <v-icon size="16">mdi-trash-can-outline</v-icon>
+              {{ t('calendar.deleteVisit') }}
+            </button>
+            <div class="flex-1! hidden! md:block!" />
+            <button type="button" class="asa-btn asa-btn--ghost" @click="closeVisitDialog">{{ t('common.cancel') }}</button>
+            <button type="button" class="asa-btn asa-btn--primary" :disabled="saving" @click="saveVisit">
+              <v-progress-circular v-if="saving" indeterminate size="16" width="2" color="#ffffff" />
+              <template v-else>{{ isEditMode ? t('calendar.saveChanges') : t('calendar.registerVisit') }}</template>
+            </button>
+          </div>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- ─── Delete confirm dialog ─── -->
+    <v-dialog v-model="deleteDialog" persistent max-width="420px" transition="dialog-top-transition">
+      <v-card class="asa-dialog">
+        <div class="asa-dialog__head">
+          <div class="min-w-0!">
+            <h2 class="asa-dialog__title">{{ t('calendar.deleteVisit') }}</h2>
+          </div>
+          <button type="button" class="cal-x" aria-label="close" @click="deleteDialog = false">
+            <v-icon size="18">mdi-close</v-icon>
+          </button>
+        </div>
+        <v-card-text class="asa-dialog__body">
+          <div class="d-flex align-center! gap-3!">
+            <span class="asa-tint asa-tint--rose asa-tint--sm"><v-icon size="18">mdi-alert-octagon-outline</v-icon></span>
+            <p class="text-sm!" style="color: var(--asa-label)">{{ t('calendar.confirmDeleteVisit') }}</p>
+          </div>
+        </v-card-text>
+        <v-card-actions class="asa-dialog__foot">
+          <div class="d-flex gap-2! w-full! justify-end!">
+            <button type="button" class="asa-btn asa-btn--ghost" @click="deleteDialog = false">{{ t('common.cancel') }}</button>
+            <button type="button" class="asa-btn asa-btn--rose" :disabled="deleting" @click="confirmDeleteVisit">
+              <v-progress-circular v-if="deleting" indeterminate size="16" width="2" color="#ffffff" />
+              <template v-else>{{ t('calendar.deleteVisit') }}</template>
+            </button>
+          </div>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </UiPageContainer>
+  <HandwritingDialog v-model="visitNotesHwOpen" :label="visitNotesHwLabel" @insert="applyVisitNotesHw" />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import faLocale from '@fullcalendar/core/locales/fa'
-import CloseCircle from '~/components/icons/CloseCircle.vue'
+import enGbLocale from '@fullcalendar/core/locales/en-gb'
+import moment from 'moment-jalaali'
 import HandwritingDialog from '~/components/HandwritingDialog.vue'
-import { useEventBus } from '~/composables/useEventBus'
 
-const { t } = useI18n()
+const { t, tm, locale } = useI18n()
+const { pn } = useLang()
+const { formatJalaliLong } = useFormatting()
+
 const calendarRef = ref<InstanceType<typeof FullCalendar> | null>(null)
-
-// جلوگیری از خطای SSR در مقداردهی اولیه با window
 const isMobile = ref(false)
-const isDarkMode = ref(false)
-let themeObserver: MutationObserver | null = null
 
 const { apiFetch } = useApi()
 const { $toast } = useNuxtApp()
-const { emit } = useEventBus()
 
+const isFa = computed(() => locale.value === 'fa')
+const todayLong = computed(() => formatJalaliLong(new Date()))
+
+function resolveMsg(v: any): string {
+  if (typeof v === 'string') return v
+  if (v && typeof v === 'object') {
+    if (typeof v.source === 'string') return v.source
+    if (v.body && typeof v.body.static === 'string') return v.body.static
+    if (typeof v.value !== 'undefined') return String(v.value)
+    return JSON.stringify(v)
+  }
+  return String(v)
+}
+
+function resolveMsgList(key: string): string[] {
+  const raw = tm(key) as unknown
+  if (Array.isArray(raw)) return raw.map(resolveMsg)
+  if (raw && typeof raw === 'object') return Object.values(raw).map(resolveMsg)
+  return []
+}
+
+// ── Visit form state ─────────────────────────────
 const patients = ref<any[]>([])
 const patientsLoading = ref(false)
-
 const visitDialog = ref(false)
+const deleteDialog = ref(false)
 const saving = ref(false)
+const deleting = ref(false)
 const isEditMode = ref(false)
 const currentVisitId = ref<string | null>(null)
 
-const visitTypes = computed(() => t('calendar.visitTypes'))
+const visitTypes = computed(() => resolveMsgList('calendar.visitTypes'))
+const statusOptions = computed(() => resolveMsgList('calendar.statusOptions'))
 
-const newVisit = ref({
-    start: '',
-    end: '',
-    patientId: null as string | null,
-    type: '',
-    status: '',
-    notes: '',
+const newVisit = ref<{
+  start: string
+  end: string
+  patientId: string | null
+  type: string
+  status: string
+  notes: string
+}>(emptyVisit())
+
+function emptyVisit() {
+  return { start: '', end: '', patientId: null as string | null, type: '', status: '', notes: '' }
+}
+
+// ── Calendar state ───────────────────────────────
+const viewType = ref('timeGridWeek')
+const calendarLoading = ref(false)
+const eventsLoadedOnce = ref(false)
+const loadedEvents = ref<any[]>([])
+const gridStart = ref<Date | null>(null)
+const gridEnd = ref<Date | null>(null)
+
+// ── Metrics ──────────────────────────────────────
+const todayCount = computed(() => {
+  const start = new Date()
+  start.setHours(0, 0, 0, 0)
+  const end = new Date(start.getTime() + 86_400_000)
+  return loadedEvents.value.filter((e) => {
+    const d = new Date(e.start)
+    return d >= start && d < end
+  }).length
 })
 
+const weekCount = computed(() => {
+  const start = new Date()
+  start.setHours(0, 0, 0, 0)
+  const end = new Date(start.getTime() + 7 * 86_400_000)
+  return loadedEvents.value.filter((e) => {
+    const d = new Date(e.start)
+    return d >= start && d < end
+  }).length
+})
+
+const nextVisitLabel = computed(() => {
+  const now = new Date()
+  const next = loadedEvents.value
+    .map((e) => ({ d: new Date(e.start), ev: e }))
+    .filter((x) => x.d >= now)
+    .sort((a, b) => a.d.getTime() - b.d.getTime())[0]
+  if (!next) return t('calendar.noVisits')
+  const m = moment(next.d)
+  return `${pn(m.format('jMM/jDD'))} · ${pn(m.format('HH:mm'))}`
+})
+
+// ── Range title (Jalali primary + Gregorian detail) ──
+const rangeTitle = computed(() => {
+  if (!gridStart.value || !gridEnd.value) return ''
+  const s = moment(gridStart.value)
+  const e = moment(gridEnd.value)
+  const same = s.format('jYYYY/jMM/jDD') === e.format('jYYYY/jMM/jDD')
+  const raw = same ? s.format('jYYYY/jMM/jDD') : `${s.format('jYYYY/jMM/jDD')} — ${e.format('jYYYY/jMM/jDD')}`
+  return pn(raw)
+})
+
+const rangeTitleGreg = computed(() => {
+  if (!gridStart.value || !gridEnd.value) return ''
+  const s = moment(gridStart.value)
+  const e = moment(gridEnd.value)
+  const same = s.format('YYYY/MM/DD') === e.format('YYYY/MM/DD')
+  return same ? s.format('YYYY/MM/DD') : `${s.format('YYYY/MM/DD')} — ${e.format('YYYY/MM/DD')}`
+})
+
+const dialogSubtitle = computed(() => {
+  const raw = newVisit.value.start || ''
+  if (!raw) return ''
+  const m = moment(raw.replace(' ', 'T'))
+  if (!m.isValid()) return ''
+  const date = isFa.value ? m.format('jDD jMMMM jYYYY') : m.format('jYYYY/jMM/jDD')
+  return `${pn(date)} · ${pn(m.format('HH:mm'))}`
+})
+
+// ── Legend (mirrors the backend visit-type colors) ──
+const visitTypeColors = ['#3b82f6', '#f59e0b', '#10b981', '#6366f1', '#ef4444']
+
+const legend = computed(() =>
+  visitTypes.value.map((label, i) => ({ label, color: visitTypeColors[i] || '#6366f1' }))
+)
+
+// ── Handwriting dialog ───────────────────────────
 const visitNotesHwOpen = ref(false)
 const visitNotesHwLabel = ref('')
 const visitNotesHwCallback = ref<((text: string) => void) | null>(null)
@@ -171,684 +348,740 @@ function openVisitNotesHw(label: string, callback: (text: string) => void) {
   visitNotesHwCallback.value = callback
   visitNotesHwOpen.value = true
 }
-function applyVisitNotesHw(text: string) { visitNotesHwCallback.value?.(text) }
 
-const handleResize = () => {
-    isMobile.value = window.innerWidth < 768
-    const api = calendarRef.value?.getApi()
-    if (api) {
-        api.changeView(isMobile.value ? 'timeGridDay' : 'timeGridWeek')
-    }
+function applyVisitNotesHw(text: string) {
+  visitNotesHwCallback.value?.(text)
 }
 
+// ── Navigation & views ───────────────────────────
+function calendarNav(action: 'prev' | 'today' | 'next') {
+  const api = calendarRef.value?.getApi()
+  if (!api) return
+  if (action === 'prev') api.prev()
+  else if (action === 'next') api.next()
+  else api.today()
+}
+
+function setView(v: string) {
+  viewType.value = v
+  calendarRef.value?.getApi()?.changeView(v)
+}
+
+function refreshCalendar() {
+  if (calendarLoading.value) return
+  loadEvents()
+  calendarRef.value?.getApi()?.refetchEvents()
+}
+
+async function loadEvents() {
+  try {
+    const events = await apiFetch('/api/visits')
+    loadedEvents.value = events || []
+    eventsLoadedOnce.value = true
+  } catch (err) {
+    eventsLoadedOnce.value = true
+    $toast.error(t('calendar.calendarLoadError'))
+  }
+}
+
+function handleResize() {
+  const mobile = window.innerWidth < 768
+  const wasMobile = isMobile.value
+  isMobile.value = mobile
+  const api = calendarRef.value?.getApi()
+  if (!api) return
+  if (mobile && !wasMobile && viewType.value === 'timeGridWeek') {
+    viewType.value = 'timeGridDay'
+    api.changeView('timeGridDay')
+  } else if (!mobile && wasMobile && viewType.value === 'timeGridDay') {
+    viewType.value = 'timeGridWeek'
+    api.changeView('timeGridWeek')
+  }
+}
+
+watch(eventsLoadedOnce, (v) => {
+  if (v) handleResize()
+})
+
+// ── Dialog helpers ───────────────────────────────
 const closeVisitDialog = () => {
-    visitDialog.value = false
-    isEditMode.value = false
-    currentVisitId.value = null
-    newVisit.value = {
-        start: '',
-        end: '',
-        patientId: null,
-        type: '',
-        status: '',
-        notes: '',
-    }
+  visitDialog.value = false
+  isEditMode.value = false
+  currentVisitId.value = null
+  newVisit.value = emptyVisit()
+}
+
+function openCreateDialog() {
+  newVisit.value = {
+    ...emptyVisit(),
+    start: moment().format('YYYY-MM-DD HH:mm'),
+    type: visitTypes.value[0],
+    status: statusOptions.value[0],
+  }
+  isEditMode.value = false
+  currentVisitId.value = null
+  visitDialog.value = true
+}
+
+function openDeleteDialog() {
+  deleteDialog.value = true
 }
 
 const fetchPatients = async () => {
-    patientsLoading.value = true
-    try {
-        const response = await apiFetch('/api/visits/patients')
-        if (response.success) {
-            patients.value = response.data
-        }
-    } catch (err) {
-        $toast.error(t('calendar.fetchPatientsError'))
-    } finally {
-        patientsLoading.value = false
+  patientsLoading.value = true
+  try {
+    const response = await apiFetch('/api/visits/patients')
+    if (response.success) {
+      patients.value = response.data
     }
+  } catch (err) {
+    $toast.error(t('calendar.fetchPatientsError'))
+  } finally {
+    patientsLoading.value = false
+  }
 }
 
 const saveVisit = async () => {
-    if (!newVisit.value.patientId || !newVisit.value.start) {
-        $toast.error(t('calendar.selectPatientError'))
-        return
+  if (!newVisit.value.patientId || !newVisit.value.start) {
+    $toast.error(t('calendar.selectPatientError'))
+    return
+  }
+
+  saving.value = true
+  try {
+    const startISO = new Date(newVisit.value.start.replace(' ', 'T') + ':00').toISOString()
+    let durationMinutes = 30
+
+    if (newVisit.value.end) {
+      const endISO = new Date(newVisit.value.end.replace(' ', 'T') + ':00').toISOString()
+      durationMinutes = Math.round((new Date(endISO).getTime() - new Date(startISO).getTime()) / 60000)
     }
 
-    saving.value = true
-    try {
-        const startISO = new Date(newVisit.value.start.replace(' ', 'T') + ':00').toISOString()
-        let durationMinutes = 30
-
-        if (newVisit.value.end) {
-            const endISO = new Date(newVisit.value.end.replace(' ', 'T') + ':00').toISOString()
-            durationMinutes = Math.round((new Date(endISO).getTime() - new Date(startISO).getTime()) / 60000)
-        }
-
-        const payload = {
-            patientId: newVisit.value.patientId,
-            visitDate: startISO,
-            visitType: newVisit.value.type,
-            reason: null,
-            notes: newVisit.value.notes || null,
-            durationMinutes: durationMinutes > 0 ? durationMinutes : 30,
-        }
-
-        const endpoint = isEditMode.value && currentVisitId.value ? `/api/visits/${currentVisitId.value}` : '/api/visits'
-        const method = isEditMode.value && currentVisitId.value ? 'PUT' : 'POST'
-
-        const response = await apiFetch(endpoint, { method, body: payload })
-
-        if (response.success) {
-            $toast.success(isEditMode.value ? t('calendar.visitSaved') : t('calendar.visitCreated'))
-            closeVisitDialog()
-            calendarRef.value?.getApi()?.refetchEvents()
-        } else {
-            $toast.error(response.error || t('calendar.saveError'))
-        }
-    } catch (err: any) {
-        $toast.error(err.data?.error || t('calendar.serverError'))
-    } finally {
-        saving.value = false
+    const payload = {
+      patientId: newVisit.value.patientId,
+      visitDate: startISO,
+      visitType: newVisit.value.type,
+      reason: null,
+      notes: newVisit.value.notes || null,
+      durationMinutes: durationMinutes > 0 ? durationMinutes : 30,
     }
+
+    const endpoint = isEditMode.value && currentVisitId.value ? `/api/visits/${currentVisitId.value}` : '/api/visits'
+    const method = isEditMode.value && currentVisitId.value ? 'PUT' : 'POST'
+
+    const response = await apiFetch(endpoint, { method, body: payload })
+
+    if (response.success) {
+      $toast.success(isEditMode.value ? t('calendar.visitSaved') : t('calendar.visitCreated'))
+      closeVisitDialog()
+      await loadEvents()
+      calendarRef.value?.getApi()?.refetchEvents()
+    } else {
+      $toast.error(response.error || t('calendar.saveError'))
+    }
+  } catch (err: any) {
+    $toast.error(err.data?.error || t('calendar.serverError'))
+  } finally {
+    saving.value = false
+  }
 }
 
-const deleteVisit = async () => {
-    if (!currentVisitId.value || !confirm(t('calendar.confirmDeleteVisit'))) return
-
-    try {
-        const response = await apiFetch(`/api/visits/${currentVisitId.value}`, { method: 'DELETE' })
-        if (response.success) {
-            $toast.success(t('calendar.visitDeleted'))
-            closeVisitDialog()
-            calendarRef.value?.getApi()?.refetchEvents()
-        } else {
-            $toast.error(response.error || t('calendar.deleteError'))
-        }
-    } catch (err: any) {
-        $toast.error(err.data?.error || t('calendar.serverError'))
+const confirmDeleteVisit = async () => {
+  if (!currentVisitId.value) return
+  deleting.value = true
+  try {
+    const response = await apiFetch(`/api/visits/${currentVisitId.value}`, { method: 'DELETE' })
+    if (response.success) {
+      $toast.success(t('calendar.visitDeleted'))
+      deleteDialog.value = false
+      closeVisitDialog()
+      await loadEvents()
+      calendarRef.value?.getApi()?.refetchEvents()
+    } else {
+      $toast.error(response.error || t('calendar.deleteError'))
     }
+  } catch (err: any) {
+    $toast.error(err.data?.error || t('calendar.serverError'))
+  } finally {
+    deleting.value = false
+  }
 }
+
+// ── Local event patching so metrics stay in sync ──
+function patchLoadedEvent(id: string, patch: (e: any) => any) {
+  loadedEvents.value = loadedEvents.value.map((e) => (e.id === id ? { ...patch(e) } : e))
+}
+
+// ── FullCalendar ─────────────────────────────────
+const fcLocale = computed(() => {
+  const months = resolveMsgList('calendar.month')
+  const wdRaw = tm('calendar.weekday') as unknown as Record<string, unknown>
+  const wd = Object.fromEntries(
+    Object.entries(wdRaw ?? {}).map(([k, v]) => [k, resolveMsg(v)])
+  ) as Record<string, string>
+  return {
+    ...faLocale,
+    monthNames: months,
+    monthNamesShort: months,
+    dayNames: ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'],
+    dayNamesShort: [wd.sun, wd.mon, wd.tue, wd.wed, wd.thu, wd.fri, wd.sat],
+  }
+})
 
 const calendarOptions = computed(() => ({
-    plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
-    initialView: 'timeGridWeek',
-    headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'timeGridDay,timeGridWeek,dayGridMonth'
-    },
-    height: 'auto',
-    locale: faLocale,
-    direction: 'rtl',
-    nowIndicator: true,
-    editable: true,
-    selectable: true,
-    selectMirror: true,
-    slotMinTime: '07:00:00',
-    slotMaxTime: '22:00:00',
-    slotDuration: '00:30:00',
-    allDaySlot: false,
-    buttonText: {
-        today: t('calendar.buttonText.today'),
-        month: t('calendar.buttonText.month'),
-        week: t('calendar.buttonText.week'),
-        day: t('calendar.buttonText.day')
-    },
+  plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+  initialView: viewType.value,
+  headerToolbar: false,
+  height: 'auto',
+  locale: isFa.value ? fcLocale.value : enGbLocale,
+  direction: isFa.value ? 'rtl' : 'ltr',
+  firstDay: isFa.value ? 6 : 1,
+  nowIndicator: true,
+  editable: true,
+  selectable: true,
+  selectMirror: true,
+  slotMinTime: '07:00:00',
+  slotMaxTime: '22:00:00',
+  slotDuration: '00:30:00',
+  allDaySlot: false,
+  expandRows: true,
+  dayMaxEvents: 3,
+  dayHeaderFormat: { weekday: 'short' },
+  slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+  eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
 
-    events: async (fetchInfo: any, successCallback: Function, failureCallback: Function) => {
-        try {
-            const events = await apiFetch('/api/visits', {
-                query: { start: fetchInfo.startStr, end: fetchInfo.endStr },
-            })
-            successCallback(events)
-        } catch (err) {
-            failureCallback(err)
-            $toast.error(t('calendar.calendarLoadError'))
-        }
-    },
+  datesSet: (info: any) => {
+    gridStart.value = info.start
+    gridEnd.value = new Date(info.end.getTime() - 1)
+  },
 
-    eventDrop: async (info: any) => {
-        try {
-            await apiFetch(`/api/visits/${info.event.id}`, {
-                method: 'PUT',
-                body: { visitDate: info.event.start.toISOString() },
-            })
-            $toast.success(t('calendar.timeChanged'))
-        } catch {
-            info.revert()
-            $toast.error(t('calendar.timeChangeError'))
-        }
-    },
+  loading: (isLoading: boolean) => {
+    calendarLoading.value = isLoading
+    if (!isLoading) eventsLoadedOnce.value = true
+  },
 
-    eventResize: async (info: any) => {
-        try {
-            const diffMins = Math.round((info.event.end.getTime() - info.event.start.getTime()) / 60000)
-            await apiFetch(`/api/visits/${info.event.id}`, {
-                method: 'PUT',
-                body: {
-                    visitDate: info.event.start.toISOString(),
-                    durationMinutes: diffMins
-                },
-            })
-            $toast.success(t('calendar.durationChanged'))
-        } catch {
-            info.revert()
-            $toast.error(t('calendar.timeChangeError'))
-        }
-    },
+  events: (fetchInfo: any, successCallback: Function) => {
+    successCallback(loadedEvents.value)
+  },
 
-    select: (info: any) => {
-        calendarRef.value?.getApi()?.unselect()
-        newVisit.value.start = info.startStr.slice(0, 16).replace('T', ' ')
-        newVisit.value.end = info.endStr ? info.endStr.slice(0, 16).replace('T', ' ') : ''
+  eventDrop: async (info: any) => {
+    try {
+      await apiFetch(`/api/visits/${info.event.id}`, {
+        method: 'PUT',
+        body: { visitDate: info.event.start.toISOString() },
+      })
+      $toast.success(t('calendar.timeChanged'))
+      const dur = new Date(info.oldEvent.end).getTime() - new Date(info.oldEvent.start).getTime()
+      patchLoadedEvent(info.event.id, (e) => ({
+        ...e,
+        start: info.event.start.toISOString(),
+        end: new Date(info.event.start.getTime() + dur).toISOString(),
+      }))
+    } catch {
+      info.revert()
+      $toast.error(t('calendar.timeChangeError'))
+    }
+  },
 
-        isEditMode.value = false
-        currentVisitId.value = null
-        visitDialog.value = true
-    },
+  eventResize: async (info: any) => {
+    try {
+      const diffMins = Math.round((info.event.end.getTime() - info.event.start.getTime()) / 60000)
+      await apiFetch(`/api/visits/${info.event.id}`, {
+        method: 'PUT',
+        body: {
+          visitDate: info.event.start.toISOString(),
+          durationMinutes: diffMins,
+        },
+      })
+      $toast.success(t('calendar.durationChanged'))
+      patchLoadedEvent(info.event.id, (e) => ({
+        ...e,
+        start: info.event.start.toISOString(),
+        end: info.event.end.toISOString(),
+      }))
+    } catch {
+      info.revert()
+      $toast.error(t('calendar.timeChangeError'))
+    }
+  },
 
-    eventClick: (info: any) => {
-        const event = info.event
-        newVisit.value = {
-            start: event.startStr.slice(0, 16).replace('T', ' '),
-            end: event.endStr ? event.endStr.slice(0, 16).replace('T', ' ') : '',
-            patientId: event.extendedProps.patientId || null,
-            type: event.extendedProps.type || t('calendar.visitTypes')[0],
-            status: t('calendar.statusOptions')[0],
-            notes: event.extendedProps.notes || '',
-        }
-        currentVisitId.value = event.id
-        isEditMode.value = true
-        visitDialog.value = true
-    },
+  select: (info: any) => {
+    calendarRef.value?.getApi()?.unselect()
+    newVisit.value = {
+      ...emptyVisit(),
+      start: info.startStr.slice(0, 16).replace('T', ' '),
+      end: info.endStr ? info.endStr.slice(0, 16).replace('T', ' ') : '',
+      type: visitTypes.value[0],
+      status: statusOptions.value[0],
+    }
+    isEditMode.value = false
+    currentVisitId.value = null
+    visitDialog.value = true
+  },
+
+  eventClick: (info: any) => {
+    const event = info.event
+    newVisit.value = {
+      start: event.startStr.slice(0, 16).replace('T', ' '),
+      end: event.endStr ? event.endStr.slice(0, 16).replace('T', ' ') : '',
+      patientId: event.extendedProps.patientId || null,
+      type: event.extendedProps.type || visitTypes.value[0],
+      status: statusOptions.value[0],
+      notes: event.extendedProps.notes || '',
+    }
+    currentVisitId.value = event.id
+    isEditMode.value = true
+    visitDialog.value = true
+  },
 }))
 
 onMounted(() => {
-    isMobile.value = window.innerWidth < 768
-
-    // تشخیص اولیه وضعیت دارک مود
-    isDarkMode.value = document.documentElement.classList.contains('dark')
-
-    // گوش دادن به تغییرات کلاس تگ html برای همگام‌سازی دارک مود
-    themeObserver = new MutationObserver(() => {
-        isDarkMode.value = document.documentElement.classList.contains('dark')
-    })
-
-    themeObserver.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['class']
-    })
-
-    fetchPatients()
-    handleResize()
-    window.addEventListener('resize', handleResize)
+  isMobile.value = window.innerWidth < 768
+  fetchPatients()
+  loadEvents()
+  window.addEventListener('resize', handleResize)
 })
 
 onBeforeUnmount(() => {
-    if (themeObserver) {
-        themeObserver.disconnect()
-    }
-    window.removeEventListener('resize', handleResize)
+  window.removeEventListener('resize', handleResize)
 })
 
 useSeoMeta({
-    title: t('calendar.titleSeo'),
+  title: t('calendar.titleSeo'),
 })
 </script>
 
 <style scoped>
-/* استایل‌های عمیق مینیمال شده برای تقویم */
-:deep(.fc) {
-    font-family: inherit;
-    color: #334155;
-    background: #ffffff;
+/* ── Metrics ───────────────────────────────────── */
+.cal-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.875rem;
+  margin-bottom: 1.375rem;
 }
 
-.dark :deep(.fc) {
-    color: #e2e8f0;
-    background: #1e293b !important;
+.cal-metric {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1rem 1.125rem;
+  border-radius: 1.125rem;
+  min-width: 0;
 }
 
-:deep(.fc-toolbar) {
-    padding: 24px !important;
-    margin-bottom: 0 !important;
-    border-bottom: 1px solid #f1f5f9;
-    background-color: #ffffff;
+.cal-metric__copy {
+  min-width: 0;
 }
 
-.dark :deep(.fc-toolbar) {
-    border-bottom: 1px solid #334155;
-    background-color: #1e293b !important;
+.cal-metric__value {
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--asa-label);
+  font-variant-numeric: tabular-nums;
 }
 
-:deep(.fc-toolbar-title) {
-    font-size: 1rem !important;
-    font-weight: 800;
-    color: #1e293b !important;
+.cal-metric__value--md {
+  font-size: 0.9375rem;
+  letter-spacing: -0.01em;
 }
 
-.dark :deep(.fc-toolbar-title) {
-    color: #e2e8f0;
+.cal-metric__label {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--asa-label-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* ========================================================
-   اصلاح دکمه‌ها و حالت Active در حالت شب و روز
-======================================================== */
-:deep(.fc-button) {
-    background-color: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    color: #475569 !important;
-    border-radius: 8px !important;
-    padding: 8px 16px !important;
-    font-weight: 500;
-    font-size: 0.875rem !important;
-    box-shadow: none !important;
-    text-transform: capitalize;
-    transition: all 0.2s ease;
+/* ── Calendar card ─────────────────────────────── */
+.cal-card {
+  padding: 0;
+  overflow: hidden;
 }
 
-.dark :deep(.fc-button) {
-    background-color: #334155 !important;
-    border-color: #475569 !important;
-    color: #e2e8f0 !important;
+.cal-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.125rem;
+  border-bottom: 1px solid var(--asa-sep);
 }
 
-:deep(.fc-button:hover) {
-    background-color: #f1f5f9 !important;
-    color: #0f172a !important;
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
 }
 
-.dark :deep(.fc-button:hover) {
-    background-color: #475569 !important;
-    color: #f8fafc !important;
+.cal-nav__ic {
+  padding-inline: 0.5rem !important;
 }
 
-/* حالت اکتیو برای روز */
-:deep(.fc-button-active) {
-    background-color: #CDB4DB !important;
-    border-color: #CDB4DB !important;
-    color: white !important;
+.cal-range {
+  flex: 1;
+  min-width: 150px;
+  text-align: center;
 }
 
-/* رفع مشکل: حالت اکتیو برای شب (اولویت بالاتر برای جلوگیری از خنثی شدن) */
-.dark :deep(.fc-button-active) {
-    background-color: #CDB4DB !important;
-    border-color: #CDB4DB !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25) !important;
+.cal-range__primary {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--asa-label);
 }
 
-:deep(.fc-button:focus) {
-    box-shadow: 0 0 0 2px #C7D2FE !important;
+.cal-range__secondary {
+  margin-top: 2px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--asa-label-3);
+  font-variant-numeric: tabular-nums;
 }
 
-:deep(.fc-theme-standard th) {
-    border: none;
-    border-bottom: 1px solid #e2e8f0;
-    padding: 12px 0;
-    background: #f8fafc;
-    font-weight: 600;
-    color: #64748b;
+/* Segmented control (Apple style) */
+.asa-seg {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  border-radius: 0.75rem;
 }
 
-.dark :deep(.fc-theme-standard th) {
-    border-bottom: 1px solid #334155;
-    background: #1e293b !important;
-    color: #94a3b8;
+.asa-seg__btn {
+  height: 2rem;
+  padding: 0 0.875rem;
+  border: none;
+  border-radius: 0.625rem;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--asa-label-2);
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default),
+    box-shadow 150ms var(--ease-default);
 }
 
-:deep(.fc-theme-standard td) {
-    border-color: #f1f5f9;
+.asa-seg__btn:hover {
+  color: var(--asa-label);
 }
 
-.dark :deep(.fc-theme-standard td) {
-    border-color: #334155;
+.asa-seg__btn--on {
+  background: var(--asa-bg-card);
+  color: var(--asa-label);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 2px 6px -2px rgba(0, 0, 0, 0.1);
 }
 
-:deep(.fc-scrollgrid) {
-    border-color: #f1f5f9;
+.dark .asa-seg__btn--on {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-.dark :deep(.fc-scrollgrid) {
-    border-color: #334155;
+/* Skeleton */
+.cal-skel {
+  display: grid;
+  gap: 0.875rem;
+  padding: 1.125rem;
 }
 
-:deep(.fc-timegrid-col),
-:deep(.fc-daygrid-day) {
-    background: #ffffff;
+/* Legend */
+.cal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem 1.125rem;
+  border-top: 1px solid var(--asa-sep);
 }
 
-.dark :deep(.fc-timegrid-col),
-.dark :deep(.fc-daygrid-day) {
-    background: #1e293b !important;
+.cal-legend__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--asa-label-2);
 }
 
-/* ========================================================
-   اصلاح رنگ روز جاری (Today) و هدر آن در حالت شب
-======================================================== */
-:deep(.fc-day-today) {
-    background: #eef2ff !important;
+.cal-legend__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem 0.875rem;
 }
 
-.dark :deep(.fc-day-today) {
-    /* یک هاله ملایم آبی رنگ برای متمایز شدن پس‌زمینه در حالت شب */
-    background: rgba(79, 70, 229, 0.08) !important;
+.cal-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--asa-label-2);
 }
 
-/* تغییر رنگ متن هدر روز جاری در حالت شب */
-.dark :deep(.fc-day-today .fc-col-header-cell-cushion) {
-    color: #A2D2FF !important;
-    font-weight: 800;
+.cal-legend__dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
 }
 
-:deep(.fc-non-business) {
-    background: #f8fafc;
+/* ── Icon close button (local asa-icon-btn) ────── */
+.cal-x {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  color: var(--asa-label-2);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default),
+    transform 120ms var(--ease-default);
 }
 
-.dark :deep(.fc-non-business) {
-    background: #162032;
+.cal-x:hover {
+  background: color-mix(in srgb, var(--asa-label) 14%, transparent);
+  color: var(--asa-label);
 }
 
-/* ========================================================
-   اصلاح بخش انتخاب شده (Highlight / Drag & Select)
-======================================================== */
-:deep(.fc-highlight) {
-    background: #C7D2FE !important;
-    opacity: 0.3;
+.cal-x:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
-.dark :deep(.fc-highlight) {
-    background: rgba(120, 139, 255, 0.25) !important;
+/* ── Form ──────────────────────────────────────── */
+.pf-stack > * + * {
+  margin-top: 1rem;
 }
 
-:deep(.fc-timegrid-now-indicator-line) {
-    border-color: #ef4444;
+.cal-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.875rem 1rem;
 }
 
-.dark :deep(.fc-timegrid-now-indicator-line) {
-    border-color: #f87171;
+.pf-field :deep(.v-field) {
+  background-color: color-mix(in srgb, var(--asa-label) 5%, transparent);
+  border-radius: 0.875rem;
+  box-shadow: none;
+  color: var(--asa-label);
 }
 
-.dark :deep(.fc-timegrid-slot) {
-    background: transparent !important;
+.pf-field :deep(.v-field--focused) {
+  background-color: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--asa-accent) 18%, transparent);
 }
 
-.dark :deep(.fc-timegrid-slot-lane) {
-    background: transparent !important;
+.pf-field :deep(.v-field__overlay) {
+  background: transparent;
 }
 
-.dark :deep(.fc-scrollgrid-section > td) {
-    background: transparent !important;
+.pf-field :deep(.v-field__input),
+.pf-field :deep(.v-field__input::placeholder),
+.pf-field :deep(.v-label),
+.pf-field :deep(.v-select__selection) {
+  color: var(--asa-label);
 }
 
-.dark :deep(.fc-scrollgrid-section-header > td) {
-    background: transparent !important;
+.pf-field :deep(.v-field__input::placeholder) {
+  color: var(--asa-label-3);
 }
 
-.dark :deep(.fc-scrollgrid-sync-table) {
-    background: transparent !important;
+.pf-field :deep(.v-icon) {
+  color: var(--asa-label-2);
 }
 
-.dark :deep(.fc-timegrid-axis) {
-    background: #1e293b !important;
+.pf-field :deep(.v-field--focused .v-icon) {
+  color: var(--asa-accent);
 }
 
-.dark :deep(.fc-timegrid-axis-frame) {
-    background: #1e293b !important;
+/* Persian date/time picker input */
+.pf-field :deep(.vpd-input-group) {
+  display: block;
 }
 
-.dark :deep(.fc-timegrid-axis-cushion) {
-    color: #64748b;
+.pf-field :deep(.vpd-input-group input) {
+  width: 100%;
+  height: 46px;
+  padding: 0 0.875rem;
+  border: none;
+  border-radius: 0.875rem;
+  background: color-mix(in srgb, var(--asa-label) 5%, transparent);
+  color: var(--asa-label);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  outline: none;
+  transition: background-color 150ms var(--ease-default), box-shadow 150ms var(--ease-default);
 }
 
-.dark :deep(.fc-col-header-cell-cushion) {
-    color: #94a3b8;
+.pf-field :deep(.vpd-input-group input:focus) {
+  background: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--asa-accent) 18%, transparent);
 }
 
-.dark :deep(.fc-daygrid-day-top) {
-    color: #cbd5e1;
+.pf-field :deep(.vpd-icon-btn) {
+  display: none;
 }
 
-.dark :deep(.fc-daygrid-day-number) {
-    color: #cbd5e1;
+/* ── FullCalendar theming (token-based, auto dark) ── */
+.cal-card :deep(.fc) {
+  --fc-border-color: var(--asa-sep);
+  --fc-page-bg-color: transparent;
+  --fc-today-bg-color: color-mix(in srgb, var(--asa-accent) 9%, transparent);
+  --fc-neutral-bg-color: color-mix(in srgb, var(--asa-label) 4%, transparent);
+  font-family: inherit;
+  color: var(--asa-label);
+  background: transparent;
 }
 
-.dark :deep(.fc-daygrid-day-events) {
-    background: transparent !important;
+.cal-card :deep(.fc-scrollgrid),
+.cal-card :deep(.fc-theme-standard th),
+.cal-card :deep(.fc-theme-standard td) {
+  border-color: var(--asa-sep);
 }
 
-.dark :deep(.fc-timegrid-col-events) {
-    background: transparent !important;
+.cal-card :deep(.fc-col-header-cell) {
+  background: color-mix(in srgb, var(--asa-label) 4%, transparent);
+  padding: 0.625rem 0;
 }
 
-.dark :deep(.fc-timegrid-col-frame) {
-    background: transparent !important;
+.cal-card :deep(.fc-col-header-cell-cushion) {
+  display: inline-flex;
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--asa-label-2);
 }
 
-.dark :deep(.fc-view-harness) {
-    background: #1e293b !important;
+.cal-card :deep(.fc-day-today .fc-col-header-cell-cushion) {
+  color: var(--asa-accent-deep);
+  font-weight: 700;
 }
 
-.dark :deep(.fc-timegrid-slots) {
-    background: transparent !important;
+.cal-card :deep(.fc-daygrid-day-number) {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--asa-label-2);
+  padding: 0.375rem 0.5rem;
 }
 
-.dark :deep(.fc-daygrid-body) {
-    background: #1e293b !important;
+.cal-card :deep(.fc-daygrid-day.fc-day-today .fc-daygrid-day-number) {
+  color: var(--asa-accent-deep);
+  font-weight: 700;
 }
 
-.dark :deep(.fc-daygrid-body-unbalanced) {
-    background: #1e293b !important;
+.cal-card :deep(.fc-timegrid-axis-cushion) {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--asa-label-3);
 }
 
-.dark :deep(.fc-timegrid-body) {
-    background: #1e293b !important;
+.cal-card :deep(.fc-timegrid-now-indicator-line),
+.cal-card :deep(.fc-now-indicator-line) {
+  border-color: var(--asa-rose);
 }
 
-.dark :deep(.fc-bg-event) {
-    opacity: 0.15;
+.cal-card :deep(.fc-timegrid-now-indicator-arrow),
+.cal-card :deep(.fc-now-indicator-arrow) {
+  border-color: var(--asa-rose);
+  background-color: var(--asa-rose);
 }
 
-.dark :deep(.fc-popover) {
-    background: #1e293b !important;
-    border-color: #475569;
+.cal-card :deep(.fc-highlight) {
+  background: color-mix(in srgb, var(--asa-accent) 16%, transparent);
 }
 
-.dark :deep(.fc-popover-title) {
-    color: #e2e8f0;
+.cal-card :deep(.fc-non-business) {
+  background: color-mix(in srgb, var(--asa-label) 3%, transparent);
 }
 
-.dark :deep(.fc-daygrid-more-popover .fc-daygrid-event) {
-    background: #1e3a5f;
-    color: #93c5fd;
+/* Event chips */
+.cal-card :deep(.fc-event) {
+  border-radius: 0.5rem;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.1);
+  transition: transform 150ms var(--ease-default), box-shadow 150ms var(--ease-default);
 }
 
-.dark :deep(.fc-view-harness-active) {
-    background: #1e293b !important;
+.cal-card :deep(.fc-event:hover) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px -4px rgba(17, 24, 39, 0.26);
 }
 
-.dark :deep(.fc-scrollgrid-liquid) {
-    background: #1e293b !important;
+.cal-card :deep(.fc-event-time),
+.cal-card :deep(.fc-event-title) {
+  font-weight: 600;
 }
 
-.dark :deep(.fc-scroller::-webkit-scrollbar) {
-    width: 8px;
-    height: 8px;
+.cal-card :deep(.fc-daygrid-more-link) {
+  color: var(--asa-accent-deep);
+  font-weight: 600;
+  font-size: 0.75rem;
+  margin-inline: 4px;
 }
 
-.dark :deep(.fc-scroller::-webkit-scrollbar-track) {
-    background: #1e293b !important;
+.cal-card :deep(.fc-popover) {
+  border-radius: 0.875rem;
+  border-color: var(--asa-card-ring);
+  box-shadow: var(--asa-card-shadow);
+  overflow: hidden;
 }
 
-.dark :deep(.fc-scroller::-webkit-scrollbar-thumb) {
-    background: #475569;
-    border-radius: 4px;
+.cal-card :deep(.fc-popover-header) {
+  background: var(--asa-bg-card);
 }
 
-.dark :deep(.fc-scroller::-webkit-scrollbar-thumb:hover) {
-    background: #64748b;
+.cal-card :deep(.fc-popover-title) {
+  color: var(--asa-label);
+  font-size: 0.875rem;
 }
 
-:deep(.fc-more-popover) {
-    background: #ffffff;
-    border-color: #e2e8f0;
+.cal-card :deep(.fc-scroller::-webkit-scrollbar) {
+  width: 8px;
+  height: 8px;
 }
 
-.dark :deep(.fc-more-popover) {
-    background: #1e293b !important;
-    border-color: #475569;
+.cal-card :deep(.fc-scroller::-webkit-scrollbar-track) {
+  background: transparent;
 }
 
-.dark :deep(.fc-more-popover .fc-popover-title) {
-    color: #e2e8f0;
+.cal-card :deep(.fc-scroller::-webkit-scrollbar-thumb) {
+  background: color-mix(in srgb, var(--asa-label) 22%, transparent);
+  border-radius: 9999px;
 }
 
-.dark :deep(.fc-popover-header) {
-    background: #334155;
+.cal-card :deep(.fc-scroller::-webkit-scrollbar-thumb:hover) {
+  background: color-mix(in srgb, var(--asa-label) 32%, transparent);
 }
 
-.dark :deep(.fc-popover-body) {
-    background: #1e293b !important;
-}
-
-/* استایل زیبای کارت رویدادها */
-:deep(.fc-event) {
-    border: none;
-    border-right: 3px solid #CDB4DB;
-    /* خط کنار رویداد (RTL) */
-    background-color: #E0E7FF;
-    color: #CDB4DB;
-    border-radius: 6px;
-    padding: 3px 6px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
-    margin: 1px 2px;
-}
-
-:deep(.fc-event:hover) {
-    background-color: #C7D2FE;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1);
-}
-
-.dark :deep(.fc-event) {
-    border-right-color: #A2D2FF;
-    background-color: #1e3a5f;
-    color: #93c5fd;
-}
-
-.dark :deep(.fc-event:hover) {
-    background-color: #2a4a7a;
-    box-shadow: 0 4px 6px -1px rgba(120, 139, 255, 0.2);
-}
-
-:deep(.fc-timegrid-slot-label-cushion) {
-    color: #94a3b8;
-    font-weight: 500;
-    font-size: 0.8rem;
-}
-
-.dark :deep(.fc-timegrid-slot-label-cushion) {
-    color: #64748b;
-}
-
-:deep(.fc-now-indicator-line) {
-    border-color: #ef4444;
-}
-
-:deep(.fc-now-indicator-arrow) {
-    border-color: #ef4444;
-    background-color: #ef4444;
-}
+/* ── Responsive ────────────────────────────────── */
+@media (max-width: 639px) {
+  .cal-metrics {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.125rem;
+  }
 
-:deep(.fc-button-group) {
-    gap: 4px
-}
-
-:deep(.fc-daygrid-more-link) {
-    color: #CDB4DB;
-    font-weight: 600;
-}
-
-.dark :deep(.fc-daygrid-more-link) {
-    color: #93c5fd;
-}
-
-:deep(.fc-event-time),
-:deep(.fc-event-title) {
-    color: inherit;
-}
-
-/* استایل DatePicker */
-:deep(.vpd-input-group input) {
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    height: 48px;
-    padding: 0 16px;
-    font-size: 0.95rem;
-    background: #ffffff;
-    transition: all 0.2s;
-    color: #334155;
-    width: 100%;
-}
-
-.dark :deep(.vpd-input-group input) {
-    border-color: #475569;
-    background: #334155;
-    color: #e2e8f0;
-}
-
-:deep(.vpd-input-group input:focus) {
-    border-color: #CDB4DB;
-    box-shadow: 0 0 0 3px #C7D2FE;
-    outline: none;
-}
-
-.dark :deep(.vpd-input-group input:focus) {
-    border-color: #A2D2FF;
-    box-shadow: 0 0 0 3px #3b5a9a;
-}
-
-:deep(.vpd-icon-btn) {
-    display: none;
-}
+  .cal-metric {
+    padding: 0.875rem 1rem;
+  }
 
-:deep(.vpd-prev),
-:deep(.vpd-next),
-:deep(.vpd-up-arrow-btn),
-:deep(.vpd-down-arrow-btn) {
-    display: flex;
-    align-items: center;
+  .cal-toolbar {
     justify-content: center;
-}
+    gap: 0.625rem;
+  }
 
-:deep(.vpd-up-arrow-btn) {
-    margin-bottom: 20px !important;
-}
+  .cal-range {
+    order: 3;
+    width: 100%;
+  }
 
-:deep(.vpd-time .vpd-time-h),
-:deep(.vpd-time .vpd-time-m) {
-    margin-top: 45px;
-}
-
-@media (max-width: 767px) {
-    :deep(.fc-toolbar) {
-        flex-direction: column;
-        gap: 12px;
-        padding: 16px !important;
-    }
-
-    :deep(.fc-toolbar-chunk) {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-    }
-
-    :deep(.fc-toolbar-title) {
-        font-size: 1.1rem !important;
-    }
+  .cal-grid2 {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

@@ -41,7 +41,7 @@
                 </p>
 
                 <div v-if="isConverting" class="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                    <v-progress-circular indeterminate size="18" width="2" color="#CDB4DB" />
+                    <v-progress-circular indeterminate size="18" width="2" color="#00ADB5" />
                     <span>{{ $t('handwriting.converting') }}</span>
                 </div>
 

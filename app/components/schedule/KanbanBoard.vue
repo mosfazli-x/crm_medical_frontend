@@ -2,7 +2,7 @@
   <div class="flex gap-4 overflow-x-auto pb-4 board-scroll">
     <div v-for="col in columns" :key="col.status"
       class="flex-1 min-w-[280px] max-w-[340px] shrink-0 rounded-2xl border transition-colors schedule-column"
-      :class="dragOverCol === col.status ? 'border-indigo-400 bg-indigo-50/60 dark:bg-indigo-500/10' : 'border-slate-200/80 dark:border-slate-700/60 bg-slate-50/60 dark:bg-slate-800/30'"
+      :class="dragOverCol === col.status ? 'border-teal-400 bg-teal-50/60 dark:bg-teal-500/10' : 'border-slate-200/80 dark:border-slate-700/60 bg-slate-50/60 dark:bg-slate-800/30'"
       @dragover.prevent @dragenter="onDragEnter(col.status)" @dragleave="onDragLeave(col.status)"
       @drop.prevent="onDrop(col.status)">
       <div class="flex items-center justify-between px-3 py-2.5! border-b border-slate-200/70 dark:border-slate-700/50">

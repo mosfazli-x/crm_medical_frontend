@@ -1,434 +1,496 @@
 ﻿<template>
   <Transition name="loader-exit" @after-leave="$emit('finished')">
-    <div v-if="rendered" :dir="isRtl ? 'rtl' : 'ltr'"
-      class="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-[#222831]"
-      role="status" aria-live="polite" :aria-label="translatedStatuses[currentIndex]">
-      <div ref="threeContainer" class="absolute inset-0 pointer-events-none"></div>
+    <LoadingBackground v-if="rendered" class="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"
+      :class="isLight ? 'ld-shell ld-shell--light' : 'ld-shell'" role="status" aria-live="polite"
+      aria-label="Loading MedVista">
+      <temolate>
+        <!-- Animated background orbs (teal, matching landing glow) -->
+        <div class="absolute inset-0 overflow-hidden">
+          <div class="loader-orb loader-orb--1 ld-glow ld-glow--1 absolute w-[600px] h-[600px] rounded-full blur-[120px] -top-40 -right-32"
+            :class="isLight ? 'opacity-[0.20]' : 'opacity-[0.22]'"></div>
+          <div
+            class="loader-orb loader-orb--2 ld-glow ld-glow--2 absolute w-[500px] h-[500px] rounded-full blur-[100px] -bottom-36 -left-28"
+            :class="isLight ? 'opacity-[0.14]' : 'opacity-[0.16]'"></div>
+          <div
+            class="loader-orb loader-orb--3 ld-glow ld-glow--3 absolute w-[400px] h-[400px] rounded-full blur-[90px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+            :class="isLight ? 'opacity-[0.10]' : 'opacity-[0.12]'"></div>
+        </div>
 
-      <div class="absolute inset-0 bg-gradient-to-b from-[#222831]/60 via-transparent to-[#222831]/95"></div>
-      <div
-        class="absolute inset-0 bg-[radial-gradient(90%_70%_at_18%_88%,rgba(0,173,181,0.14),transparent_65%)]">
-      </div>
+        <!-- Subtle teal grid pattern overlay -->
+        <div class="absolute inset-0 ld-grid" />
+        <div class="absolute inset-0 ld-veil" aria-hidden="true" />
 
-      <div ref="cardRef"
-        class="relative z-10 flex flex-col w-[min(88vw,400px)] rounded-3xl border border-[#4A505A]/60 bg-[#2B3138]/80 shadow-2xl shadow-black/50 overflow-hidden"
-        style="backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);">
-        <div class="flex flex-col items-center gap-8 w-full px-8 py-10">
-          <div ref="logoRef" class="flex items-center gap-3">
-            <div class="relative flex-shrink-0">
-              <img src="../../assets/images/hastihoseinilogo.png" class="h-11">
-              <div class="absolute -inset-1 rounded-xl bg-[#00ADB5]/10 blur-md -z-10"></div>
+        <!-- Main content -->
+        <div class="relative z-10 flex flex-col items-center gap-8">
+          <!-- 3D Rotating medical cross -->
+          <div class="loader-3d-container">
+            <div class="loader-3d-element relative">
+              <!-- Front face -->
+              <div
+                class="loader-face loader-face--front ld-cube ld-cube--front">
+                <img src="~/assets/images/hastihoseinilogo.png" alt="Hasti Hosseini Clinic"
+                  class="w-16 h-16 object-contain ld-cube-logo" width="48" height="48" />
+              </div>
+              <!-- Back face -->
+              <div class="loader-face loader-face--back ld-cube ld-cube--back">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#EEEEEE" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                    d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
+                </svg>
+              </div>
+
+              <!-- Teal rim light along the cube edge -->
+              <div class="pointer-events-none absolute inset-0 rounded-2xl ld-cube-rim" aria-hidden="true"></div>
             </div>
-            <span class="text-md font-bold tracking-tight text-[#EEEEEE]/90">{{ resolvedClinicName }}</span>
           </div>
 
-          <div class="w-full">
-            <div ref="lottieRef" class="mx-auto w-3/4" style="aspect-ratio: 1/1; max-height: 150px;" />
+          <!-- Logo text with teal gradient -->
+          <div class="loader-text-container text-center">
+            <h1 class="loader-logo-text text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight ld-logo-gradient"
+              style="background-size: 200% auto;">
+              {{ t('landing.loading.clinicName') }}
+            </h1>
+            <p class="loader-tagline mt-2 text-sm font-medium ld-muted">
+              {{ computedTagline }}
+            </p>
           </div>
 
-          <div ref="statusRef" class="flex flex-col items-center gap-1">
+          <!-- Animated progress (ECG pulse) -->
+          <svg class="heart" viewBox="-5 -5 278 56" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <filter>
+              <feGaussianBlur stdDeviation="1.6"></feGaussianBlur>
+            </filter>
+            <g transform="translate(29.1 -127.42)">
+              <path pathLength="1"
+                d="M-28.73 167.2c26.43 9.21 68.46-9.46 85.45-12.03 18.45-2.78 32.82 4.86 28.75 9.83-3.82 4.66-25.77-21.18-14.81-31.5 9.54-8.98 17.64 10.64 16.42 17.06-1.51-6.2 2.95-26.6 14.74-22.11 11.7 4.46-4.33 49.03-15.44 44.08-6.97-3.1 15.44-16.26 26.1-16 23.03.56 55.6 27.51 126.63 3.36"
+                id="line"></path>
+            </g>
+            <g transform="translate(29.1 -127.42)">
+              <path pathLength="1"
+                d="M-28.73 167.2c26.43 9.21 68.46-9.46 85.45-12.03 18.45-2.78 32.82 4.86 28.75 9.83-3.82 4.66-25.77-21.18-14.81-31.5 9.54-8.98 17.64 10.64 16.42 17.06-1.51-6.2 2.95-26.6 14.74-22.11 11.7 4.46-4.33 49.03-15.44 44.08-6.97-3.1 15.44-16.26 26.1-16 23.03.56 55.6 27.51 126.63 3.36"
+                id="point" filter="url(#blur)"></path>
+            </g>
+          </svg>
+
+          <!-- Loading status text -->
+          <div class="loader-status-container h-5">
             <Transition name="status-fade" mode="out-in">
-              <p :key="currentIndex" class="text-sm font-medium text-center text-[#B8BDC5]">
-                <span class="text-[#00ADB5] mr-1 inline-block">✦</span>
-                {{ translatedStatuses[currentIndex] }}
-              </p>
+              <span :key="statusIndex" class="text-xs font-medium ld-muted">
+                {{ statusMessages[statusIndex] }}
+              </span>
             </Transition>
-            <div class="flex gap-1.5 mt-1" :class="isRtl ? 'flex-row-reverse' : ''">
-              <span v-for="i in translatedStatuses.length" :key="i" class="h-1 rounded-full transition-all duration-500"
-                :class="i - 1 === currentIndex
-                  ? 'w-5 bg-[#00ADB5]'
-                  : i - 1 < currentIndex
-                    ? 'w-1.5 bg-[#00ADB5]/40'
-                    : 'w-1.5 bg-[#4A505A]/70'" />
-            </div>
           </div>
         </div>
 
-        <div class="h-[3px] transition-all duration-500 ease-out" :style="{
-          width: progress + '%',
-          background: 'linear-gradient(90deg, #00ADB5, #39C6D6, #0E7C82)',
-        }" />
-      </div>
-    </div>
+        <!-- Floating particles (teal) -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden">
+          <div v-for="i in 20" :key="i" class="loader-particle absolute w-1 h-1 rounded-full ld-particle"
+            :class="isLight ? 'opacity-40' : 'opacity-70'" :style="particleStyle(i)"></div>
+        </div>
+      </temolate>
+    </LoadingBackground>
   </Transition>
 </template>
 
 <script setup lang="ts">
-const { t } = useLang()
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import * as THREE from 'three'
-import gsap from 'gsap'
-const { locale } = useI18n()
-import { useLoadingSequence } from '~/composables/useLoadingSequence'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 
 const props = withDefaults(defineProps<{
   show: boolean
-  clinicName?: string
+  tagline?: string
 }>(), {
-  clinicName: '',
+  tagline: undefined,
 })
 
 const emit = defineEmits<{ (e: 'finished'): void }>()
 
+const { t, locale } = useI18n()
 
-const resolvedClinicName = computed(() => props.clinicName || t('landing.loading.clinicName'))
+const computedTagline = computed(() => props.tagline ?? t('landing.loading.tagline'))
 
-const isRtl = computed(() => locale.value === 'fa')
-
-const translatedStatuses = computed(() => [
+const statusMessages = computed(() => [
   t('landing.loading.status1'),
   t('landing.loading.status2'),
   t('landing.loading.status3'),
   t('landing.loading.status4'),
-  t('landing.loading.status5'),
-  t('landing.loading.status6'),
 ])
 
-const {
-  currentIndex,
-  progress,
-  start: startSequence,
-  stop: stopSequence,
-  finish: finishSequence,
-} = useLoadingSequence()
-
 const rendered = ref(true)
-const threeContainer = ref<HTMLElement | null>(null)
-const cardRef = ref<HTMLElement | null>(null)
-const logoRef = ref<HTMLElement | null>(null)
-const lottieRef = ref<HTMLElement | null>(null)
-const statusRef = ref<HTMLElement | null>(null)
-let lottieAnim: any = null
+const displayProgress = ref(0)
+const statusIndex = ref(0)
+const isLight = ref(false)
+const prefersReducedMotion = ref(false)
 
-let scene: THREE.Scene | null = null
-let camera: THREE.PerspectiveCamera | null = null
-let renderer: THREE.WebGLRenderer | null = null
-let dnaGroup: THREE.Group | null = null
-let particleSystem: THREE.Points | null = null
-let networkLines: THREE.LineSegments | null = null
-let animId = 0
+let progressTimer: ReturnType<typeof setInterval> | null = null
 let finishTimer: ReturnType<typeof setTimeout> | null = null
-let resizeObs: ResizeObserver | null = null
-let mouseX = 0
-let mouseY = 0
 
-// Teal accent family — matches the navy/teal landing palette.
-const COLORS = { primary: '#00ADB5', secondary: '#39C6D6', accent: '#6EE7B7' }
+const SOFT_CAP = 92
+const circumference = 2 * Math.PI * 28
 
-function applyThemeToScene() {
-  if (!scene) return
-  if (dnaGroup) {
-    dnaGroup.children.forEach((child) => {
-      if (child instanceof THREE.Points) {
-        ; (child.material as THREE.Material).opacity = 0.9
-      } else if (child instanceof THREE.LineSegments) {
-        ; (child.material as THREE.Material).opacity = 0.3
-      }
-    })
-  }
-  if (particleSystem) {
-    ; (particleSystem.material as THREE.Material).opacity = 0.4
-  }
-  if (networkLines) {
-    ; (networkLines.material as THREE.Material).opacity = 0.12
+const strokeOffset = computed(() => {
+  return circumference - (displayProgress.value / 100) * circumference
+})
+
+const particleStyle = (i: number) => {
+  const delay = Math.random() * 5
+  const duration = 8 + Math.random() * 12
+  const x = Math.random() * 100
+  const y = Math.random() * 100
+  return {
+    left: `${x}%`,
+    top: `${y}%`,
+    animationDelay: `${delay}s`,
+    animationDuration: `${duration}s`,
   }
 }
 
-function createDNA(): THREE.Group {
-  const group = new THREE.Group()
-  const levels = 30
-  const turns = 3
-  const radius = 0.7
-  const height = 2.8
-
-  const strandPositions: number[] = []
-  const rungPositions: number[] = []
-
-  for (let i = 0; i < levels; i++) {
-    const t = i / (levels - 1)
-    const angle = t * Math.PI * 2 * turns
-    const y = (t - 0.5) * height
-    const x1 = Math.cos(angle) * radius
-    const z1 = Math.sin(angle) * radius
-    const x2 = Math.cos(angle + Math.PI) * radius
-    const z2 = Math.sin(angle + Math.PI) * radius
-    strandPositions.push(x1, y, z1)
-    strandPositions.push(x2, y, z2)
-    if (i < levels - 1) {
-      rungPositions.push(x1, y, z1)
-      rungPositions.push(x2, y, z2)
+const startProgress = () => {
+  progressTimer = setInterval(() => {
+    const remaining = SOFT_CAP - displayProgress.value
+    displayProgress.value += Math.max(remaining * 0.12, 0.15)
+    if (displayProgress.value >= SOFT_CAP) {
+      displayProgress.value = SOFT_CAP
+      if (progressTimer) clearInterval(progressTimer)
     }
-  }
-
-  const pGeo = new THREE.BufferGeometry()
-  pGeo.setAttribute('position', new THREE.Float32BufferAttribute(strandPositions, 3))
-  const pMat = new THREE.PointsMaterial({
-    color: COLORS.primary,
-    size: 0.09,
-    sizeAttenuation: true,
-    transparent: true,
-    opacity: 0.9,
-  })
-  group.add(new THREE.Points(pGeo, pMat))
-
-  const lGeo = new THREE.BufferGeometry()
-  lGeo.setAttribute('position', new THREE.Float32BufferAttribute(rungPositions, 3))
-  const lMat = new THREE.LineBasicMaterial({
-    color: COLORS.secondary,
-    transparent: true,
-    opacity: 0.3,
-  })
-  group.add(new THREE.LineSegments(lGeo, lMat))
-
-  return group
+    if (displayProgress.value > 28 && statusIndex.value === 0) statusIndex.value = 1
+    else if (displayProgress.value > 58 && statusIndex.value === 1) statusIndex.value = 2
+    else if (displayProgress.value > 84 && statusIndex.value === 2) statusIndex.value = 3
+  }, 130)
 }
 
-function createParticles(): { points: THREE.Points; lines: THREE.LineSegments } {
-  const count = 120
-  const positions = new Float32Array(count * 3)
-  for (let i = 0; i < count * 3; i++) {
-    positions[i] = (Math.random() - 0.5) * 10
-  }
-  const pGeo = new THREE.BufferGeometry()
-  pGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
-  const pMat = new THREE.PointsMaterial({
-    color: COLORS.secondary,
-    size: 0.035,
-    sizeAttenuation: true,
-    transparent: true,
-    opacity: 0.4,
-  })
-  const points = new THREE.Points(pGeo, pMat)
-
-  const conn: number[] = []
-  for (let i = 0; i < count; i++) {
-    for (let j = i + 1; j < count; j++) {
-      const i3 = i * 3
-      const j3 = j * 3
-      const dx = positions[i3]! - positions[j3]!
-      const dy = positions[i3 + 1]! - positions[j3 + 1]!
-      const dz = positions[i3 + 2]! - positions[j3 + 2]!
-      if (dx * dx + dy * dy + dz * dz < 3.5) {
-        conn.push(positions[i3]!, positions[i3 + 1]!, positions[i3 + 2]!)
-        conn.push(positions[j3]!, positions[j3 + 1]!, positions[j3 + 2]!)
-      }
-    }
-  }
-  const lGeo = new THREE.BufferGeometry()
-  lGeo.setAttribute('position', new THREE.Float32BufferAttribute(conn, 3))
-  const lMat = new THREE.LineBasicMaterial({
-    color: COLORS.accent,
-    transparent: true,
-    opacity: 0.12,
-  })
-  const lines = new THREE.LineSegments(lGeo, lMat)
-  return { points, lines }
-}
-
-function initScene() {
-  if (!threeContainer.value) return
-  const c = threeContainer.value
-  const w = c.clientWidth || window.innerWidth
-  const h = c.clientHeight || window.innerHeight
-
-  scene = new THREE.Scene()
-
-  camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 100)
-  camera.position.set(0, 0.3, 5)
-
-  renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
-  renderer.setSize(w, h)
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.toneMapping = THREE.ACESFilmicToneMapping
-  renderer.toneMappingExposure = 0.6
-  c.appendChild(renderer.domElement)
-
-  const ambient = new THREE.AmbientLight(0x3ee8c6, 0.5)
-  scene.add(ambient)
-  const key = new THREE.DirectionalLight(0x00adb5, 1.6)
-  key.position.set(2, 3, 4)
-  scene.add(key)
-  const fill = new THREE.DirectionalLight(0x6ee7b7, 0.5)
-  fill.position.set(-3, 1, -2)
-  scene.add(fill)
-
-  dnaGroup = createDNA()
-  dnaGroup.position.y = 0.2
-  scene.add(dnaGroup)
-
-  const { points, lines } = createParticles()
-  particleSystem = points
-  networkLines = lines
-  scene.add(points)
-  scene.add(lines)
-}
-
-function animate() {
-  if (!scene || !renderer || !camera || !dnaGroup) return
-  const time = performance.now() * 0.001
-  dnaGroup.rotation.x = Math.sin(time * 0.08) * 0.05
-  dnaGroup.rotation.y = time * 0.15
-  if (particleSystem) {
-    particleSystem.rotation.y = time * 0.01
-    particleSystem.rotation.x = Math.sin(time * 0.005) * 0.02
-  }
-  if (networkLines) {
-    networkLines.rotation.y = time * 0.01
-    networkLines.rotation.x = Math.sin(time * 0.005) * 0.02
-  }
-  if (mouseX || mouseY) {
-    camera.position.x += (mouseX * 0.3 - camera.position.x) * 0.02
-    camera.position.y += (mouseY * 0.2 + 0.3 - camera.position.y) * 0.02
-    camera.lookAt(0, 0.2, 0)
-  } else {
-    camera.position.x += (0 - camera.position.x) * 0.02
-    camera.position.y += (0.3 - camera.position.y) * 0.02
-    camera.lookAt(0, 0.2, 0)
-  }
-  renderer.render(scene, camera)
-  animId = requestAnimationFrame(animate)
-}
-
-function handleResize() {
-  if (!threeContainer.value || !camera || !renderer) return
-  const w = threeContainer.value.clientWidth || window.innerWidth
-  const h = threeContainer.value.clientHeight || window.innerHeight
-  camera.aspect = w / h
-  camera.updateProjectionMatrix()
-  renderer.setSize(w, h)
-}
-
-function handleMouseMove(e: MouseEvent) {
-  const w = window.innerWidth
-  const h = window.innerHeight
-  mouseX = (e.clientX / w - 0.5) * 2
-  mouseY = (e.clientY / h - 0.5) * 2
-}
-
-function initAnimations() {
-  if (!cardRef.value) return
-  const mm = gsap.matchMedia()
-  const reduced = '(prefers-reduced-motion: no-preference)'
-  const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-
-  mm.add(reduced, () => {
-    gsap.set([cardRef.value, logoRef.value, lottieRef.value, statusRef.value], {
-      opacity: 0, y: 24,
-    })
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.7 } })
-    tl.to(cardRef.value, { opacity: 1, y: 0 })
-    tl.to(logoRef.value, { opacity: 1, y: 0 }, '-=0.4')
-    tl.to(lottieRef.value, { opacity: 1, y: 0 }, '-=0.35')
-    tl.to(statusRef.value, { opacity: 1, y: 0 }, '-=0.3')
-
-    if (logoRef.value) {
-      gsap.to(logoRef.value, {
-        y: -4,
-        duration: 2.6,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      })
-    }
-  })
-
-  if (prefersReduced) {
-    gsap.set([cardRef.value, logoRef.value, lottieRef.value, statusRef.value], {
-      opacity: 1, y: 0,
-    })
-  }
+const stopProgress = () => {
+  if (progressTimer) clearInterval(progressTimer)
+  progressTimer = null
 }
 
 watch(() => props.show, (isShowing) => {
   if (!isShowing) {
-    stopSequence()
-    progress.value = 100
+    stopProgress()
+    displayProgress.value = 100
     finishTimer = setTimeout(() => {
       rendered.value = false
-    }, 500)
+    }, 420)
   }
 })
 
-onMounted(async () => {
-  await nextTick()
-  const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+onMounted(() => {
+  isLight.value = document.documentElement.getAttribute('data-theme') === 'light'
+  prefersReducedMotion.value = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
 
-  try {
-    initScene()
-    applyThemeToScene()
-    if (!reduced) animate()
-    else if (renderer && scene && camera) renderer.render(scene, camera)
-  } catch {
-    // fallback — scene stays dark, card still works
-  }
+  const observer = new MutationObserver(() => {
+    isLight.value = document.documentElement.getAttribute('data-theme') === 'light'
+  })
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
 
-  initAnimations()
-
-  if (!reduced) {
-    resizeObs = new ResizeObserver(() => handleResize())
-    if (threeContainer.value) resizeObs.observe(threeContainer.value)
-    window.addEventListener('mousemove', handleMouseMove)
-  }
-
-  startSequence()
-
-  if (lottieRef.value) {
-    const lottie = (await import('lottie-web')).default
-    lottieAnim = lottie.loadAnimation({
-      container: lottieRef.value,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      path: '/lottie/clone.json',
-    })
-  }
+  startProgress()
 })
 
 onBeforeUnmount(() => {
-  stopSequence()
+  stopProgress()
   if (finishTimer) clearTimeout(finishTimer)
-  cancelAnimationFrame(animId)
-  renderer?.dispose()
-  scene?.clear()
-  scene = null
-  renderer = null
-  dnaGroup = null
-  particleSystem = null
-  networkLines = null
-  resizeObs?.disconnect()
-  lottieAnim?.destroy()
-  window.removeEventListener('mousemove', handleMouseMove)
-  gsap.matchMedia().revert()
 })
 </script>
 
 <style scoped>
-.loader-exit-leave-active {
-  transition: opacity 0.55s ease, filter 0.55s ease, transform 0.55s ease;
+/* ═══════════════════════════════════════════
+   MedicalDashboardLoader — navy + teal
+   Mirrors the current landing template palette.
+   ═══════════════════════════════════════════ */
+.ld-shell {
+  --ld-bg: #0f151c;
+  --ld-foreground: #EEEEEE;
+  --ld-muted: #B8BDC5;
+  --ld-card: #393E46;
+  --ld-card-soft: #2B3138;
+  --ld-border: #4A505A;
+  --ld-primary: #00ADB5;
+  --ld-primary-soft: #39C6D6;
+  --ld-primary-bright: #4FD6E4;
+  --ld-font-display: 'Fraunces', ui-serif, Georgia, serif;
+  --ld-font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+
+  background:
+    radial-gradient(
+      100% 80% at 85% 0%,
+      rgba(0, 173, 181, 0.12) 0%,
+      rgba(34, 40, 49, 0) 50%
+    ),
+    var(--ld-bg);
+  color: var(--ld-foreground);
+  color-scheme: dark;
 }
 
-.loader-exit-leave-to {
-  opacity: 0;
-  filter: blur(10px);
-  transform: scale(1.06);
+.ld-shell--light {
+  --ld-bg: #f6f8fb;
+  --ld-foreground: #1c232b;
+  --ld-muted: #5b6675;
+  --ld-card: #ffffff;
+  --ld-card-soft: #eef1f6;
+  --ld-border: #d5dbe4;
+  --ld-primary: #00ADB5;
+  --ld-primary-soft: #17c1c9;
+  --ld-primary-bright: #2dd3db;
+  background:
+    radial-gradient(
+      100% 80% at 85% 0%,
+      rgba(0, 173, 181, 0.12) 0%,
+      rgba(255, 255, 255, 0) 50%
+    ),
+    var(--ld-bg);
+  color: var(--ld-foreground);
+  color-scheme: light;
 }
 
+.ld-muted {
+  color: var(--ld-muted);
+}
+
+/* ── Backdrop glow orbs (teal) ── */
+.ld-glow--1 {
+  background: radial-gradient(circle,
+    color-mix(in oklab, var(--ld-primary) 45%, transparent),
+    transparent 70%);
+}
+
+.ld-glow--2 {
+  background: radial-gradient(circle,
+    color-mix(in oklab, var(--ld-primary-soft) 40%, transparent),
+    transparent 70%);
+}
+
+.ld-glow--3 {
+  background: radial-gradient(circle,
+    color-mix(in oklab, var(--ld-primary-bright) 35%, transparent),
+    transparent 70%);
+}
+
+/* ── Teal grid pattern ── */
+.ld-grid {
+  opacity: 0.05;
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--ld-primary) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--ld-primary) 55%, transparent) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ── Soft navy veil to deepen the base, like the landing backdrop ── */
+.ld-veil {
+  background: linear-gradient(
+    100deg,
+    color-mix(in oklab, #222831 92%, transparent) 0%,
+    color-mix(in oklab, #222831 70%, transparent) 45%,
+    color-mix(in oklab, #222831 46%, transparent) 100%
+  );
+}
+
+/* Orb animations */
+.loader-orb {
+  animation: loader-drift 18s ease-in-out infinite;
+}
+
+.loader-orb--2 {
+  animation-duration: 22s;
+  animation-delay: -4s;
+}
+
+.loader-orb--3 {
+  animation-duration: 25s;
+  animation-delay: -8s;
+}
+
+@keyframes loader-drift {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(4%, 5%) scale(1.08);
+  }
+
+  50% {
+    transform: translate(-3%, -2%) scale(0.95);
+  }
+
+  75% {
+    transform: translate(2%, -4%) scale(1.03);
+  }
+}
+
+/* 3D Cube rotation */
+.loader-3d-container {
+  perspective: 1000px;
+  width: 128px;
+  height: 128px;
+}
+
+.loader-3d-element {
+  width: 128px;
+  height: 128px;
+  transform-style: preserve-3d;
+  animation: loader-rotate3d 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.loader-face {
+  backface-visibility: hidden;
+}
+
+.loader-face--back {
+  transform: rotateY(180deg);
+}
+
+/* Cube faces — teal gradient surfaces with a soft inner glow cue */
+.ld-cube {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+}
+
+.ld-cube--front {
+  background: linear-gradient(135deg, var(--ld-primary), var(--ld-primary-soft));
+  box-shadow: 0 30px 60px -15px rgba(0, 173, 181, 0.35);
+}
+
+.ld-cube--front .ld-cube-logo {
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.35));
+}
+
+.ld-cube--back {
+  background: linear-gradient(135deg, var(--ld-primary-soft), var(--ld-primary));
+  box-shadow: 0 30px 60px -15px rgba(0, 173, 181, 0.35);
+}
+
+/* Teal rim light traced around the cube edge (glass depth cue) */
+.ld-cube-rim {
+  box-shadow: inset 0 1px 0 rgba(238, 238, 238, 0.25),
+    0 0 0 1px color-mix(in oklab, var(--ld-primary-bright) 40%, transparent);
+}
+
+@keyframes loader-rotate3d {
+
+  0%,
+  100% {
+    transform: rotateY(0deg) rotateX(0deg) scale(1);
+  }
+
+  25% {
+    transform: rotateY(90deg) rotateX(15deg) scale(1.05);
+  }
+
+  50% {
+    transform: rotateY(180deg) rotateX(0deg) scale(1);
+  }
+
+  75% {
+    transform: rotateY(270deg) rotateX(-15deg) scale(1.05);
+  }
+}
+
+/* Logo text gradient — teal sweep */
+.ld-logo-gradient {
+  background-image: linear-gradient(90deg, var(--ld-primary), var(--ld-primary-soft) 50%, var(--ld-primary-bright));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: "bon";
+}
+
+.loader-logo-text {
+  animation: loader-text-gradient 3s ease-in-out infinite;
+}
+
+.ld-shell--light .ld-logo-gradient {
+  background-image: linear-gradient(90deg, #008b92, #00ADB5 50%, #1ec6cf);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes loader-text-gradient {
+
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+
+  50% {
+    background-position: 200% center;
+  }
+}
+
+/* Floating particles — teal */
+.ld-particle {
+  background: var(--ld-primary-soft);
+  box-shadow: 0 0 8px 1px color-mix(in oklab, var(--ld-primary) 55%, transparent);
+}
+
+.loader-particle {
+  animation: loader-float linear infinite;
+}
+
+@keyframes loader-float {
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  50% {
+    transform: translateY(-100vh) translateX(20px) scale(1.5);
+  }
+}
+
+/* Status text transition */
 .status-fade-enter-active,
 .status-fade-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .status-fade-enter-from {
   opacity: 0;
-  transform: translateY(6px);
+  transform: translateY(4px);
 }
 
 .status-fade-leave-to {
   opacity: 0;
-  transform: translateY(-6px);
+  transform: translateY(-4px);
 }
 
+/* Exit transition */
+.loader-exit-leave-active {
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), filter 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loader-exit-leave-to {
+  opacity: 0;
+  filter: blur(12px) brightness(1.2);
+  transform: scale(1.1);
+}
+
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
+
+  .loader-orb,
+  .loader-3d-element,
+  .loader-logo-text,
+  .loader-particle {
+    animation: none !important;
+  }
+
   .loader-exit-leave-active {
     transition: opacity 0.3s ease;
   }
@@ -436,6 +498,43 @@ onBeforeUnmount(() => {
   .loader-exit-leave-to {
     filter: none;
     transform: none;
+  }
+}
+
+/* ECG pulse — teal trace (kept structural path from Uiverse) */
+.heart #line {
+  fill: none;
+  stroke: var(--ld-primary);
+  stroke-width: 1.5;
+  stroke-linecap: butt;
+  stroke-linejoin: round;
+  stroke-miterlimit: 4;
+  stroke-opacity: 1;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: dash 2s linear infinite;
+}
+.heart #point {
+  fill: none;
+  stroke: var(--ld-primary-soft);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-miterlimit: 0.1;
+  stroke-opacity: 1;
+  stroke-dasharray: 0.0001, 0.9999;
+  stroke-dashoffset: 1;
+  animation: dash 2s linear infinite;
+}
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  80% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 0;
   }
 }
 </style>

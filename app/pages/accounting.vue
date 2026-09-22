@@ -63,7 +63,7 @@
                 </td>
                 <td class="!text-center">
                   <button @click="editAccount(account)"
-                    class="!p-1.5 !text-slate-400 hover:!text-indigo-500 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/20 !rounded-lg">
+                    class="!p-1.5 !text-slate-400 hover:!text-teal-500 hover:!bg-teal-50 dark:hover:!bg-teal-900/20 !rounded-lg">
                     <Icon name="lucide:pencil" class="!w-4 !h-4" />
                   </button>
                 </td>
@@ -136,7 +136,7 @@
                 </td>
                 <td class="!text-center">
                   <button @click.stop="viewJournalEntry(entry)"
-                    class="!p-1.5 !text-slate-400 hover:!text-indigo-500 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/20 !rounded-lg">
+                    class="!p-1.5 !text-slate-400 hover:!text-teal-500 hover:!bg-teal-50 dark:hover:!bg-teal-900/20 !rounded-lg">
                     <Icon name="lucide:eye" class="!w-4 !h-4" />
                   </button>
                 </td>
@@ -180,9 +180,9 @@
             </template>
           </UiStatCard>
           <UiStatCard :label="$t('accounting.transactionCount')" :value="String(reportData.summary.transactionCount)"
-            value-class="!text-indigo-600 dark:!text-indigo-400">
+            value-class="!text-teal-600 dark:!text-teal-400">
             <template #icon>
-              <Icon name="lucide:files" class="!w-5 !h-5 !text-indigo-400" />
+              <Icon name="lucide:files" class="!w-5 !h-5 !text-teal-400" />
             </template>
           </UiStatCard>
         </div>

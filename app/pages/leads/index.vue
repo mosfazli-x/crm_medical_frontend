@@ -12,8 +12,8 @@
       <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5 shadow-sm">
         <div class="flex items-center justify-between mb-3">
           <span class="text-xs font-bold text-slate-500 dark:text-slate-400">{{ $t('leads.stats.total') }}</span>
-          <span class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/20 flex items-center justify-center">
-            <v-icon size="18" color="#CDB4DB">mdi-account-outline</v-icon>
+          <span class="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-500/20 flex items-center justify-center">
+            <v-icon size="18" color="#00ADB5">mdi-account-outline</v-icon>
           </span>
         </div>
         <p class="text-2xl font-extrabold text-slate-800 dark:text-slate-100">{{ summary?.totalLeads ?? 0 }}</p>
@@ -76,7 +76,7 @@
         <button v-for="p in summary.pipeline" :key="p.status"
           class="px-3 py-1.5 rounded-full text-xs font-bold border transition-colors"
           :class="filters.status === p.status
-            ? 'bg-indigo-600 text-white border-indigo-600'
+            ? 'bg-teal-600 text-white border-teal-600'
             : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50'"
           @click="togglePipelineFilter(p.status)">
           <span :class="badgeClass(p.status)" class="!text-[11px] mr-1">{{ badgeLabel(p.status) }}</span>
@@ -236,7 +236,7 @@
         <span class="text-xs text-slate-500 font-medium">
           {{ $t('leads.showing', { from: (pagination.page - 1) * pagination.limit + 1, to: Math.min(pagination.page * pagination.limit, pagination.total), total: pagination.total }) }}
         </span>
-        <v-pagination v-model="pagination.page" :length="pagination.totalPages" density="compact" color="#CDB4DB"
+        <v-pagination v-model="pagination.page" :length="pagination.totalPages" density="compact" color="#00ADB5"
           :total-visible="4" @update:model-value="fetchLeads" />
       </div>
     </UiContentCard>

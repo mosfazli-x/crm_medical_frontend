@@ -33,7 +33,7 @@ const PALETTE: { dark: Palette; light: Palette } = {
       { r: 59, g: 130, b: 246 },   // medical blue
       { r: 34, g: 211, b: 238 },   // cyan
       { r: 129, g: 140, b: 248 },  // soft purple
-      { r: 99, g: 102, b: 241 },   // indigo
+      { r: 99, g: 102, b: 241 },   // teal
     ],
     connection: [59, 130, 246],
     glow: [

@@ -138,7 +138,7 @@
                 <td class="px-4 py-3 text-sm text-center font-mono text-red-500">{{ s.absentDays }}</td>
                 <td class="px-4 py-3 text-sm text-center font-mono text-blue-600">{{ s.leaveDays }}</td>
                 <td class="px-4 py-3 text-sm text-center font-mono text-purple-600">{{ s.holidayDays }}</td>
-                <td class="px-4 py-3 text-sm text-center font-mono text-indigo-600 font-bold" dir="ltr">{{
+                <td class="px-4 py-3 text-sm text-center font-mono text-teal-600 font-bold" dir="ltr">{{
                   formatWorkedHours(s.totalWorkedMinutes) }}</td>
                 <td class="px-4 py-3 text-center">
                   <span class="px-3 py-1 rounded-full text-xs font-bold" :class="rateClass(s)">
@@ -158,8 +158,8 @@
         <UiContentCard class="lg:col-span-1">
           <div class="text-center py-4">
             <div
-              class="w-20 h-20 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center mx-auto mb-4">
-              <v-icon size="36" color="#CDB4DB">mdi-account-outline</v-icon>
+              class="w-20 h-20 rounded-2xl bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center mx-auto mb-4">
+              <v-icon size="36" color="#00ADB5">mdi-account-outline</v-icon>
             </div>
             <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">{{ user?.fullName || $t('staff.name') }}</h3>
             <p class="text-sm text-slate-500 mt-1">{{ todayStatus }}</p>
@@ -182,7 +182,7 @@
                 <p class="text-xs text-slate-500 mb-2">{{ $t('attendance.todaySessionsLabel') }}</p>
                 <div v-for="(s, i) in todayRecord.sessions" :key="i"
                   class="flex items-center gap-2 text-xs font-mono text-slate-600 mb-1">
-                  <v-icon size="14" color="#CDB4DB">mdi-clock-outline</v-icon>
+                  <v-icon size="14" color="#00ADB5">mdi-clock-outline</v-icon>
                   {{ formatSessionTime(s.checkInTime) }} - {{ formatSessionTime(s.checkOutTime) || '...' }}
                 </div>
                 <div v-if="!todayRecord.sessions?.length" class="text-xs text-slate-400">{{ $t('attendance.noSessionsYet') }}</div>
@@ -196,9 +196,9 @@
             <v-select v-model="selectedMonth" :items="jalaliMonthOptions" variant="outlined" density="compact"
               hide-details class="max-w-[200px]" />
             <div
-              class="mr-auto px-4 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800">
-              <span class="text-xs text-indigo-500">{{ $t('attendance.totalWorkHours') }}</span>
-              <span class="text-sm font-bold text-indigo-700 dark:text-indigo-300 mr-2" dir="ltr">{{
+              class="mr-auto px-4 py-2 rounded-xl bg-teal-50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-800">
+              <span class="text-xs text-teal-500">{{ $t('attendance.totalWorkHours') }}</span>
+              <span class="text-sm font-bold text-teal-700 dark:text-teal-300 mr-2" dir="ltr">{{
                 formatWorkedHoursLabel(totalWorkedThisMonth) }}</span>
             </div>
           </div>
@@ -233,7 +233,7 @@
                     </span>
                   </td>
                   <td class="px-4 py-3 text-sm text-slate-500">{{ locationLabel(record.workLocation) }}</td>
-                  <td class="px-4 py-3 text-sm font-mono text-indigo-600 font-semibold" dir="ltr">{{
+                  <td class="px-4 py-3 text-sm font-mono text-teal-600 font-semibold" dir="ltr">{{
                     formatWorkedHours(record.workedMinutes) }}</td>
                 </tr>
               </tbody>
@@ -339,7 +339,7 @@
                     <v-icon size="16">mdi-close</v-icon>
                   </v-btn>
                 </div>
-                <v-btn variant="text" size="x-small" class="text-indigo-500"
+                <v-btn variant="text" size="x-small" class="text-teal-500"
                   @click="item.sessions.push({ checkInTime: '08:00', checkOutTime: '12:00' })">
                   + {{ $t('attendance.addSession') }}
                 </v-btn>

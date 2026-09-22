@@ -78,13 +78,18 @@ const dir = computed(() => (locale.value === 'fa' ? 'rtl' : 'ltr'))
           </div>
           <slot />
         </div>
-        <NuxtLink to="/" class="auth-back-link">
-          <svg class="auth-back-link__icon" :class="{ 'auth-back-link__icon--rtl': isRtl }" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M15 10H5M9 6l-4 4 4 4" />
-          </svg>
-          <span>{{ t('auth.backToHome') }}</span>
-        </NuxtLink>
       </div>
+
+      <!-- Native back-to-home control: pinned to the app bar on mobile,
+           top corner of the form panel on desktop. -->
+      <NuxtLink to="/" class="auth-return" :aria-label="t('auth.backToHome')">
+        <svg class="auth-return__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2.5 9.5 10 3l7.5 6.5" />
+          <path d="M4 8.6V17h4.5v-4h3v4H16V8.6" />
+        </svg>
+        <span class="auth-return__label">{{ t('auth.backToHome') }}</span>
+      </NuxtLink>
     </div>
   </div>
 </template>
@@ -107,6 +112,9 @@ const dir = computed(() => (locale.value === 'fa' ? 'rtl' : 'ltr'))
   display: flex;
   min-height: 100vh;
   min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   background: var(--auth-background);
   color: var(--auth-foreground);
   font-family: var(--font-body, ui-sans-serif, system-ui, sans-serif);
@@ -385,7 +393,7 @@ const dir = computed(() => (locale.value === 'fa' ? 'rtl' : 'ltr'))
 }
 
 .auth-mobile-brand {
-  font-family: var(--font-display, ui-serif, Georgia, serif);
+  font-family: "bon", ui-serif, Georgia, serif;
   font-weight: 700;
   font-size: 1rem;
   color: var(--auth-foreground);
@@ -395,57 +403,81 @@ const dir = computed(() => (locale.value === 'fa' ? 'rtl' : 'ltr'))
 /* Form wrapper */
 .auth-form-wrap {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1.25rem;
-  padding: 2rem 1.5rem;
 }
 
-@media (min-width: 640px) {
+/* @media (min-width: 640px) {
   .auth-form-wrap {
     padding: 3rem 2rem;
   }
+} */
+
+/* Back-to-home control — native, professional
+   A compact icon button pinned to the app bar on mobile and to the top
+   corner of the form panel on desktop. No floating detached pill below
+   the card. */
+.auth-form-panel {
+  position: relative;
 }
 
-/* Back-to-home link */
-.auth-back-link {
+.auth-return {
+  position: absolute;
+  top: max(env(safe-area-inset-top, 0px), 1.5rem);
+  inset-inline-end: 1.5rem;
+  z-index: 30;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
+  height: 2.5rem;
+  padding-inline: 0.625rem;
+  border: 1px solid var(--auth-border);
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--auth-card-raised) 78%, transparent);
   color: var(--auth-muted);
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  transition: all 0.25s ease;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease,
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.auth-back-link:hover {
+.auth-return:hover {
+  border-color: color-mix(in oklab, var(--auth-primary) 55%, var(--auth-border));
   color: var(--auth-primary-hover);
   background: color-mix(in oklab, var(--auth-primary) 12%, transparent);
+  transform: translateY(-1px);
 }
 
-.auth-back-link__icon {
-  width: 1rem;
-  height: 1rem;
+.auth-return:active {
+  transform: translateY(0);
+}
+
+.auth-return:focus-visible {
+  outline: 2px solid var(--auth-primary);
+  outline-offset: 2px;
+}
+
+.auth-return__icon {
+  width: 1.15rem;
+  height: 1.15rem;
   flex-shrink: 0;
-  transition: transform 0.25s ease;
 }
 
-.auth-back-link:hover .auth-back-link__icon {
-  transform: translateX(-2px);
+.auth-return__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
 }
 
-.auth-back-link__icon--rtl {
-  transform: scaleX(-1);
-}
-
-.auth-back-link:hover .auth-back-link__icon--rtl {
-  transform: scaleX(-1) translateX(2px);
-}
+/* On desktop keep it compact (icon-only feel with a soft label);
+   the label stays visible for clarity. */
 
 /* ── Glass Card ── */
 .auth-card {
@@ -501,5 +533,306 @@ const dir = computed(() => (locale.value === 'fa' ? 'rtl' : 'ltr'))
   font-size: 0.875rem;
   color: var(--auth-muted);
   font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════
+   Native Mobile — full-height app-style layout
+   ═══════════════════════════════════════════ */
+@media (max-width: 1023px) {
+
+  .auth-shell {
+    min-height: 0;
+    height: 100dvh;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Native app bar ── */
+  .auth-form-panel {
+    flex: 1;
+    min-height: 0;
+    height: 100dvh;
+    padding-top: env(safe-area-inset-top, 0px);
+    background: var(--auth-background);
+    overflow: hidden;
+  }
+
+  /* Branded compact header anchored to the top */
+  .auth-mobile-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: calc(3.25rem + env(safe-area-inset-top, 0px));
+    padding:
+      calc(0.4375rem + env(safe-area-inset-top, 0px))
+      1.25rem
+      0.4375rem;
+    background: color-mix(in oklab, #1b2129 92%, transparent);
+    border-bottom: 1px solid var(--auth-border);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+
+  .auth-mobile-logo {
+    width: 2.125rem;
+    height: 2.125rem;
+    border-radius: 11px;
+  }
+
+  .auth-mobile-logo-svg {
+    width: 2.25rem;
+  }
+
+  .auth-mobile-brand {
+    font-size: 1rem;
+  }
+
+  /* ── Full-height (non-floating) form surface ── */
+  .auth-form-wrap {
+    flex: 1;
+    min-height: 0;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  /* Card becomes a bottom-anchored full-width sheet that fits the
+     available height. min-height:0 lets flexbox shrink it (no overflow);
+     spacing is viewport-height-ish so the form compresses to fit. */
+  .auth-card {
+    flex: 1;
+    min-height: 0;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0;
+    border-inline: none;
+    border-top: 1px solid var(--auth-border);
+    background: var(--auth-background);
+    box-shadow: none;
+    backdrop-filter: none;
+    padding: clamp(1rem, 4vh, 2rem) 1.5rem
+      calc(clamp(0.75rem, 3vh, 1.5rem) + env(safe-area-inset-bottom, 0px));
+    overflow: hidden;
+  }
+
+  .auth-card :deep(.auth-card__header) {
+    flex-shrink: 0;
+    text-align: start;
+    margin-bottom: clamp(0.75rem, 3vh, 1.75rem);
+  }
+
+  .auth-card :deep(.auth-card__title) {
+    font-size: clamp(1.35rem, 4.4vh, 1.75rem);
+    line-height: 1.15;
+  }
+
+  .auth-card :deep(.auth-card__subtitle) {
+    margin-top: 0.25rem;
+    line-height: 1.5;
+  }
+
+  /* Form fills the card; CTA anchored toward the bottom (thumb zone).
+     Vertical rhythm is viewport-height-relative so the whole form
+     compresses to fit without ever needing a scroll. */
+  .auth-card :deep(.auth-form) {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.5rem, 2.4vh, 1rem);
+  }
+
+  .auth-card :deep(.auth-btn) {
+    flex-shrink: 0;
+    margin-top: auto;
+    height: clamp(2.5rem, 7.7vh, 3.25rem);
+    font-size: 0.9375rem;
+    border-radius: 0.875rem;
+  }
+
+  .auth-card :deep(.auth-input) {
+    height: clamp(2.25rem, 7vh, 3.125rem);
+    font-size: 0.9375rem;
+    border-radius: 0.875rem;
+  }
+
+  .auth-card :deep(.auth-field) {
+    gap: clamp(0.375rem, 1.5vh, 0.5rem);
+  }
+
+  .auth-card :deep(.auth-label) {
+    font-size: clamp(0.75rem, 2vh, 0.875rem);
+  }
+
+  .auth-card :deep(.auth-input-icon) svg,
+  .auth-card :deep(.auth-input-toggle) svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Compact the role grid (used on register) so it fits short screens */
+  .auth-card :deep(.auth-role-grid) {
+    gap: clamp(0.375rem, 1.4vh, 0.5rem);
+  }
+
+  .auth-card :deep(.auth-role-card) {
+    padding: clamp(0.625rem, 2.6vh, 1rem) clamp(0.75rem, 2.2vh, 1rem);
+    min-height: 0;
+  }
+
+  .auth-card :deep(.auth-role-label) {
+    font-size: clamp(0.8125rem, 2.4vh, 0.9375rem);
+  }
+
+  /* Footer sits just above the submit action, toward the bottom */
+  .auth-card :deep(.auth-footer) {
+    flex-shrink: 0;
+    margin-top: clamp(0.5rem, 2vh, 1.25rem);
+  }
+
+  /* Native back-to-home: pinned to the trailing edge of the app bar,
+     icon-only like a native app-bar action. No detached bottom pill. */
+  .auth-return {
+    top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
+    inset-inline-end: 1.25rem;
+    padding-inline: 0.625rem;
+    height: 2.75rem;
+    width: 2.75rem;
+    justify-content: center;
+    border-color: color-mix(in oklab, var(--auth-border) 70%, transparent);
+    background: color-mix(in oklab, var(--auth-card) 55%, transparent);
+    box-shadow: none;
+  }
+
+  .auth-return__label {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   Short desktop windows — keep the centered card fully in view
+   by gently compacting vertical rhythm instead of scrolling.
+   ═══════════════════════════════════════════ */
+@media (min-width: 1024px) and (max-height: 760px) {
+
+  .auth-card {
+    padding: 1.5rem 2rem;
+  }
+
+  .auth-card__header {
+    margin-bottom: 1.25rem;
+  }
+
+  .auth-card__title {
+    font-size: 1.25rem;
+  }
+
+  .auth-card__subtitle {
+    font-size: 0.8125rem;
+  }
+
+  .auth-card :deep(.auth-form) {
+    gap: 0.75rem;
+  }
+
+  .auth-card :deep(.auth-input) {
+    height: 2.75rem;
+  }
+
+  .auth-card :deep(.auth-btn) {
+    height: 2.875rem;
+  }
+
+  .auth-card :deep(.auth-footer) {
+    margin-top: 0.875rem;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   Short mobile windows (landscape-ish / small phones) — guarantee
+   the full form fits the viewport with zero scrolling.
+   ═══════════════════════════════════════════ */
+@media (max-width: 1023px) and (max-height: 740px) {
+
+  .auth-shell {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .auth-mobile-header {
+    min-height: 3.75rem;
+    padding-top: calc(0.25rem + env(safe-area-inset-top, 0px));
+    padding-bottom: 0.25rem;
+  }
+
+  .auth-mobile-logo {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .auth-mobile-brand {
+    font-size: 0.875rem;
+  }
+
+  .auth-card {
+    padding: 1rem 1.25rem
+      calc(0.625rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .auth-card :deep(.auth-card__header) {
+    margin-bottom: 0.625rem;
+  }
+
+  .auth-card :deep(.auth-card__title) {
+    font-size: 1.4rem;
+    line-height: 1.2;
+  }
+
+  .auth-card :deep(.auth-card__subtitle) {
+    margin-top: 0.125rem;
+    font-size: 0.8125rem;
+  }
+
+  .auth-card :deep(.auth-form) {
+    gap: 0.5rem;
+  }
+
+  .auth-card :deep(.auth-field) {
+    gap: 0.375rem;
+  }
+
+  .auth-card :deep(.auth-input) {
+    height: 2.625rem;
+    font-size: 0.9375rem;
+  }
+
+  .auth-card :deep(.auth-label) {
+    font-size: 0.8125rem;
+  }
+
+  .auth-card :deep(.auth-input-icon) svg,
+  .auth-card :deep(.auth-input-toggle) svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .auth-card :deep(.auth-btn) {
+    height: 2.875rem;
+  }
+
+  .auth-card :deep(.auth-footer) {
+    margin-top: 0.625rem;
+  }
+
+  .auth-card :deep(.auth-role-grid) {
+    gap: 0.375rem;
+  }
+
+  .auth-card :deep(.auth-role-card) {
+    padding: 0.375rem 0.5rem;
+    gap: 0.25rem;
+  }
 }
 </style>

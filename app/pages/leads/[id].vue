@@ -471,13 +471,13 @@ function formatPriceValue(value: number | string) {
 }
 
 const activityMeta: Record<string, { icon: string; cls: string }> = {
-  created: { icon: 'mdi-plus-circle-outline', cls: 'bg-indigo-50 text-indigo-500 dark:bg-indigo-500/20' },
+  created: { icon: 'mdi-plus-circle-outline', cls: 'bg-teal-50 text-teal-500 dark:bg-teal-500/20' },
   contacted: { icon: 'mdi-phone-outline', cls: 'bg-blue-50 text-blue-500 dark:bg-blue-500/20' },
   note_added: { icon: 'mdi-note-text-outline', cls: 'bg-slate-100 text-slate-500 dark:bg-slate-600/30' },
   status_changed: { icon: 'mdi-swap-horizontal', cls: 'bg-purple-50 text-purple-500 dark:bg-purple-500/20' },
   assigned: { icon: 'mdi-account-multiple-outline', cls: 'bg-teal-50 text-teal-500 dark:bg-teal-500/20' },
   qualified: { icon: 'mdi-star-outline', cls: 'bg-amber-50 text-amber-500 dark:bg-amber-500/20' },
-  appointment_booked: { icon: 'mdi-calendar-check-outline', cls: 'bg-indigo-50 text-indigo-500 dark:bg-indigo-500/20' },
+  appointment_booked: { icon: 'mdi-calendar-check-outline', cls: 'bg-teal-50 text-teal-500 dark:bg-teal-500/20' },
   visit_completed: { icon: 'mdi-hospital-box-outline', cls: 'bg-emerald-50 text-emerald-500 dark:bg-emerald-500/20' },
   converted: { icon: 'mdi-check-decagram', cls: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20' },
   lost: { icon: 'mdi-close-octagon-outline', cls: 'bg-red-50 text-red-500 dark:bg-red-500/20' },

@@ -268,7 +268,7 @@
                   {{ formatPrice(code.price) }}
                 </td>
                 <td class="!px-6 !py-4 !whitespace-nowrap">
-                  <span class="!text-sm !font-black !text-indigo-600 dark:!text-indigo-400">{{
+                  <span class="!text-sm !font-black !text-teal-600 dark:!text-teal-400">{{
                     code.insurance_coverage_percent
                   }}%</span>
                 </td>

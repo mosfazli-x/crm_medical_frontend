@@ -5,7 +5,7 @@
       class="group relative flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all duration-300 hover:scale-110"
       :class="isOpen
         ? 'bg-red-500! hover:bg-red-600! shadow-red-500/30!'
-        : 'bg-indigo-600! hover:bg-indigo-700! shadow-indigo-600/30!'">
+        : 'bg-teal-600! hover:bg-teal-700! shadow-teal-600/30!'">
       <svg v-if="!isOpen" class="h-6 w-6 text-white transition-transform duration-300 group-hover:scale-110" fill="none"
         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round"
@@ -23,7 +23,7 @@
         class="absolute bottom-20 left-0 w-[380px] rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-900 flex flex-col overflow-hidden"
         :class="locale === 'fa' ? 'origin-bottom-left' : 'origin-bottom-right'">
         <!-- Header -->
-        <div class="flex items-center gap-3 bg-indigo-600 px-5 py-4 text-white">
+        <div class="flex items-center gap-3 bg-teal-600 px-5 py-4 text-white">
           <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -32,7 +32,7 @@
           </div>
           <div class="flex-1">
             <h3 class="text-sm font-bold">{{ t('support.widget.title') }}</h3>
-            <p class="text-xs text-indigo-200">{{ t('support.widget.subtitle') }}</p>
+            <p class="text-xs text-teal-200">{{ t('support.widget.subtitle') }}</p>
           </div>
           <button @click="clearMessages" class="rounded-lg p-1.5! hover:bg-white/20 transition-colors"
             :title="t('support.widget.clearChat')">
@@ -49,8 +49,8 @@
           <!-- Welcome message -->
           <div v-if="messages.length === 0" class="flex flex-col items-center justify-center py-4 text-center">
             <div
-              class="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-900/30">
-              <svg class="h-8 w-8 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              class="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-teal-50 dark:bg-teal-900/30">
+              <svg class="h-8 w-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                 stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
@@ -83,10 +83,10 @@
         <div class="border-t border-gray-200 p-3 dark:border-gray-700">
           <form @submit.prevent="handleSend" class="flex gap-2 py-1 px-1">
             <input ref="inputRef" v-model="inputText" type="text" :placeholder="t('support.widget.placeholder')"
-              class="flex-1 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5! text-sm text-gray-900 placeholder-gray-400 outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-indigo-500 dark:focus:ring-indigo-900/30"
+              class="flex-1 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5! text-sm text-gray-900 placeholder-gray-400 outline-none transition-colors focus:border-teal-400 focus:ring-2 focus:ring-teal-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-teal-500 dark:focus:ring-teal-900/30"
               :disabled="isLoading" />
             <button type="submit" :disabled="!inputText.trim() || isLoading"
-              class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600! text-white! transition-all hover:bg-indigo-700! disabled:opacity-50 disabled:cursor-not-allowed">
+              class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-600! text-white! transition-all hover:bg-teal-700! disabled:opacity-50 disabled:cursor-not-allowed">
               <svg class="h-4 w-4 -rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>

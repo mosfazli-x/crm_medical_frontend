@@ -1,205 +1,221 @@
 <template>
-  <UiPageContainer>
-    <UiPageHeader :title="t('mySessions.title')" :subtitle="t('mySessions.subtitle')" />
+  <UiPageContainer class="relative! max-w-7xl! mx-auto!">
+    <!-- ─── Apple-style large-title header ─── -->
+    <header class="dash-head">
+      <div class="dash-head__copy">
+        <h1 class="dash-head__title">{{ t('mySessions.title') }}</h1>
+        <p class="dash-head__date">{{ t('mySessions.subtitle') }}</p>
+      </div>
+      <div class="dash-head__actions">
+        <button class="asa-btn asa-btn--ghost" :disabled="loading" :aria-label="t('mySessions.title')"
+          @click="refreshAll">
+          <v-icon size="16" :class="{ 'pf-spin': loading }">mdi-refresh</v-icon>
+        </button>
+      </div>
+    </header>
 
-    <div v-if="summary" class="!mb-6 !grid !grid-cols-1 sm:!grid-cols-3 !gap-4">
-      <div class="!bg-white dark:!bg-[#0f1115] !rounded-2xl !shadow-sm !border !border-slate-200/60 dark:!border-slate-800/60 !p-5">
-        <p class="!text-[10px] !font-bold !text-slate-400 !uppercase !tracking-wider !mb-1">{{ t('mySessions.totalLogins') }}</p>
-        <p class="!text-2xl !font-bold !text-slate-900 dark:!text-white">{{ summary.totalLogins || 0 }}</p>
+    <!-- ─── Summary metrics ─── -->
+    <div v-if="!summary" class="grid! grid-cols-1! min-[520px]:grid-cols-3! gap-3! sm:gap-4!">
+      <div v-for="i in 3" :key="`ms-${i}`" class="asa-skel rounded-[22px]! h-28!" />
+    </div>
+    <div v-else class="grid! grid-cols-1! min-[520px]:grid-cols-3! gap-3! sm:gap-4!">
+      <div class="asa-card pf-metric">
+        <div class="asa-tint asa-tint--teal">
+          <Clock class="w-5! h-5! fill-current" />
+        </div>
+        <div class="pf-metric__copy">
+          <p class="pf-metric__value">{{ summary.totalLogins || 0 }}</p>
+          <p class="pf-metric__label">{{ t('mySessions.totalLogins') }}</p>
+        </div>
       </div>
-      <div class="!bg-white dark:!bg-[#0f1115] !rounded-2xl !shadow-sm !border !border-slate-200/60 dark:!border-slate-800/60 !p-5">
-        <p class="!text-[10px] !font-bold !text-slate-400 !uppercase !tracking-wider !mb-1">{{ t('mySessions.activeSessions') }}</p>
-        <p class="!text-2xl !font-bold !text-emerald-600">{{ summary.activeSessions || 0 }}</p>
+
+      <div class="asa-card pf-metric">
+        <div class="asa-tint asa-tint--green">
+          <Activity class="w-5! h-5! fill-current" />
+        </div>
+        <div class="pf-metric__copy">
+          <p class="pf-metric__value asa-green">{{ summary.activeSessions || 0 }}</p>
+          <p class="pf-metric__label">{{ t('mySessions.activeSessions') }}</p>
+        </div>
       </div>
-      <div class="!bg-white dark:!bg-[#0f1115] !rounded-2xl !shadow-sm !border !border-slate-200/60 dark:!border-slate-800/60 !p-5">
-        <p class="!text-[10px] !font-bold !text-slate-400 !uppercase !tracking-wider !mb-1">{{ t('mySessions.lastLogin') }}</p>
-        <p class="!text-sm !font-semibold !text-slate-900 dark:!text-white">{{ summary.lastLogin ? formatDateTime(summary.lastLogin) : '---' }}</p>
+
+      <div class="asa-card pf-metric">
+        <div class="asa-tint asa-tint--amber">
+          <Calendar class="w-5! h-5! fill-current" />
+        </div>
+        <div class="pf-metric__copy">
+          <p class="pf-metric__value pf-metric__value--sm">{{ summary.lastLogin ? formatDateTime(summary.lastLogin) :
+            '---' }}
+          </p>
+          <p class="pf-metric__label">{{ t('mySessions.lastLogin') }}</p>
+        </div>
       </div>
     </div>
 
-    <div class="!mb-6 !flex !items-center !justify-between">
-      <p class="!text-xs !text-zinc-400">
-        {{ t('mySessions.pageInfo', { page: currentPage, totalPages: totalPages, total: totalCount }) }}
-      </p>
-    </div>
+    <!-- ─── Sessions table card ─── -->
+    <div class="asa-card pf-table-card mt-5!">
+      <div v-if="loading" class="pf-skel">
+        <div v-for="i in 6" :key="`sk-${i}`" class="pf-skel__row">
+          <div class="asa-skel h-4! w-32! rounded-md!" />
+          <div class="asa-skel h-4! w-44! rounded-md!" />
+          <div class="asa-skel h-4! w-24! rounded-md!" />
+        </div>
+      </div>
 
-    <div
-      class="!bg-white dark:!bg-[#0f1115] !rounded-2xl !shadow-sm !border !border-slate-200/60 dark:!border-slate-800/60 !overflow-hidden">
-      <div class="!overflow-x-auto">
-        <table class="!min-w-full !text-right !border-collapse">
-          <thead
-            class="!bg-slate-50/50 dark:!bg-slate-800/20 !border-b !border-slate-200/60 dark:!border-slate-800/60">
+      <div v-else-if="sessions.length === 0" class="pf-empty">
+        <div class="asa-tint asa-tint--indigo pf-tint-lg">
+          <ShieldCheck class="w-6! h-6! fill-current" />
+        </div>
+        <div>
+          <p class="pf-empty__title">{{ t('mySessions.noSessions') }}</p>
+          <p class="pf-empty__desc">{{ t('mySessions.noSessionsDesc') }}</p>
+        </div>
+      </div>
+
+      <div v-else class="asa-table-wrap">
+        <table class="asa-table pf-table">
+          <thead>
             <tr>
-              <th class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
+              <th class="pf-pl0"></th>
+              <th v-for="col in sortableColumns" :key="col.key" :aria-sort="sortAria(col.key)">
+                <button type="button" class="pf-th-btn" :class="{ 'pf-th-btn--active': sortKey === col.key }"
+                  @click="toggleSort(col.key)">
+                  <span>{{ col.label }}</span>
+                  <v-icon size="13" :class="['pf-th-ic', { 'pf-th-ic--on': sortKey === col.key }]">
+                    {{ sortIndicator(col.key) }}
+                  </v-icon>
+                </button>
               </th>
-              <th class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                {{ t('mySessions.timestamp') }}
-              </th>
-              <th class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                {{ t('mySessions.event') }}
-              </th>
-              <th class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                {{ t('mySessions.browser') }}
-              </th>
-              <th class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                {{ t('mySessions.os') }}
-              </th>
-              <th class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                {{ t('mySessions.device') }}
-              </th>
-              <th class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-                {{ t('mySessions.ipAddress') }}
-              </th>
-              <th class="!px-6 !py-4 !text-xs !font-bold !text-slate-500 dark:!text-slate-400 !uppercase !tracking-wider !whitespace-nowrap">
-              </th>
+              <th class="pf-ta-end"></th>
             </tr>
           </thead>
           <tbody>
-            <template v-if="loading">
-              <tr v-for="i in 8" :key="`skeleton-${i}`">
-                <td colspan="8">
-                  <v-skeleton-loader type="list-item" class="bg-transparent!" />
-                </td>
-              </tr>
-            </template>
-            <tr v-else-if="sessions.length === 0">
-              <td colspan="8">
-                <UiEmptyState :title="t('mySessions.noSessions')" :description="t('mySessions.noSessionsDesc')">
-                  <template #icon>
-                    <Icon name="lucide:shield" class="!w-8 !h-8 !text-zinc-300" />
-                  </template>
-                </UiEmptyState>
-              </td>
-            </tr>
-            <template v-else>
-              <tr v-for="session in sessions" :key="session.id"
-                class="!border-b !border-slate-100/60 dark:!border-slate-800/40 hover:!bg-slate-50/50 dark:hover:!bg-slate-800/20 !transition-colors"
-                :class="{ '!bg-emerald-50/30 dark:!bg-emerald-900/10': isCurrentSession(session) }">
-              <td class="!px-4 !py-4 !whitespace-nowrap">
-                <span v-if="isCurrentSession(session)"
-                  class="!inline-flex !items-center !gap-1 !px-2 !py-0.5 !rounded-full !text-[10px] !font-bold !bg-emerald-100 !text-emerald-700 !border !border-emerald-200">
-                  <span class="!w-1.5 !h-1.5 !rounded-full !bg-emerald-500 animate-pulse"></span>
+            <tr v-for="session in sortedSessions" :key="session.id" class="pf-row-tr"
+              :class="{ 'pf-row-tr--current': isCurrentSession(session) }">
+              <td class="pf-pl0 flex justify-center align-middle items-center">
+                <span v-if="isCurrentSession(session)" class="asa-pill asa-pill--green pf-live">
+                  <span class="pf-pulse" />
                   {{ t('mySessions.currentSession') }}
                 </span>
               </td>
-              <td class="!px-6 !py-4 !text-xs !text-slate-600 dark:!text-slate-400 !whitespace-nowrap">
-                {{ formatDateTime(session.createdAt) }}
+              <td class="pf-dt">
+                <div class="pf-dt__date">{{ formatDate(session.createdAt) }}</div>
+                <div class="pf-dt__time">{{ formatTime(session.createdAt) }}</div>
               </td>
-              <td class="!px-6 !py-4 !whitespace-nowrap">
-                <span class="!px-2.5 !py-1 !rounded-lg !text-[10px] !font-bold !border"
-                  :class="eventClass(session.event)">
+              <td>
+                <span class="asa-pill" :class="eventPillClass(session.event)">
                   {{ t(`mySessions.events.${session.event}`, session.event) }}
                 </span>
               </td>
-              <td class="!px-6 !py-4 !text-xs !text-slate-600 dark:!text-slate-400 !whitespace-nowrap">
+              <td class="pf-sub">
                 {{ session.browser || '---' }}
-                <span v-if="session.browserVersion" class="!text-slate-400"> {{ session.browserVersion }}</span>
+                <span v-if="session.browserVersion" class="pf-tiny">{{ session.browserVersion }}</span>
               </td>
-              <td class="!px-6 !py-4 !text-xs !text-slate-600 dark:!text-slate-400 !whitespace-nowrap">
+              <td class="pf-sub">
                 {{ session.os || '---' }}
-                <span v-if="session.osVersion" class="!text-slate-400"> {{ session.osVersion }}</span>
+                <span v-if="session.osVersion" class="pf-tiny">{{ session.osVersion }}</span>
               </td>
-              <td class="!px-6 !py-4 !whitespace-nowrap">
-                <span class="!px-2 !py-0.5 !rounded-md !text-[10px] !font-semibold"
-                  :class="deviceTypeClass(session.deviceType)">
+              <td>
+                <span class="asa-pill" :class="devicePillClass(session.deviceType)">
                   {{ session.device || '---' }}
                 </span>
               </td>
-              <td class="!px-6 !py-4 !text-xs !text-slate-500 dark:!text-slate-400 !font-mono !whitespace-nowrap">
-                {{ session.ipAddress || '---' }}
-              </td>
-              <td class="!px-6 !py-4 !whitespace-nowrap">
-                <button @click="openDetails(session)"
-                  class="!p-1.5 !rounded-lg !text-slate-400 hover:!text-slate-700 hover:!bg-slate-100 dark:hover:!bg-slate-800 !transition-colors">
-                  <Icon name="lucide:eye" class="!w-4 !h-4" />
+              <td class="pf-ip">{{ session.ipAddress || '---' }}</td>
+              <td class="pf-ta-end">
+                <button class="pf-icon-btn" :aria-label="t('mySessions.sessionDetails')" @click="openDetails(session)">
+                  <Eye class="w-4! h-4! stroke-current" />
                 </button>
               </td>
             </tr>
-            </template>
           </tbody>
         </table>
       </div>
+
+      <div v-if="totalCount" class="pf-card-foot">
+        <p class="pf-card-foot__info">
+          {{ t('mySessions.pageInfo', { page: currentPage, totalPages, total: totalCount }) }}
+        </p>
+        <v-pagination v-if="totalPages > 1" v-model="currentPage" :length="totalPages" :total-visible="5"
+          density="comfortable" color="#00adb5" rounded="circle" :disabled="loading" />
+      </div>
     </div>
 
-    <div v-if="totalPages > 1" class="!mt-6 !flex !justify-center">
-      <v-pagination v-model="currentPage" :length="totalPages" :total-visible="7" density="comfortable"
-        rounded="lg" />
-    </div>
-
-    <v-dialog v-model="detailsDialog" max-width="600">
-      <div class="!bg-white dark:!bg-[#0f1115] !rounded-2xl !shadow-2xl !overflow-hidden">
-        <div class="!px-6 !py-4 !border-b !border-slate-100 dark:!border-slate-800 !flex !items-center !justify-between">
-          <h3 class="!text-sm !font-bold !text-slate-900 dark:!text-white">{{ t('mySessions.sessionDetails') }}</h3>
-          <button @click="detailsDialog = false"
-            class="!p-1 !rounded-lg !text-slate-400 hover:!text-slate-700 hover:!bg-slate-100 !transition-colors">
-            <Icon name="lucide:x" class="!w-4 !h-4" />
+    <!-- ─── Session details dialog ─── -->
+    <v-dialog v-model="detailsDialog" max-width="560" persistent transition="dialog-bottom-transition">
+      <v-card class="asa-dialog overflow-hidden!" elevation="0">
+        <div class="asa-dialog__head">
+          <div>
+            <h2 class="asa-dialog__title">{{ t('mySessions.sessionDetails') }}</h2>
+            <span class="asa-dialog__sub">
+              {{ selectedSession ? formatDateTime(selectedSession.createdAt) : '' }}
+            </span>
+          </div>
+          <button class="pf-x" aria-label="close" @click="detailsDialog = false">
+            <v-icon size="18">mdi-close</v-icon>
           </button>
         </div>
-        <div v-if="selectedSession" class="!px-6 !py-5 !space-y-4">
-          <div class="!grid !grid-cols-2 !gap-4">
-            <div>
-              <p class="!text-[10px] !font-bold !text-slate-400 !uppercase !tracking-wider !mb-1">{{ t('mySessions.event') }}</p>
-              <span class="!px-2.5 !py-1 !rounded-lg !text-[10px] !font-bold !border"
-                :class="eventClass(selectedSession.event)">
+        <v-card-text class="asa-dialog__body">
+          <div v-if="selectedSession" class="pf-info-grid">
+            <div class="pf-info-cell">
+              <p class="pf-info-label">{{ t('mySessions.event') }}</p>
+              <span class="asa-pill" :class="eventPillClass(selectedSession.event)">
                 {{ t(`mySessions.events.${selectedSession.event}`, selectedSession.event) }}
               </span>
             </div>
-            <div>
-              <p class="!text-[10px] !font-bold !text-slate-400 !uppercase !tracking-wider !mb-1">{{ t('mySessions.timestamp') }}</p>
-              <p class="!text-xs !font-semibold !text-slate-700 dark:!text-slate-300">
-                {{ formatDateTime(selectedSession.createdAt) }}
-              </p>
+            <div class="pf-info-cell">
+              <p class="pf-info-label">{{ t('mySessions.device') }}</p>
+              <p class="pf-info-value">{{ selectedSession.device || '---' }}</p>
             </div>
-          </div>
-          <div class="!grid !grid-cols-2 !gap-4">
-            <div>
-              <p class="!text-[10px] !font-bold !text-slate-400 !uppercase !tracking-wider !mb-1">{{ t('mySessions.browser') }}</p>
-              <p class="!text-xs !text-slate-600 dark:!text-slate-400">
+            <div class="pf-info-cell">
+              <p class="pf-info-label">{{ t('mySessions.browser') }}</p>
+              <p class="pf-info-value">
                 {{ selectedSession.browser || '---' }}
                 <span v-if="selectedSession.browserVersion">{{ selectedSession.browserVersion }}</span>
               </p>
             </div>
-            <div>
-              <p class="!text-[10px] !font-bold !text-slate-400 !uppercase !tracking-wider !mb-1">{{ t('mySessions.os') }}</p>
-              <p class="!text-xs !text-slate-600 dark:!text-slate-400">
+            <div class="pf-info-cell">
+              <p class="pf-info-label">{{ t('mySessions.os') }}</p>
+              <p class="pf-info-value">
                 {{ selectedSession.os || '---' }}
                 <span v-if="selectedSession.osVersion">{{ selectedSession.osVersion }}</span>
               </p>
             </div>
-          </div>
-          <div class="!grid !grid-cols-2 !gap-4">
-            <div>
-              <p class="!text-[10px] !font-bold !text-slate-400 !uppercase !tracking-wider !mb-1">{{ t('mySessions.device') }}</p>
-              <p class="!text-xs !text-slate-600 dark:!text-slate-400">{{ selectedSession.device || '---' }}</p>
+            <div class="pf-info-cell">
+              <p class="pf-info-label">{{ t('mySessions.ipAddress') }}</p>
+              <p class="pf-info-value pf-ip">{{ selectedSession.ipAddress || '---' }}</p>
             </div>
-            <div>
-              <p class="!text-[10px] !font-bold !text-slate-400 !uppercase !tracking-wider !mb-1">{{ t('mySessions.ipAddress') }}</p>
-              <p class="!text-xs !text-slate-600 dark:!text-slate-400 !font-mono">{{ selectedSession.ipAddress || '---' }}</p>
+            <div v-if="selectedSession.userAgent" class="pf-info-cell pf-info-cell--full">
+              <p class="pf-info-label">{{ t('mySessions.userAgent') }}</p>
+              <div class="pf-ua">{{ selectedSession.userAgent }}</div>
             </div>
           </div>
-          <div v-if="selectedSession.userAgent"
-            class="!bg-slate-50 dark:!bg-slate-800/30 !rounded-xl !p-4">
-            <p class="!text-[10px] !font-bold !text-slate-400 !uppercase !tracking-wider !mb-1">{{ t('mySessions.userAgent') }}</p>
-            <p class="!text-[11px] !text-slate-500 dark:!text-slate-400 !break-all !leading-relaxed">{{ selectedSession.userAgent }}</p>
-          </div>
-        </div>
-        <div class="!px-6 !py-3 !border-t !border-slate-100 dark:!border-slate-800 !flex !justify-end">
-          <button @click="detailsDialog = false"
-            class="!px-4 !py-2 !text-xs !font-semibold !text-slate-600 !bg-slate-100 hover:!bg-slate-200 !rounded-xl !transition-colors">{{ t('mySessions.close') }}</button>
-        </div>
-      </div>
+        </v-card-text>
+        <v-card-actions class="asa-dialog__foot">
+          <v-spacer />
+          <button class="asa-btn asa-btn--ghost asa-btn--sm" @click="detailsDialog = false">
+            <span>{{ t('mySessions.close') }}</span>
+          </button>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
-
   </UiPageContainer>
 </template>
 
 <script setup lang="ts">
+import Clock from '~/components/icons/Clock.vue'
+import Activity from '~/components/icons/Activity.vue'
+import Calendar from '~/components/icons/Calendar.vue'
+import ShieldCheck from '~/components/icons/ShieldCheck.vue'
+import Eye from '~/components/icons/Eye.vue'
+import moment from 'moment-jalaali'
+
 definePageMeta({})
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const { toPersianNum } = useLang()
 const { apiFetch } = useApi()
 const { $toast } = useNuxtApp()
-const { user } = useAuth()
+useAuth()
 
 const sessions = ref<any[]>([])
 const loading = ref(false)
@@ -225,30 +241,40 @@ function isCurrentSession(session: any): boolean {
   }
 }
 
-function formatDateTime(date: string | null) {
+function formatDate(date: string | null | undefined) {
   if (!date) return '---'
-  return new Intl.DateTimeFormat('fa-IR', {
-    year: 'numeric', month: 'short', day: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  }).format(new Date(date))
+  const m = moment(date)
+  return locale.value === 'fa' ? toPersianNum(m.format('jDD jMMMM jYYYY')) : m.format('jYYYY/jMM/jDD')
 }
 
-function eventClass(event: string): string {
-  const map: Record<string, string> = {
-    login: '!bg-emerald-50 !text-emerald-700 !border-emerald-200',
-    logout: '!bg-zinc-100 !text-zinc-600 !border-zinc-200',
-  }
-  return map[event] || '!bg-zinc-100 !text-zinc-600 !border-zinc-200'
+function formatTime(date: string | null | undefined) {
+  if (!date) return '---'
+  const m = moment(date)
+  return locale.value === 'fa' ? toPersianNum(m.format('HH:mm')) : m.format('HH:mm')
 }
 
-function deviceTypeClass(deviceType: string | null): string {
+function formatDateTime(date: string | null | undefined) {
+  if (!date) return '---'
+  const m = moment(date)
+  return locale.value === 'fa' ? toPersianNum(m.format('jDD jMMMM jYYYY - HH:mm')) : m.format('jYYYY/jMM/jDD - HH:mm')
+}
+
+function eventPillClass(event: string): string {
   const map: Record<string, string> = {
-    desktop: '!bg-blue-50 !text-blue-700',
-    mobile: '!bg-purple-50 !text-purple-700',
-    tablet: '!bg-amber-50 !text-amber-700',
-    unknown: '!bg-slate-100 !text-slate-500',
+    login: 'asa-pill--green',
+    logout: 'pf-pill--neutral',
   }
-  return map[deviceType || 'unknown'] || '!bg-slate-100 !text-slate-500'
+  return map[event] || 'pf-pill--neutral'
+}
+
+function devicePillClass(deviceType: string | null): string {
+  const map: Record<string, string> = {
+    desktop: 'asa-pill--teal',
+    mobile: 'asa-pill--indigo',
+    tablet: 'asa-pill--amber',
+    unknown: 'pf-pill--neutral',
+  }
+  return map[deviceType || 'unknown'] || 'pf-pill--neutral'
 }
 
 async function fetchSessions() {
@@ -283,6 +309,57 @@ async function fetchSummary() {
   }
 }
 
+function refreshAll() {
+  currentPage.value = 1
+  fetchSessions()
+  fetchSummary()
+}
+
+const sortableColumns = computed(() => [
+  { key: 'createdAt', label: t('mySessions.timestamp') },
+  { key: 'event', label: t('mySessions.event') },
+  { key: 'browser', label: t('mySessions.browser') },
+  { key: 'os', label: t('mySessions.os') },
+  { key: 'device', label: t('mySessions.device') },
+  { key: 'ipAddress', label: t('mySessions.ipAddress') },
+])
+
+type SortKey = 'createdAt' | 'event' | 'browser' | 'os' | 'device' | 'ipAddress'
+
+const sortKey = ref<SortKey>('createdAt')
+const sortDir = ref<'asc' | 'desc'>('desc')
+
+function toggleSort(key: SortKey) {
+  if (sortKey.value === key) {
+    sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortKey.value = key
+    sortDir.value = key === 'createdAt' ? 'desc' : 'asc'
+  }
+}
+
+function sortAria(key: SortKey): string {
+  if (sortKey.value !== key) return 'none'
+  return sortDir.value === 'asc' ? 'ascending' : 'descending'
+}
+
+function sortIndicator(key: SortKey): string {
+  if (sortKey.value !== key) return 'mdi-sort'
+  return sortDir.value === 'asc' ? 'mdi-arrow-up' : 'mdi-arrow-down'
+}
+
+const sortedSessions = computed(() => {
+  const key = sortKey.value
+  const dir = sortDir.value === 'asc' ? 1 : -1
+  return [...sessions.value].sort((a, b) => {
+    const va = key === 'createdAt' ? (a[key] ?? '').toString() : (a[key] ?? '').toString().toLowerCase().trim()
+    const vb = key === 'createdAt' ? (b[key] ?? '').toString() : (b[key] ?? '').toString().toLowerCase().trim()
+    if (va < vb) return -1 * dir
+    if (va > vb) return 1 * dir
+    return 0
+  })
+})
+
 function openDetails(session: any) {
   selectedSession.value = session
   detailsDialog.value = true
@@ -297,3 +374,370 @@ onMounted(() => {
 
 useSeoMeta({ title: t('mySessions.titleSeo') })
 </script>
+
+<style scoped>
+/* ── Header refresh spinner ────────────────────── */
+.pf-spin {
+  animation: pf-spin 800ms linear infinite;
+}
+
+@keyframes pf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Metric cards ──────────────────────────────── */
+.pf-metric {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.125rem 1.25rem;
+}
+
+.pf-metric__copy {
+  min-width: 0;
+}
+
+.pf-metric__value {
+  font-size: 1.625rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--asa-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-metric__value--sm {
+  font-size: 1.0625rem;
+  line-height: 1.3;
+}
+
+.pf-metric__label {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--asa-label-2);
+}
+
+/* ── Table shell ───────────────────────────────── */
+.pf-table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.asa-table-wrap {
+  overflow-x: auto;
+}
+
+.pf-table {
+  width: 100%;
+  min-width: 48rem;
+  border-collapse: collapse;
+  text-align: start;
+}
+
+.pf-table thead th {
+  padding: 0.875rem 1rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: start;
+  white-space: nowrap;
+  color: var(--asa-label-2);
+  border-bottom: 1px solid var(--asa-sep);
+}
+
+.pf-th-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 150ms var(--ease-default);
+}
+
+.pf-th-btn:hover {
+  color: var(--asa-label);
+}
+
+.pf-th-btn--active {
+  color: var(--asa-accent);
+}
+
+.dark .pf-th-btn--active {
+  color: var(--asa-dark);
+}
+
+.pf-th-ic {
+  opacity: 0.4;
+  transition: opacity 150ms var(--ease-default);
+}
+
+.pf-th-btn:hover .pf-th-ic,
+.pf-th-ic--on {
+  opacity: 1;
+}
+
+.pf-table tbody td {
+  padding: 0.875rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--asa-label);
+  white-space: nowrap;
+  border-top: 1px solid var(--asa-sep);
+  vertical-align: middle;
+}
+
+.pf-table tbody tr {
+  transition: background-color 150ms var(--ease-default);
+}
+
+.pf-table tbody tr:hover {
+  background-color: color-mix(in srgb, var(--asa-label) 4%, transparent);
+}
+
+.dark .pf-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.pf-table tbody tr:nth-child(even):not(.pf-row-tr--current) {
+  background: color-mix(in srgb, var(--asa-label) 2%, transparent);
+}
+
+.dark .pf-table tbody tr:nth-child(even):not(.pf-row-tr--current) {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.pf-row-tr--current {
+  background: color-mix(in srgb, var(--asa-green) 6%, transparent);
+}
+
+.pf-pl0 {
+  padding-inline-start: 0 !important;
+  height: 100%;
+}
+
+.pf-ta-end {
+  text-align: end !important;
+}
+
+.pf-sub {
+  color: var(--asa-label-2);
+}
+
+.pf-tiny {
+  color: var(--asa-label-3);
+  font-size: 0.6875rem;
+}
+
+.pf-dt {
+  color: var(--asa-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-dt__date {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--asa-label);
+}
+
+.pf-dt__time {
+  margin-top: 0.1875rem;
+  font-size: 0.6875rem;
+  color: var(--asa-label-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-ip {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  color: var(--asa-label-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-pill--neutral {
+  background: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  color: var(--asa-label-2);
+}
+
+/* Live "current session" pill */
+.pf-live {
+  border: 1px solid color-mix(in srgb, var(--asa-green) 30%, transparent);
+}
+
+.pf-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--asa-green);
+  animation: pf-pulse 2s ease-in-out infinite;
+}
+
+@keyframes pf-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* ── Icon button (row actions) ─────────────────── */
+.pf-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.125rem;
+  height: 2.125rem;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--asa-label-2);
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
+}
+
+.pf-icon-btn:hover {
+  background: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  color: var(--asa-label);
+}
+
+.dark .pf-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ── Loading skeletons ─────────────────────────── */
+.pf-skel {
+  padding: 0.875rem 0;
+}
+
+.pf-skel__row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 1rem;
+  padding: 0.875rem 1.25rem;
+}
+
+.pf-skel__row+.pf-skel__row {
+  border-top: 1px solid var(--asa-sep);
+}
+
+/* ── Empty state ───────────────────────────────── */
+.pf-tint-lg {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1.25rem;
+}
+
+.pf-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.pf-empty__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--asa-label);
+}
+
+.pf-empty__desc {
+  margin-top: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--asa-label-2);
+}
+
+/* ── Table footer (info + pagination) ──────────── */
+.pf-card-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--asa-sep);
+  background: color-mix(in srgb, var(--asa-label) 3%, transparent);
+}
+
+.pf-card-foot__info {
+  font-size: 0.75rem;
+  color: var(--asa-label-2);
+}
+
+/* ── Details dialog ────────────────────────────── */
+.pf-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  color: var(--asa-label-2);
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
+}
+
+.pf-x:hover {
+  background: color-mix(in srgb, var(--asa-label) 7%, transparent);
+  color: var(--asa-label);
+}
+
+.pf-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.125rem 1rem;
+}
+
+.pf-info-cell {
+  min-width: 0;
+}
+
+.pf-info-cell--full {
+  grid-column: 1 / -1;
+}
+
+.pf-info-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--asa-label-2);
+  margin-bottom: 0.375rem;
+}
+
+.pf-info-value {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--asa-label);
+  overflow-wrap: anywhere;
+}
+
+.pf-ua {
+  padding: 0.75rem 0.875rem;
+  border-radius: 0.875rem;
+  background: color-mix(in srgb, var(--asa-label) 4%, transparent);
+  border: 1px solid var(--asa-card-ring);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--asa-label-2);
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .pf-spin,
+  .pf-pulse {
+    animation: none;
+  }
+}
+</style>

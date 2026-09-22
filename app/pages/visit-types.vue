@@ -140,7 +140,7 @@
               </v-col>
 
               <v-col cols="12" md="6" class="py-2 d-flex align-center">
-                <v-switch v-model="form.isActive" color="#CDB4DB" :label="$t('visitTypes.active')" hide-details />
+                <v-switch v-model="form.isActive" color="#00ADB5" :label="$t('visitTypes.active')" hide-details />
               </v-col>
             </v-row>
           </v-form>
@@ -152,7 +152,7 @@
             {{ $t('common.cancel') }}
           </v-btn>
           <v-spacer />
-          <v-btn variant="flat" color="#CDB4DB" size="large" :loading="saving"
+          <v-btn variant="flat" color="#00ADB5" size="large" :loading="saving"
             class="px-8 font-bold rounded-lg shadow-md shadow-electric-sapphire/30 hover:bg-electric-sapphire/80!" @click="saveVisitType">
             {{ editingId ? $t('visitTypes.saveChanges') : $t('visitTypes.createType') }}
           </v-btn>

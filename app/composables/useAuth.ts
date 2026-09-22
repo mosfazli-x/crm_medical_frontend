@@ -6,18 +6,18 @@ export const useAuth = () => {
     sameSite: 'lax',
   })
   const user = useState<User | null>('auth_user', () => null)
+  // Lazy i18n translator: the composer may not be ready during early SSR.
+  // Resolve on first successful call and keep it; never cache a failure.
   let _t: ((key: string) => string) | null = null
-  let _tFailed = false
-  const t = (key: string) => {
-    if (!_t && !_tFailed) {
+  const t = (key: string): string => {
+    if (!_t) {
       try {
         _t = useI18n().t
       } catch {
-        _tFailed = true
         return key
       }
     }
-    return _t ? _t(key) : key
+    return _t(key)
   }
 
   onMounted(() => {
@@ -47,6 +47,42 @@ export const useAuth = () => {
     }
   })
 
+  // Resolves the message a Fastify/AppError response actually returned, so the
+  // server's own (often localized) wording shows instead of a generic key.
+  const resolveError = (err: any, fallbackKey: string): string => {
+    const status = err?.status ?? err?.statusCode ?? err?.response?.status
+    const data = err?.data ?? err?.response?.data
+    const serverMessage =
+      (typeof data?.error === 'string' && data.error !== 'Unknown error' && data.error) ||
+      (typeof data?.message === 'string' && data.message) ||
+      (Array.isArray(data?.details) && typeof data.details[0]?.message === 'string' &&
+        data.details[0].message)
+
+    if (err?.name === 'NetworkError' || (!process.server && !navigator.onLine)) {
+      return t('auth.errors.networkError')
+    }
+    if (err?.code === 'ECONNABORTED') {
+      return t('auth.errors.timeoutError')
+    }
+    if (status === 429) return t('auth.errors.rateLimited')
+    if (status && status >= 500) return t('auth.errors.serverError')
+    // 4xx validation & domain errors: the API includes the exact message.
+    if (serverMessage) return serverMessage
+
+    switch (status) {
+      case 401:
+        return t('auth.errors.invalidCredentials')
+      case 403:
+        return t('auth.errors.accountDisabled')
+      case 409:
+        return t('auth.errors.phoneExists')
+      case 400:
+        return t('auth.errors.invalidInput')
+      default:
+        return t(fallbackKey) || t('auth.errors.loginError') || fallbackKey
+    }
+  }
+
   const login = async (credentials: { phone: string; password: string }) => {
     try {
       const response: any = await $fetch('/api/auth/login', {
@@ -63,28 +99,7 @@ export const useAuth = () => {
         useNuxtApp().$toast.error(response.message || t('auth.errors.loginFailed'))
       }
     } catch (err: any) {
-      const status = err?.response?.status
-
-      let message: string
-      if (err?.name === 'NetworkError' || (!process.server && !navigator.onLine)) {
-        message = t('auth.errors.networkError')
-      } else if (status === 401) {
-        message = t('auth.errors.invalidCredentials')
-      } else if (status === 403) {
-        message = t('auth.errors.accountDisabled')
-      } else if (status === 422) {
-        message = err.data?.details?.[0]?.message || err.data?.error || t('auth.errors.invalidInput')
-      } else if (status === 429) {
-        message = t('auth.errors.rateLimited')
-      } else if (status && status >= 500) {
-        message = t('auth.errors.serverError')
-      } else if (err?.code === 'ECONNABORTED') {
-        message = t('auth.errors.timeoutError')
-      } else {
-        message = err.data?.error || t('auth.errors.loginError')
-      }
-
-      useNuxtApp().$toast.error(message)
+      useNuxtApp().$toast.error(resolveError(err, 'auth.errors.loginError'))
     }
   }
 
@@ -103,30 +118,7 @@ export const useAuth = () => {
         useNuxtApp().$toast.error(response.message || t('auth.register.error'))
       }
     } catch (err: any) {
-      const status = err?.response?.status
-
-      let message: string
-      if (err?.name === 'NetworkError' || (!process.server && !navigator.onLine)) {
-        message = t('auth.errors.networkError')
-      } else if (status === 400) {
-        message = err.data?.details?.[0]?.message || err.data?.error || t('auth.errors.invalidInput')
-      } else if (status === 401) {
-        message = t('auth.errors.invalidCredentials')
-      } else if (status === 403) {
-        message = err.data?.error || t('auth.errors.accountDisabled')
-      } else if (status === 409) {
-        message = t('auth.errors.phoneExists')
-      } else if (status === 429) {
-        message = t('auth.errors.rateLimited')
-      } else if (status && status >= 500) {
-        message = t('auth.errors.serverError')
-      } else if (err?.code === 'ECONNABORTED') {
-        message = t('auth.errors.timeoutError')
-      } else {
-        message = err.data?.error || t('auth.register.error')
-      }
-
-      useNuxtApp().$toast.error(message)
+      useNuxtApp().$toast.error(resolveError(err, 'auth.register.error'))
     }
   }
 

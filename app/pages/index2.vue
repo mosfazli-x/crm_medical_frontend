@@ -33,7 +33,7 @@ const showDoctorsSection = computed(() =>
 
 const featuredDoctor = computed<LandingDoctor | undefined>(() => doctors.value[0])
 const sideDoctors = computed<LandingDoctor[]>(() => doctors.value.slice(1))
-const sideDoctorAccents = ['imm-doctor-card--cyan', 'imm-doctor-card--indigo']
+const sideDoctorAccents = ['imm-doctor-card--cyan', 'imm-doctor-card--teal']
 
 function doctorInitials(name: string): string {
   return name

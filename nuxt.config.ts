@@ -9,12 +9,14 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // apiBase: 'https://crmapi.ladiesneeds.com',
+      // apiBase: 'http://5.144.134.16:2004',
       apiBase: ''
     },
   },
   nitro: {
     routeRules: {
       '/api/**': { proxy: 'http://localhost:3001/api/**' },
+      // '/api/**': { proxy: 'http://localhost:3001/api/**' },
       '/**': {
         headers: {
           'X-Content-Type-Options': 'nosniff',

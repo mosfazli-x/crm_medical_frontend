@@ -2,7 +2,7 @@
   <UiPageContainer>
     <UiPageHeader :title="$t('adminSettings.title')" :subtitle="$t('adminSettings.subtitle')">
       <template #actions>
-        <v-chip size="small" color="indigo" variant="tonal" prepend-icon="mdi-shield-lock">
+        <v-chip size="small" color="teal" variant="tonal" prepend-icon="mdi-shield-lock">
           {{ $t('adminSettings.adminOnly') }}
         </v-chip>
       </template>
@@ -13,7 +13,7 @@
       <UiContentCard>
         <div class="crm-card-header">
           <div class="flex items-center! gap-3">
-            <div class="p-2.5 rounded-xl bg-indigo-50 text-indigo-600">
+            <div class="p-2.5 rounded-xl bg-teal-50 text-teal-600">
               <v-icon icon="mdi-message-text" size="20" />
             </div>
             <div>
@@ -24,13 +24,13 @@
         </div>
 
         <div v-if="loading" class="text-center py-8">
-          <v-progress-circular indeterminate color="#CDB4DB" size="32" />
+          <v-progress-circular indeterminate color="#00ADB5" size="32" />
         </div>
 
         <div v-else class="space-y-6 px-10! py-3!">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="bg-slate-50 rounded-xl p-4 text-center py-2!">
-              <p class="text-2xl font-bold text-indigo-600" dir="ltr">{{ fmt(smsStats.remaining) }}</p>
+              <p class="text-2xl font-bold text-teal-600" dir="ltr">{{ fmt(smsStats.remaining) }}</p>
               <p class="text-xs text-slate-500 mt-1">{{ $t('adminSettings.remaining') }}</p>
             </div>
             <div class="bg-slate-50 rounded-xl p-4 text-center py-2!">
@@ -50,7 +50,7 @@
             </div>
             <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
               <div class="h-full rounded-full transition-all duration-500"
-                :class="smsPercent > 20 ? 'bg-indigo-600' : smsPercent > 5 ? 'bg-amber-500' : 'bg-rose-500'"
+                :class="smsPercent > 20 ? 'bg-teal-600' : smsPercent > 5 ? 'bg-amber-500' : 'bg-rose-500'"
                 :style="{ width: smsPercent + '%' }" />
             </div>
           </div>
@@ -60,7 +60,7 @@
             <div class="flex gap-4 justify-between align-middle items-center">
               <v-text-field v-model="newCredit" type="number" min="0" :label="$t('adminSettings.smsCount')" variant="outlined"
                 density="compact" hide-details="auto" class="max-w-xs" bg-color="white" />
-              <v-btn color="#CDB4DB" variant="flat" size="small" class="rounded-lg px-6"
+              <v-btn color="#00ADB5" variant="flat" size="small" class="rounded-lg px-6"
                 :disabled="saving || newCredit === ''" :loading="saving" @click="saveCredit">
                 {{ $t('common.save') }}
               </v-btn>
@@ -83,7 +83,7 @@
                 <p class="text-sm font-medium text-slate-700">{{ $t('adminSettings.smsSending') }}</p>
                 <p class="text-xs text-slate-400">{{ $t('adminSettings.smsSendingDesc') }}</p>
               </div>
-              <v-switch v-model="smsEnabled" color="#CDB4DB" density="compact" hide-details :loading="savingEnabled"
+              <v-switch v-model="smsEnabled" color="#00ADB5" density="compact" hide-details :loading="savingEnabled"
                 @update:model-value="(val: any) => toggleSmsEnabled(val === true)" />
             </div>
           </div>
@@ -119,7 +119,7 @@
               <!-- SMS toggle -->
               <div v-if="event.channels.includes('sms')" class="flex items-center gap-2">
                 <v-icon icon="mdi-cellphone" size="16" class="text-slate-400" />
-                <v-switch v-model="event.sms" color="#CDB4DB" density="compact" hide-details
+                <v-switch v-model="event.sms" color="#00ADB5" density="compact" hide-details
                   :disabled="event.critical && event.key === 'auth_otp'"
                   @update:model-value="(val: any) => toggleEvent(event.key, 'sms', val === true)" />
               </div>
@@ -127,7 +127,7 @@
               <!-- Telegram toggle -->
               <div v-if="event.channels.includes('telegram')" class="flex items-center gap-2">
                 <v-icon icon="mdi-telegram" size="16" class="text-blue-400" />
-                <v-switch v-model="event.telegram" color="#CDB4DB" density="compact" hide-details
+                <v-switch v-model="event.telegram" color="#00ADB5" density="compact" hide-details
                   @update:model-value="(val: any) => toggleEvent(event.key, 'telegram', val === true)" />
               </div>
             </div>
