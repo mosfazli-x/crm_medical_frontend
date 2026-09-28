@@ -43,7 +43,7 @@
       </section>
 
       <nav class="ln-nav" aria-label="Main">
-        <NuxtLink to="/appointments" class="ln-card ln-card--primary">
+        <NuxtLink to="/booking" class="ln-card ln-card--primary">
           <span class="ln-card-text">
             <span class="ln-card-title font-bon">{{ t('nav.appointments.title') }}</span>
             <span class="ln-card-sub">{{ t('nav.appointments.sub') }}</span>

@@ -28,7 +28,7 @@
     <!-- Patients with no phone cannot be reminded -->
     <div
       v-if="missingPhone > 0"
-      class="asa-alert asa-alert--amber"
+      class="asa-alert asa-alert--amber mb-4"
       role="status">
       <span class="asa-alert__icon" aria-hidden="true">
         <UsersGroup class="w-5! h-5! fill-current" />

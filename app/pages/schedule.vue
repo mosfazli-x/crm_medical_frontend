@@ -1,301 +1,581 @@
 ﻿<template>
-  <UiPageContainer>
-    <UiPageHeader :title="$t('schedule.title')" :subtitle="$t('schedule.subtitle')">
-      <template #actions>
-        <div class="flex items-center gap-3 flex-wrap">
-          <div class="inline-flex items-center rounded-lg bg-slate-100 dark:bg-slate-800 p-1 gap-1">
-            <button class="view-toggle-btn" :class="viewMode === 'board' ? 'view-toggle-active' : ''"
-              @click="viewMode = 'board'">
-              <v-icon size="15">mdi-view-column-outline</v-icon>
-              <span>{{ t('schedule.board') }}</span>
-            </button>
-            <button class="view-toggle-btn" :class="viewMode === 'list' ? 'view-toggle-active' : ''"
-              @click="viewMode = 'list'">
-              <v-icon size="15">mdi-format-list-bulleted</v-icon>
-              <span>{{ t('schedule.listView') }}</span>
-            </button>
-          </div>
-          <v-btn v-if="isAdmin" variant="flat" class="crm-btn crm-btn-accent" @click="openCreate('pending')">
-            <v-icon start size="16">mdi-plus</v-icon>
-            {{ $t('schedule.addTask') }}
-          </v-btn>
+  <UiPageContainer class="relative! max-w-7xl! mx-auto!">
+    <!-- ─── Large-title header ─── -->
+    <header class="dash-head">
+      <div class="dash-head__copy">
+        <h1 class="dash-head__title">{{ t('schedule.title') }}</h1>
+        <p class="dash-head__date">{{ t('schedule.subtitle') }}</p>
+      </div>
+      <div class="dash-head__actions">
+        <div class="pf-seg" role="group" :aria-label="t('schedule.viewMode')">
+          <button
+            v-for="seg in viewSegments"
+            :key="seg.value"
+            type="button"
+            class="pf-seg__btn"
+            :class="{ 'pf-seg__btn--on': view === seg.value }"
+            :aria-pressed="view === seg.value"
+            @click="setView(seg.value)"
+          >
+            <v-icon size="14">{{ seg.icon }}</v-icon>
+            <span>{{ seg.label }}</span>
+          </button>
         </div>
-      </template>
-    </UiPageHeader>
+        <button
+          class="asa-btn asa-btn--ghost"
+          :disabled="loading"
+          :aria-label="t('schedule.refresh')"
+          :title="t('schedule.refresh')"
+          @click="refreshAll"
+        >
+          <v-icon size="16" :class="{ 'pf-spin': loading }">mdi-refresh</v-icon>
+        </button>
+        <button v-if="isAdmin" class="asa-btn asa-btn--primary" @click="openCreate('pending')">
+          <Plus class="w-4! h-4! stroke-current" />
+          <span>{{ t('schedule.addTask') }}</span>
+        </button>
+      </div>
+    </header>
 
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-      <UiStatCard :label="$t('schedule.totalTasks')" :value="stats.total">
-        <template #icon><v-icon size="24" color="#00ADB5">mdi-clipboard-text-outline</v-icon></template>
-      </UiStatCard>
-      <UiStatCard :label="$t('schedule.pendingTasks')" :value="stats.pending" valueClass="!text-amber-600">
-        <template #icon><v-icon size="24" color="#D97706">mdi-clock-outline</v-icon></template>
-      </UiStatCard>
-      <UiStatCard :label="$t('schedule.inProgressTasks')" :value="stats.inProgress" valueClass="!text-blue-600">
-        <template #icon><v-icon size="24" color="#2563EB">mdi-progress-clock</v-icon></template>
-      </UiStatCard>
-      <UiStatCard :label="$t('schedule.doneTasks')" :value="stats.done" valueClass="!text-emerald-600">
-        <template #icon><v-icon size="24" color="#059669">mdi-check-circle-outline</v-icon></template>
-      </UiStatCard>
-      <UiStatCard :label="$t('schedule.overdueTasks')" :value="overdueCount" valueClass="!text-red-500">
-        <template #icon><v-icon size="24" color="#EF4444">mdi-alert-circle-outline</v-icon></template>
-      </UiStatCard>
+    <!-- ─── Summary metrics ─── -->
+    <div class="sch-metrics">
+      <template v-if="!stats">
+        <div v-for="i in 5" :key="`sk-m-${i}`" class="asa-skel rounded-[22px]! h-[74px]!" />
+      </template>
+      <div v-for="m in metricCards" v-else :key="m.key" class="asa-card pf-metric">
+        <div class="asa-tint" :class="m.tint">
+          <component :is="m.icon" class="w-5! h-5! fill-current" />
+        </div>
+        <div class="pf-metric__copy">
+          <p class="pf-metric__value" :class="m.valueClass">{{ pn(m.value) }}</p>
+          <p class="pf-metric__label">{{ m.label }}</p>
+        </div>
+      </div>
     </div>
 
-    <UiContentCard>
-      <template #header>
-        <h3 class="crm-card-title">{{ $t('schedule.taskDetails') }}</h3>
-      </template>
-
-      <div class="crm-filter-bar">
-        <div class="crm-filter-bar-head">
-          <div class="flex items-center gap-2">
-            <v-icon size="16" class="!text-slate-400">mdi-filter-variant</v-icon>
-            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">{{ $t('schedule.filters') }}</span>
-            <span v-if="filtersActive" class="crm-badge crm-badge-blue">{{ activeFilterCount }}</span>
-          </div>
-          <div class="w-full md:w-auto flex flex-wrap items-center gap-x-4 gap-y-2 justify-center align-middle">
-            <v-switch v-if="isAdmin" v-model="assignedToMe" hide-details :label="$t('schedule.myTasks')"
-              color="#00ADB5" density="compact" inset />
-            <v-btn v-if="filtersActive" variant="text" size="small" color="#EF4444" class="!font-semibold"
-              @click="resetFilters">
-              <v-icon start size="15">mdi-filter-remove-outline</v-icon>
-              {{ $t('schedule.clearFilters') }}
-            </v-btn>
-          </div>
+    <!-- ─── Tasks card ─── -->
+    <div class="asa-card pf-table-card mt-5!">
+      <!-- Toolbar: search + status segments + filters -->
+      <div class="pf-toolbar">
+        <div class="pf-toolbar__search">
+          <span class="pf-toolbar__search-ic">
+            <Magnify class="w-4! h-4! stroke-current" />
+          </span>
+          <input
+            v-model="query"
+            type="search"
+            class="pf-toolbar__input"
+            :placeholder="t('schedule.searchPlaceholder')"
+            :aria-label="t('schedule.searchPlaceholder')"
+          >
+          <button
+            v-if="query"
+            class="pf-toolbar__clear"
+            type="button"
+            :aria-label="t('common.clear')"
+            @click="query = ''"
+          >
+            <v-icon size="15">mdi-close</v-icon>
+          </button>
         </div>
 
-        <div class="crm-filter-grid">
-          <div class="crm-filter-search">
-            <v-text-field v-model="filters.q" variant="outlined" density="comfortable" hide-details="auto" clearable
-              rounded="lg" :label="$t('schedule.searchPlaceholder')" prepend-inner-icon="mdi-magnify" />
-          </div>
-          <v-select v-model="filters.status" :items="statusOptions" item-title="title" item-value="value"
-            variant="outlined" density="comfortable" hide-details="auto" clearable rounded="lg"
-            :label="$t('schedule.status')" />
-          <v-select v-model="filters.priority" :items="priorityOptions" item-title="title" item-value="value"
-            variant="outlined" density="comfortable" hide-details="auto" clearable rounded="lg"
-            :label="$t('schedule.priority')" />
-          <v-select v-if="isAdmin" v-model="filters.assigneeId" :items="assigneeFilterOptions" item-title="label"
-            item-value="value" variant="outlined" density="comfortable" hide-details="auto" clearable rounded="lg"
-            :label="$t('schedule.assignee')" />
-          <v-select v-model="filters.due" :items="dueOptions" item-title="title" item-value="value" variant="outlined"
-            density="comfortable" hide-details="auto" clearable rounded="lg" :label="$t('schedule.dueDate')" />
+        <div class="pf-seg" role="group" :aria-label="t('schedule.status')">
+          <button
+            v-for="seg in statusSegments"
+            :key="seg.value"
+            type="button"
+            class="pf-seg__btn"
+            :class="{ 'pf-seg__btn--on': status === seg.value }"
+            :aria-pressed="status === seg.value"
+            @click="status = seg.value"
+          >
+            <span>{{ seg.label }}</span>
+          </button>
+        </div>
+
+        <div class="pf-toolbar__tail">
+          <button
+            v-if="isAdmin"
+            class="asa-pill sch-mine"
+            :class="assignedToMe ? 'asa-pill--teal' : 'pf-pill--neutral'"
+            type="button"
+            :aria-pressed="assignedToMe"
+            @click="assignedToMe = !assignedToMe"
+          >
+            <v-icon size="12">mdi-account-check-outline</v-icon>
+            {{ t('schedule.myTasks') }}
+          </button>
+
+          <v-select
+            v-model="priority"
+            class="asa-select sch-select"
+            :items="priorityOptions"
+            item-title="title"
+            item-value="value"
+            variant="solo"
+            density="compact"
+            hide-details
+            clearable
+            :placeholder="t('schedule.filterAllPriority')"
+            :aria-label="t('schedule.priority')"
+            prepend-inner-icon="mdi-flag-outline"
+          />
+
+          <v-select
+            v-if="isAdmin"
+            v-model="assigneeId"
+            class="asa-select sch-select"
+            :items="assigneeFilterOptions"
+            item-title="label"
+            item-value="value"
+            variant="solo"
+            density="compact"
+            hide-details
+            clearable
+            :placeholder="t('schedule.filterAllAssignee')"
+            :aria-label="t('schedule.assignee')"
+            prepend-inner-icon="mdi-account-outline"
+          />
+
+          <v-select
+            v-model="due"
+            class="asa-select sch-select"
+            :items="dueOptions"
+            item-title="title"
+            item-value="value"
+            variant="solo"
+            density="compact"
+            hide-details
+            clearable
+            :placeholder="t('schedule.filterAllDue')"
+            :aria-label="t('schedule.dueDate')"
+            prepend-inner-icon="mdi-calendar-clock"
+          />
+
+          <v-select
+            v-model="sort"
+            class="asa-select sch-select"
+            :items="sortOptions"
+            item-title="title"
+            item-value="value"
+            variant="solo"
+            density="compact"
+            hide-details
+            :placeholder="t('schedule.sort')"
+            :aria-label="t('schedule.sort')"
+            prepend-inner-icon="mdi-sort"
+          />
+
+          <button
+            v-if="filtersActive"
+            class="pf-toolbar__clear sch-clear"
+            type="button"
+            :aria-label="t('schedule.clearFilters')"
+            :title="t('schedule.clearFilters')"
+            @click="resetFilters"
+          >
+            <v-icon size="15">mdi-filter-remove-outline</v-icon>
+          </button>
         </div>
       </div>
 
-      <div class="px-2!">
-        <p v-if="viewMode === 'board' && tasks.length > 0" class="text-xs text-slate-400 mb-3">
-          <v-icon size="13" class="mr-1">mdi-cursor-move</v-icon>
+      <!-- Loading -->
+      <div v-if="loading">
+        <div class="pf-skel">
+          <div v-for="i in 6" :key="`sk-${i}`" class="pf-skel__row">
+            <div class="asa-skel h-4! w-40! rounded-md!" />
+            <div class="asa-skel h-4! w-24! rounded-md!" />
+            <div class="asa-skel h-4! w-20! rounded-md!" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Load error -->
+      <div v-else-if="error" class="pf-empty">
+        <div class="asa-tint asa-tint--rose pf-tint-lg">
+          <v-icon size="26">mdi-cloud-alert-outline</v-icon>
+        </div>
+        <div>
+          <p class="pf-empty__title">{{ t('schedule.loadErrorTitle') }}</p>
+          <p class="pf-empty__desc">{{ t('schedule.fetchError') }}</p>
+        </div>
+        <div class="pf-empty__actions">
+          <button class="asa-btn asa-btn--primary asa-btn--sm" @click="fetchTasks">
+            <v-icon size="15">mdi-refresh</v-icon>
+            <span>{{ t('common.retry') }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Nothing at all yet -->
+      <div v-else-if="!totalCount" class="pf-empty">
+        <div class="asa-tint asa-tint--teal pf-tint-lg">
+          <ClipboardCheck class="w-6! h-6! fill-current" />
+        </div>
+        <div>
+          <p class="pf-empty__title">{{ t('schedule.noTasks') }}</p>
+          <p class="pf-empty__desc">{{ t('schedule.emptyDescription') }}</p>
+        </div>
+        <div v-if="isAdmin" class="pf-empty__actions">
+          <button class="asa-btn asa-btn--primary asa-btn--sm" @click="openCreate('pending')">
+            <Plus class="w-4! h-4! stroke-current" />
+            <span>{{ t('schedule.addTask') }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters exclude everything -->
+      <div v-else-if="!tasks.length" class="pf-empty">
+        <div class="asa-tint asa-tint--indigo pf-tint-lg">
+          <Magnify class="w-6! h-6! stroke-current" />
+        </div>
+        <div>
+          <p class="pf-empty__title">{{ t('schedule.noTasks') }}</p>
+          <p class="pf-empty__desc">{{ t('schedule.noTasksDescription') }}</p>
+        </div>
+        <div class="pf-empty__actions">
+          <button class="asa-btn asa-btn--ghost asa-btn--sm" @click="resetFilters">
+            <v-icon size="15">mdi-filter-remove-outline</v-icon>
+            <span>{{ t('schedule.clearFilters') }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ─── Board view ─── -->
+      <template v-else-if="view === 'board'">
+        <p v-if="canMove" class="sch-hint">
+          <v-icon size="13">mdi-cursor-move</v-icon>
           {{ t('schedule.boardHint') }}
         </p>
+        <ScheduleKanbanBoard
+          :tasks="tasks"
+          :can-add="isAdmin"
+          :can-move="canMove"
+          @move="changeStatus"
+          @open="openDetail"
+          @add="openCreate"
+        />
+      </template>
 
-        <!-- Kanban Board -->
-        <template v-if="viewMode === 'board'">
-          <UiLoadingSpinner v-if="loading" :text="$t('schedule.fetchingTasks')" />
-          <ScheduleKanbanBoard v-else :tasks="tasks" @move="changeStatus" @open="openDetail"
-            @add="(s) => isAdmin && openCreate(s)" />
-          <div v-if="!loading && tasks.length === 0" class="text-center py-12">
-            <v-icon size="40" class="text-slate-300 mb-2">mdi-view-column-outline</v-icon>
-            <p class="text-sm text-slate-400">
-              {{ filtersActive ? $t('schedule.noTasksDescription') : $t('schedule.emptyDescription') }}
-            </p>
-          </div>
-        </template>
+      <!-- ─── List view: desktop table ─── -->
+      <template v-else>
+        <div class="sch-table-wrap asa-table-wrap">
+          <table class="pf-table">
+            <thead>
+              <tr>
+                <th class="pf-pl0">{{ t('schedule.task') }}</th>
+                <th>{{ t('schedule.assignees') }}</th>
+                <th>{{ t('schedule.priority') }}</th>
+                <th>{{ t('schedule.dueDate') }}</th>
+                <th>{{ t('schedule.status') }}</th>
+                <th>{{ t('schedule.timeSpent') }}</th>
+                <th>{{ t('schedule.updated') }}</th>
+                <th class="pf-ta-end">{{ t('schedule.actions') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="task in tasks" :key="task.id">
+                <td class="pf-pl0">
+                  <button type="button" class="sch-cell" @click="openDetail(task)">
+                    <span class="sch-cell__name">{{ task.title }}</span>
+                    <span v-if="task.description" class="sch-cell__sub">{{ task.description }}</span>
+                  </button>
+                </td>
+                <td>
+                  <div v-if="task.assignees.length" class="sch-avatars">
+                    <span
+                      v-for="a in task.assignees.slice(0, 3)"
+                      :key="a.id"
+                      class="sch-avatar"
+                      :style="{ background: avatarColor(a.id) }"
+                      :title="assigneeLabel(a)"
+                    >{{ assigneeInitials(a) }}</span>
+                    <span v-if="task.assignees.length > 3" class="pf-tiny">+{{ task.assignees.length - 3 }}</span>
+                  </div>
+                  <span v-else class="pf-tiny">{{ t('schedule.noAssignees') }}</span>
+                </td>
+                <td>
+                  <span class="asa-pill" :class="priorityPill(task.priority)">
+                    {{ priorityLabel(task.priority) }}
+                  </span>
+                </td>
+                <td>
+                  <span v-if="task.dueDate" class="pf-dt" :class="{ 'sch-due--over': isOverdue(task) }">
+                    {{ formatJalaliDateShort(task.dueDate) }}
+                  </span>
+                  <span v-else class="pf-tiny">{{ t('schedule.noDueDate') }}</span>
+                </td>
+                <td>
+                  <v-menu location="bottom start">
+                    <template #activator="{ props: menuProps }">
+                      <button
+                        v-bind="menuProps"
+                        type="button"
+                        class="asa-pill sch-status"
+                        :class="statusPill(task.status)"
+                        :aria-label="t('schedule.changeStatus')"
+                      >
+                        {{ statusLabel(task.status) }}
+                        <v-icon size="11">mdi-chevron-down</v-icon>
+                      </button>
+                    </template>
+                    <v-list density="compact" min-width="160">
+                      <v-list-item
+                        v-for="opt in statusOptions"
+                        :key="opt.value"
+                        :active="task.status === opt.value"
+                        @click="changeStatus(task, opt.value)"
+                      >
+                        <v-list-item-title class="text-sm">{{ opt.title }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </td>
+                <td class="sch-time">
+                  <v-icon size="13">mdi-timer-outline</v-icon>
+                  {{ timeRange(task) }}
+                </td>
+                <td class="pf-dt">{{ formatJalaliDateShort(task.updatedAt) }}</td>
+                <td class="pf-ta-end">
+                  <div class="sch-actions">
+                    <button
+                      class="pf-icon-btn"
+                      type="button"
+                      :title="isAdmin ? t('schedule.editTask') : t('schedule.taskDetails')"
+                      :aria-label="isAdmin ? t('schedule.editTask') : t('schedule.taskDetails')"
+                      @click="openDetail(task)"
+                    >
+                      <Eye class="w-4! h-4! stroke-current" />
+                    </button>
+                    <template v-if="isAdmin">
+                      <button
+                        class="pf-icon-btn"
+                        type="button"
+                        :title="t('schedule.editTask')"
+                        :aria-label="t('schedule.editTask')"
+                        @click="openEdit(task)"
+                      >
+                        <Pencil class="w-4! h-4! stroke-current" />
+                      </button>
+                      <button
+                        class="pf-icon-btn pf-icon-btn--danger"
+                        type="button"
+                        :title="t('common.delete')"
+                        :aria-label="t('common.delete')"
+                        @click="askDelete(task)"
+                      >
+                        <Trash2 class="w-4! h-4! stroke-current" />
+                      </button>
+                    </template>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-        <!-- List view -->
-        <template v-else>
-          <div class="crm-table-wrap">
-            <table class="crm-table">
-              <thead>
-                <tr>
-                  <th class="px-4 py-3 text-sm font-bold whitespace-nowrap">{{ $t('schedule.task') }}</th>
-                  <th class="px-4 py-3 text-sm font-bold whitespace-nowrap">{{ $t('schedule.assignees') }}</th>
-                  <th class="px-4 py-3 text-sm font-bold whitespace-nowrap">{{ $t('schedule.priority') }}</th>
-                  <th class="px-4 py-3 text-sm font-bold whitespace-nowrap">{{ $t('schedule.dueDate') }}</th>
-                  <th class="px-4 py-3 text-sm font-bold whitespace-nowrap">{{ $t('schedule.status') }}</th>
-                  <th class="px-4 py-3 text-sm font-bold whitespace-nowrap">{{ $t('schedule.timeSpent') }}</th>
-                  <th class="px-4 py-3 text-sm font-bold whitespace-nowrap">{{ $t('schedule.updated') }}</th>
-                  <th v-if="isAdmin" class="px-4 py-3 text-sm font-bold text-center whitespace-nowrap">{{
-                    $t('schedule.actions') }}</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100">
-                <tr v-for="task in pagedTasks" :key="task.id" class="hover:bg-slate-50/80 transition-colors">
-                  <td class="px-4 py-3 cursor-pointer" @click="openDetail(task)">
-                    <div class="text-sm font-semibold text-slate-800 dark:text-slate-200">{{ task.title }}</div>
-                    <div v-if="task.description" class="text-xs text-slate-400 max-w-[280px] truncate mt-0.5">{{
-                      task.description }}</div>
-                  </td>
-                  <td class="px-4 py-3">
-                    <div class="flex items-center gap-1.5">
-                      <template v-if="task.assignees.length">
-                        <div v-for="a in task.assignees.slice(0, 3)" :key="a.id"
-                          class="w-6 h-6 rounded-full text-[10px] font-bold text-white flex items-center justify-center"
-                          :style="{ background: avatarColor(a.id) }" :title="assigneeLabel(a)">
-                          {{ assigneeInitials(a) }}
-                        </div>
-                        <span v-if="task.assignees.length > 3" class="text-xs text-slate-400">
-                          +{{ task.assignees.length - 3 }}
-                        </span>
-                      </template>
-                      <span v-else class="text-xs text-slate-400">{{ $t('schedule.noAssignees') }}</span>
-                    </div>
-                  </td>
-                  <td class="px-4 py-3 whitespace-nowrap">
-                    <span :class="['px-2 py-0.5 rounded-full text-xs font-semibold', priorityClass(task.priority)]">
-                      {{ priorityLabel(task.priority) }}
-                    </span>
-                  </td>
-                  <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">
-                    <span v-if="task.dueDate" :class="{ '!text-red-500 font-semibold': isOverdue(task) }">
-                      {{ formatJalaliDateShort(task.dueDate) }}
-                    </span>
-                    <span v-else class="text-xs text-slate-400">{{ $t('schedule.noDueDate') }}</span>
-                  </td>
-                  <td class="px-4 py-3 whitespace-nowrap">
-                    <v-menu>
-                      <template #activator="{ props: menuProps }">
-                        <span v-bind="menuProps"
-                          :class="['px-2 py-0.5 rounded-full text-xs font-semibold cursor-pointer inline-flex items-center gap-1', badgeClass(task.status)]">
-                          {{ statusLabel(task.status) }}
-                          <v-icon size="12">mdi-chevron-down</v-icon>
-                        </span>
-                      </template>
-                      <v-list density="compact" min-width="150">
-                        <v-list-item v-for="opt in statusOptions" :key="opt.value" :value="opt.value"
-                          :active="task.status === opt.value" @click="changeStatus(task, opt.value)">
-                          <v-list-item-title class="text-sm">{{ opt.title }}</v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
-                  </td>
-                  <td class="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">
-                    <span class="inline-flex items-center gap-1">
-                      <v-icon size="14">mdi-timer-outline</v-icon>
-                      {{ formatMinutes(task.spentMinutes) }}
-                      <template v-if="task.estimatedMinutes">
-                        <span class="text-slate-300 dark:text-slate-600">/</span>
-                        <span class="text-slate-400">{{ formatMinutes(task.estimatedMinutes) }}</span>
-                      </template>
-                    </span>
-                  </td>
-                  <td class="px-4 py-3 text-xs text-slate-400 whitespace-nowrap">{{
-                    formatJalaliDateShort(task.updatedAt) }}</td>
-                  <td v-if="isAdmin" class="px-4 py-3 text-center whitespace-nowrap">
-                    <v-tooltip :text="$t('schedule.editTask')" location="top">
-                      <template #activator="{ props: tipProps }">
-                        <v-btn v-bind="tipProps" icon variant="text" size="small"
-                          class="text-amber-500 hover:text-amber-600" @click="openEdit(task)">
-                          <v-icon size="18">mdi-pencil-outline</v-icon>
-                        </v-btn>
-                      </template>
-                    </v-tooltip>
-                    <v-tooltip :text="$t('common.delete')" location="top">
-                      <template #activator="{ props: tipProps }">
-                        <v-btn v-bind="tipProps" icon variant="text" size="small" color="error"
-                          @click="confirmDelete(task)">
-                          <v-icon size="18">mdi-delete-outline</v-icon>
-                        </v-btn>
-                      </template>
-                    </v-tooltip>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            <div v-if="tasks.length === 0" class="text-center py-10">
-              <v-icon size="40" class="text-slate-300 mb-2">mdi-clipboard-text-outline</v-icon>
-              <p class="text-sm text-slate-400">{{ filtersActive ? $t('schedule.noTasksDescription') :
-                $t('schedule.emptyDescription') }}</p>
+        <!-- ─── List view: mobile roster ─── -->
+        <div class="pf-roster sch-roster">
+          <div v-for="task in tasks" :key="task.id" class="pf-roster__item">
+            <div class="pf-roster__body">
+              <div class="pf-roster__top">
+                <span class="pf-roster__name">{{ task.title }}</span>
+                <span class="asa-pill" :class="statusPill(task.status)">
+                  {{ statusLabel(task.status) }}
+                </span>
+              </div>
+              <div class="pf-roster__meta">
+                <span>
+                  <v-icon size="13">mdi-flag-outline</v-icon>
+                  {{ priorityLabel(task.priority) }}
+                </span>
+                <span v-if="task.dueDate" :class="{ 'sch-due--over': isOverdue(task) }">
+                  <v-icon size="13">mdi-calendar-clock</v-icon>
+                  {{ formatJalaliDateShort(task.dueDate) }}
+                </span>
+                <span>
+                  <v-icon size="13">mdi-timer-outline</v-icon>
+                  {{ timeRange(task) }}
+                </span>
+              </div>
+              <div v-if="task.assignees.length" class="sch-avatars sch-avatars--mt">
+                <span
+                  v-for="a in task.assignees.slice(0, 4)"
+                  :key="a.id"
+                  class="sch-avatar"
+                  :style="{ background: avatarColor(a.id) }"
+                  :title="assigneeLabel(a)"
+                >{{ assigneeInitials(a) }}</span>
+              </div>
+            </div>
+            <div class="pf-roster__actions">
+              <button
+                class="pf-icon-btn"
+                type="button"
+                :title="isAdmin ? t('schedule.editTask') : t('schedule.taskDetails')"
+                :aria-label="isAdmin ? t('schedule.editTask') : t('schedule.taskDetails')"
+                @click="openDetail(task)"
+              >
+                <Eye class="w-4! h-4! stroke-current" />
+              </button>
+              <template v-if="isAdmin">
+                <button
+                  class="pf-icon-btn"
+                  type="button"
+                  :title="t('schedule.editTask')"
+                  :aria-label="t('schedule.editTask')"
+                  @click="openEdit(task)"
+                >
+                  <Pencil class="w-4! h-4! stroke-current" />
+                </button>
+                <button
+                  class="pf-icon-btn pf-icon-btn--danger"
+                  type="button"
+                  :title="t('common.delete')"
+                  :aria-label="t('common.delete')"
+                  @click="askDelete(task)"
+                >
+                  <Trash2 class="w-4! h-4! stroke-current" />
+                </button>
+              </template>
             </div>
           </div>
+        </div>
 
-          <div v-if="tasks.length > perPage" class="flex items-center justify-between mt-4 px-2!">
-            <span class="text-xs text-slate-400">
-              {{ (currentPage - 1) * perPage + 1 }}â€“{{ Math.min(currentPage * perPage, tasks.length) }} / {{
-                tasks.length }}
-            </span>
-            <div class="flex items-center gap-2">
-              <v-btn variant="tonal" size="small" class="crm-btn" :disabled="currentPage <= 1" @click="currentPage--">
-                <v-icon start size="14">mdi-chevron-right</v-icon>
-                {{ $t('prev') }}
-              </v-btn>
-              <v-btn variant="tonal" size="small" class="crm-btn" :disabled="currentPage >= totalPages"
-                @click="currentPage++">
-                {{ $t('next') }}
-                <v-icon end size="14">mdi-chevron-left</v-icon>
-              </v-btn>
-            </div>
-          </div>
-        </template>
-      </div>
-    </UiContentCard>
+        <div v-if="totalCount" class="pf-card-foot">
+          <p class="pf-card-foot__info">
+            {{ t('schedule.pageInfo', { page: currentPage, totalPages, total: totalCount }) }}
+          </p>
+          <v-pagination
+            v-if="totalPages > 1"
+            v-model="currentPage"
+            :length="totalPages"
+            :total-visible="5"
+            density="comfortable"
+            color="#00ADB5"
+            rounded="circle"
+            :disabled="loading"
+          />
+        </div>
+      </template>
+    </div>
 
-    <ScheduleTaskFormDialog v-model="formDialog" :task="editingTask" :assignees="assignees" :readonly="dialogReadonly"
-      :initial-status="createStatus" @saved="onSaved" />
+    <!-- ─── Create / edit / view dialog ─── -->
+    <ScheduleTaskFormDialog
+      v-model="formDialog"
+      :task="editingTask"
+      :assignees="assignees"
+      :readonly="dialogReadonly"
+      :initial-status="createStatus"
+      @saved="onSaved"
+    />
+
+    <!-- ─── Delete confirmation ─── -->
+    <UiConfirmDialog
+      v-model="deleteOpen"
+      variant="danger"
+      :title="t('schedule.deleteTitle')"
+      :message="t('schedule.deleteBody', { title: deleteTarget?.title ?? '' })"
+      :confirm-label="t('schedule.deleteAction')"
+      :cancel-label="t('schedule.form.cancel')"
+      :loading="deleting"
+      @confirm="confirmDelete"
+    />
   </UiPageContainer>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
-import { TASK_STATUSES } from '~/types/schedule'
-import type { ClinicTask, ScheduleAssignee, TaskFilters, TaskStatus } from '~/types/schedule'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import Plus from '~/components/icons/Plus.vue'
+import Magnify from '~/components/icons/Magnify.vue'
+import Pencil from '~/components/icons/Pencil.vue'
+import Trash2 from '~/components/icons/Trash2.vue'
+import Eye from '~/components/icons/Eye.vue'
+import ClipboardCheck from '~/components/icons/ClipboardCheck.vue'
+import Clock from '~/components/icons/Clock.vue'
+import Activity from '~/components/icons/Activity.vue'
+import CheckCircle from '~/components/icons/CheckCircle.vue'
+import CalendarOff from '~/components/icons/CalendarOff.vue'
+import type {
+  ClinicTask,
+  ScheduleAssignee,
+  TaskFilters,
+  TaskPriority,
+  TaskSort,
+  TaskStats,
+  TaskStatus,
+} from '~/types/schedule'
 
+type ViewMode = 'board' | 'list'
+type DueFilter = NonNullable<TaskFilters['due']>
+
+const { t } = useI18n()
+const { pn } = useLang()
 const { user } = useAuth()
 const { $toast } = useNuxtApp()
-const { listTasks, listAssignees, deleteTask, changeStatus: apiChangeStatus } = useSchedule()
-const { badgeClass, priorityClass, priorityLabel } = useStatusBadge()
-const { formatJalaliDateShort, formatMinutes, todayJalali } = useFormatting()
-const { t } = useI18n()
+const { listTasks, listAssignees, deleteTask, changeStatus: apiChangeStatus, getStats } = useSchedule()
+const {
+  priorityOptions,
+  sortOptions,
+  statusOptions,
+  statusLabel,
+  statusPill,
+  priorityLabel,
+  priorityPill,
+  assigneeLabel,
+  assigneeInitials,
+  avatarColor,
+  isOverdue,
+  formatJalaliDateShort,
+  timeRange,
+} = useTaskPresentation()
 
 const isAdmin = computed(() => user?.value?.role === 'admin_doctor')
+const canMove = computed(() => !!user?.value)
 
-const viewMode = ref<'board' | 'list'>('board')
-try {
-  const saved = localStorage.getItem('schedule-view')
-  if (saved === 'board' || saved === 'list') viewMode.value = saved
-} catch { /* ignore */ }
-watch(viewMode, (v) => {
-  try { localStorage.setItem('schedule-view', v) } catch { /* ignore */ }
-})
+const PER_PAGE = 20
 
-const perPage = 10
-const currentPage = ref(1)
+/* ── Data ─────────────────────────────────────────────── */
 const tasks = ref<ClinicTask[]>([])
 const assignees = ref<ScheduleAssignee[]>([])
+const stats = ref<TaskStats | null>(null)
+const totalCount = ref(0)
+const totalPages = ref(1)
+const currentPage = ref(1)
 const loading = ref(false)
+const error = ref(false)
 
-const filters = reactive<TaskFilters>({
-  limit: 100,
-  status: '',
-  priority: '',
-  assigneeId: '',
-  due: '',
-  assignedToMe: false,
-  q: '',
-})
-const assignedToMe = computed({
-  get: () => !!filters.assignedToMe,
-  set: (v: boolean) => {
-    filters.assignedToMe = v
-    fetchTasks()
-  },
+/* ── View mode (persisted) ────────────────────────────── */
+const view = ref<ViewMode>('board')
+const VIEW_KEY = 'schedule-view'
+
+onMounted(() => {
+  try {
+    const saved = localStorage.getItem(VIEW_KEY)
+    if (saved === 'board' || saved === 'list') view.value = saved
+  } catch { /* storage unavailable */ }
 })
 
-const formDialog = ref(false)
-const editingTask = ref<ClinicTask | null>(null)
-const dialogReadonly = ref(false)
-const createStatus = ref<TaskStatus>('pending')
+function setView(next: ViewMode) {
+  view.value = next
+  try {
+    localStorage.setItem(VIEW_KEY, next)
+  } catch { /* storage unavailable */ }
+}
 
-const statusOptions = computed(() =>
-  TASK_STATUSES.map((s) => ({ title: t(`schedule.statuses.${s}`), value: s })),
-)
-
-const priorityOptions = computed(() => [
-  { title: t('schedule.priorities.low'), value: 'low' },
-  { title: t('schedule.priorities.medium'), value: 'medium' },
-  { title: t('schedule.priorities.high'), value: 'high' },
+const viewSegments = computed(() => [
+  { value: 'board' as ViewMode, icon: 'mdi-view-column-outline', label: t('schedule.board') },
+  { value: 'list' as ViewMode, icon: 'mdi-format-list-bulleted', label: t('schedule.listView') },
 ])
+
+/* ── Filters ──────────────────────────────────────────── */
+const query = ref('')
+const status = ref<TaskStatus | ''>('')
+const priority = ref<TaskPriority | ''>('')
+const assigneeId = ref<string>('')
+const due = ref<DueFilter | ''>('')
+const assignedToMe = ref(false)
+const sort = ref<TaskSort>('created_at_desc')
 
 const dueOptions = computed(() => [
   { title: t('schedule.dueOverdue'), value: 'overdue' },
@@ -304,104 +584,159 @@ const dueOptions = computed(() => [
 ])
 
 const assigneeFilterOptions = computed(() =>
-  assignees.value.map((a) => ({ label: [a.fullName, a.position].filter(Boolean).join(' â€” '), value: a.id })),
+  assignees.value.map((a) => ({ label: [a.fullName, a.position].filter(Boolean).join(' — '), value: a.id })),
 )
 
-const filtersActive = computed(() =>
-  !!(filters.status || filters.priority || filters.assigneeId || filters.due || filters.assignedToMe || filters.q),
+const statusSegments = computed(() => [
+  { value: '' as TaskStatus | '', label: t('schedule.allTasks') },
+  ...statusOptions.value,
+])
+
+const filtersActive = computed(
+  () => !!(status.value || priority.value || assigneeId.value || due.value || assignedToMe.value || query.value.trim()),
 )
 
-const activeFilterCount = computed(
-  () =>
-    [filters.status, filters.priority, filters.assigneeId, filters.due, filters.q, filters.assignedToMe ? 'on' : '']
-      .filter(Boolean).length,
-)
-
-const stats = computed(() => ({
-  total: tasks.value.length,
-  pending: tasks.value.filter((x) => x.status === 'pending').length,
-  inProgress: tasks.value.filter((x) => x.status === 'in_progress').length,
-  done: tasks.value.filter((x) => x.status === 'done').length,
-}))
-
-const today = todayJalali()
-const overdueCount = computed(() =>
-  tasks.value.filter((x) => x.dueDate && x.dueDate < today && x.status !== 'done' && x.status !== 'cancelled').length,
-)
-
-const totalPages = computed(() => Math.max(1, Math.ceil(tasks.value.length / perPage)))
-const pagedTasks = computed(() => {
-  const start = (currentPage.value - 1) * perPage
-  return tasks.value.slice(start, start + perPage)
+/* ── Metric cards ─────────────────────────────────────── */
+const metricCards = computed(() => {
+  if (!stats.value) return []
+  return [
+    { key: 'total', value: stats.value.total, label: t('schedule.totalTasks'), tint: 'asa-tint--teal', icon: ClipboardCheck, valueClass: '' },
+    { key: 'pending', value: stats.value.pending, label: t('schedule.pendingTasks'), tint: 'asa-tint--amber', icon: Clock, valueClass: '' },
+    { key: 'inProgress', value: stats.value.inProgress, label: t('schedule.inProgressTasks'), tint: 'asa-tint--indigo', icon: Activity, valueClass: '' },
+    { key: 'done', value: stats.value.done, label: t('schedule.doneTasks'), tint: 'asa-tint--green', icon: CheckCircle, valueClass: 'asa-green' },
+    { key: 'overdue', value: stats.value.overdue, label: t('schedule.overdueTasks'), tint: 'asa-tint--rose', icon: CalendarOff, valueClass: '' },
+  ]
 })
 
-const statusLabel = (s: string) => t(`schedule.statuses.${s}`) || s
+/* ── Fetching ─────────────────────────────────────────── */
+const buildFilters = (): TaskFilters => ({
+  q: query.value.trim(),
+  status: status.value,
+  priority: priority.value,
+  assigneeId: assigneeId.value,
+  due: due.value,
+  assignedToMe: assignedToMe.value,
+  sort: sort.value,
+  limit: PER_PAGE,
+  page: currentPage.value,
+})
 
-const { isOverdue, avatarColor, assigneeInitials, assigneeLabel } = useHelpers()
-
-const fetchTasks = async () => {
+async function fetchTasks() {
   loading.value = true
+  error.value = false
   try {
-    const res = await listTasks({ ...filters })
-    if (res.success) {
-      tasks.value = res.data || []
-      currentPage.value = 1
-    }
+    const res = await listTasks(buildFilters())
+    tasks.value = res.data || []
+    totalCount.value = res.pagination?.total ?? 0
+    totalPages.value = Math.max(1, res.pagination?.totalPages ?? 1)
   } catch {
-    $toast.error(t('schedule.fetchError'))
+    tasks.value = []
+    totalCount.value = 0
+    totalPages.value = 1
+    error.value = true
   } finally {
     loading.value = false
   }
 }
 
-const fetchAssignees = async () => {
+async function fetchStats() {
   try {
-    const res = await listAssignees()
-    if (res.success) assignees.value = res.data || []
-  } catch { /* ignore */ }
+    stats.value = await getStats()
+  } catch {
+    stats.value = null
+  }
 }
 
-const changeStatus = async (task: ClinicTask, status: TaskStatus) => {
-  if (task.status === status) return
+async function fetchAssignees() {
   try {
-    const res = await apiChangeStatus(task.id, status)
-    if (res.success) {
-      $toast.success(t('schedule.statusUpdateSuccess'))
-      await fetchTasks()
-    }
+    const res = await listAssignees()
+    assignees.value = res.data || []
+  } catch { /* assignees are optional chrome */ }
+}
+
+function refreshAll() {
+  currentPage.value = 1
+  fetchTasks()
+  fetchStats()
+}
+
+function refetchFromFirstPage() {
+  currentPage.value = 1
+  fetchTasks()
+  fetchStats()
+}
+
+/* Debounced search */
+let searchTimer: ReturnType<typeof setTimeout> | null = null
+watch(query, () => {
+  if (searchTimer) clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => {
+    if (!resettingFilters.value) refetchFromFirstPage()
+  }, 400)
+})
+
+/* Suppress the per-field watcher while resetFilters assigns every field at once. */
+const resettingFilters = ref(false)
+
+watch([status, priority, assigneeId, due, assignedToMe, sort], () => {
+  if (!resettingFilters.value) refetchFromFirstPage()
+})
+watch(currentPage, fetchTasks)
+
+async function resetFilters() {
+  if (searchTimer) {
+    clearTimeout(searchTimer)
+    searchTimer = null
+  }
+  resettingFilters.value = true
+  query.value = ''
+  status.value = ''
+  priority.value = ''
+  assigneeId.value = ''
+  due.value = ''
+  assignedToMe.value = false
+  await nextTick()
+  resettingFilters.value = false
+  refetchFromFirstPage()
+}
+
+/* ── Mutations ────────────────────────────────────────── */
+async function changeStatus(task: ClinicTask, next: TaskStatus) {
+  if (task.status === next) return
+  const previous = task.status
+  task.status = next
+  try {
+    const res = await apiChangeStatus(task.id, next)
+    if (res.success && res.data) Object.assign(task, res.data)
+    else task.status = previous
+    $toast.success(t('schedule.statusUpdateSuccess'))
+    fetchStats()
   } catch {
+    task.status = previous
     $toast.error(t('schedule.statusUpdateError'))
   }
 }
 
-const confirmDelete = async (task: ClinicTask) => {
-  if (!confirm(t('schedule.confirmDelete'))) return
-  try {
-    const res = await deleteTask(task.id)
-    if (res.success) {
-      $toast.success(t('schedule.deleteSuccess'))
-      await fetchTasks()
-    }
-  } catch {
-    $toast.error(t('schedule.deleteError'))
-  }
-}
+const formDialog = ref(false)
+const editingTask = ref<ClinicTask | null>(null)
+const dialogReadonly = ref(false)
+const createStatus = ref<TaskStatus>('pending')
 
-const openCreate = (status: TaskStatus = 'pending') => {
+function openCreate(next: TaskStatus = 'pending') {
   editingTask.value = null
   dialogReadonly.value = false
-  createStatus.value = status
+  createStatus.value = next
   formDialog.value = true
 }
 
-const openEdit = (task: ClinicTask) => {
+function openEdit(task: ClinicTask) {
   editingTask.value = task
   dialogReadonly.value = false
   createStatus.value = 'pending'
   formDialog.value = true
 }
 
-const openDetail = (task: ClinicTask) => {
+function openDetail(task: ClinicTask) {
   if (isAdmin.value) {
     openEdit(task)
     return
@@ -412,127 +747,209 @@ const openDetail = (task: ClinicTask) => {
   formDialog.value = true
 }
 
-const onSaved = () => {
-  fetchTasks()
+function onSaved() {
+  refetchFromFirstPage()
 }
 
-let searchTimer: ReturnType<typeof setTimeout> | null = null
-const resettingFilters = ref(false)
-watch(() => filters.q, () => {
-  if (resettingFilters.value) return
-  if (searchTimer) clearTimeout(searchTimer)
-  searchTimer = setTimeout(() => fetchTasks(), 400)
-})
+const deleteOpen = ref(false)
+const deleteTarget = ref<ClinicTask | null>(null)
+const deleting = ref(false)
 
-watch(() => [filters.status, filters.priority, filters.assigneeId, filters.due], () => {
-  if (!resettingFilters.value) fetchTasks()
-})
+function askDelete(task: ClinicTask) {
+  deleteTarget.value = task
+  deleteOpen.value = true
+}
 
-const resetFilters = async () => {
-  if (searchTimer) {
-    clearTimeout(searchTimer)
-    searchTimer = null
+async function confirmDelete() {
+  const target = deleteTarget.value
+  if (!target || deleting.value) return
+  deleting.value = true
+  try {
+    const res = await deleteTask(target.id)
+    if (res.success) {
+      $toast.success(t('schedule.deleteSuccess'))
+      deleteOpen.value = false
+      deleteTarget.value = null
+      refetchFromFirstPage()
+    } else {
+      $toast.error(t('schedule.deleteError'))
+    }
+  } catch {
+    $toast.error(t('schedule.deleteError'))
+  } finally {
+    deleting.value = false
   }
-  resettingFilters.value = true
-  filters.status = ''
-  filters.priority = ''
-  filters.assigneeId = ''
-  filters.due = ''
-  filters.q = ''
-  filters.assignedToMe = false
-  await nextTick()
-  resettingFilters.value = false
-  fetchTasks()
 }
 
 onMounted(() => {
   if (isAdmin.value) fetchAssignees()
   fetchTasks()
+  fetchStats()
 })
 
 useSeoMeta({ title: t('schedule.titleSeo') })
 </script>
 
 <style scoped>
-.crm-filter-bar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-3-5);
-  padding: var(--spacing-4) var(--spacing-5);
-  border-bottom: 1px solid var(--color-border-subtle);
-  background-color: var(--color-surface-muted);
-}
-
-.dark .crm-filter-bar {
-  border-bottom-color: var(--color-border);
-  background-color: rgba(30, 32, 40, 0.3);
-}
-
-.crm-filter-bar-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--spacing-3);
-}
-
-.crm-filter-grid {
+/* ── Metrics ─────────────────────────────────────────── */
+.sch-metrics {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--spacing-3-5);
-}
-
-.crm-filter-search {
-  grid-column: span 1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
 }
 
 @media (min-width: 640px) {
-  .crm-filter-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .crm-filter-search {
-    grid-column: span 2;
+  .sch-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 1024px) {
-  .crm-filter-grid {
-    grid-template-columns: repeat(6, 1fr);
-  }
-
-  .crm-filter-search {
-    grid-column: span 2;
+@media (min-width: 1100px) {
+  .sch-metrics {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 
-.view-toggle-btn {
-  display: inline-flex;
+@media (max-width: 400px) {
+  .sch-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── Toolbar ─────────────────────────────────────────── */
+.sch-mine {
+  border: 1px solid var(--asa-sep);
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-default);
+}
+
+.sch-mine:hover {
+  background: color-mix(in srgb, var(--asa-accent) 10%, transparent);
+}
+
+.sch-select {
+  flex: 0 1 12rem;
+  min-width: 8.5rem;
+  max-width: 12rem;
+}
+
+@media (max-width: 720px) {
+  .sch-select {
+    flex: 1 1 8.5rem;
+    max-width: none;
+  }
+}
+
+.sch-clear {
+  flex-shrink: 0;
+}
+
+.sch-hint {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  border-radius: var(--radius-md);
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-secondary);
-  transition: background var(--duration-fast) var(--ease-default),
-              color var(--duration-fast) var(--ease-default),
-              box-shadow var(--duration-fast) var(--ease-default);
+  gap: 0.25rem;
+  padding: 0.75rem 1.25rem 0.25rem;
+  font-size: 0.6875rem;
+  color: var(--asa-label-3);
+}
+
+/* ── Table cell ──────────────────────────────────────── */
+.sch-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  width: 100%;
+  text-align: start;
   cursor: pointer;
 }
 
-.dark .view-toggle-btn {
-  color: var(--color-slate-400);
+.sch-cell__name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--asa-label);
+  transition: color 150ms var(--ease-default);
 }
 
-.view-toggle-active {
-  background: var(--color-surface);
-  color: var(--color-primary);
-  box-shadow: var(--shadow-xs);
+.sch-cell:hover .sch-cell__name {
+  color: var(--asa-accent-deep);
 }
 
-.dark .view-toggle-active {
-  background: var(--color-slate-700);
-  color: var(--color-teal-400);
+.dark .sch-cell:hover .sch-cell__name {
+  color: var(--asa-accent);
+}
+
+.sch-cell__sub {
+  font-size: 0.6875rem;
+  color: var(--asa-label-3);
+  max-width: 22rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sch-status {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.sch-due--over {
+  color: var(--asa-rose);
+  font-weight: 600;
+}
+
+.sch-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1875rem;
+  font-size: 0.6875rem;
+  color: var(--asa-label-3);
+  white-space: nowrap;
+}
+
+.sch-avatars {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.sch-avatars--mt {
+  margin-top: 0.5rem;
+}
+
+.sch-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.sch-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+/* Desktop table / mobile roster are mutually exclusive. */
+.sch-roster {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .sch-table-wrap {
+    display: none;
+  }
+
+  .sch-roster {
+    display: flex;
+  }
 }
 </style>

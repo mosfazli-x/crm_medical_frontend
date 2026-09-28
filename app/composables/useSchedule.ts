@@ -3,6 +3,7 @@ import type {
   ScheduleAssignee,
   TaskFilters,
   TaskListResponse,
+  TaskStats,
   TaskStatus,
 } from '~/types/schedule'
 
@@ -44,6 +45,20 @@ export const useSchedule = () => {
       body: { status },
     })
 
+  const countTasks = async (filters: TaskFilters = {}) =>
+    (await listTasks({ ...filters, page: 1, limit: 1 })).pagination.total
+
+  const getStats = async (): Promise<TaskStats> => {
+    const [total, pending, inProgress, done, overdue] = await Promise.all([
+      countTasks(),
+      countTasks({ status: 'pending' }),
+      countTasks({ status: 'in_progress' }),
+      countTasks({ status: 'done' }),
+      countTasks({ due: 'overdue' }),
+    ])
+    return { total, pending, inProgress, done, overdue }
+  }
+
   return {
     listTasks,
     getTask,
@@ -52,5 +67,7 @@ export const useSchedule = () => {
     updateTask,
     deleteTask,
     changeStatus,
+    countTasks,
+    getStats,
   }
 }

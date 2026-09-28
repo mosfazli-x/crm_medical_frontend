@@ -1541,7 +1541,7 @@ const activeGroupKey = computed(() => {
 .crm-drawer__nav {
   flex: 1 1 auto;
   overflow-y: auto;
-  overscroll-behavior: contain;
+  /* overscroll-behavior: contain; */
   padding: 0.5rem;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 173, 181, 0.35) transparent;

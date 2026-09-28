@@ -4,6 +4,14 @@ export type TaskStatus = (typeof TASK_STATUSES)[number]
 export const TASK_PRIORITIES = ['low', 'medium', 'high'] as const
 export type TaskPriority = (typeof TASK_PRIORITIES)[number]
 
+export const TASK_SORTS = [
+  'created_at_desc',
+  'created_at_asc',
+  'due_date_asc',
+  'due_date_desc',
+] as const
+export type TaskSort = (typeof TASK_SORTS)[number]
+
 export interface ScheduleAssignee {
   id: string
   fullName: string | null
@@ -54,5 +62,13 @@ export interface TaskFilters {
   assignedToMe?: boolean
   due?: 'overdue' | 'today' | 'upcoming' | ''
   q?: string
-  sort?: string
+  sort?: TaskSort
+}
+
+export interface TaskStats {
+  total: number
+  pending: number
+  inProgress: number
+  done: number
+  overdue: number
 }

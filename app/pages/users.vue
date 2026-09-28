@@ -16,7 +16,7 @@
     </header>
 
     <!-- ─── Summary metrics (clickable = status filters) ─── -->
-    <section class="asa-sec us-sec">
+    <section class="asa-sec us-sec mb-4">
       <div class="grid! grid-cols-2! lg:grid-cols-4! gap-3! sm:gap-4!">
         <button v-for="m in metricCards" :key="m.key" type="button" class="asa-card us-metric"
           :class="{ 'us-metric--active': statusFilter === m.key }" @click="setStatus(m.key)">

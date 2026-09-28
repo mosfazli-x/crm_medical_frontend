@@ -1,11 +1,9 @@
 ﻿/**
- * Shared UI helpers â€” extracted from duplicated code across
+ * Shared UI helpers — extracted from duplicated code across
  * schedule.vue, TaskCard.vue, PatientProfile.vue, etc.
  */
 
 export const useHelpers = () => {
-  const { t } = useI18n()
-
   const init = (name: string | undefined | null): string => {
     if (!name) return '?'
     const parts = name.trim().split(/\s+/)
@@ -60,7 +58,7 @@ export const useHelpers = () => {
   }
 
   const assigneeLabel = (a: { fullName?: string | null; position?: string | null }): string =>
-    [a.fullName, a.position].filter(Boolean).join(' â€” ')
+    [a.fullName, a.position].filter(Boolean).join(' — ')
 
   return { initials: init, assigneeInitials, avatarColor, avatarColors, isOverdue, assigneeLabel }
 }

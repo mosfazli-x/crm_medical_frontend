@@ -1980,6 +1980,14 @@
   color: var(--asa-label);
 }
 
+/* Title/subtitle group. Needed so a long title can shrink instead of pushing
+   the action cluster off-screen (flex items default to min-width: auto). */
+.dash-head__copy {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+
 .dash-head__date {
   margin-top: 0.5rem;
   font-size: 0.9375rem;
@@ -2173,6 +2181,12 @@
   color: var(--asa-amber);
 }
 
+/* Alias: some pages spell the amber tint "--amber" */
+.asa-tint--amber {
+  background: var(--asa-amber-soft);
+  color: var(--asa-amber);
+}
+
 .asa-tint--rose {
   background: var(--asa-rose-soft);
   color: var(--asa-rose);
@@ -2282,6 +2296,88 @@
   font-weight: 600;
   color: var(--asa-label-2);
 }
+
+/* Compact inline filter select (v-select / v-text-field surface) */
+.asa-select .v-field {
+  border-radius: 0.875rem !important;
+  background: color-mix(in srgb, var(--asa-label) 4%, transparent);
+  font-size: 0.8125rem;
+}
+
+.asa-select .v-field__outline {
+  --v-field-border-opacity: 0.14;
+}
+
+.asa-select .v-field--focused .v-field__outline {
+  --v-field-border-opacity: 0.5;
+}
+
+.asa-select .v-field__input {
+  min-height: 2.5rem;
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  color: var(--asa-label);
+}
+
+.asa-select .v-field-label {
+  font-size: 0.8125rem;
+  color: var(--asa-label-3);
+}
+
+.asa-select .v-field-label--active {
+  color: var(--asa-accent);
+}
+
+.asa-select .v-select__selection-text {
+  color: var(--asa-label);
+}
+
+.asa-select .v-field__append-inner {
+  padding-top: 0.375rem;
+}
+
+.dark .asa-select .v-field {
+  background: color-mix(in srgb, var(--asa-label) 6%, transparent);
+}
+
+/* ── Standalone input (plain <input>, no Vuetify wrapper) ─────────
+   Matches the .asa-select field surface so forms can mix native inputs
+   and v-select without the two looking like different products. */
+.asa-input {
+  width: 100%;
+  height: 2.5rem;
+  padding-inline: 0.875rem;
+  border: 1px solid var(--asa-card-ring);
+  border-radius: 0.875rem;
+  background: color-mix(in srgb, var(--asa-label) 4%, transparent);
+  color: var(--asa-label);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 150ms var(--ease-default), background-color 150ms var(--ease-default),
+    box-shadow 150ms var(--ease-default);
+}
+
+.asa-input::placeholder {
+  color: var(--asa-label-3);
+}
+
+.asa-input:focus {
+  outline: none;
+  border-color: var(--asa-accent);
+  background: var(--asa-bg-card);
+  box-shadow: 0 0 0 3px var(--asa-accent-soft);
+}
+
+.asa-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.dark .asa-input {
+  background: color-mix(in srgb, var(--asa-label) 6%, transparent);
+}
+
 
 .asa-dialog__foot {
   padding: 0.875rem 1.5rem 1.25rem !important;
@@ -2885,5 +2981,846 @@
 .vpd-next {
   display: flex;
   align-items: center;
+  justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SHARED PAGE PRIMITIVES
+   ───────────────────────────────────────────────────────────────
+   Promoted out of the individual pages that first used them so the
+   "data page" look (hero banner, metric tiles, sortable table,
+   row actions, empty/skeleton states, dialog info grid) has a
+   single source of truth instead of being copy-pasted per page.
+
+   Origin: pages/dashboard.vue (hero) and pages/my-sessions.vue
+   (metric + table kit). Values are byte-identical to what those
+   pages shipped, so promoting them is a no-op visually.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Pill: indigo variant (used by device/schedule chips) ─────── */
+.asa-pill--indigo {
+  background: var(--asa-indigo-soft);
+  color: var(--asa-indigo);
+}
+
+/* ── Hero banner ──────────────────────────────────────────────── */
+.asa-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  background: linear-gradient(140deg, #0e9a92 0%, #0b7c77 52%, #0a6764 100%);
+  box-shadow: 0 24px 48px -20px rgba(11, 124, 119, 0.5);
+  color: #ffffff;
+}
+
+.asa-hero__orb {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+.asa-hero__orb--a {
+  width: 16rem;
+  height: 16rem;
+  top: -6rem;
+  inset-inline-end: -4rem;
+}
+
+.asa-hero__orb--b {
+  width: 10rem;
+  height: 10rem;
+  bottom: -5rem;
+  inset-inline-start: -3rem;
+}
+
+.asa-hero__inner {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.75rem 1.5rem;
+}
+
+.asa-hero__copy {
+  min-width: 0;
+}
+
+.asa-hero__eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.asa-hero__title {
+  margin-top: 0.5rem;
+  font-size: clamp(1.375rem, 4vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.asa-hero__desc {
+  margin-top: 0.625rem;
+  max-width: 36rem;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.asa-hero__avatar {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  flex-shrink: 0;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+@media (min-width: 640px) {
+  .asa-hero__inner {
+    padding: 2.25rem;
+  }
+
+  .asa-hero__avatar {
+    display: inline-flex;
+  }
+}
+
+/* Glass stat strip inside the hero */
+.asa-hero__stats {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.625rem;
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.asa-hero__stat {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.asa-hero__stat-ic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  border-radius: 0.625rem;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.asa-hero__stat-copy {
+  min-width: 0;
+}
+
+.asa-hero__stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.asa-hero__stat-label {
+  margin-top: 0.1875rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+@media (min-width: 560px) {
+  .asa-hero__stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 0 2.25rem 2rem;
+  }
+}
+
+/* ── Metric tile ──────────────────────────────────────────────── */
+.pf-metric {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.125rem 1.25rem;
+}
+
+.pf-metric__copy {
+  min-width: 0;
+}
+
+.pf-metric__value {
+  font-size: 1.625rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--asa-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-metric__value--sm {
+  font-size: 1.0625rem;
+  line-height: 1.3;
+}
+
+.pf-metric__label {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--asa-label-2);
+}
+
+/* ── Card shell for tables ────────────────────────────────────── */
+.pf-table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.asa-table-wrap {
+  overflow-x: auto;
+}
+
+.pf-table {
+  width: 100%;
+  min-width: 48rem;
+  border-collapse: collapse;
+  text-align: start;
+}
+
+.pf-table thead th {
+  padding: 0.875rem 1rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: start;
+  white-space: nowrap;
+  color: var(--asa-label-2);
+  border-bottom: 1px solid var(--asa-sep);
+}
+
+.pf-th-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 150ms var(--ease-default);
+}
+
+.pf-th-btn:hover {
+  color: var(--asa-label);
+}
+
+.pf-th-btn--active {
+  color: var(--asa-accent);
+}
+
+.dark .pf-th-btn--active {
+  color: var(--asa-dark);
+}
+
+.pf-th-ic {
+  opacity: 0.4;
+  transition: opacity 150ms var(--ease-default);
+}
+
+.pf-th-btn:hover .pf-th-ic,
+.pf-th-ic--on {
+  opacity: 1;
+}
+
+.pf-table tbody td {
+  padding: 0.875rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--asa-label);
+  white-space: nowrap;
+  border-top: 1px solid var(--asa-sep);
+  vertical-align: middle;
+}
+
+.pf-table tbody tr {
+  transition: background-color 150ms var(--ease-default);
+}
+
+.pf-table tbody tr:hover {
+  background: color-mix(in srgb, var(--asa-label) 4%, transparent);
+}
+
+.dark .pf-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.pf-table tbody tr:nth-child(even):not(.pf-row-tr--current) {
+  background: color-mix(in srgb, var(--asa-label) 2%, transparent);
+}
+
+.dark .pf-table tbody tr:nth-child(even):not(.pf-row-tr--current) {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+/* Highlighted / "this one" row (e.g. the active session) */
+.pf-row-tr--current {
+  background: color-mix(in srgb, var(--asa-green) 6%, transparent);
+}
+
+.pf-pl0 {
+  padding-inline-start: 0 !important;
+  height: 100%;
+}
+
+.pf-ta-end {
+  text-align: end !important;
+}
+
+.pf-sub {
+  color: var(--asa-label-2);
+}
+
+.pf-tiny {
+  color: var(--asa-label-3);
+  font-size: 0.6875rem;
+}
+
+.pf-dt {
+  color: var(--asa-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-dt__date {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--asa-label);
+}
+
+.pf-dt__time {
+  margin-top: 0.1875rem;
+  font-size: 0.6875rem;
+  color: var(--asa-label-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-ip {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  color: var(--asa-label-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-pill--neutral {
+  background: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  color: var(--asa-label-2);
+}
+
+/* Live / pulsing status pill */
+.pf-live {
+  border: 1px solid color-mix(in srgb, var(--asa-green) 30%, transparent);
+}
+
+.pf-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--asa-green);
+  animation: pf-pulse 2s ease-in-out infinite;
+}
+
+@keyframes pf-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* ── Segmented control ────────────────────────────────────────── */
+.pf-seg {
+  display: inline-flex;
+  gap: 0.125rem;
+  padding: 0.1875rem;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--asa-label) 6%, transparent);
+}
+
+.pf-seg__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  height: 2rem;
+  padding: 0 0.75rem;
+  border: none;
+  border-radius: 0.625rem;
+  background: transparent;
+  color: var(--asa-label-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
+}
+
+.pf-seg__btn:hover {
+  color: var(--asa-label);
+}
+
+.pf-seg__btn--on {
+  background: var(--asa-bg-card);
+  color: var(--asa-label);
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.1);
+}
+
+.dark .pf-seg__btn--on {
+  background: color-mix(in srgb, #ffffff 14%, transparent);
+}
+
+.pf-seg__count {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+}
+
+/* ── Toolbar (search + filters above a table) ─────────────────── */
+.pf-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--asa-sep);
+}
+
+.pf-toolbar__search {
+  position: relative;
+  flex: 1 1 15rem;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.pf-toolbar__search-ic {
+  position: absolute;
+  inset-inline-start: 0.875rem;
+  display: flex;
+  align-items: center;
+  color: var(--asa-label-3);
+  pointer-events: none;
+}
+
+.pf-toolbar__input {
+  width: 100%;
+  height: 2.5rem;
+  padding-inline: 2.5rem 2.75rem;
+  border: 1px solid var(--asa-card-ring);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--asa-label) 4%, transparent);
+  color: var(--asa-label);
+  font-size: 0.8125rem;
+  font-family: inherit;
+  transition: border-color 150ms var(--ease-default), background-color 150ms var(--ease-default);
+}
+
+.pf-toolbar__input::placeholder {
+  color: var(--asa-label-3);
+}
+
+.pf-toolbar__input:focus {
+  outline: none;
+  border-color: var(--asa-accent);
+  background: var(--asa-bg-card);
+}
+
+.pf-toolbar__clear {
+  position: absolute;
+  inset-inline-end: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--asa-label-3);
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
+}
+
+.pf-toolbar__clear:hover {
+  background: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  color: var(--asa-label);
+}
+
+.pf-toolbar__tail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-inline-start: auto;
+}
+
+.pf-toolbar__count {
+  font-size: 0.75rem;
+  color: var(--asa-label-2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Icon button (row actions) ─────────────────────────────────── */
+.pf-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.125rem;
+  height: 2.125rem;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--asa-label-2);
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
+}
+
+.pf-icon-btn:hover {
+  background: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  color: var(--asa-label);
+}
+
+.dark .pf-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.pf-icon-btn--danger:hover {
+  background: var(--asa-rose-soft);
+  color: var(--asa-rose);
+}
+
+.pf-icon-btn--on {
+  background: var(--asa-accent-soft);
+  color: var(--asa-accent-deep);
+}
+
+.dark .pf-icon-btn--on {
+  color: var(--asa-accent);
+}
+
+/* ── Card footer (info + pagination) ──────────────────────────── */
+.pf-card-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--asa-sep);
+  background: color-mix(in srgb, var(--asa-label) 3%, transparent);
+}
+
+.pf-card-foot__info {
+  font-size: 0.75rem;
+  color: var(--asa-label-2);
+}
+
+/* ── Loading skeletons ────────────────────────────────────────── */
+.pf-skel {
+  padding: 0.875rem 0;
+}
+
+.pf-skel__row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 1rem;
+  padding: 0.875rem 1.25rem;
+}
+
+.pf-skel__row+.pf-skel__row {
+  border-top: 1px solid var(--asa-sep);
+}
+
+.pf-spin {
+  animation: pf-spin 800ms linear infinite;
+}
+
+@keyframes pf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Empty / error state ──────────────────────────────────────── */
+.pf-tint-lg {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1.25rem;
+}
+
+.pf-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.pf-empty__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--asa-label);
+}
+
+.pf-empty__desc {
+  margin-top: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--asa-label-2);
+}
+
+.pf-empty__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+/* ── Dialog close button ──────────────────────────────────────── */
+.pf-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--asa-label-2);
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
+}
+
+.pf-x:hover {
+  background: color-mix(in srgb, var(--asa-label) 7%, transparent);
+  color: var(--asa-label);
+}
+
+/* ── Dialog info grid ─────────────────────────────────────────── */
+.pf-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.125rem 1rem;
+}
+
+.pf-info-cell {
+  min-width: 0;
+}
+
+.pf-info-cell--full {
+  grid-column: 1 / -1;
+}
+
+.pf-info-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--asa-label-2);
+  margin-bottom: 0.375rem;
+}
+
+.pf-info-value {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--asa-label);
+  overflow-wrap: anywhere;
+}
+
+.pf-ua {
+  padding: 0.75rem 0.875rem;
+  border-radius: 0.875rem;
+  background: color-mix(in srgb, var(--asa-label) 4%, transparent);
+  border: 1px solid var(--asa-card-ring);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--asa-label-2);
+  overflow-wrap: anywhere;
+}
+
+/* ── Responsive roster list (mobile) ──────────────────────────── */
+.pf-roster {
+  display: flex;
+  flex-direction: column;
+}
+
+.pf-roster__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--asa-sep);
+  transition: background-color 150ms var(--ease-default);
+}
+
+.pf-roster__item:first-child {
+  border-top: none;
+}
+
+.pf-roster__item:hover {
+  background: color-mix(in srgb, var(--asa-label) 3%, transparent);
+}
+
+.pf-roster__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.pf-roster__top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pf-roster__name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--asa-label);
+  overflow-wrap: anywhere;
+}
+
+.pf-roster__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+  margin-top: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--asa-label-2);
+}
+
+.pf-roster__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex-shrink: 0;
+}
+
+/* ── Persian date picker, themed to match asa fields ─────────────
+   The library ships LTR-only borders (border-right: none) which breaks
+   under dir=rtl, so the input group is re-skinned from the token set. */
+
+.asa-datepicker {
+  display: block;
+  inline-size: 100%;
+}
+
+.asa-datepicker .vpd-input-group {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--asa-sep);
+  border-radius: 0.85rem;
+  background: var(--asa-track);
+  overflow: hidden;
+  transition: border-color 150ms var(--ease-default), box-shadow 150ms var(--ease-default);
+}
+
+.asa-datepicker .vpd-input-group:focus-within {
+  border-color: var(--asa-accent);
+  box-shadow: 0 0 0 3px var(--asa-accent-soft);
+}
+
+.asa-datepicker .vpd-input-group input {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--asa-label);
+  font: inherit;
+  font-size: 0.85rem;
+  line-height: 2.3;
+  padding-inline: 0.7rem;
+  text-align: start;
+}
+
+.asa-datepicker .vpd-input-group input::placeholder {
+  color: var(--asa-label-3);
+}
+
+.asa-datepicker .vpd-input-group input:focus {
+  outline: none;
+}
+
+.asa-datepicker .vpd-icon-btn {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: 2.4rem;
+  padding: 0;
+  background: var(--asa-accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.asa-datepicker .vpd-icon-btn:hover {
+  background: var(--asa-accent-deep);
+}
+
+.asa-datepicker .vpd-clear-btn {
+  position: static;
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: 1.7rem;
+  line-height: 1;
+  color: var(--asa-label-3);
+  font-size: 0.7rem;
+  font-family: inherit;
+}
+
+.asa-datepicker .vpd-clear-btn:hover {
+  color: var(--asa-rose);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .pf-spin,
+  .pf-pulse {
+    animation: none;
+  }
+}
+
+.vpd-up-arrow-btn {
+  display: flex;
+  justify-content: center;
+}
+
+.vpd-down-arrow-btn {
+  display: flex;
   justify-content: center;
 }
