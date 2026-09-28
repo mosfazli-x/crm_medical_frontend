@@ -154,7 +154,7 @@ type Locale = keyof typeof messages
 
 const stored = useCookie<string>('i18n_lang', { sameSite: 'lax', maxAge: 60 * 60 * 24 * 365, path: '/' })
 
-const locale = ref<Locale>(stored.value === 'fa' ? 'fa' : 'en')
+const locale = ref<Locale>(stored.value === 'en' ? 'en' : 'fa')
 
 const loaderShown = ref(false)
 

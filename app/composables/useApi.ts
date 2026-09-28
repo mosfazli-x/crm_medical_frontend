@@ -1,3 +1,5 @@
+type ApiFetchOptions = NonNullable<Parameters<typeof $fetch>[1]>
+
 export const useApi = () => {
   const { token, logout } = useAuth()
   const nuxtApp = useNuxtApp()
@@ -7,7 +9,7 @@ export const useApi = () => {
 
   const apiLoading = computed(() => apiLoadingCount.value > 0)
 
-  const apiFetch = async <T>(url: string, options: FetchOptions = {}): Promise<T> => {
+  const apiFetch = async <T>(url: string, options: ApiFetchOptions = {}): Promise<T> => {
     const headers = {
       Authorization: token.value ? `Bearer ${token.value}` : '',
       ...options.headers,
@@ -20,10 +22,16 @@ export const useApi = () => {
         ...options,
         headers,
       })
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as {
+        response?: { status?: number }
+        status?: number
+        data?: { status?: number }
+      }
+
       console.error('API Error:', err)
 
-      const status = err.response?.status || err.status || err.data?.status
+      const status = error.response?.status || error.status || error.data?.status
 
       if (status === 401) {
         nuxtApp.$toast.error(t('auth.errors.sessionExpired'))

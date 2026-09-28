@@ -1,13 +1,12 @@
 <template>
   <div ref="rootEl" class="patient-selector">
-    <!-- Selected patient chip -->
     <div v-if="selected && !isOpen" class="selected-chip" @click="openAndFocus">
       <div class="selected-chip-avatar">
-        <Icon name="lucide:user" class="!w-3.5 !h-3.5 !text-teal-500" />
+        <Icon name="lucide:user" class="!w-3.5 !h-3.5" />
       </div>
       <div class="selected-chip-info">
         <span class="selected-chip-name">{{ selected.firstName }} {{ selected.lastName }}</span>
-        <span v-if="selected.nationalId" class="selected-chip-meta">{{ selected.nationalId }}</span>
+        <span v-if="selected.nationalId" class="selected-chip-meta" dir="ltr">{{ selected.nationalId }}</span>
       </div>
       <button
         type="button"
@@ -19,8 +18,7 @@
       </button>
     </div>
 
-    <!-- Search input -->
-    <div class="input-wrapper" :class="{ focused: isFocused, open: isOpen }">
+    <div class="input-wrapper" :class="{ focused: isFocused }">
       <div class="input-icon">
         <Icon name="lucide:search" class="!w-4 !h-4" />
       </div>
@@ -38,7 +36,7 @@
         @focus="onFocus"
         @blur="onBlur"
         @keydown="onKeydown"
-      />
+      >
       <button
         v-if="query || selected"
         type="button"
@@ -48,20 +46,29 @@
       >
         <Icon name="lucide:x" class="!w-3.5 !h-3.5" />
       </button>
+      <button
+        v-if="handwritingLabel"
+        type="button"
+        class="hw-btn"
+        :title="t('handwriting.title')"
+        :aria-label="t('handwriting.title')"
+        @mousedown.prevent
+        @click="openHandwriting"
+      >
+        <v-icon size="17">mdi-draw-pen</v-icon>
+      </button>
       <div class="input-chevron" :class="{ rotated: isOpen }">
         <Icon name="lucide:chevron-down" class="!w-4 !h-4" />
       </div>
     </div>
 
-    <!-- Dropdown -->
     <Transition name="dropdown">
       <div v-if="isOpen" class="dropdown" role="listbox">
-        <!-- Results list -->
         <div v-if="filtered.length" class="dropdown-results">
           <div class="dropdown-count">
             {{ t('patientSearch.resultsCount', { count: filtered.length }) }}
           </div>
-          <div class="dropdown-scroll" ref="listEl">
+          <div ref="listEl" class="dropdown-scroll">
             <div
               v-for="(patient, idx) in filtered"
               :key="patient.id"
@@ -95,23 +102,32 @@
                   </span>
                 </div>
               </div>
+              <div v-if="patient.id === modelValue" class="result-check">
+                <Icon name="lucide:check" class="!w-4 !h-4" />
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- No results -->
         <div v-else class="dropdown-empty">
-          <Icon name="lucide:user-x" class="!w-5 !h-5 !text-slate-300 dark:!text-slate-500" />
+          <Icon name="lucide:user-x" class="!w-5 !h-5" />
           <p class="dropdown-empty-title">{{ t('patientSearch.noResults') }}</p>
           <p class="dropdown-empty-hint">{{ t('patientSearch.noResultsHint') }}</p>
         </div>
       </div>
     </Transition>
+
+    <HandwritingDialog
+      v-model="hwOpen"
+      :label="handwritingLabel"
+      @insert="applyHandwriting"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { PatientOption } from '~/types/report'
+import HandwritingDialog from '~/components/HandwritingDialog.vue'
 
 const { t } = useI18n()
 
@@ -121,10 +137,12 @@ const props = withDefaults(
     patients: PatientOption[]
     label?: string
     placeholder?: string
+    handwritingLabel?: string
   }>(),
   {
     label: '',
     placeholder: '',
+    handwritingLabel: '',
   },
 )
 
@@ -141,6 +159,7 @@ const query = ref('')
 const isOpen = ref(false)
 const isFocused = ref(false)
 const activeIndex = ref(-1)
+const hwOpen = ref(false)
 
 const selected = computed(() =>
   props.modelValue ? props.patients.find((p) => p.id === props.modelValue) || null : null,
@@ -257,7 +276,17 @@ function clearAll() {
   nextTick(() => inputEl.value?.focus())
 }
 
-// Close on outside click
+function openHandwriting() {
+  hwOpen.value = true
+}
+
+function applyHandwriting(text: string) {
+  query.value = text
+  isOpen.value = true
+  activeIndex.value = 0
+  nextTick(() => inputEl.value?.focus())
+}
+
 function onClickOutside(e: MouseEvent) {
   if (rootEl.value && !rootEl.value.contains(e.target as Node)) {
     isOpen.value = false
@@ -278,41 +307,39 @@ onUnmounted(() => {
   position: relative;
 }
 
-/* ── Selected chip ── */
 .selected-chip {
   display: flex;
   align-items: center;
   gap: 0.625rem;
   padding: 0.5rem 0.75rem;
   margin-bottom: 0.375rem;
-  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
-  border: 1px solid rgba(79, 70, 229, 0.2);
+  background: var(--asa-indigo-soft);
+  border: 1px solid color-mix(in srgb, var(--asa-indigo) 22%, transparent);
   border-radius: 0.75rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  color: var(--asa-label);
+  transition: border-color 150ms var(--ease-default), box-shadow 150ms var(--ease-default),
+    background-color 150ms var(--ease-default);
 }
-.dark .selected-chip {
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.12) 0%, rgba(99, 102, 241, 0.08) 100%);
-  border-color: rgba(79, 70, 229, 0.3);
-}
+
 .selected-chip:hover {
-  border-color: rgba(79, 70, 229, 0.35);
-  box-shadow: 0 1px 3px rgba(79, 70, 229, 0.1);
+  background: color-mix(in srgb, var(--asa-indigo) 20%, transparent);
+  box-shadow: 0 2px 8px -4px color-mix(in srgb, var(--asa-indigo) 55%, transparent);
 }
+
 .selected-chip-avatar {
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(79, 70, 229, 0.15);
+  background: color-mix(in srgb, var(--asa-bg-card) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--asa-indigo) 16%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--asa-indigo);
   flex-shrink: 0;
 }
-.dark .selected-chip-avatar {
-  background: rgba(99, 102, 241, 0.2);
-}
+
 .selected-chip-info {
   flex: 1;
   min-width: 0;
@@ -320,280 +347,270 @@ onUnmounted(() => {
   align-items: center;
   gap: 0.5rem;
 }
+
 .selected-chip-name {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--asa-label);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.dark .selected-chip-name {
-  color: #e2e8f0;
-}
+
 .selected-chip-meta {
   font-size: 0.6875rem;
   font-weight: 500;
-  color: #A2D2FF;
+  color: var(--asa-label-2);
   font-family: 'Courier New', monospace;
-  background: rgba(99, 102, 241, 0.08);
+  background: color-mix(in srgb, var(--asa-label) 5%, transparent);
   padding: 0.125rem 0.375rem;
-  border-radius: 0.25rem;
+  border-radius: 0.375rem;
   white-space: nowrap;
+  flex-shrink: 0;
 }
+
 .selected-chip-clear {
   width: 1.25rem;
   height: 1.25rem;
   border-radius: 0.375rem;
   border: none;
-  background: rgba(79, 70, 229, 0.12);
-  color: #A2D2FF;
+  background: color-mix(in srgb, var(--asa-label) 7%, transparent);
+  color: var(--asa-label-3);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: all 0.15s ease;
-}
-.selected-chip-clear:hover {
-  background: rgba(239, 68, 68, 0.15);
-  color: #dc2626;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
 }
 
-/* ── Input wrapper ── */
+.selected-chip-clear:hover {
+  background: var(--asa-rose-soft);
+  color: var(--asa-rose);
+}
+
 .input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
-  height: 3rem;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 0.75rem;
-  background: #ffffff;
-  transition: all 0.2s ease;
-  overflow: hidden;
+  height: 2.75rem;
+  border-radius: 0.875rem;
+  background: color-mix(in srgb, var(--asa-label) 5%, transparent);
+  transition: background-color 150ms var(--ease-default), box-shadow 150ms var(--ease-default);
 }
-.dark .input-wrapper {
-  border-color: #2a2d37;
-  background: #0f1115;
-}
+
 .input-wrapper:hover {
-  border-color: #cbd5e1;
+  background: color-mix(in srgb, var(--asa-label) 7%, transparent);
 }
-.dark .input-wrapper:hover {
-  border-color: #3a3d47;
-}
+
 .input-wrapper.focused {
-  border-color: #00ADB5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
+  background: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--asa-accent) 18%, transparent);
 }
-.dark .input-wrapper.focused {
-  border-color: #A2D2FF;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
-}
-.input-wrapper.open {
-  border-radius: 0.75rem 0.75rem 0 0;
-  border-bottom-color: transparent;
-}
+
 .input-icon {
-  padding-left: 0.875rem;
-  padding-right: 0.875rem;
-  color: #94a3b8;
+  padding-inline-start: 0.875rem;
+  padding-inline-end: 0.625rem;
+  color: var(--asa-label-3);
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  transition: color 150ms var(--ease-default);
 }
-.dark .input-icon {
-  color: #64748b;
+
+.input-wrapper.focused .input-icon {
+  color: var(--asa-accent);
 }
+
 .search-input {
   flex: 1;
+  min-width: 0;
   height: 100%;
   border: none;
   outline: none;
   background: transparent;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 500;
-  color: #1e293b;
+  color: var(--asa-label);
   direction: inherit;
 }
+
 .search-input::placeholder {
-  color: #94a3b8;
+  color: var(--asa-label-3);
   font-weight: 400;
 }
-.dark .search-input {
-  color: #e2e8f0;
-}
-.dark .search-input::placeholder {
-  color: #64748b;
-}
+
 .input-clear {
   padding: 0.375rem;
-  margin-right: 0.25rem;
   border: none;
   background: transparent;
-  color: #94a3b8;
-  border-radius: 0.375rem;
+  color: var(--asa-label-3);
+  border-radius: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
   flex-shrink: 0;
 }
+
 .input-clear:hover {
-  color: #A2D2FF;
-  background: rgba(99, 102, 241, 0.08);
+  color: var(--asa-accent);
+  background: var(--asa-accent-soft);
 }
+
+.hw-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 0.625rem;
+  background: transparent;
+  color: var(--asa-label-3);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
+}
+
+.hw-btn:hover {
+  background: var(--asa-accent-soft);
+  color: var(--asa-accent-deep);
+}
+
 .input-chevron {
-  padding-right: 0.75rem;
-  color: #94a3b8;
+  padding-inline-end: 0.75rem;
+  color: var(--asa-label-3);
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  transition: transform 0.2s ease;
+  transition: transform 200ms var(--ease-default);
 }
-.dark .input-chevron {
-  color: #64748b;
-}
+
 .input-chevron.rotated {
   transform: rotate(180deg);
 }
 
-/* ── Dropdown ── */
 .dropdown {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 0.5rem);
   left: 0;
   right: 0;
-  z-index: 50;
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-top: 1px solid #f1f5f9;
-  border-radius: 0 0 0.75rem 0.75rem;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.05),
-    0 10px 15px -3px rgba(0, 0, 0, 0.08);
+  z-index: 60;
+  background: var(--asa-bg-card);
+  border: 1px solid var(--asa-card-ring);
+  border-radius: 0.875rem;
+  box-shadow: var(--asa-card-shadow);
   overflow: hidden;
 }
-.dark .dropdown {
-  background: #16181d;
-  border-color: #2a2d37;
-  border-top-color: #1e2028;
-}
+
 .dropdown-results {
   padding: 0;
 }
+
 .dropdown-count {
-  padding: 0.5rem 0.875rem;
+  padding: 0.625rem 0.875rem;
   font-size: 0.6875rem;
   font-weight: 600;
-  color: #94a3b8;
-  border-bottom: 1px solid #f1f5f9;
+  color: var(--asa-label-3);
+  border-bottom: 1px solid var(--asa-sep);
   letter-spacing: 0.025em;
 }
-.dark .dropdown-count {
-  color: #64748b;
-  border-bottom-color: #1e2028;
-}
+
 .dropdown-scroll {
-  max-height: 16rem;
+  max-height: 18rem;
   overflow-y: auto;
-  padding: 0.25rem;
+  padding: 0.375rem;
 }
+
 .dropdown-scroll::-webkit-scrollbar {
   width: 4px;
 }
+
 .dropdown-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .dropdown-scroll::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
+  background: color-mix(in srgb, var(--asa-label) 22%, transparent);
   border-radius: 4px;
 }
-:global(.dark) .dropdown-scroll::-webkit-scrollbar-thumb {
-  background: #334155;
-}
 
-/* ── Result cards ── */
 .result-card {
   display: flex;
   align-items: flex-start;
   gap: 0.625rem;
-  padding: 0.625rem 0.625rem;
-  border-radius: 0.5rem;
+  padding: 0.5rem 0.625rem;
+  border-radius: 0.625rem;
   cursor: pointer;
-  transition: all 0.12s ease;
+  transition: background-color 120ms var(--ease-default);
 }
+
 .result-card:hover,
 .result-card.active {
-  background: #f8fafc;
+  background: color-mix(in srgb, var(--asa-label) 6%, transparent);
 }
-.dark .result-card:hover,
-.dark .result-card.active {
-  background: rgba(79, 70, 229, 0.08);
-}
+
 .result-card.selected {
-  background: #eef2ff;
+  background: var(--asa-indigo-soft);
 }
-.dark .result-card.selected {
-  background: rgba(79, 70, 229, 0.15);
-}
+
 .result-avatar {
   width: 2rem;
   height: 2rem;
-  border-radius: 0.5rem;
-  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  border-radius: 0.625rem;
+  background: var(--asa-indigo-soft);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   margin-top: 0.125rem;
 }
-.dark .result-avatar {
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.15), rgba(99, 102, 241, 0.1));
-}
+
 .result-avatar-text {
   font-size: 0.625rem;
   font-weight: 700;
-  color: #00ADB5;
+  color: var(--asa-indigo);
   letter-spacing: 0.05em;
 }
-.dark .result-avatar-text {
-  color: #818cf8;
-}
+
 .result-info {
   flex: 1;
   min-width: 0;
 }
+
 .result-name {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--asa-label);
   display: flex;
   gap: 0.375rem;
   margin-bottom: 0.25rem;
 }
-.dark .result-name {
-  color: #e2e8f0;
-}
+
 .result-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.625rem;
+  align-items: center;
 }
+
 .result-meta-item {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
   font-size: 0.6875rem;
-  color: #64748b;
+  color: var(--asa-label-2);
   font-weight: 500;
 }
-.dark .result-meta-item {
-  color: #94a3b8;
+
+.result-check {
+  color: var(--asa-indigo);
+  align-self: center;
+  flex-shrink: 0;
 }
 
-/* ── Empty state ── */
 .dropdown-empty {
   display: flex;
   flex-direction: column;
@@ -601,44 +618,42 @@ onUnmounted(() => {
   justify-content: center;
   padding: 2rem 1rem;
   text-align: center;
+  color: var(--asa-label-3);
 }
+
 .dropdown-empty-title {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--asa-label);
   margin-top: 0.625rem;
 }
-.dark .dropdown-empty-title {
-  color: #cbd5e1;
-}
+
 .dropdown-empty-hint {
   font-size: 0.6875rem;
-  color: #94a3b8;
+  color: var(--asa-label-2);
   margin-top: 0.25rem;
 }
-.dark .dropdown-empty-hint {
-  color: #64748b;
-}
 
-/* ── Mark highlight ── */
 :deep(mark) {
-  background: rgba(99, 102, 241, 0.2);
+  background: var(--asa-accent-soft);
   color: inherit;
   border-radius: 0.125rem;
   padding: 0 0.0625rem;
 }
 
-/* ── Transition ── */
 .dropdown-enter-active {
-  transition: all 0.15s ease;
+  transition: all 150ms var(--ease-default);
 }
+
 .dropdown-leave-active {
-  transition: all 0.1s ease;
+  transition: all 100ms var(--ease-default);
 }
+
 .dropdown-enter-from {
   opacity: 0;
   transform: translateY(-4px);
 }
+
 .dropdown-leave-to {
   opacity: 0;
   transform: translateY(-4px);

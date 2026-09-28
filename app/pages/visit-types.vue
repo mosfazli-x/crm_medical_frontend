@@ -1,186 +1,306 @@
 ﻿<template>
-  <UiPageContainer>
-    <UiPageHeader :title="$t('visitTypes.title')" :subtitle="$t('visitTypes.subtitle')">
-      <template #actions>
-        <button class="crm-btn crm-btn-accent px-6! py-3!" @click="openCreateDialog">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-          {{ $t('visitTypes.addNew') }}
+  <UiPageContainer class="relative! max-w-7xl! mx-auto!">
+    <!-- ─── Apple-style large-title header ─── -->
+    <header class="dash-head vt-head">
+      <div class="dash-head__copy">
+        <h1 class="dash-head__title">{{ t('visitTypes.title') }}</h1>
+        <p class="dash-head__date">{{ t('visitTypes.subtitle') }}</p>
+      </div>
+      <div class="dash-head__actions">
+        <button type="button" class="asa-btn asa-btn--primary" @click="openCreateDialog">
+          <v-icon size="16">mdi-plus</v-icon>
+          {{ t('visitTypes.addNew') }}
         </button>
-      </template>
-    </UiPageHeader>
-
-    <UiContentCard>
-      <div v-if="loading" class="flex flex-col items-center justify-center py-24!">
-        <svg class="animate-spin h-8 w-8 text-electric-sapphire mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-        </svg>
-        <span class="text-sm text-slate-500 font-medium">{{ $t('visitTypes.loading') }}</span>
       </div>
+    </header>
 
-      <div v-else-if="!visitTypes.length" class="flex flex-col items-center justify-center py-24 px-4 text-center my-3">
-        <div class="w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-5 border border-slate-100 dark:border-slate-700">
-          <svg class="w-8 h-8 text-slate-300 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
+    <!-- ─── Loading skeletons ─── -->
+    <div v-if="loading && !visitTypes.length">
+      <div class="vt-metrics">
+        <div v-for="n in 4" :key="`m-${n}`" class="asa-skel vt-metric-skel" />
+      </div>
+      <div class="asa-skel vt-list-skel" />
+    </div>
+
+    <template v-else>
+      <!-- ─── Overview metrics ─── -->
+      <section class="asa-sec">
+        <p class="asa-sec__label">{{ t('visitTypes.overview') }}</p>
+        <div class="vt-metrics">
+          <article v-for="m in metrics" :key="m.key" class="asa-card vt-metric">
+            <span class="asa-tint" :class="m.tint" aria-hidden="true">
+              <component :is="m.icon" class="w-5! h-5! fill-current" />
+            </span>
+            <div class="vt-metric__copy">
+              <p class="vt-metric__value">{{ m.value }}</p>
+              <p class="vt-metric__label">{{ m.label }}</p>
+            </div>
+            <p class="vt-metric__foot">
+              <span class="vt-dot" :class="m.dot" aria-hidden="true" />
+              {{ m.foot }}
+            </p>
+          </article>
         </div>
-        <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">{{ $t('visitTypes.noTypesDefined') }}</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-sm">{{ $t('visitTypes.addFirst') }}</p>
+      </section>
+
+      <!-- ─── Frosted toolbar: search / count / refresh ─── -->
+      <div class="asa-toolbar">
+        <div class="asa-field asa-field--search">
+          <v-text-field v-model="searchQuery" variant="solo" density="comfortable" hide-details clearable
+            :placeholder="t('visitTypes.searchPlaceholder')" prepend-inner-icon="mdi-magnify" />
+        </div>
+        <div class="flex-1! min-w-0" />
+        <span class="asa-pill asa-pill--teal whitespace-nowrap!">
+          {{ t('visitTypes.typeCount', { count: filteredVisitTypes.length }) }}
+        </span>
+        <v-tooltip :text="t('visitTypes.refresh')" location="top">
+          <template #activator="{ props }">
+            <button v-bind="props" type="button" class="asa-icon-btn" :disabled="loading"
+              :aria-label="t('visitTypes.refresh')" @click="fetchVisitTypes">
+              <v-icon :size="18" :class="{ 'animate-spin!': loading }">mdi-refresh</v-icon>
+            </button>
+          </template>
+        </v-tooltip>
       </div>
 
+      <!-- ─── Empty: no match with active search ─── -->
+      <div v-if="!filteredVisitTypes.length && hasQuery" class="asa-card asa-empty">
+        <span class="asa-tint asa-tint--indigo" aria-hidden="true">
+          <v-icon icon="mdi-filter-off-outline" size="32" />
+        </span>
+        <p class="asa-empty__title">{{ t('visitTypes.noResults') }}</p>
+        <p class="asa-empty__sub">{{ t('visitTypes.noResultsDesc') }}</p>
+        <button type="button" class="asa-btn asa-btn--ghost asa-btn--sm" @click="searchQuery = ''">
+          <v-icon size="14">mdi-filter-remove-outline</v-icon>
+          {{ t('common.clear') }}
+        </button>
+      </div>
+
+      <!-- ─── Empty: no visit types yet ─── -->
+      <div v-else-if="!visitTypes.length" class="asa-card asa-empty">
+        <span class="asa-tint asa-tint--teal" aria-hidden="true">
+          <Grid class="w-8! h-8! fill-current" />
+        </span>
+        <p class="asa-empty__title">{{ t('visitTypes.noTypesDefined') }}</p>
+        <p class="asa-empty__sub">{{ t('visitTypes.addFirst') }}</p>
+        <button type="button" class="asa-btn asa-btn--primary asa-btn--sm" @click="openCreateDialog">
+          <v-icon size="14">mdi-plus</v-icon>
+          {{ t('visitTypes.addNew') }}
+        </button>
+      </div>
+
+      <!-- ─── Visit type list ─── -->
       <template v-else>
-        <div class="px-6 py-4 bg-slate-100 dark:bg-slate-800 border-b border-slate-100 flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-700 dark:text-slate-200 tracking-wide">{{ $t('visitTypes.typeCount', { count: visitTypes.length }) }}</span>
-        </div>
-
-        <div class="divide-y divide-slate-100/80">
-          <div v-for="vt in visitTypes" :key="vt.id"
-            class="p-5 md:p-6 py-2 px-2 flex flex-col md:flex-row md:items-center gap-5 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors group">
-            <div class="flex items-center gap-4 shrink-0 md:w-14">
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm border"
-                :style="{ backgroundColor: vt.color + '20', borderColor: vt.color + '40' }">
-                <div class="w-4 h-4 rounded-full" :style="{ backgroundColor: vt.color }"></div>
-              </div>
-            </div>
-
-            <div class="flex-1 min-w-0 px-2">
-              <div class="flex flex-wrap items-center gap-3 mb-1">
-                <h3 class="text-base font-bold text-slate-800 dark:text-slate-300">{{ vt.name }}</h3>
-                <span v-if="!vt.isActive"
-                  class="px-2 py-0.5 text-[11px] font-bold rounded-lg border bg-slate-100 text-slate-500 border-slate-200">
-                  {{ $t('visitTypes.inactive') }}
-                </span>
-              </div>
-              <p v-if="vt.description" class="text-sm text-slate-500 mt-1 leading-relaxed">{{ vt.description }}</p>
-              <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-sm text-slate-500 font-medium">
-                <div class="flex items-center gap-1">
-                  <Clock class="w-4 h-4 fill-slate-400" />
-                  <span>{{ vt.durationMinutes }} {{ $t('visitTypes.minutes') }}</span>
-                </div>
-                <div class="flex items-center gap-1">
-                  <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>{{ formatPrice(vt.price) }}</span>
-                </div>
-                <span class="w-1 h-1 rounded-full bg-slate-300 hidden sm:inline-block"></span>
-                <div class="flex items-center gap-1">
-                  <span class="text-xs text-slate-400">{{ $t('visitTypes.id') }}</span>
-                  <span class="text-xs text-slate-600 font-mono">{{ vt.id?.slice(0, 8) }}...</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-2 shrink-0 w-full md:w-auto justify-end px-2">
-              <v-btn icon variant="text" color="slate-500" size="small" @click="openEditDialog(vt)">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </v-btn>
-              <v-btn icon variant="text" color="red" size="small" @click="confirmDelete(vt)">
-                <TrashBin class="w-5 h-5 fill-red-500" />
-              </v-btn>
+        <!-- Desktop table (lg and up) -->
+        <section class="asa-sec hidden! lg:block!">
+          <div class="asa-card vt-table-card">
+            <div class="vt-table-wrap">
+              <table class="vt-table">
+                <thead>
+                  <tr>
+                    <th>{{ t('visitTypes.colName') }}</th>
+                    <th>{{ t('visitTypes.colDuration') }}</th>
+                    <th>{{ t('visitTypes.colPrice') }}</th>
+                    <th>{{ t('visitTypes.colStatus') }}</th>
+                    <th class="vt-th-end">{{ t('common.actions') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="vt in filteredVisitTypes" :key="vt.id">
+                    <td>
+                      <div class="flex items-center gap-3 min-w-0">
+                        <span class="vt-avatar vt-avatar--sm" :class="tintOf(vt)"
+                          :style="avatarStyle(vt)">{{ firstLetter(vt.name) }}</span>
+                        <span class="min-w-0">
+                          <span class="vt-td-name block">{{ vt.name }}</span>
+                          <span v-if="vt.description" class="vt-td-desc block">{{ vt.description }}</span>
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="flex items-center gap-1.5 whitespace-nowrap!">
+                        <Clock class="w-4! h-4! fill-current opacity-60" />
+                        {{ vt.durationMinutes }} {{ t('visitTypes.minutes') }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="vt-price whitespace-nowrap!">{{ priceLabel(vt) }}</span>
+                    </td>
+                    <td>
+                      <span class="asa-pill" :class="vt.isActive ? 'asa-pill--teal' : 'vt-pill--neutral'">
+                        {{ vt.isActive ? t('visitTypes.active') : t('visitTypes.inactive') }}
+                      </span>
+                    </td>
+                    <td class="vt-th-end">
+                      <div class="flex items-center justify-end gap-1.5">
+                        <v-tooltip :text="t('visitTypes.edit')" location="top">
+                          <template #activator="{ props }">
+                            <button v-bind="props" type="button" class="asa-icon-btn" :aria-label="t('visitTypes.edit')"
+                              @click="openEditDialog(vt)">
+                              <v-icon size="17">mdi-pencil</v-icon>
+                            </button>
+                          </template>
+                        </v-tooltip>
+                        <v-tooltip :text="t('visitTypes.delete')" location="top">
+                          <template #activator="{ props }">
+                            <button v-bind="props" type="button" class="asa-icon-btn asa-icon-btn--danger"
+                              :aria-label="t('visitTypes.delete')" @click="confirmDelete(vt)">
+                              <v-icon size="17">mdi-trash-can-outline</v-icon>
+                            </button>
+                          </template>
+                        </v-tooltip>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
+        </section>
+
+        <!-- Tablet / mobile cards -->
+        <div class="lg:hidden! mt-4! space-y-3!">
+          <article v-for="vt in filteredVisitTypes" :key="`c-${vt.id}`" class="asa-card asa-pcard vt-pcard">
+            <span class="vt-avatar vt-avatar--lg" :class="tintOf(vt)" :style="avatarStyle(vt)">
+              {{ firstLetter(vt.name) }}
+            </span>
+            <div class="asa-pcard__main">
+              <p class="asa-pcard__name">
+                {{ vt.name }}
+                <span class="asa-pill vt-status-pill" :class="vt.isActive ? 'asa-pill--teal' : 'vt-pill--neutral'">
+                  {{ vt.isActive ? t('visitTypes.active') : t('visitTypes.inactive') }}
+                </span>
+              </p>
+              <p v-if="vt.description" class="asa-pcard__meta vt-desc-line">{{ vt.description }}</p>
+              <p class="asa-pcard__meta">
+                <span class="flex items-center gap-1.5">
+                  <Clock class="w-4! h-4! fill-current opacity-60" />
+                  {{ vt.durationMinutes }} {{ t('visitTypes.minutes') }}
+                </span>
+                <span class="asa-dot-inline" aria-hidden="true" />
+                <span class="vt-price">{{ priceLabel(vt) }}</span>
+              </p>
+            </div>
+            <div class="vt-pcard__actions">
+              <button type="button" class="asa-icon-btn" :aria-label="t('visitTypes.edit')" @click="openEditDialog(vt)">
+                <v-icon size="17">mdi-pencil</v-icon>
+              </button>
+              <button type="button" class="asa-icon-btn asa-icon-btn--danger" :aria-label="t('visitTypes.delete')"
+                @click="confirmDelete(vt)">
+                <v-icon size="17">mdi-trash-can-outline</v-icon>
+              </button>
+            </div>
+          </article>
         </div>
       </template>
-    </UiContentCard>
+    </template>
 
-    <v-dialog v-model="dialog" max-width="580" :persistent="saving">
-      <v-card class="rounded-2xl">
-        <v-card-title class="text-lg font-bold! text-slate-800 dark:text-slate-100 px-6 pt-6 pb-4 border-b border-slate-100">
-          {{ editingId ? $t('visitTypes.editType') : $t('visitTypes.addType') }}
-        </v-card-title>
+    <!-- ─── Create / Edit dialog ─── -->
+    <v-dialog v-model="dialog" max-width="560">
+      <v-card class="asa-dialog overflow-hidden!" elevation="0">
+        <div class="asa-dialog__head">
+          <div>
+            <h2 class="asa-dialog__title text-xl!">{{ editingId ? t('visitTypes.editType') : t('visitTypes.addType') }}</h2>
+            <span class="asa-dialog__sub">{{ t('visitTypes.subtitle') }}</span>
+          </div>
+          <v-btn icon variant="text" size="small" class="!text-slate-400 hover:!text-slate-800" @click="dialog = false">
+            <CloseCircle class="w-6! h-6! fill-slate-600! dark:!fill-slate-200!" />
+          </v-btn>
+        </div>
 
-        <v-card-text class="px-6 py-6">
+        <v-card-text class="asa-dialog__body">
           <v-form ref="formRef" @submit.prevent="saveVisitType">
-            <v-row>
-              <v-col cols="12" class="py-2">
-                <label class="text-sm font-semibold text-slate-700 mb-2 block dark:text-slate-200">{{ $t('visitTypes.typeName') }} <span class="text-red-500">*</span></label>
-                <v-text-field v-model="form.name" variant="outlined" density="comfortable"
-                  :placeholder="$t('visitTypes.typeNameExample')" hide-details="auto" bg-color="white" rounded="lg"
-                  :rules="[v => !!v?.trim() || $t('visitTypes.typeNameRequired')]" />
-              </v-col>
+            <div class="space-y-5!">
+              <div class="asa-field">
+                <label class="asa-field-label">{{ t('visitTypes.typeName') }} <span class="vt-req">*</span></label>
+                <v-text-field v-model="form.name" variant="solo" density="comfortable" hide-details
+                  :placeholder="t('visitTypes.typeNameExample')"
+                  :rules="[v => !!v?.trim() || t('visitTypes.typeNameRequired')]" />
+              </div>
 
-              <v-col cols="12" class="py-2">
-                <label class="text-sm font-semibold text-slate-700 mb-2 block dark:text-slate-200">{{ $t('visitTypes.description') }}</label>
-                <v-textarea v-model="form.description" variant="outlined" density="comfortable"
-                  :placeholder="$t('visitTypes.descriptionPlaceholder')" hide-details="auto" bg-color="white" rounded="lg"
-                  rows="3" />
-              </v-col>
+              <div class="asa-field">
+                <label class="asa-field-label">{{ t('visitTypes.description') }}</label>
+                <v-textarea v-model="form.description" variant="solo" density="comfortable" rows="2" auto-grow hide-details
+                  :placeholder="t('visitTypes.descriptionPlaceholder')" />
+              </div>
 
-              <v-col cols="12" md="6" class="py-2">
-                <label class="text-sm font-semibold text-slate-700 mb-2 block dark:text-slate-200">{{ $t('visitTypes.duration') }} <span class="text-red-500">*</span></label>
-                <v-text-field v-model.number="form.durationMinutes" variant="outlined" density="comfortable"
-                  type="number" min="5" max="480" placeholder="30" hide-details="auto" bg-color="white" rounded="lg"
-                  :rules="[v => !!v || $t('visitTypes.durationRequired'), v => v >= 5 || $t('visitTypes.durationMin')]" />
-              </v-col>
-
-              <v-col cols="12" md="6" class="py-2">
-                <label class="text-sm font-semibold text-slate-700 mb-2 block dark:text-slate-200">{{ $t('visitTypes.price') }} <span class="text-red-500">*</span></label>
-                <v-text-field v-model.number="form.price" variant="outlined" density="comfortable"
-                  type="number" min="0" placeholder="100000" hide-details="auto" bg-color="white" rounded="lg"
-                  :rules="[v => v >= 0 || $t('visitTypes.priceNegative')]" />
-              </v-col>
-
-              <v-col cols="12" class="py-2">
-                <label class="text-sm font-semibold text-slate-700 mb-3 block dark:text-slate-200">{{ $t('visitTypes.color') }} <span class="text-red-500">*</span></label>
-                <div class="flex flex-wrap gap-2.5">
-                  <button v-for="c in colorPalette" :key="c"
-                    type="button"
-                    class="w-9 h-9 rounded-xl border-2 transition-all duration-150 shrink-0 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-800"
-                    :class="form.color === c
-                      ? 'border-slate-800 dark:border-white ring-2 ring-slate-400 scale-110 shadow-md'
-                      : 'border-slate-200 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-400'"
-                    :style="{ backgroundColor: c }"
-                    @click="form.color = c"
-                  />
+              <div class="grid grid-cols-1! gap-5! sm:grid-cols-2!">
+                <div class="asa-field">
+                  <label class="asa-field-label">{{ t('visitTypes.duration') }} <span class="vt-req">*</span></label>
+                  <v-text-field v-model.number="form.durationMinutes" variant="solo" density="comfortable" type="number"
+                    min="5" max="480" hide-details placeholder="30"
+                    :rules="[v => v !== null && v !== undefined && v !== '' || t('visitTypes.durationRequired'), v => v === null || v === undefined || v === '' || v >= 5 || t('visitTypes.durationMin')]" />
                 </div>
-                <input type="hidden" :value="form.color" />
-              </v-col>
 
-              <v-col cols="12" md="6" class="py-2 d-flex align-center">
-                <v-switch v-model="form.isActive" color="#00ADB5" :label="$t('visitTypes.active')" hide-details />
-              </v-col>
-            </v-row>
+                <div class="asa-field">
+                  <label class="asa-field-label">{{ t('visitTypes.price') }}</label>
+                  <v-text-field v-model.number="form.price" variant="solo" density="comfortable" type="number"
+                    min="0" hide-details placeholder="0"
+                    :rules="[v => v === null || v === undefined || v === '' || v >= 0 || t('visitTypes.priceNegative')]" />
+                </div>
+              </div>
+
+              <div>
+                <label class="asa-field-label">{{ t('visitTypes.color') }} <span class="vt-req">*</span></label>
+                <div class="vt-swatches">
+                  <button v-for="c in colorPalette" :key="c" type="button" class="vt-swatch"
+                    :class="{ 'vt-swatch--selected': form.color === c }"
+                    :style="{ backgroundColor: c }" :aria-label="c" @click="form.color = c">
+                    <span v-if="form.color === c" class="vt-swatch__check" aria-hidden="true">
+                      <v-icon size="12" color="#ffffff">mdi-check</v-icon>
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="asa-field">
+                <v-switch v-model="form.isActive" color="rgba(0, 173, 181, 1)" hide-details
+                  :label="t('visitTypes.active')" inset />
+              </div>
+            </div>
           </v-form>
         </v-card-text>
 
-        <v-card-actions class="px-6 pb-6 pt-2 border-t border-slate-100 gap-3">
-          <v-btn variant="text" color="slate-500" size="large" class="rounded-lg font-medium"
-            :disabled="saving" @click="dialog = false">
-            {{ $t('common.cancel') }}
-          </v-btn>
+        <v-card-actions class="asa-dialog__foot">
           <v-spacer />
-          <v-btn variant="flat" color="#00ADB5" size="large" :loading="saving"
-            class="px-8 font-bold rounded-lg shadow-md shadow-electric-sapphire/30 hover:bg-electric-sapphire/80!" @click="saveVisitType">
-            {{ editingId ? $t('visitTypes.saveChanges') : $t('visitTypes.createType') }}
-          </v-btn>
+          <button type="button" class="asa-btn asa-btn--ghost" :disabled="saving" @click="dialog = false">
+            {{ t('common.cancel') }}
+          </button>
+          <button type="button" class="asa-btn asa-btn--primary" :disabled="saving" @click="saveVisitType">
+            <v-icon v-if="saving" size="15" class="animate-spin!">mdi-loading</v-icon>
+            {{ editingId ? t('visitTypes.saveChanges') : t('visitTypes.createType') }}
+          </button>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
+    <!-- ─── Delete confirmation dialog ─── -->
     <v-dialog v-model="deleteDialog" max-width="420">
-      <v-card class="rounded-2xl text-center py-6">
-        <v-card-text class="px-6">
-          <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <TrashBin class="w-8 h-8 fill-red-500" />
+      <v-card class="asa-dialog overflow-hidden!" elevation="0">
+        <div class="asa-dialog__head">
+          <div class="flex items-start gap-3 min-w-0">
+            <span class="asa-tint asa-tint--rose" aria-hidden="true">
+              <v-icon size="20">mdi-trash-can-outline</v-icon>
+            </span>
+            <div class="min-w-0">
+              <h2 class="asa-dialog__title text-lg!">{{ t('visitTypes.deleteTitle') }}</h2>
+              <span class="asa-dialog__sub">{{ t('visitTypes.deleteConfirm', { name: deletingItem?.name }) }}</span>
+            </div>
           </div>
-          <h3 class="text-lg font-bold text-slate-800 mb-2">{{ $t('visitTypes.deleteTitle') }}</h3>
-          <p class="text-sm text-slate-500">
-            {{ $t('visitTypes.deleteConfirm', { name: deletingItem?.name }) }}
-          </p>
-        </v-card-text>
+          <v-btn icon variant="text" size="small" class="!text-slate-400 hover:!text-slate-800" @click="deleteDialog = false">
+            <CloseCircle class="w-6! h-6! fill-slate-600! dark:!fill-slate-200!" />
+          </v-btn>
+        </div>
 
-        <v-card-actions class="justify-center gap-3 px-6 pt-4">
-          <v-btn variant="text" color="slate-500" size="large" class="rounded-lg font-medium"
-            :disabled="saving" @click="deleteDialog = false">
-            {{ $t('common.cancel') }}
-          </v-btn>
-          <v-btn variant="flat" color="red" size="large" :loading="saving"
-            class="px-8 font-bold rounded-lg shadow-md shadow-red-500/30" @click="deleteVisitType">
-            {{ $t('common.delete') }}
-          </v-btn>
+        <v-card-actions class="asa-dialog__foot">
+          <v-spacer />
+          <button type="button" class="asa-btn asa-btn--ghost" :disabled="saving" @click="deleteDialog = false">
+            {{ t('common.cancel') }}
+          </button>
+          <button type="button" class="asa-btn vt-btn--destructive" :disabled="saving" @click="deleteVisitType">
+            <v-icon v-if="saving" size="15" class="animate-spin!">mdi-loading</v-icon>
+            {{ t('common.delete') }}
+          </button>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -188,35 +308,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import Grid from '~/components/icons/Grid.vue'
 import Clock from '~/components/icons/Clock.vue'
-import TrashBin from '~/components/icons/TrashBin.vue'
+import Wallet from '~/components/icons/Wallet.vue'
+import LineChart from '~/components/icons/LineChart.vue'
+import CloseCircle from '~/components/icons/CloseCircle.vue'
 
-const { t } = useI18n()
-const { formatPrice } = useFormatting()
-const { apiFetch } = useApi()
-const { user } = useAuth()
-const { $toast } = useNuxtApp()
-
-interface VisitType {
+interface VisitTypeItem {
   id: string
   doctorId?: string
   name: string
   description?: string
   durationMinutes: number
-  price: number
+  price: number | null
   color: string
   isActive: boolean
 }
 
-const visitTypes = ref<VisitType[]>([])
+interface VisitTypeForm {
+  name: string
+  description: string
+  durationMinutes: number | null
+  price: number | null
+  color: string
+  isActive: boolean
+}
+
+const { t } = useI18n()
+const { apiFetch } = useApi()
+const { user } = useAuth()
+const { $toast } = useNuxtApp()
+const { formatPrice, formatPriceDetail } = useFormatting()
+
+const visitTypes = ref<VisitTypeItem[]>([])
 const loading = ref(true)
-const dialog = ref(false)
-const deleteDialog = ref(false)
 const saving = ref(false)
-const editingId = ref<string | null>(null)
-const deletingItem = ref<VisitType | null>(null)
-const formRef = ref<any>(null)
+const searchQuery = ref('')
 
 const colorPalette = [
   '#3B82F6', '#A2D2FF', '#8B5CF6', '#A855F7',
@@ -224,19 +352,134 @@ const colorPalette = [
   '#22C55E', '#14B8A6', '#06B6D4', '#0EA5E9',
 ]
 
-const defaultForm = {
+const defaultForm = (): VisitTypeForm => ({
   name: '',
   description: '',
   durationMinutes: 30,
-  price: 0,
-  color: '#3B82F6',
+  price: null,
+  color: '#00adb5',
   isActive: true,
+})
+
+const form = ref<VisitTypeForm>(defaultForm())
+const formRef = ref<{ validate: () => Promise<{ valid: boolean }> } | null>(null)
+
+const dialog = ref(false)
+const deleteDialog = ref(false)
+const editingId = ref<string | null>(null)
+const deletingItem = ref<VisitTypeItem | null>(null)
+
+// ─── Derived list ───
+const hasQuery = computed(() => searchQuery.value.trim() !== '')
+
+const filteredVisitTypes = computed(() => {
+  const q = searchQuery.value.trim().toLowerCase()
+  return visitTypes.value
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .filter((vt) => {
+      if (!q) return true
+      return `${vt.name} ${vt.description || ''}`.toLowerCase().includes(q)
+    })
+})
+
+// ─── Overview metrics ───
+const metrics = computed(() => {
+  const list = visitTypes.value
+  const total = list.length
+  const avgMin = total
+    ? Math.round(list.reduce((sum, vt) => sum + (vt.durationMinutes || 0), 0) / total)
+    : 0
+  const prices = list
+    .map((vt) => vt.price)
+    .filter((p): p is number => p !== null && p !== undefined && !Number.isNaN(p))
+  const min = prices.length ? Math.min(...prices) : null
+  const max = prices.length ? Math.max(...prices) : null
+  const priceDigits = (p: number | null) =>
+    p === null ? '—' : formatPriceDetail(p).digits
+
+  return [
+    {
+      key: 'total', icon: Grid, tint: 'asa-tint--indigo', dot: 'vt-dot--indigo',
+      value: total, label: t('visitTypes.metricTotal'),
+      foot: t('visitTypes.metricTotalFoot'),
+    },
+    {
+      key: 'avg', icon: Clock, tint: 'asa-tint--amber', dot: 'vt-dot--amber',
+      value: avgMin, label: t('visitTypes.metricAvg'),
+      foot: t('visitTypes.metricAvgFoot'),
+    },
+    {
+      key: 'cheap', icon: Wallet, tint: 'asa-tint--green', dot: 'vt-dot--green',
+      value: priceDigits(min), label: t('visitTypes.metricCheapest'),
+      foot: t('visitTypes.metricCheapestFoot'),
+    },
+    {
+      key: 'pricey', icon: LineChart, tint: 'asa-tint--rose', dot: 'vt-dot--rose',
+      value: priceDigits(max), label: t('visitTypes.metricCostly'),
+      foot: t('visitTypes.metricCostlyFoot'),
+    },
+  ]
+})
+
+// ─── Helpers ───
+const firstLetter = (name: string) => (name?.trim()?.charAt(0) || '·').toUpperCase()
+
+const tintOf = (vt: VisitTypeItem) => {
+  const map: Record<string, string> = {
+    '#3B82F6': 'vt-avatar--blue', '#A2D2FF': 'vt-avatar--blue',
+    '#8B5CF6': 'vt-avatar--purple', '#A855F7': 'vt-avatar--purple',
+    '#EC4899': 'vt-avatar--pink', '#EF4444': 'vt-avatar--red',
+    '#F97316': 'vt-avatar--orange', '#EAB308': 'vt-avatar--amber',
+    '#22C55E': 'vt-avatar--green', '#14B8A6': 'vt-avatar--teal',
+    '#06B6D4': 'vt-avatar--cyan', '#0EA5E9': 'vt-avatar--blue',
+  }
+  return map[vt.color] || 'vt-avatar--default'
 }
 
-const form = ref({ ...defaultForm })
+const avatarStyle = (vt: VisitTypeItem) => {
+  const color = vt.color || '#00adb5'
+  return {
+    backgroundColor: `color-mix(in srgb, ${color} 16%, transparent)`,
+    color,
+    borderColor: `color-mix(in srgb, ${color} 34%, transparent)`,
+  }
+}
 
+const priceLabel = (vt: VisitTypeItem) =>
+  vt.price !== null && vt.price !== undefined && !Number.isNaN(vt.price)
+    ? formatPrice(vt.price)
+    : '—'
+
+// ─── Data ───
+async function fetchVisitTypes() {
+  const doctorId = user.value?.id
+  if (!doctorId) return
+  loading.value = true
+  try {
+    const res = await apiFetch<{ success: boolean; data: VisitTypeItem[] }>(`/api/visit-types/${doctorId}`)
+    if (res.success) {
+      visitTypes.value = (res.data || []).map((vt) => ({
+        id: vt.id,
+        doctorId: vt.doctorId,
+        name: vt.name,
+        description: vt.description || undefined,
+        durationMinutes: Number(vt.durationMinutes) || 30,
+        price: vt.price !== null && vt.price !== undefined ? Number(vt.price) : null,
+        color: vt.color || '#00adb5',
+        isActive: vt.isActive ?? true,
+      }))
+    }
+  } catch {
+    $toast.error(t('visitTypes.fetchError'))
+  } finally {
+    loading.value = false
+  }
+}
+
+// ─── Form ───
 function resetForm() {
-  form.value = { ...defaultForm }
+  form.value = defaultForm()
   editingId.value = null
 }
 
@@ -245,7 +488,7 @@ function openCreateDialog() {
   dialog.value = true
 }
 
-function openEditDialog(vt: VisitType) {
+function openEditDialog(vt: VisitTypeItem) {
   editingId.value = vt.id
   form.value = {
     name: vt.name,
@@ -258,36 +501,6 @@ function openEditDialog(vt: VisitType) {
   dialog.value = true
 }
 
-function confirmDelete(vt: VisitType) {
-  deletingItem.value = vt
-  deleteDialog.value = true
-}
-
-async function fetchVisitTypes() {
-  const doctorId = user?.value?.id || (user as any)?.id
-  if (!doctorId) return
-  loading.value = true
-  try {
-    const res = await apiFetch<any>(`/api/visit-types/${doctorId}`)
-    if (res.success) {
-      visitTypes.value = (res.data || []).map((vt: any) => ({
-        id: vt.id,
-        doctorId: vt.doctor_id || vt.doctorId,
-        name: vt.name,
-        description: vt.description,
-        durationMinutes: vt.duration_minutes ?? vt.durationMinutes ?? 30,
-        price: vt.price ?? 0,
-        color: vt.color || '#3B82F6',
-        isActive: vt.is_active ?? vt.isActive ?? true,
-      }))
-    }
-  } catch {
-    $toast.error(t('visitTypes.fetchError'))
-  } finally {
-    loading.value = false
-  }
-}
-
 async function saveVisitType() {
   const formEl = formRef.value
   if (formEl) {
@@ -297,60 +510,536 @@ async function saveVisitType() {
 
   saving.value = true
   try {
-    const body = {
+    const bodyBase = {
       name: form.value.name.trim(),
       description: form.value.description.trim() || undefined,
-      durationMinutes: form.value.durationMinutes,
-      price: form.value.price,
+      durationMinutes: form.value.durationMinutes ?? 30,
+      price: form.value.price && form.value.price > 0 ? form.value.price : undefined,
       color: form.value.color,
-      isActive: form.value.isActive,
     }
 
     if (editingId.value) {
-      await apiFetch(`/api/visit-types/${editingId.value}`, {
+      await apiFetch<{ success: boolean }>(`/api/visit-types/${editingId.value}`, {
         method: 'PUT',
-        body,
+        body: { ...bodyBase, isActive: form.value.isActive },
       })
       $toast.success(t('visitTypes.updatedSuccess'))
     } else {
-      const doctorId = user?.value?.id || (user as any)?.id
-      await apiFetch('/api/visit-types/', {
+      await apiFetch<{ success: boolean }>('/api/visit-types/', {
         method: 'POST',
-        body: { ...body, doctorId },
+        body: bodyBase,
       })
       $toast.success(t('visitTypes.createdSuccess'))
     }
 
     dialog.value = false
     await fetchVisitTypes()
-  } catch (err: any) {
-    $toast.error(err.data?.error || t('visitTypes.saveError'))
+  } catch (err) {
+    const error = err as { data?: { error?: string } }
+    $toast.error(error.data?.error || t('visitTypes.saveError'))
   } finally {
     saving.value = false
   }
+}
+
+// ─── Delete ───
+function confirmDelete(vt: VisitTypeItem) {
+  deletingItem.value = vt
+  deleteDialog.value = true
 }
 
 async function deleteVisitType() {
   if (!deletingItem.value) return
+  const target = deletingItem.value
   saving.value = true
   try {
-    await apiFetch(`/api/visit-types/${deletingItem.value.id}`, { method: 'DELETE' })
+    await apiFetch<{ success: boolean }>(`/api/visit-types/${target.id}`, { method: 'DELETE' })
     $toast.success(t('visitTypes.deletedSuccess'))
     deleteDialog.value = false
     deletingItem.value = null
     await fetchVisitTypes()
-  } catch (err: any) {
-    $toast.error(err.data?.error || t('visitTypes.deleteError'))
+  } catch (err) {
+    const error = err as { data?: { error?: string } }
+    $toast.error(error.data?.error || t('visitTypes.deleteError'))
   } finally {
     saving.value = false
   }
 }
 
-onMounted(() => {
-  fetchVisitTypes()
-})
+onMounted(() => fetchVisitTypes())
 
-useSeoMeta({
-  title: t('visitTypes.titleSeo'),
-})
+useSeoMeta({ title: t('visitTypes.titleSeo') })
 </script>
+
+<style scoped>
+/* ── Top spacing ─────────────────────────────── */
+.vt-head {
+  margin-top: 0.25rem;
+}
+
+/* ── Frosted, sticky toolbar ─────────────────── */
+.asa-toolbar {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--asa-card-ring);
+  background: color-mix(in srgb, var(--asa-bg-card) 82%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.8);
+  backdrop-filter: blur(18px) saturate(1.8);
+  box-shadow: var(--asa-card-shadow);
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.asa-field--search {
+  flex: 1 1 16rem;
+  min-width: 13rem;
+}
+
+.asa-field :deep(.v-field) {
+  background-color: color-mix(in srgb, var(--asa-label) 5%, transparent);
+  border-radius: 0.875rem;
+  box-shadow: none;
+  color: var(--asa-label);
+}
+
+.asa-field :deep(.v-field--focused) {
+  background-color: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--asa-accent) 18%, transparent);
+}
+
+.asa-field :deep(.v-field__overlay) {
+  background: transparent;
+}
+
+.asa-field :deep(.v-field__input),
+.asa-field :deep(.v-field__input::placeholder),
+.asa-field :deep(.v-label) {
+  color: var(--asa-label);
+}
+
+.asa-field :deep(.v-field__input::placeholder) {
+  color: var(--asa-label-3);
+}
+
+.asa-field :deep(.v-icon) {
+  color: var(--asa-label-2);
+}
+
+.asa-field :deep(.v-field--focused .v-icon) {
+  color: var(--asa-accent);
+}
+
+.asa-field :deep(.v-messages) {
+  display: none;
+}
+
+/* ── Compact icon buttons ─────────────────────── */
+.asa-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.125rem;
+  height: 2.125rem;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--asa-label-2);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
+}
+
+.asa-icon-btn:hover {
+  background: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  color: var(--asa-label);
+}
+
+.dark .asa-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.asa-icon-btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.asa-icon-btn--danger {
+  color: var(--asa-label-2);
+}
+
+.asa-icon-btn--danger:hover {
+  background: var(--asa-rose-soft);
+  color: var(--asa-rose);
+}
+
+/* ── Metrics grid ─────────────────────────────── */
+.vt-metrics {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.875rem;
+}
+
+@media (min-width: 560px) {
+  .vt-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .vt-metrics {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.vt-metric {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 1.125rem 1.25rem;
+}
+
+.vt-metric__copy {
+  min-width: 0;
+  text-align: end;
+}
+
+.vt-metric__value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  color: var(--asa-label);
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vt-metric__label {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--asa-label-2);
+}
+
+.vt-metric__foot {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.25rem;
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--asa-sep);
+  font-size: 0.75rem;
+  color: var(--asa-label-2);
+}
+
+.vt-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--asa-label-3);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--asa-label-3) 18%, transparent);
+}
+
+.vt-dot--indigo {
+  background: var(--asa-indigo);
+  box-shadow: 0 0 0 3px var(--asa-indigo-soft);
+}
+
+.vt-dot--amber {
+  background: var(--asa-amber);
+  box-shadow: 0 0 0 3px var(--asa-amber-soft);
+}
+
+.vt-dot--green {
+  background: var(--asa-green);
+  box-shadow: 0 0 0 3px var(--asa-green-soft);
+}
+
+.vt-dot--rose {
+  background: var(--asa-rose);
+  box-shadow: 0 0 0 3px var(--asa-rose-soft);
+}
+
+/* ── Skeleton blocks ──────────────────────────── */
+.vt-metric-skel {
+  height: 7.5rem;
+  border-radius: 1.375rem;
+}
+
+.vt-list-skel {
+  height: 22rem;
+  margin-top: 1.25rem;
+  border-radius: 1.375rem;
+}
+
+/* ── Color avatar (first letter on tint) ──────── */
+.vt-avatar {
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+}
+
+.vt-avatar--sm {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.vt-avatar--lg {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  font-size: 1rem;
+}
+
+/* ── Desktop table ────────────────────────────── */
+.vt-table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.vt-table-wrap {
+  overflow-x: auto;
+}
+
+.vt-table {
+  width: 100%;
+  min-width: 46rem;
+  border-collapse: collapse;
+  text-align: start;
+}
+
+.vt-table thead th {
+  padding: 0.875rem 1.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: start;
+  white-space: nowrap;
+  color: var(--asa-label-2);
+  border-bottom: 1px solid var(--asa-sep);
+}
+
+.vt-table tbody td {
+  padding: 0.875rem 1.25rem;
+  font-size: 0.8125rem;
+  color: var(--asa-label);
+  border-top: 1px solid var(--asa-sep);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.vt-table tbody tr {
+  transition: background-color 150ms var(--ease-default);
+}
+
+.vt-table tbody tr:hover {
+  background-color: color-mix(in srgb, var(--asa-label) 4%, transparent);
+}
+
+.dark .vt-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.vt-th-end {
+  text-align: end !important;
+}
+
+.vt-td-name {
+  display: block;
+  min-width: 0;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vt-td-desc {
+  min-width: 0;
+  margin-top: 0.125rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--asa-label-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vt-price {
+  font-weight: 600;
+  color: var(--asa-label);
+}
+
+/* ── Pill variants ────────────────────────────── */
+.vt-pill--neutral {
+  background: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  color: var(--asa-label-2);
+}
+
+/* ── Tablet / mobile cards ────────────────────── */
+.asa-pcard {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.9375rem 1rem;
+}
+
+.asa-pcard__main {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.asa-pcard__name {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  min-width: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--asa-label);
+}
+
+.asa-pcard__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--asa-label-2);
+}
+
+.asa-dot-inline {
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background: var(--asa-label-3);
+  flex-shrink: 0;
+}
+
+.vt-status-pill {
+  margin-inline-start: 0.25rem;
+}
+
+.vt-pcard__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.vt-pcard__actions .asa-icon-btn {
+  width: 2rem;
+  height: 2rem;
+}
+
+@media (min-width: 480px) {
+  .vt-pcard__actions {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* ── Empty state ──────────────────────────────── */
+.asa-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.asa-empty__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--asa-label);
+}
+
+.asa-empty__sub {
+  margin-top: -0.5rem;
+  max-width: 26rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--asa-label-2);
+}
+
+/* ── Create / edit dialog ─────────────────────── */
+.vt-req {
+  color: var(--asa-rose);
+}
+
+.vt-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(2.375rem, 1fr));
+  gap: 0.225rem;
+}
+
+.vt-swatch {
+  position: relative;
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: transform 150ms var(--ease-default), box-shadow 150ms var(--ease-default);
+}
+
+.vt-swatch:hover {
+  transform: scale(1.06);
+}
+
+.vt-swatch--selected {
+  box-shadow: 0 0 0 2px var(--asa-bg-card), 0 0 0 4px var(--asa-accent);
+  transform: scale(1.08);
+}
+
+.vt-swatch__check {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.vt-swatch__check .v-icon {
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+}
+
+.vt-btn--destructive {
+  background: var(--asa-rose);
+  color: #ffffff;
+}
+
+.vt-btn--destructive:hover {
+  background: color-mix(in srgb, var(--asa-rose) 88%, #000);
+}
+
+/* ── Responsive tuning ────────────────────────── */
+@media (max-width: 480px) {
+  .asa-field--search {
+    flex-basis: 100% !important;
+  }
+
+  .vt-pcard__actions {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+}
+</style>

@@ -1,14 +1,13 @@
 <template>
-  <div class="border-t border-gray-100 px-4 py-3 dark:border-gray-800">
-    <p class="mb-2 text-[10px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
-      {{ t('support.widget.suggestedQuestions') }}
-    </p>
-    <div class="flex flex-wrap gap-1.5">
+  <div class="suggest">
+    <p class="suggest__label">{{ t('support.widget.suggestedQuestions') }}</p>
+    <div class="suggest__list">
       <button
         v-for="q in questions"
         :key="q.key"
+        type="button"
+        class="suggest__chip"
         @click="$emit('select', t(q.key))"
-        class="rounded-lg bg-white px-3 py-1.5! text-xs text-gray-600 transition-all hover:border-teal-300 hover:bg-teal-50 hover:text-teal-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:border-teal-600 dark:hover:bg-teal-900/20 dark:hover:text-teal-400"
       >
         {{ t(q.key) }}
       </button>
@@ -30,3 +29,59 @@ const questions = [
   { key: 'support.suggested.howToPrintReport' },
 ]
 </script>
+
+<style scoped>
+.suggest {
+  padding: 0.375rem 1.25rem 0.875rem;
+}
+
+.suggest__label {
+  margin-bottom: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--asa-label-3);
+}
+
+.suggest__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.suggest__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--asa-card-ring);
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--asa-bg-card) 70%, transparent);
+  color: var(--asa-label-2);
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease-default), color 0.2s var(--ease-default),
+    background 0.2s var(--ease-default), transform 0.15s var(--ease-default);
+}
+
+.suggest__chip:hover {
+  border-color: color-mix(in srgb, var(--asa-accent) 45%, var(--asa-card-ring));
+  background: var(--asa-accent-soft);
+  color: var(--asa-accent-deep);
+}
+
+:global(.dark) .suggest__chip:hover {
+  color: var(--asa-accent);
+}
+
+.suggest__chip:active {
+  transform: scale(0.97);
+}
+
+.suggest__chip:focus-visible {
+  outline: 2px solid var(--asa-accent);
+  outline-offset: 1px;
+}
+</style>

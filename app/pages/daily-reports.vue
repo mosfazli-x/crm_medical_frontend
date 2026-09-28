@@ -50,7 +50,8 @@
             <div class="sc-field">
               <span class="asa-field-label">{{ t('dailyReports.patient') }}</span>
               <PatientSelector v-model="form.patientId" :patients="patients"
-                :label="t('dailyReports.patient')" :placeholder="t('dailyReports.patientPlaceholder')" />
+                :label="t('dailyReports.patient')" :placeholder="t('dailyReports.patientPlaceholder')"
+                :handwriting-label="t('dailyReports.patient')" />
             </div>
           </div>
 
@@ -91,15 +92,23 @@
               <UiClinicalCheckbox v-for="proc in PROCEDURE_ITEMS" :key="proc.key"
                 v-model="form.procedures[proc.key]" :label="t(proc.labelKey)" />
             </div>
-            <input v-if="form.procedures.other" v-model="form.otherProcedureText" type="text" class="sc-input"
-              :placeholder="t('dailyReports.otherPlaceholder')" />
+            <div v-if="form.procedures.other" class="sc-input-hw">
+              <input v-model="form.otherProcedureText" type="text" class="sc-input"
+                :placeholder="t('dailyReports.otherPlaceholder')" />
+              <button type="button" class="sc-hw-btn" :title="t('handwriting.title')"
+                :aria-label="t('handwriting.title')"
+                @click="openMainHandwriting(t('dailyReports.other'), (text) => (form.otherProcedureText = text))">
+                <v-icon size="17">mdi-draw-pen</v-icon>
+              </button>
+            </div>
           </div>
 
           <div class="sc-form__grid">
             <div class="sc-field">
               <span class="asa-field-label">{{ t('dailyReports.feeCollected') }}</span>
               <v-text-field v-model.number="form.feeCollected" type="number" min="0" variant="solo" density="comfortable"
-                hide-details="auto" />
+                hide-details="auto" append-inner-icon="mdi-draw-pen"
+                @click:append-inner="openMainHandwriting(t('dailyReports.feeCollected'), (text) => (form.feeCollected = Number(text)), true)" />
             </div>
             <div class="sc-field">
               <span class="asa-field-label">{{ t('dailyReports.paymentMethod') }}</span>
@@ -210,7 +219,8 @@
           <div class="sc-field">
             <span class="asa-field-label">{{ t('dailyReports.patient') }}</span>
             <PatientSelector v-model="listFilters.patientId" :patients="patients"
-              :label="t('dailyReports.patient')" :placeholder="t('dailyReports.patientPlaceholder')" />
+              :label="t('dailyReports.patient')" :placeholder="t('dailyReports.patientPlaceholder')"
+              :handwriting-label="t('dailyReports.patient')" />
           </div>
           <div class="sc-filters__actions">
             <button class="asa-btn asa-btn--primary asa-btn--sm" :disabled="loading" @click="loadReports">
@@ -382,7 +392,8 @@
                 <div class="sc-field">
                   <span class="asa-field-label">{{ t('dailyReports.price') }}</span>
                   <v-text-field v-model.number="visitTypeForm.price" type="number" min="0" variant="solo"
-                    density="comfortable" hide-details="auto" />
+                    density="comfortable" hide-details="auto" append-inner-icon="mdi-draw-pen"
+                    @click:append-inner="openVtHandwriting(t('dailyReports.price'), (text) => (visitTypeForm.price = Number(text)), true)" />
                 </div>
                 <div class="sc-field">
                   <span class="asa-field-label">{{ t('dailyReports.color') }}</span>
@@ -490,7 +501,8 @@
           <div class="sc-field">
             <span class="asa-field-label">{{ t('dailyReports.patient') }}</span>
             <PatientSelector v-model="statsFilters.patientId" :patients="patients"
-              :label="t('dailyReports.patient')" :placeholder="t('dailyReports.patientPlaceholder')" />
+              :label="t('dailyReports.patient')" :placeholder="t('dailyReports.patientPlaceholder')"
+              :handwriting-label="t('dailyReports.patient')" />
           </div>
           <div class="sc-filters__actions">
             <button class="asa-btn asa-btn--primary asa-btn--sm" :disabled="statsLoading" @click="loadStats">
@@ -671,7 +683,8 @@
 
     <HandwritingDialog v-model="mainHandwritingOpen" :label="mainHandwritingLabel" :numeric="mainHandwritingNumeric"
       @insert="applyMainHandwriting" />
-    <HandwritingDialog v-model="vtHandwritingOpen" :label="vtHandwritingLabel" @insert="applyVtHandwriting" />
+    <HandwritingDialog v-model="vtHandwritingOpen" :label="vtHandwritingLabel" :numeric="vtHandwritingNumeric"
+      @insert="applyVtHandwriting" />
   </UiPageContainer>
 </template>
 
@@ -804,9 +817,10 @@ const mainHandwritingLabel = ref('')
 const mainHandwritingNumeric = ref(false)
 const mainHandwritingCallback = ref<((text: string) => void) | null>(null)
 
-function openMainHandwriting(label: string, callback: (text: string) => void) {
+function openMainHandwriting(label: string, callback: (text: string) => void, numeric = false) {
   mainHandwritingLabel.value = label
   mainHandwritingCallback.value = callback
+  mainHandwritingNumeric.value = numeric
   mainHandwritingOpen.value = true
 }
 
@@ -1014,11 +1028,13 @@ const visitTypeDeleteTarget = ref<DailyReportVisitType | null>(null)
 
 const vtHandwritingOpen = ref(false)
 const vtHandwritingLabel = ref('')
+const vtHandwritingNumeric = ref(false)
 const vtHandwritingCallback = ref<((text: string) => void) | null>(null)
 
-function openVtHandwriting(label: string, callback: (text: string) => void) {
+function openVtHandwriting(label: string, callback: (text: string) => void, numeric = false) {
   vtHandwritingLabel.value = label
   vtHandwritingCallback.value = callback
+  vtHandwritingNumeric.value = numeric
   vtHandwritingOpen.value = true
 }
 
@@ -1243,7 +1259,7 @@ useSeoMeta({
 /* ── Shared card chrome ────────────────────────── */
 .sc-card {
   padding: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .sc-card__head {
@@ -1253,6 +1269,8 @@ useSeoMeta({
   gap: 1rem;
   padding: 1.375rem 1.5rem;
   border-bottom: 1px solid var(--asa-sep);
+  border-start-start-radius: 1.375rem;
+  border-start-end-radius: 1.375rem;
 }
 
 .sc-card__head-copy {
@@ -1319,6 +1337,39 @@ useSeoMeta({
   transition: background-color 150ms var(--ease-default), box-shadow 150ms var(--ease-default);
 }
 
+.sc-input-hw {
+  position: relative;
+  margin-top: 0.75rem;
+}
+
+.sc-input-hw .sc-input {
+  margin-top: 0;
+  padding-inline-end: 2.75rem;
+}
+
+.sc-hw-btn {
+  position: absolute;
+  inset-inline-end: 0.375rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 0.625rem;
+  background: transparent;
+  color: var(--asa-label-3);
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
+}
+
+.sc-hw-btn:hover {
+  background: var(--asa-accent-soft);
+  color: var(--asa-accent-deep);
+}
+
 .sc-input:focus {
   background: color-mix(in srgb, var(--asa-label) 8%, transparent);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--asa-accent) 18%, transparent);
@@ -1374,7 +1425,7 @@ useSeoMeta({
 }
 
 .sc-date :deep(.vpd-input-group input) {
-  width: 100%;
+  /* width: 100%; */
   height: 2.75rem;
   padding: 0 0.875rem;
   border: none;

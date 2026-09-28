@@ -144,6 +144,47 @@
                 density="comfortable" rows="3" hide-details="auto" append-inner-icon="mdi-draw-pen"
                 @click:append-inner="openVisitNotesHw(t('calendar.doctorNotes'), (text) => (newVisit.notes = text))" />
             </div>
+
+            <!-- ── Follow-up / return visit ── -->
+            <div class="fu-section">
+              <div class="fu-section__head">
+                <v-icon size="18" color="#00ADB5">mdi-calendar-sync</v-icon>
+                <span class="asa-field-label mb-0!">{{ t('followups.returnVisit') }}</span>
+                <v-spacer />
+                <v-btn size="small" variant="text" color="#00ADB5" class="text-none!"
+                  :prepend-icon="newVisit.nextVisitDate ? 'mdi-close' : 'mdi-plus'"
+                  @click="toggleReturnVisit">
+                  {{ newVisit.nextVisitDate ? t('followups.remove') : t('followups.add') }}
+                </v-btn>
+              </div>
+
+              <p v-if="!newVisit.nextVisitDate" class="fu-section__hint">
+                {{ t('followups.returnVisitHint') }}
+              </p>
+
+              <div v-else class="cal-grid2">
+                <div class="pf-field">
+                  <span class="asa-field-label">{{ t('followups.nextVisitDate') }}</span>
+                  <PersianDatetimePicker v-model="newVisit.nextVisitDate" type="date"
+                    display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#00ADB5" auto-submit
+                    custom-input class="w-full" clearable />
+                </div>
+
+                <div class="pf-field">
+                  <span class="asa-field-label">{{ t('followups.remindDaysBefore') }}</span>
+                  <v-text-field v-model.number="newVisit.reminderDaysBefore" type="number" min="0" max="90"
+                    variant="solo" density="comfortable" hide-details="auto" :suffix="t('followups.daysUnit')"
+                    :placeholder="t('followups.useClinicDefault', { days: defaultReminderDays })"
+                    clearable @update:model-value="onReminderDaysInput" />
+                </div>
+              </div>
+
+              <p
+                v-if="newVisit.nextVisitDate && newVisit.reminderDaysBefore == null"
+                class="fu-section__hint">
+                {{ t('followups.usingClinicDefault', { days: defaultReminderDays }) }}
+              </p>
+            </div>
           </div>
         </v-card-text>
 
@@ -239,6 +280,36 @@ function resolveMsgList(key: string): string[] {
 }
 
 // ── Visit form state ─────────────────────────────
+/** The subset of a FullCalendar event the edit dialog reads. */
+interface CalendarEventLike {
+  id: string
+  startStr?: string | null
+  endStr?: string | null
+  start?: string | null
+  end?: string | null
+  extendedProps?: {
+    patientId?: string | null
+    type?: string | null
+    notes?: string | null
+    nextVisitDate?: string | null
+    reminderDaysBefore?: number | null
+  }
+}
+
+/** Payload returned by `GET /api/visits/:id`. */
+interface VisitDetail {
+  id: string
+  patientId: string
+  visitDate: string
+  visitType?: string | null
+  status?: string | null
+  notes?: string | null
+  durationMinutes?: number | null
+  nextVisitDate?: string | null
+  reminderDaysBefore?: number | null
+  reminderSentAt?: string | null
+}
+
 const patients = ref<any[]>([])
 const patientsLoading = ref(false)
 const visitDialog = ref(false)
@@ -247,6 +318,11 @@ const saving = ref(false)
 const deleting = ref(false)
 const isEditMode = ref(false)
 const currentVisitId = ref<string | null>(null)
+/** Snapshot of the follow-up fields on open, so edit only sends real changes. */
+const editOriginal = ref<{ nextVisitDate: string; reminderDaysBefore: number | null }>({
+  nextVisitDate: '',
+  reminderDaysBefore: null,
+})
 
 const visitTypes = computed(() => resolveMsgList('calendar.visitTypes'))
 const statusOptions = computed(() => resolveMsgList('calendar.statusOptions'))
@@ -258,10 +334,57 @@ const newVisit = ref<{
   type: string
   status: string
   notes: string
+  nextVisitDate: string
+  reminderDaysBefore: number | null
 }>(emptyVisit())
 
 function emptyVisit() {
-  return { start: '', end: '', patientId: null as string | null, type: '', status: '', notes: '' }
+  return {
+    start: '',
+    end: '',
+    patientId: null as string | null,
+    type: '',
+    status: '',
+    notes: '',
+    nextVisitDate: '',
+    reminderDaysBefore: null as number | null,
+  }
+}
+
+// Clinic-wide reminder lead time, shown as the placeholder/override baseline.
+const defaultReminderDays = ref(3)
+const followUpReminderDaysLoaded = ref(false)
+
+const loadDefaultReminderDays = async () => {
+  if (followUpReminderDaysLoaded.value) return
+  try {
+    const { data } = await useFollowUps().getSummary()
+    if (typeof data?.defaultReminderDays === 'number') {
+      defaultReminderDays.value = data.defaultReminderDays
+    }
+  } catch {
+    // Non-fatal: the field simply falls back to the built-in default.
+  } finally {
+    followUpReminderDaysLoaded.value = true
+  }
+}
+
+function toggleReturnVisit() {
+  if (newVisit.value.nextVisitDate) {
+    newVisit.value.nextVisitDate = ''
+    newVisit.value.reminderDaysBefore = null
+  } else {
+    newVisit.value.nextVisitDate = moment().add(1, 'month').format('YYYY-MM-DD')
+  }
+}
+
+/** Empty input means "use the clinic default", which the API models as null. */
+function onReminderDaysInput(value: unknown) {
+  const parsed = Number(value)
+  newVisit.value.reminderDaysBefore =
+    value === '' || value === null || value === undefined || Number.isNaN(parsed)
+      ? null
+      : parsed
 }
 
 // ── Calendar state ───────────────────────────────
@@ -418,9 +541,11 @@ function openCreateDialog() {
     type: visitTypes.value[0],
     status: statusOptions.value[0],
   }
+  editOriginal.value = { nextVisitDate: '', reminderDaysBefore: null }
   isEditMode.value = false
   currentVisitId.value = null
   visitDialog.value = true
+  loadDefaultReminderDays()
 }
 
 function openDeleteDialog() {
@@ -464,6 +589,24 @@ const saveVisit = async () => {
       reason: null,
       notes: newVisit.value.notes || null,
       durationMinutes: durationMinutes > 0 ? durationMinutes : 30,
+      // `null` clears the follow-up; omitted on edit so an untouched date is
+      // never silently reset.
+      ...(isEditMode.value
+        ? {}
+        : {
+            nextVisitDate: newVisit.value.nextVisitDate || null,
+            reminderDaysBefore: newVisit.value.reminderDaysBefore,
+          }),
+    }
+
+    if (isEditMode.value) {
+      const changed =
+        newVisit.value.nextVisitDate !== editOriginal.value.nextVisitDate ||
+        newVisit.value.reminderDaysBefore !== editOriginal.value.reminderDaysBefore
+      if (changed) {
+        payload.nextVisitDate = newVisit.value.nextVisitDate || null
+        payload.reminderDaysBefore = newVisit.value.reminderDaysBefore
+      }
     }
 
     const endpoint = isEditMode.value && currentVisitId.value ? `/api/visits/${currentVisitId.value}` : '/api/visits'
@@ -621,6 +764,12 @@ const calendarOptions = computed(() => ({
 
   eventClick: (info: any) => {
     const event = info.event
+    // The calendar payload carries the follow-up fields so the dialog can
+    // prefill without a second request.
+    const nextVisitRaw = event.extendedProps.nextVisitDate as string | null
+    const nextVisitDate = nextVisitRaw ? moment(nextVisitRaw).format('YYYY-MM-DD') : ''
+    const reminderDaysBefore = event.extendedProps.reminderDaysBefore ?? null
+
     newVisit.value = {
       start: event.startStr.slice(0, 16).replace('T', ' '),
       end: event.endStr ? event.endStr.slice(0, 16).replace('T', ' ') : '',
@@ -628,19 +777,98 @@ const calendarOptions = computed(() => ({
       type: event.extendedProps.type || visitTypes.value[0],
       status: statusOptions.value[0],
       notes: event.extendedProps.notes || '',
+      nextVisitDate,
+      reminderDaysBefore,
     }
+    editOriginal.value = { nextVisitDate, reminderDaysBefore }
     currentVisitId.value = event.id
     isEditMode.value = true
     visitDialog.value = true
+    loadDefaultReminderDays()
   },
 }))
 
-onMounted(() => {
+onMounted(async () => {
   isMobile.value = window.innerWidth < 768
   fetchPatients()
-  loadEvents()
+  await loadEvents()
   window.addEventListener('resize', handleResize)
+  openVisitFromQuery()
 })
+
+/**
+ * The follow-ups page deep-links with `?visit=<id>`. Events are limited to the
+ * visible range, so fall back to the visit detail endpoint when the id is not
+ * among the loaded events.
+ */
+async function openVisitFromQuery() {
+  const route = useRoute()
+  const visitId = typeof route.query.visit === 'string' ? route.query.visit : null
+  if (!visitId) return
+
+  const openFrom = (event: CalendarEventLike) => {
+    const nextVisitRaw = event.extendedProps?.nextVisitDate ?? null
+    const nextVisitDate = nextVisitRaw ? moment(nextVisitRaw).format('YYYY-MM-DD') : ''
+    const reminderDaysBefore = event.extendedProps?.reminderDaysBefore ?? null
+    // FullCalendar events expose `startStr`/`endStr`; plain API events only `start`/`end`.
+    const rawStart = event.startStr || event.start
+    const rawEnd = event.endStr || event.end
+
+    newVisit.value = {
+      start: rawStart ? moment(rawStart).format('YYYY-MM-DD HH:mm') : '',
+      end: rawEnd ? moment(rawEnd).format('YYYY-MM-DD HH:mm') : '',
+      patientId: event.extendedProps?.patientId || null,
+      type: event.extendedProps?.type || visitTypes.value[0],
+      status: statusOptions.value[0],
+      notes: event.extendedProps?.notes || '',
+      nextVisitDate,
+      reminderDaysBefore,
+    }
+    editOriginal.value = { nextVisitDate, reminderDaysBefore }
+    currentVisitId.value = String(event.id)
+    isEditMode.value = true
+    visitDialog.value = true
+    loadDefaultReminderDays()
+  }
+
+  const loaded = loadedEvents.value.find((e) => String(e.id) === visitId) as CalendarEventLike | undefined
+  if (loaded) {
+    openFrom(loaded)
+    await navigateTo('/calendar', { replace: true })
+    return
+  }
+
+  try {
+    const res = await apiFetch<{ success: boolean; data: VisitDetail }>(`/api/visits/${visitId}`)
+    if (res?.success && res.data) {
+      const v = res.data
+      const start = v.visitDate
+      const nextVisitDate = v.nextVisitDate ? moment(v.nextVisitDate).format('YYYY-MM-DD') : ''
+      const reminderDaysBefore = v.reminderDaysBefore ?? null
+      newVisit.value = {
+        start: start ? moment(start).format('YYYY-MM-DD HH:mm') : '',
+        // Visits store a duration rather than an explicit end time.
+        end: start
+          ? moment(new Date(new Date(start).getTime() + (v.durationMinutes ?? 30) * 60000)).format('YYYY-MM-DD HH:mm')
+          : '',
+        patientId: v.patientId || null,
+        type: v.visitType || visitTypes.value[0],
+        status: v.status || statusOptions.value[0],
+        notes: v.notes || '',
+        nextVisitDate,
+        reminderDaysBefore,
+      }
+      editOriginal.value = { nextVisitDate, reminderDaysBefore }
+      currentVisitId.value = visitId
+      isEditMode.value = true
+      visitDialog.value = true
+      loadDefaultReminderDays()
+    }
+  } catch (err: unknown) {
+    $toast.error((err as { data?: { error?: string } } | null)?.data?.error || t('calendar.serverError'))
+  }
+  await navigateTo('/calendar', { replace: true })
+}
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
@@ -861,6 +1089,27 @@ useSeoMeta({
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.875rem 1rem;
+}
+
+/* ── Follow-up / return visit section ──────────── */
+.fu-section {
+  border: 1px dashed color-mix(in srgb, var(--asa-accent) 34%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--asa-accent) 5%, transparent);
+  padding: 0.75rem 0.875rem 0.875rem;
+}
+
+.fu-section__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fu-section__hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--asa-label-2);
 }
 
 .pf-field :deep(.v-field) {

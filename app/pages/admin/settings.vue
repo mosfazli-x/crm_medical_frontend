@@ -90,6 +90,43 @@
         </div>
       </UiContentCard>
 
+      <!-- ═══ Follow-up Reminder Window ═══ -->
+      <UiContentCard>
+        <div class="crm-card-header">
+          <div class="flex items-center! gap-3">
+            <div class="p-2.5 rounded-xl bg-teal-50 text-teal-600">
+              <v-icon icon="mdi-calendar-sync" size="20" />
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-slate-800">{{ $t('adminSettings.followupWindow') }}</h3>
+              <p class="text-xs text-slate-400">{{ $t('adminSettings.followupWindowDesc') }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="loading" class="text-center py-8">
+          <v-progress-circular indeterminate color="#00ADB5" size="32" />
+        </div>
+
+        <div v-else class="px-10! pb-4!">
+          <div class="border-t border-slate-100 py-3! flex flex-wrap items-center justify-between gap-4">
+            <div class="min-w-0">
+              <label class="text-sm font-medium text-slate-700 block">{{ $t('adminSettings.followupDaysLabel') }}</label>
+              <p class="text-xs text-slate-400">{{ $t('adminSettings.followupDaysDesc') }}</p>
+            </div>
+            <div class="flex items-center gap-3 shrink-0">
+              <v-text-field v-model="followupReminderDays" type="number" min="0" max="90" variant="outlined"
+                density="compact" hide-details="auto" class="max-w-[7rem]" bg-color="white"
+                :suffix="$t('followups.daysUnit')" :disabled="savingFollowupDays" />
+              <v-btn color="#00ADB5" variant="flat" size="small" class="rounded-lg px-6"
+                :disabled="savingFollowupDays" :loading="savingFollowupDays" @click="saveFollowupReminderDays">
+                {{ $t('common.save') }}
+              </v-btn>
+            </div>
+          </div>
+        </div>
+      </UiContentCard>
+
       <!-- ═══ Notification Settings by Category ═══ -->
       <UiContentCard v-for="cat in categories" :key="cat.key">
         <div class="crm-card-header">
@@ -174,7 +211,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, reactive } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useApi } from '~/composables/useApi'
 
 const { apiFetch } = useApi()
@@ -189,6 +226,14 @@ const savingBulk = ref(false)
 const smsStats = ref({ remaining: 0, sent: 0, total: 0 })
 const newCredit = ref<number | string>('')
 const smsEnabled = ref(true)
+const followupReminderDays = ref<number | string>(3)
+const savingFollowupDays = ref(false)
+
+interface SmsStats {
+  remaining: number
+  sent: number
+  total: number
+}
 
 interface NotificationEventUI {
   key: string
@@ -208,6 +253,7 @@ const categories = computed(() => [
   { key: 'patient', label: t('adminSettings.categories.patient'), description: t('adminSettings.categories.patientDesc'), icon: 'mdi-account-group', bgClass: 'bg-green-50', iconClass: 'text-green-600' },
   { key: 'appointment', label: t('adminSettings.categories.appointment'), description: t('adminSettings.categories.appointmentDesc'), icon: 'mdi-calendar-clock', bgClass: 'bg-orange-50', iconClass: 'text-orange-600' },
   { key: "messaging", label: t('adminSettings.categories.messaging'), description: t('adminSettings.categories.messagingDesc'), icon: 'mdi-message-text', bgClass: 'bg-purple-50', iconClass: 'text-purple-600' },
+  { key: 'followup', label: t('adminSettings.categories.followup'), description: t('adminSettings.categories.followupDesc'), icon: 'mdi-calendar-sync', bgClass: 'bg-teal-50', iconClass: 'text-teal-600' },
 ])
 
 const smsPercent = computed(() => {
@@ -226,10 +272,13 @@ function eventsByCategory(catKey: string) {
 async function fetchSettings() {
   loading.value = true
   try {
-    const [statsRes, enabledRes, notifRes] = await Promise.all([
-      apiFetch<any>('/api/settings/sms-stats'),
-      apiFetch<any>('/api/settings/sms_enabled'),
-      apiFetch<any>('/api/settings/notifications/all'),
+    const [statsRes, enabledRes, notifRes, followupDaysRes] = await Promise.all([
+      apiFetch<{ success: boolean; data: SmsStats }>('/api/settings/sms-stats'),
+      apiFetch<{ success: boolean; data: { value: string } }>('/api/settings/sms_enabled'),
+      apiFetch<{ success: boolean; data: NotificationEventUI[] }>('/api/settings/notifications/all'),
+      apiFetch<{ success: boolean; data: { value: string } | null }>(
+        '/api/settings/followup_reminder_days'
+      ),
     ])
     if (statsRes.success) {
       smsStats.value = statsRes.data
@@ -240,6 +289,9 @@ async function fetchSettings() {
     }
     if (notifRes.success) {
       events.value = notifRes.data
+    }
+    if (followupDaysRes?.success) {
+      followupReminderDays.value = Number(followupDaysRes.data?.value ?? 3)
     }
   } catch {
     $toast.error(t('adminSettings.fetchError'))
@@ -305,6 +357,30 @@ async function toggleSmsEnabled(val: boolean) {
     $toast.error(t('adminSettings.generalError'))
   } finally {
     savingEnabled.value = false
+  }
+}
+
+async function saveFollowupReminderDays() {
+  const parsed = Number(followupReminderDays.value)
+  if (!Number.isFinite(parsed) || parsed < 0 || parsed > 90) {
+    $toast.error(t('followups.invalidDays'))
+    return
+  }
+  savingFollowupDays.value = true
+  try {
+    await apiFetch('/api/settings/followup_reminder_days', {
+      method: 'PUT',
+      body: {
+        value: String(Math.trunc(parsed)),
+        description: t('adminSettings.followupDaysDesc'),
+      },
+    })
+    followupReminderDays.value = Math.trunc(parsed)
+    $toast.success(t('adminSettings.followupDaysSaved'))
+  } catch {
+    $toast.error(t('adminSettings.saveError'))
+  } finally {
+    savingFollowupDays.value = false
   }
 }
 

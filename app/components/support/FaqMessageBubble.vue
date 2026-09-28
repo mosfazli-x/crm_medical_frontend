@@ -1,83 +1,65 @@
 <template>
-  <div class="flex" :class="message.role === 'user' ? 'justify-end' : 'justify-start'">
+  <div class="msg" :class="`msg--${message.role}`">
     <!-- System message -->
-    <div v-if="message.role === 'system'" class="w-full">
-      <div class="rounded-xl bg-blue-50 px-4 py-3 text-center dark:bg-blue-900/20">
-        <p class="text-xs text-blue-700 dark:text-blue-300">{{ message.content }}</p>
-        <span v-if="message.source === 'escalated'" class="mt-1 inline-flex items-center gap-1 text-[10px] text-blue-500">
-          <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-          </svg>
-          {{ t('support.message.escalated') }}
-        </span>
-      </div>
+    <div v-if="message.role === 'system'" class="msg-system">
+      <p class="msg-system__text">{{ message.content }}</p>
+      <span v-if="message.source === 'escalated'" class="msg-system__badge">
+        <svg class="msg-system__badge-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+        </svg>
+        {{ t('support.message.escalated') }}
+      </span>
     </div>
 
     <!-- User message -->
-    <div v-else-if="message.role === 'user'" class="max-w-[85%]">
-      <div class="rounded-2xl rounded-br-md bg-teal-600 px-4 py-2.5! text-white">
-        <p class="text-sm leading-relaxed whitespace-pre-wrap">{{ message.content }}</p>
-      </div>
-      <p class="mt-1 text-[10px] text-gray-400 dark:text-gray-500 text-end">{{ formatTime(message.timestamp) }}</p>
+    <div v-else-if="message.role === 'user'" class="msg-user">
+      <div class="msg-user__bubble">{{ message.content }}</div>
+      <p class="msg__time msg__time--end">{{ formatTime(message.timestamp) }}</p>
     </div>
 
     <!-- Assistant message -->
-    <div v-else class="max-w-[85%]">
-      <div class="rounded-2xl rounded-bl-md bg-gray-100 px-4 py-3 dark:bg-gray-800">
-        <!-- Source badge -->
-        <div class="mb-2 flex items-center gap-1.5">
-          <span
-            class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium"
-            :class="sourceBadgeClass"
-          >
-            <svg v-if="message.source === 'faq'" class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-            <svg v-else-if="message.source === 'gemini'" class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
-            </svg>
-            <svg v-else-if="message.source === 'groq'" class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-            </svg>
-            {{ sourceLabel }}
-          </span>
+    <div v-else class="msg-assistant">
+      <div class="msg-assistant__bubble">
+        <div v-if="sourceBadgeClass" class="msg-assistant__badges">
+          <span class="msg-assistant__badge" :class="sourceBadgeClass">{{ sourceLabel }}</span>
         </div>
 
-        <!-- Answer content -->
-        <p class="text-sm leading-relaxed text-gray-800 dark:text-gray-200 whitespace-pre-wrap">{{ message.content }}</p>
+        <p class="msg-assistant__text">{{ message.content }}</p>
 
-        <!-- Confirm button -->
-        <div v-if="message.needsConfirmation && !message.confirmed" class="mt-3 flex items-center gap-2 border-t border-gray-200 pt-3 dark:border-gray-700">
-          <span class="text-xs text-gray-500 dark:text-gray-400">{{ t('support.message.helpful') }}</span>
-          <button
-            @click="$emit('confirm', message.ticketId, true)"
-            class="inline-flex items-center gap-1 rounded-lg bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700 transition-colors hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30"
-          >
-            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-            </svg>
-            {{ t('support.message.yes') }}
-          </button>
-          <button
-            @click="$emit('confirm', message.ticketId, false)"
-            class="inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 transition-colors hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
-          >
-            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-            {{ t('support.message.no') }}
-          </button>
+        <div v-if="message.needsConfirmation && !message.confirmed" class="msg-assistant__confirm">
+          <span class="msg-assistant__confirm-label">{{ t('support.message.helpful') }}</span>
+          <div class="msg-assistant__confirm-actions">
+            <button
+              type="button"
+              class="msg-assistant__btn msg-assistant__btn--yes"
+              @click="$emit('confirm', message.ticketId, true)"
+            >
+              <svg class="msg-assistant__btn-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m4.5 12.75 6 6 9-13.5" />
+              </svg>
+              {{ t('support.message.yes') }}
+            </button>
+            <button
+              type="button"
+              class="msg-assistant__btn msg-assistant__btn--no"
+              @click="$emit('confirm', message.ticketId, false)"
+            >
+              <svg class="msg-assistant__btn-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <path d="M6 18 18 6M6 6l12 12" />
+              </svg>
+              {{ t('support.message.no') }}
+            </button>
+          </div>
         </div>
 
-        <!-- Confirmed badge -->
-        <div v-if="message.confirmed" class="mt-2 flex items-center gap-1 text-[10px] text-green-600 dark:text-green-400">
-          <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <div v-if="message.confirmed" class="msg-assistant__confirmed">
+          <svg class="msg-assistant__confirmed-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m9 12.75 2.25 2.25L15 9.75" />
           </svg>
           {{ t('support.message.confirmed') }}
         </div>
       </div>
-      <p class="mt-1 text-[10px] text-gray-400 dark:text-gray-500">{{ formatTime(message.timestamp) }}</p>
+      <p class="msg__time">{{ formatTime(message.timestamp) }}</p>
     </div>
   </div>
 </template>
@@ -101,11 +83,11 @@ const { t, locale } = useI18n()
 
 const sourceBadgeClass = computed(() => {
   switch (props.message.source) {
-    case 'faq': return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400'
-    case 'gemini': return 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
-    case 'groq': return 'bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400'
-    case 'admin': return 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'
-    default: return 'bg-gray-50 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+    case 'faq': return 'src--faq'
+    case 'gemini': return 'src--gemini'
+    case 'groq': return 'src--groq'
+    case 'admin': return 'src--admin'
+    default: return ''
   }
 })
 
@@ -126,3 +108,221 @@ const formatTime = (date: Date) => {
   }).format(date)
 }
 </script>
+
+<style scoped>
+.msg {
+  width: 100%;
+}
+
+/* System */
+.msg-system {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.6875rem 0.875rem;
+  border: 1px solid color-mix(in srgb, var(--asa-indigo) 25%, var(--asa-card-ring));
+  border-radius: 0.875rem;
+  background: var(--asa-indigo-soft);
+  text-align: center;
+}
+
+.msg-system__text {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--asa-indigo);
+  font-weight: 500;
+}
+
+.msg-system__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--asa-indigo);
+  opacity: 0.85;
+}
+
+.msg-system__badge-svg {
+  width: 0.8125rem;
+  height: 0.8125rem;
+}
+
+/* User */
+.msg-user {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-inline-start: auto;
+  max-width: 85%;
+}
+
+.msg-user__bubble {
+  padding: 0.625rem 0.875rem;
+  border-radius: 1.125rem;
+  border-start-start-radius: 1.125rem;
+  border-start-end-radius: 0.375rem;
+  background: linear-gradient(135deg, var(--asa-accent), color-mix(in srgb, var(--asa-accent) 82%, var(--asa-accent-deep)));
+  color: #fff;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-shadow: 0 6px 14px -6px color-mix(in srgb, var(--asa-accent) 55%, transparent);
+}
+
+/* Assistant */
+.msg-assistant {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 85%;
+}
+
+.msg-assistant__bubble {
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--asa-card-ring);
+  border-radius: 1.125rem;
+  border-start-end-radius: 1.125rem;
+  border-start-start-radius: 0.375rem;
+  background: color-mix(in srgb, var(--asa-label) 5%, transparent);
+}
+
+.msg-assistant__badges {
+  margin-bottom: 0.5rem;
+}
+
+.msg-assistant__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1875rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.src--faq {
+  background: var(--asa-green-soft);
+  color: var(--asa-green);
+}
+
+.src--gemini {
+  background: var(--asa-accent-soft);
+  color: var(--asa-accent-deep);
+}
+
+:global(.dark) .src--gemini {
+  color: var(--asa-accent);
+}
+
+.src--groq {
+  background: var(--asa-indigo-soft);
+  color: var(--asa-indigo);
+}
+
+.src--admin {
+  background: var(--asa-amber-soft);
+  color: var(--asa-amber);
+}
+
+.msg-assistant__text {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--asa-label);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Confirm */
+.msg-assistant__confirm {
+  margin-top: 0.75rem;
+  padding-top: 0.6875rem;
+  border-top: 1px solid var(--asa-sep);
+}
+
+.msg-assistant__confirm-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--asa-label-2);
+}
+
+.msg-assistant__confirm-actions {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.msg-assistant__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.375rem 0.75rem;
+  border: none;
+  border-radius: 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: filter 0.2s var(--ease-default);
+}
+
+.msg-assistant__btn:hover {
+  filter: brightness(0.96);
+}
+
+.msg-assistant__btn:focus-visible {
+  outline: 2px solid var(--asa-accent);
+  outline-offset: 1px;
+}
+
+.msg-assistant__btn--yes {
+  background: var(--asa-green-soft);
+  color: var(--asa-green);
+}
+
+.msg-assistant__btn--no {
+  background: var(--asa-rose-soft);
+  color: var(--asa-rose);
+}
+
+:global(.dark) .msg-assistant__btn:hover {
+  filter: brightness(1.15);
+}
+
+.msg-assistant__btn-svg {
+  width: 0.8125rem;
+  height: 0.8125rem;
+}
+
+/* Confirmed */
+.msg-assistant__confirmed {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  margin-top: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--asa-green);
+}
+
+.msg-assistant__confirmed-svg {
+  width: 0.8125rem;
+  height: 0.8125rem;
+}
+
+/* Time */
+.msg__time {
+  margin-top: 0.1875rem;
+  font-size: 0.625rem;
+  color: var(--asa-label-3);
+}
+
+.msg__time--end {
+  text-align: end;
+}
+</style>

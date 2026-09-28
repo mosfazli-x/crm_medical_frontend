@@ -776,8 +776,13 @@
   }
 
   @keyframes crm-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   .crm-loading-text {
@@ -794,7 +799,7 @@
      LIST ITEMS
      ───────────────────────────────────────── */
 
-  .crm-list > * + * {
+  .crm-list>*+* {
     border-top: 1px solid var(--color-border-subtle);
   }
 
@@ -1574,7 +1579,7 @@
 
   .crm-tool-card {
     transition: box-shadow var(--duration-normal) var(--ease-default),
-                border-color var(--duration-normal) var(--ease-default);
+      border-color var(--duration-normal) var(--ease-default);
   }
 
   .crm-tool-card:hover {
@@ -1957,371 +1962,372 @@
    color: inherit) that beat any layered rule.
    ───────────────────────────────────────── */
 
-  /* Large-title page header */
+/* Large-title page header */
+.dash-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-top: 0.25rem;
+}
+
+.dash-head__title {
+  font-size: clamp(1.9rem, 4.5vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--asa-label);
+}
+
+.dash-head__date {
+  margin-top: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: var(--asa-label-2);
+}
+
+.dash-head__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  margin-bottom: 0.125rem;
+}
+
+/* Section captions (iOS grouped-list headers) */
+.asa-sec {
+  margin-top: 2.25rem;
+}
+
+.asa-sec__label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--asa-label-2);
+  margin-bottom: 0.75rem;
+  padding-inline: 0.25rem;
+}
+
+/* Buttons */
+.asa-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.5rem;
+  padding: 0 1.25rem;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 150ms var(--ease-default), transform 120ms var(--ease-default),
+    box-shadow 150ms var(--ease-default);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+}
+
+.asa-btn:active {
+  transform: scale(0.97);
+}
+
+.asa-btn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--asa-accent) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.asa-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.asa-btn.asa-btn--primary {
+  background: var(--asa-accent);
+  color: #ffffff;
+}
+
+.asa-btn.asa-btn--primary:hover {
+  background: color-mix(in srgb, var(--asa-accent) 88%, #000);
+}
+
+.dark .asa-btn.asa-btn--primary:hover {
+  background: color-mix(in srgb, var(--asa-accent) 78%, #fff);
+}
+
+.asa-btn.asa-btn--ghost {
+  background: rgba(116, 116, 128, 0.12);
+  color: var(--asa-label);
+  box-shadow: none;
+}
+
+.asa-btn.asa-btn--ghost:hover {
+  background: rgba(116, 116, 128, 0.2);
+}
+
+.asa-btn.asa-btn--amber {
+  background: #ff9500;
+  color: #ffffff;
+}
+
+.asa-btn.asa-btn--amber:hover {
+  background: #e08600;
+}
+
+.asa-btn.asa-btn--rose {
+  background: #ff3b30;
+  color: #ffffff;
+}
+
+.asa-btn.asa-btn--rose:hover {
+  background: #d6231a;
+}
+
+.asa-btn--sm {
+  height: 2.125rem;
+  padding: 0 0.875rem;
+  font-size: 0.75rem;
+  border-radius: 0.625rem;
+}
+
+/* Base card (iOS inset grouped) */
+.asa-card {
+  position: relative;
+  background: var(--asa-bg-card);
+  border: 1px solid var(--asa-card-ring);
+  border-radius: 1.375rem;
+  box-shadow: var(--asa-card-shadow);
+  padding: 1.375rem;
+  color: var(--asa-label);
+  transition: transform 220ms var(--ease-premium), box-shadow 220ms var(--ease-premium),
+    border-color 220ms var(--ease-premium);
+}
+
+@media (hover: hover) {
+  .asa-card:hover {
+    box-shadow: 0 2px 4px rgba(17, 24, 39, 0.04), 0 16px 32px -14px rgba(17, 24, 39, 0.2);
+  }
+
+  .dark .asa-card:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 22px 44px -22px rgba(0, 0, 0, 0.8);
+  }
+}
+
+.asa-card-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--asa-label);
+}
+
+.asa-card-sub {
+  margin-top: 0.125rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--asa-label-2);
+}
+
+/* Semantic text helpers */
+.asa-green {
+  color: var(--asa-green) !important;
+}
+
+.asa-amber {
+  color: var(--asa-amber) !important;
+}
+
+/* Tints (Apple system swatches) */
+.asa-tint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.875rem;
+  flex-shrink: 0;
+}
+
+.asa-tint--sm {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.625rem;
+}
+
+.asa-tint--teal {
+  background: var(--asa-accent-soft);
+  color: var(--asa-accent-deep);
+}
+
+.dark .asa-tint--teal {
+  color: var(--asa-accent);
+}
+
+.asa-tint--green {
+  background: var(--asa-green-soft);
+  color: var(--asa-green);
+}
+
+.asa-tint--orange {
+  background: var(--asa-amber-soft);
+  color: var(--asa-amber);
+}
+
+.asa-tint--rose {
+  background: var(--asa-rose-soft);
+  color: var(--asa-rose);
+}
+
+.asa-tint--indigo {
+  background: var(--asa-indigo-soft);
+  color: var(--asa-indigo);
+}
+
+/* Pills */
+.asa-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem !important;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.asa-pill--teal {
+  background: var(--asa-accent-soft);
+  color: var(--asa-accent-deep);
+}
+
+.dark .asa-pill--teal {
+  color: var(--asa-accent);
+}
+
+.asa-pill--green {
+  background: var(--asa-green-soft);
+  color: var(--asa-green);
+}
+
+.asa-pill--amber {
+  background: var(--asa-amber-soft);
+  color: var(--asa-amber);
+}
+
+.asa-pill--rose {
+  background: var(--asa-rose-soft);
+  color: var(--asa-rose);
+}
+
+/* Skeleton */
+.asa-skel {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--asa-label) 7%, transparent);
+}
+
+.dark .asa-skel {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.asa-skel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  animation: asa-shimmer 1.6s ease-in-out infinite;
+}
+
+.dark .asa-skel::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+}
+
+/* Dialog chrome */
+.asa-dialog {
+  border-radius: 1.25rem !important;
+  border: 1px solid var(--asa-card-ring);
+}
+
+.asa-dialog__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.375rem 1.5rem 0.75rem;
+}
+
+.asa-dialog__title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--asa-label);
+}
+
+.asa-dialog__sub {
+  display: block;
+  margin-top: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--asa-label-2);
+}
+
+.asa-dialog__body {
+  padding: 1rem 1.5rem !important;
+  background: transparent !important;
+}
+
+.asa-field-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--asa-label-2);
+}
+
+.asa-dialog__foot {
+  padding: 0.875rem 1.5rem 1.25rem !important;
+  border-top: 1px solid var(--asa-sep);
+}
+
+/* Scroll reveal (entrance, one pass) */
+.asa-card,
+.asa-hero,
+.asa-alert {
+  animation: asa-rise 480ms var(--ease-premium) both;
+}
+
+@keyframes asa-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes asa-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Responsive tuning */
+@media (max-width: 639px) {
   .dash-head {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding-top: 0.25rem;
+    margin-bottom: 1.25rem;
   }
 
-  .dash-head__title {
-    font-size: clamp(1.9rem, 4.5vw, 2.5rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.05;
-    color: var(--asa-label);
-  }
-
-  .dash-head__date {
-    margin-top: 0.5rem;
-    font-size: 0.9375rem;
-    font-weight: 400;
-    color: var(--asa-label-2);
-  }
-
-  .dash-head__actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-shrink: 0;
-    margin-bottom: 0.125rem;
-  }
-
-  /* Section captions (iOS grouped-list headers) */
   .asa-sec {
-    margin-top: 2.25rem;
+    margin-top: 1.75rem;
   }
 
-  .asa-sec__label {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: var(--asa-label-2);
-    margin-bottom: 0.75rem;
-    padding-inline: 0.25rem;
-  }
-
-  /* Buttons */
-  .asa-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    height: 2.5rem;
-    padding: 0 1.25rem;
-    border: none;
-    border-radius: 0.75rem;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background-color 150ms var(--ease-default), transform 120ms var(--ease-default),
-      box-shadow 150ms var(--ease-default);
-    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08);
-    text-decoration: none;
-  }
-
-  .asa-btn:active {
-    transform: scale(0.97);
-  }
-
-  .asa-btn:focus-visible {
-    outline: 3px solid color-mix(in srgb, var(--asa-accent) 45%, transparent);
-    outline-offset: 2px;
-  }
-
-  .asa-btn:disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
-
-  .asa-btn.asa-btn--primary {
-    background: var(--asa-accent);
-    color: #ffffff;
-  }
-
-  .asa-btn.asa-btn--primary:hover {
-    background: color-mix(in srgb, var(--asa-accent) 88%, #000);
-  }
-
-  .dark .asa-btn.asa-btn--primary:hover {
-    background: color-mix(in srgb, var(--asa-accent) 78%, #fff);
-  }
-
-  .asa-btn.asa-btn--ghost {
-    background: rgba(116, 116, 128, 0.12);
-    color: var(--asa-label);
-    box-shadow: none;
-  }
-
-  .asa-btn.asa-btn--ghost:hover {
-    background: rgba(116, 116, 128, 0.2);
-  }
-
-  .asa-btn.asa-btn--amber {
-    background: #ff9500;
-    color: #ffffff;
-  }
-
-  .asa-btn.asa-btn--amber:hover {
-    background: #e08600;
-  }
-
-  .asa-btn.asa-btn--rose {
-    background: #ff3b30;
-    color: #ffffff;
-  }
-
-  .asa-btn.asa-btn--rose:hover {
-    background: #d6231a;
-  }
-
-  .asa-btn--sm {
-    height: 2.125rem;
-    padding: 0 0.875rem;
-    font-size: 0.75rem;
-    border-radius: 0.625rem;
-  }
-
-  /* Base card (iOS inset grouped) */
   .asa-card {
-    position: relative;
-    background: var(--asa-bg-card);
-    border: 1px solid var(--asa-card-ring);
-    border-radius: 1.375rem;
-    box-shadow: var(--asa-card-shadow);
-    padding: 1.375rem;
-    color: var(--asa-label);
-    transition: transform 220ms var(--ease-premium), box-shadow 220ms var(--ease-premium),
-      border-color 220ms var(--ease-premium);
+    padding: 1.125rem;
+    border-radius: 1.125rem;
   }
-
-  @media (hover: hover) {
-    .asa-card:hover {
-      box-shadow: 0 2px 4px rgba(17, 24, 39, 0.04), 0 16px 32px -14px rgba(17, 24, 39, 0.2);
-    }
-
-    .dark .asa-card:hover {
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 22px 44px -22px rgba(0, 0, 0, 0.8);
-    }
-  }
-
-  .asa-card-title {
-    font-size: 0.9375rem;
-    font-weight: 600;
-    line-height: 1.3;
-    color: var(--asa-label);
-  }
-
-  .asa-card-sub {
-    margin-top: 0.125rem;
-    font-size: 0.75rem;
-    line-height: 1.5;
-    color: var(--asa-label-2);
-  }
-
-  /* Semantic text helpers */
-  .asa-green {
-    color: var(--asa-green) !important;
-  }
-
-  .asa-amber {
-    color: var(--asa-amber) !important;
-  }
-
-  /* Tints (Apple system swatches) */
-  .asa-tint {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 0.875rem;
-    flex-shrink: 0;
-  }
-
-  .asa-tint--sm {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 0.625rem;
-  }
-
-  .asa-tint--teal {
-    background: var(--asa-accent-soft);
-    color: var(--asa-accent-deep);
-  }
-
-  .dark .asa-tint--teal {
-    color: var(--asa-accent);
-  }
-
-  .asa-tint--green {
-    background: var(--asa-green-soft);
-    color: var(--asa-green);
-  }
-
-  .asa-tint--orange {
-    background: var(--asa-amber-soft);
-    color: var(--asa-amber);
-  }
-
-  .asa-tint--rose {
-    background: var(--asa-rose-soft);
-    color: var(--asa-rose);
-  }
-
-  .asa-tint--indigo {
-    background: var(--asa-indigo-soft);
-    color: var(--asa-indigo);
-  }
-
-  /* Pills */
-  .asa-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.25rem 0.625rem !important;
-    border-radius: 9999px;
-    font-size: 0.6875rem;
-    font-weight: 600;
-  }
-
-  .asa-pill--teal {
-    background: var(--asa-accent-soft);
-    color: var(--asa-accent-deep);
-  }
-
-  .dark .asa-pill--teal {
-    color: var(--asa-accent);
-  }
-
-  .asa-pill--green {
-    background: var(--asa-green-soft);
-    color: var(--asa-green);
-  }
-
-  .asa-pill--amber {
-    background: var(--asa-amber-soft);
-    color: var(--asa-amber);
-  }
-
-  .asa-pill--rose {
-    background: var(--asa-rose-soft);
-    color: var(--asa-rose);
-  }
-
-  /* Skeleton */
-  .asa-skel {
-    position: relative;
-    overflow: hidden;
-    background: color-mix(in srgb, var(--asa-label) 7%, transparent);
-  }
-
-  .dark .asa-skel {
-    background: rgba(255, 255, 255, 0.07);
-  }
-
-  .asa-skel::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    transform: translateX(-100%);
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
-    animation: asa-shimmer 1.6s ease-in-out infinite;
-  }
-
-  .dark .asa-skel::after {
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
-  }
-
-  /* Dialog chrome */
-  .asa-dialog {
-    border-radius: 1.25rem !important;
-    border: 1px solid var(--asa-card-ring);
-  }
-
-  .asa-dialog__head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.375rem 1.5rem 0.75rem;
-  }
-
-  .asa-dialog__title {
-    font-size: 1.375rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--asa-label);
-  }
-
-  .asa-dialog__sub {
-    display: block;
-    margin-top: 0.375rem;
-    font-size: 0.8125rem;
-    color: var(--asa-label-2);
-  }
-
-  .asa-dialog__body {
-    padding: 1rem 1.5rem !important;
-    background: transparent !important;
-  }
-
-  .asa-field-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: var(--asa-label-2);
-  }
-
-  .asa-dialog__foot {
-    padding: 0.875rem 1.5rem 1.25rem !important;
-    border-top: 1px solid var(--asa-sep);
-  }
-
-  /* Scroll reveal (entrance, one pass) */
-  .asa-card,
-  .asa-hero,
-  .asa-alert {
-    animation: asa-rise 480ms var(--ease-premium) both;
-  }
-
-  @keyframes asa-rise {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes asa-shimmer {
-    100% {
-      transform: translateX(100%);
-    }
-  }
-
-  /* Responsive tuning */
-  @media (max-width: 639px) {
-    .dash-head {
-      margin-bottom: 1.25rem;
-    }
-
-    .asa-sec {
-      margin-top: 1.75rem;
-    }
-
-    .asa-card {
-      padding: 1.125rem;
-      border-radius: 1.125rem;
-    }
-  }
+}
 
 /* ═══════════════════════════════════════════════
    VUETIFY OVERRIDES (minimal, using tokens)
@@ -2365,7 +2371,7 @@
   border-color: var(--color-border);
 }
 
-.v-list-item--active > .v-list-item__overlay {
+.v-list-item--active>.v-list-item__overlay {
   opacity: 0;
 }
 
@@ -2397,7 +2403,7 @@
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity var(--duration-slow) var(--ease-default),
-              backdrop-filter var(--duration-slow) var(--ease-default);
+    backdrop-filter var(--duration-slow) var(--ease-default);
 }
 
 .fade-enter-from,
@@ -2407,10 +2413,13 @@
 }
 
 @keyframes ping-slow {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(0.8);
     opacity: 0.2;
   }
+
   50% {
     transform: scale(1.3);
     opacity: 0.5;
@@ -2425,7 +2434,7 @@
 .page-enter-active,
 .page-leave-active {
   transition: opacity var(--duration-slow) var(--ease-default),
-              transform var(--duration-slow) var(--ease-default);
+    transform var(--duration-slow) var(--ease-default);
 }
 
 .page-enter-from {
@@ -2443,7 +2452,7 @@
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 0.4s var(--ease-premium),
-              transform 0.4s var(--ease-premium);
+    transform 0.4s var(--ease-premium);
 }
 
 .stagger-enter.visible {
@@ -2451,21 +2460,44 @@
   transform: translateY(0);
 }
 
-.stagger-enter.visible:nth-child(1) { transition-delay: 0ms; }
-.stagger-enter.visible:nth-child(2) { transition-delay: 60ms; }
-.stagger-enter.visible:nth-child(3) { transition-delay: 120ms; }
-.stagger-enter.visible:nth-child(4) { transition-delay: 180ms; }
-.stagger-enter.visible:nth-child(5) { transition-delay: 240ms; }
-.stagger-enter.visible:nth-child(6) { transition-delay: 300ms; }
-.stagger-enter.visible:nth-child(7) { transition-delay: 360ms; }
-.stagger-enter.visible:nth-child(8) { transition-delay: 420ms; }
+.stagger-enter.visible:nth-child(1) {
+  transition-delay: 0ms;
+}
+
+.stagger-enter.visible:nth-child(2) {
+  transition-delay: 60ms;
+}
+
+.stagger-enter.visible:nth-child(3) {
+  transition-delay: 120ms;
+}
+
+.stagger-enter.visible:nth-child(4) {
+  transition-delay: 180ms;
+}
+
+.stagger-enter.visible:nth-child(5) {
+  transition-delay: 240ms;
+}
+
+.stagger-enter.visible:nth-child(6) {
+  transition-delay: 300ms;
+}
+
+.stagger-enter.visible:nth-child(7) {
+  transition-delay: 360ms;
+}
+
+.stagger-enter.visible:nth-child(8) {
+  transition-delay: 420ms;
+}
 
 /* ── Scale-in ── */
 .scale-in {
   opacity: 0;
   transform: scale(0.95);
   transition: opacity var(--duration-slow) var(--ease-premium),
-              transform var(--duration-slow) var(--ease-premium);
+    transform var(--duration-slow) var(--ease-premium);
 }
 
 .scale-in.visible {
@@ -2478,7 +2510,7 @@
   opacity: 0;
   transform: translateX(20px);
   transition: opacity 0.4s var(--ease-premium),
-              transform 0.4s var(--ease-premium);
+    transform 0.4s var(--ease-premium);
 }
 
 .slide-in-right.visible {
@@ -2491,7 +2523,7 @@
   opacity: 0;
   transform: translateX(-20px);
   transition: opacity 0.4s var(--ease-premium),
-              transform 0.4s var(--ease-premium);
+    transform 0.4s var(--ease-premium);
 }
 
 .slide-in-left.visible {
@@ -2615,4 +2647,243 @@
 
 .driver-stage-no-interaction {
   pointer-events: none;
+}
+
+/* ─────────────────────────────────────────
+   PERSIAN DATE PICKER (vue3-persian-datetime-picker)
+   The library injects its own stylesheet at runtime
+   and hardcodes a light surface (#fff panel, #b9b9b9
+   weekday headers), which is unreadable in dark mode
+   (white-on-white) and fails contrast in light mode.
+   These rules re-point the panel at the app tokens.
+   Kept OUTSIDE @layer for the same reason as the
+   asa-* primitives above: the library's runtime
+   styles are unlayered and would beat a layered rule.
+   The popover is teleported to <body>, so this must
+   be a global (non-scoped) block.
+   ───────────────────────────────────────── */
+
+.vpd-wrapper {
+  z-index: 2400;
+}
+
+/* ── Input field ──
+   Reproduces Vuetify's `.v-field--variant-solo` chrome
+   (surface fill, 4px radius, key-light shadow, 48px
+   comfortable height, 16px type) so the picker sits flush
+   next to the v-text-field / v-select siblings it is
+   always rendered beside. */
+.vpd-input-group {
+  height: 48px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: rgb(var(--v-theme-surface));
+  box-shadow: 0 3px 1px -2px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)), 0 2px 2px 0 var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)), 0 1px 5px 0 var(--v-shadow-key-ambient-opacity, rgba(0, 0, 0, 0.12));
+  transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vpd-input-group:hover {
+  box-shadow: 0 3px 1px -2px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)), 0 2px 2px 0 var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)), 0 1px 5px 0 var(--v-shadow-key-ambient-opacity, rgba(0, 0, 0, 0.12)), 0 0 0 1px var(--asa-accent-soft);
+}
+
+.vpd-input-group:focus-within {
+  box-shadow: 0 3px 1px -2px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)), 0 2px 2px 0 var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)), 0 1px 5px 0 var(--v-shadow-key-ambient-opacity, rgba(0, 0, 0, 0.12)), 0 0 0 2px color-mix(in srgb, var(--asa-accent) 32%, transparent);
+}
+
+/* The library's own `.vpd-input-group input` rule ties this
+   specificity but is injected later, so it wins on source
+   order. Adding the `.vpd-main` hop puts these ahead of it. */
+.vpd-main .vpd-input-group input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 48px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity, 0.87));
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.009375em;
+  line-height: normal;
+  text-align: start;
+}
+
+.vpd-main .vpd-input-group input:focus,
+.vpd-main .vpd-input-group input:focus-visible {
+  outline: none;
+}
+
+.vpd-main .vpd-input-group input::placeholder {
+  color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity, 0.6));
+  opacity: 1;
+}
+
+/* The library paints this icon with `background-color: <color prop>`
+   as an INLINE style, which renders as a solid block filling the
+   field height. Inline styles need !important to unwind. */
+.vpd-input-group .vpd-icon-btn {
+  flex: 0 0 auto;
+  width: 44px;
+  padding: 0;
+  background: transparent !important;
+  color: var(--asa-accent);
+  cursor: pointer;
+}
+
+.vpd-input-group .vpd-icon-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.vpd-input-group .vpd-icon-btn:hover {
+  color: var(--asa-accent-deep);
+}
+
+/* The library pins this to `left: 0` (physical left, which is where
+   RTL text ends) with a 32px line-box inside a 48px field, so the
+   glyph lands on top of the date. Scoped to the finance picker:
+   that date is required and always pre-filled, and many other
+   pages rely on `clearable` to reset date filters. */
+.cb-date-picker .vpd-clear-btn {
+  display: none;
+}
+
+.vpd-content {
+  color: var(--asa-label);
+  font-family: inherit;
+  overflow: hidden;
+}
+
+/* The library injects `background-color`/`box-shadow` in a
+   runtime <style> that lands after this file, so these two
+   need the extra `.vpd-container` hop to win the tie.
+   The library also hardcodes `width: 316px`, which hangs
+   ~2px off a 320px viewport, so cap it against the vw. */
+.vpd-container .vpd-content {
+  background-color: var(--asa-bg-card);
+  border: 1px solid var(--asa-sep);
+  border-radius: 1rem;
+  box-shadow: var(--asa-card-shadow);
+  width: min(316px, calc(100vw - 1rem));
+}
+
+/* The `color` prop is also painted onto the header as an inline
+   background, producing a full-width accent band. The app's
+   language is quiet elevated surfaces, so the accent is reserved
+   for the selected day and the header goes back to the surface. */
+.vpd-container .vpd-header {
+  background: var(--asa-bg-card) !important;
+  color: var(--asa-label);
+  border-bottom: 1px solid var(--asa-sep);
+  padding: 12px 16px;
+}
+
+.vpd-year-label,
+.vpd-date,
+.vpd-month-label {
+  color: var(--asa-label);
+  font-weight: 600;
+}
+
+.vpd-container .vpd-date {
+  height: 28px;
+  font-size: 18px;
+  line-height: 28px;
+}
+
+.vpd-container .vpd-year-label {
+  opacity: 1;
+  font-size: 13px;
+}
+
+/* Day grid.
+   Upstream uses fixed 40px floats, but the two rows disagree on
+   side padding (.vpd-week 14px vs .vpd-days 18px), which offsets
+   the weekday labels 4px off their columns, and 7 x 40px overflows
+   the 18px-padded box, dropping the 7th column onto its own line.
+   Equal padding plus percentage cells make both rows resolve to
+   the same 7 tracks at any panel width, without disturbing the
+   library's own float/clearfix layout. */
+.vpd-container .vpd-week,
+.vpd-container .vpd-days {
+  padding-inline: 14px;
+}
+
+.vpd-container .vpd-weekday,
+.vpd-container .vpd-day {
+  width: calc(100% / 7);
+}
+
+.vpd-container .vpd-day {
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+}
+
+/* Upstream pins the 36px selection disc to top/left 2px, which
+   only centres inside a 40px cell. Offsetting by half the disc
+   keeps it centred in flexible cells and leaves the scale()
+   transition untouched. */
+.vpd-container .vpd-day-effect {
+  top: 50%;
+  left: 50%;
+  margin: -18px 0 0 -18px;
+}
+
+.vpd-weekday {
+  color: var(--asa-label-2);
+  font-weight: 600;
+}
+
+.vpd-day {
+  color: var(--asa-label);
+}
+
+.vpd-day:hover:not(.vpd-disabled) .vpd-day-effect {
+  background: var(--asa-accent-soft);
+}
+
+/* The library paints the selected day with the `color` prop
+   (#00adb5) and white text, which is only 2.75:1. A dark
+   label on the same accent clears AA comfortably. */
+.vpd-day.vpd-selected .vpd-day-text,
+.vpd-day.vpd-selected .vpd-day-effect {
+  color: #04292c;
+}
+
+.vpd-addon-list-content {
+  background: var(--asa-bg-card);
+}
+
+.vpd-addon-list-item {
+  color: var(--asa-label);
+}
+
+.vpd-addon-list-item:hover {
+  background: var(--asa-accent-soft);
+}
+
+.vpd-icon-btn,
+.vpd-clear-btn {
+  color: var(--asa-label-2);
+}
+
+.vpd-icon-btn:hover,
+.vpd-clear-btn:hover {
+  color: var(--asa-accent-deep);
+}
+
+.vpd-prev {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vpd-next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
