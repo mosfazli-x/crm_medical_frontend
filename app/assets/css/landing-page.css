@@ -697,3 +697,9 @@ input:focus, select:focus, textarea:focus {
     display: none;
   }
 }
+
+
+.mapboxgl-ctrl-bottom-left {
+  display: none !important;
+}
+

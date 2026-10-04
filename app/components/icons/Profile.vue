@@ -1,5 +1,5 @@
 <template>
-    <svg fill="inheirt" width="800px" height="800px" viewBox="0 0 30.586 30.586" xmlns="http://www.w3.org/2000/svg">
+    <svg fill="inherit" width="800px" height="800px" viewBox="0 0 30.586 30.586" xmlns="http://www.w3.org/2000/svg">
         <g transform="translate(-546.269 -195.397)">
             <path d="M572.138,221.245a15.738,15.738,0,0,0-21.065-.253l-1.322-1.5a17.738,17.738,0,0,1,23.741.28Z" />
             <path

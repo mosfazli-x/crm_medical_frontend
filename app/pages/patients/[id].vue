@@ -1,547 +1,553 @@
 <template>
-  <div class="max-w-7xl mx-auto p-4 md:p-8 pt-6 space-y-6">
-    <!-- Loading State -->
-    <div v-if="profileLoading" class="space-y-6">
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 h-20 animate-pulse bg-slate-100" />
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 h-[400px] animate-pulse bg-slate-100" />
+  <UiPageContainer class="relative! max-w-7xl! mx-auto!">
+    <!-- ─── Loading ─── -->
+    <div v-if="profileLoading" class="pr-skel-wrap">
+      <div class="asa-skel rounded-[28px]! h-44!" />
+      <div class="grid! grid-cols-2! min-[520px]:grid-cols-4! gap-3! sm:gap-4!">
+        <div v-for="i in 4" :key="`ms-${i}`" class="asa-skel rounded-[22px]! h-28!" />
+      </div>
+      <div class="asa-skel rounded-[22px]! h-96!" />
     </div>
 
-    <!-- Error State -->
-    <div v-else-if="loadError" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center">
-      <v-icon icon="mdi-alert-circle-outline" size="x-large" class="text-red-400 mb-4" />
-      <h2 class="text-xl font-bold text-slate-700 mb-2">خطا در دریافت اطلاعات بیمار</h2>
-      <p class="text-slate-500 mb-6">{{ loadError }}</p>
-      <v-btn variant="tonal" color="black" @click="fetchProfile">تلاش مجدد</v-btn>
+    <!-- ─── Error ─── -->
+    <div v-else-if="loadError" class="asa-card pf-empty">
+      <div class="asa-tint asa-tint--rose pf-tint-lg">
+        <v-icon size="24">mdi-alert-circle-outline</v-icon>
+      </div>
+      <div>
+        <p class="pf-empty__title">{{ t('patientRecord.errorTitle') }}</p>
+        <p class="pf-empty__desc">{{ loadError }}</p>
+      </div>
+      <div class="pf-empty__actions">
+        <button class="asa-btn asa-btn--ghost asa-btn--sm" @click="refreshProfile">
+          <v-icon size="16">mdi-refresh</v-icon>
+          <span>{{ t('patientRecord.retry') }}</span>
+        </button>
+      </div>
     </div>
 
-    <!-- Main Content -->
-    <template v-else-if="basicInfo">
-      <!-- Patient Header Card -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-2xl bg-periwinkle text-electric-sapphire flex items-center justify-center text-xl font-bold shadow-sm">
-              {{ basicInfo.first_name?.charAt(0) }}{{ basicInfo.last_name?.charAt(0) }}
-            </div>
-            <div>
-              <h1 class="text-2xl font-extrabold text-slate-800">{{ basicInfo.first_name }} {{ basicInfo.last_name }}</h1>
-              <div class="flex flex-wrap items-center gap-3 mt-1 text-sm text-slate-500">
-                <span class="font-mono tracking-wider">{{ basicInfo.national_id }}</span>
-                <span v-if="basicInfo.is_foreign" class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 rounded-full px-2.5 py-0.5">
-                  <img v-if="countryFlag" :src="countryFlag" alt="" class="w-5 h-3.5 object-contain" />
-                  <span class="font-medium text-slate-700 dark:text-slate-300">{{ countryName(basicInfo.nationality, 'fa') || basicInfo.nationality }}</span>
-                </span>
-                <span class="w-1 h-1 bg-slate-300 rounded-full" />
-                <span dir="ltr">{{ basicInfo.phone || '---' }}</span>
-                <span class="w-1 h-1 bg-slate-300 rounded-full" />
-                <span class="flex items-center gap-1.5">
-                  <span>{{ formatDate(basicInfo.birth_date ?? basicInfo.birthDate) }}</span>
-                  <span v-if="(basicInfo.birth_date_exact ?? basicInfo.birthDateExact) === false" class="text-[10px] font-medium text-amber-700 bg-amber-100 rounded-full px-1.5 py-0.5">{{ $t('patients.approxDob') }}</span>
-                </span>
-              </div>
+    <template v-else>
+      <!-- ─── Apple-style large-title header ─── -->
+      <header class="pr-head">
+        <div class="pr-head__copy">
+          <NuxtLink to="/patients" class="pr-back">
+            <AltArrowLeft class="w-3.5! h-3.5! fill-current" />
+            <span>{{ t('patientRecord.backToList') }}</span>
+          </NuxtLink>
+          <h1 class="pr-head__title">{{ fullName }}</h1>
+          <p class="pr-head__date">{{ t('patientRecord.subtitle') }}</p>
+        </div>
+        <div class="pr-head__actions">
+          <button
+            class="asa-btn asa-btn--ghost"
+            :disabled="profileLoading"
+            :aria-label="t('patientRecord.refresh')"
+            @click="refreshAll"
+          >
+            <v-icon size="16" :class="{ 'pf-spin': refreshing }">mdi-refresh</v-icon>
+          </button>
+        </div>
+      </header>
+
+      <!-- ─── Identity hero ─── -->
+      <section class="asa-hero pr-hero">
+        <div class="pr-hero__glow" aria-hidden="true" />
+
+        <div class="pr-hero__top">
+          <div class="pr-avatar" aria-hidden="true">{{ initials }}</div>
+
+          <div class="pr-hero__id">
+            <h2 class="pr-hero__name">{{ fullName }}</h2>
+
+            <div class="pr-hero__pills">
+              <span v-if="isForeign" class="pr-hero__pill">
+                <img v-if="countryFlag" :src="countryFlag" alt="" class="w-4! h-3! object-contain" />
+                <span>{{ nationalityLabel }}</span>
+              </span>
+              <span v-if="nationalId" class="pr-hero__pill pr-hero__pill--mono" dir="ltr">
+                {{ nationalId }}
+              </span>
+              <span v-if="phone" class="pr-hero__pill" dir="ltr">
+                <v-icon size="13">mdi-phone-outline</v-icon>
+                {{ phone }}
+              </span>
+              <span v-if="birthDate && birthDateExact === false" class="pr-hero__pill">
+                {{ t('patients.approxDob') }}
+              </span>
             </div>
           </div>
-          <v-btn variant="tonal" color="#4F46E5" size="small" class="rounded-lg" @click="refreshProfile">بروزرسانی</v-btn>
+
+          <div class="pr-hero__badge">
+            <HeartPulse class="w-6! h-6! fill-current" />
+            <span class="pr-hero__badge-value">{{ toPersianNum(age ?? 0) }}</span>
+            <span class="pr-hero__badge-label">{{ t('patientRecord.yearsOld') }}</span>
+          </div>
+        </div>
+
+        <dl class="pr-facts">
+          <div v-for="fact in facts" :key="fact.label" class="pr-facts__cell">
+            <dt class="pr-facts__label">{{ fact.label }}</dt>
+            <dd class="pr-facts__value" :dir="fact.ltr ? 'ltr' : undefined">
+              <component :is="fact.icon" v-if="fact.icon" class="w-3.5! h-3.5! fill-current" />
+              <span>{{ fact.value }}</span>
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- ─── Record metrics ─── -->
+      <div class="grid! grid-cols-2! min-[520px]:grid-cols-4! gap-3! sm:gap-4! mt-5!">
+        <div class="asa-card pf-metric">
+          <div class="asa-tint asa-tint--indigo">
+            <MedicalKit class="w-5! h-5! fill-current" />
+          </div>
+          <div class="pf-metric__copy">
+            <p class="pf-metric__value">{{ toPersianNum(recordStats.visits) }}</p>
+            <p class="pf-metric__label">{{ t('patientRecord.statsVisits') }}</p>
+          </div>
+        </div>
+
+        <div class="asa-card pf-metric">
+          <div class="asa-tint asa-tint--green">
+            <ClipboardCheck class="w-5! h-5! fill-current" />
+          </div>
+          <div class="pf-metric__copy">
+            <p class="pf-metric__value">{{ toPersianNum(recordStats.prescriptions) }}</p>
+            <p class="pf-metric__label">{{ t('patientRecord.statsPrescriptions') }}</p>
+          </div>
+        </div>
+
+        <div class="asa-card pf-metric">
+          <div class="asa-tint asa-tint--amber">
+            <DocumentText class="w-5! h-5! fill-current" />
+          </div>
+          <div class="pf-metric__copy">
+            <p class="pf-metric__value">{{ toPersianNum(recordStats.notes) }}</p>
+            <p class="pf-metric__label">{{ t('patientRecord.statsNotes') }}</p>
+          </div>
+        </div>
+
+        <div class="asa-card pf-metric">
+          <div class="asa-tint asa-tint--teal">
+            <UsersGroup class="w-5! h-5! fill-current" />
+          </div>
+          <div class="pf-metric__copy">
+            <p class="pf-metric__value">{{ toPersianNum(recordStats.doctors) }}</p>
+            <p class="pf-metric__label">{{ t('patientRecord.statsDoctors') }}</p>
+          </div>
         </div>
       </div>
 
-      <!-- Tabbed Content -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
-        <v-tabs v-model="activeTab" color="black" bg-color="transparent" slider-color="black">
-          <v-tab value="timeline" class="text-sm font-medium tracking-wide">خط زمانی</v-tab>
-          <v-tab value="reproductive" class="text-sm font-medium tracking-wide">سابقه باروری</v-tab>
-          <v-tab value="pregnancy" class="text-sm font-medium tracking-wide">بارداری و زایمان</v-tab>
-          <v-tab value="lifestyle" class="text-sm font-medium tracking-wide">سبک زندگی</v-tab>
-          <v-tab value="screening" class="text-sm font-medium tracking-wide">غربالگری</v-tab>
-          <v-tab value="lab" class="text-sm font-medium tracking-wide">آزمایشات</v-tab>
-          <v-tab value="consent" class="text-sm font-medium tracking-wide">رضایت‌نامه</v-tab>
-          <v-tab value="attachments" class="text-sm font-medium tracking-wide">مستندات</v-tab>
-        </v-tabs>
+      <!-- ─── Case summary (unified feed) ─── -->
+      <PatientCaseFeed :patient-id="patientId" :patient-name="fullName" @stats="onFeedStats" />
 
-        <v-divider />
-
-        <div class="p-6">
-          <v-window v-model="activeTab">
-            <!-- Timeline Tab -->
-            <v-window-item value="timeline">
-              <TimelineTab :patient-id="patientId" />
-            </v-window-item>
-
-            <!-- Reproductive History Tab -->
-            <v-window-item value="reproductive">
-              <ReproductiveTab
-                :repro-form="reproForm"
-                :saving="reproSaving"
-                :flow-volume-options="flowVolumeOptions"
-                :yes-no-options="yesNoOptions"
-                :yes-no-unknown-options="yesNoUnknownOptions"
-                @save="saveReproSection"
-              />
-            </v-window-item>
-
-            <!-- Pregnancy History Tab -->
-            <v-window-item value="pregnancy">
-              <PregnancyHistoryTab
-                v-model:records="pregnancyRecords"
-                v-model:general-notes="pregnancyGeneralNotes"
-              />
-              <div class="flex justify-end mt-4">
-                <v-btn variant="flat" color="#4F46E5" size="small" class="rounded-lg px-8"
-                       :loading="pregnancySaving" @click="savePregnancyHistory">
-                  ذخیره تاریخچه بارداری
-                </v-btn>
-              </div>
-            </v-window-item>
-
-            <!-- Lifestyle Tab -->
-            <v-window-item value="lifestyle">
-              <div class="max-w-2xl space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <v-select
-                    v-model="lifestyleForm.smoking"
-                    :items="yesNoOptions"
-                    label="استعمال دخانیات"
-                    variant="outlined"
-                    density="compact"
-                    hide-details="auto"
-                    bg-color="white"
-                  />
-                  <v-text-field
-                    v-model.number="lifestyleForm.bmi"
-                    label="BMI"
-                    type="number"
-                    step="0.1"
-                    variant="outlined"
-                    density="compact"
-                    hide-details="auto"
-                    bg-color="white"
-                  />
-                  <v-text-field
-                    v-model="lifestyleForm.exercise"
-                    label="فعالیت ورزشی"
-                    variant="outlined"
-                    density="compact"
-                    hide-details="auto"
-                    bg-color="white"
-                  />
-                  <v-select
-                    v-model="lifestyleForm.alcohol"
-                    :items="yesNoOptions"
-                    label="مصرف الکل"
-                    variant="outlined"
-                    density="compact"
-                    hide-details="auto"
-                    bg-color="white"
-                  />
-                </div>
-                <div class="flex justify-end">
-                  <v-btn
-                    variant="flat"
-                    color="black"
-                    size="small"
-                    class="rounded-lg px-8"
-                    :loading="lifestyleSaving"
-                    @click="saveLifestyle"
-                  >
-                    ذخیره تغییرات
-                  </v-btn>
-                </div>
-              </div>
-            </v-window-item>
-
-            <!-- Screening Tab -->
-            <v-window-item value="screening">
-              <ScreeningTab
-                :schedules="screenings?.schedules"
-                :results="screenings?.results"
-                :overdue="screenings?.overdue"
-                :loading="screeningsLoading"
-                @create="createScreening"
-                @refresh="fetchScreenings"
-              />
-            </v-window-item>
-
-            <!-- Lab Results Tab -->
-            <v-window-item value="lab">
-              <LabResultsSection :patient-id="patientId" />
-            </v-window-item>
-
-            <!-- Consent Tab -->
-            <v-window-item value="consent">
-              <ConsentTab
-                :records="consents?.records"
-                :loading="consentsLoading"
-                @create="createConsent"
-                @revoke="revokeConsent"
-              />
-            </v-window-item>
-
-            <!-- Attachments Tab -->
-            <v-window-item value="attachments">
-              <AttachmentsTab
-                :patient-id="patientId"
-                v-model:attachments="newAttachments"
-                v-model:existing-attachments="existingAttachmentsModel"
-              />
-            </v-window-item>
-          </v-window>
+      <!-- ─── Test results ─── -->
+      <section class="pr-sec">
+        <div class="pr-sec__head">
+          <div class="pr-sec__copy">
+            <h2 class="asa-card-title">{{ t('patientRecord.tests') }}</h2>
+            <p class="asa-card-sub">{{ t('patientRecord.testsDesc') }}</p>
+          </div>
         </div>
-      </div>
+        <div class="pr-lab">
+          <LabResultsSection :patient-id="patientId" />
+        </div>
+      </section>
     </template>
-  </div>
+  </UiPageContainer>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, watch } from 'vue'
-import { usePatientProfile } from '~/composables/usePatientProfile'
+import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import AttachmentsTab from '~/components/patient/tabs/Attachments.vue'
-import PregnancyHistoryTab from '~/components/patient/tabs/PregnancyHistory.vue'
-import TimelineTab from '~/components/patient/tabs/TimelineTab.vue'
+import { usePatientProfile } from '~/composables/usePatientProfile'
 import { loadFlagSvg, countryName } from '~/composables/useCountries'
+import AltArrowLeft from '~/components/icons/AltArrowLeft.vue'
+import HeartPulse from '~/components/icons/HeartPulse.vue'
+import DocumentText from '~/components/icons/DocumentText.vue'
+import UsersGroup from '~/components/icons/UsersGroup.vue'
+import Calendar from '~/components/icons/Calendar.vue'
+import ShieldCheck from '~/components/icons/ShieldCheck.vue'
+import ClipboardCheck from '~/components/icons/ClipboardCheck.vue'
+import MedicalKit from '~/components/icons/MedicalKit.vue'
+import Profile from '~/components/icons/Profile.vue'
+import Task from '~/components/icons/Task.vue'
+import Clock from '~/components/icons/Clock.vue'
+import PatientCaseFeed from '~/components/patient/PatientCaseFeed.vue'
 
-// Initialize composable - unified entry point
 const route = useRoute()
-const patientId = computed(() => route.params.id as string)
+const { t } = useI18n()
+const { toPersianNum } = useLang()
+
+const patientId = computed(() => String(route.params.id || ''))
 
 const {
-  profile,
   basicInfo,
-  medicalHistory,
-  reproductiveHealth,
-  obstetricHistory,
-  screenings,
-  consents,
-  attachments,
   loading: profileLoading,
   error: profileError,
-  lifestyleForm,
-  reproForm,
   fetchProfile,
-  saveLifestyle,
-  saveReproductiveSection,
   refresh: refreshProfile,
-  reset
-} = usePatientProfile({
-  patientId: patientId.value,
-  autoFetch: true
-})
+  reset,
+} = usePatientProfile({ patientId: patientId.value, autoFetch: true })
 
-// Watch for route changes
 watch(patientId, (newId) => {
   if (newId) {
     reset()
-    // Update composable with new patient ID
     fetchProfile()
   }
 })
 
-// ─────────────────────────────────────────────────────────────
-// Legacy State (for gradual migration)
-// ─────────────────────────────────────────────────────────────
-const activeTab = ref('reproductive')
+const loadError = computed(() => profileError.value)
+const refreshing = ref(false)
 
-// Nationality / country flag for foreign patients
+const recordStats = ref({ visits: 0, prescriptions: 0, notes: 0, doctors: 0 })
+function onFeedStats(stats: { visits: number; prescriptions: number; notes: number; doctors: number }) {
+  recordStats.value = stats
+}
+
+async function refreshAll() {
+  refreshing.value = true
+  try {
+    await refreshProfile()
+  } finally {
+    refreshing.value = false
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Identity — the unified profile endpoint returns camelCase while
+// the legacy endpoint returns a mix, so read both.
+// ─────────────────────────────────────────────────────────────
+const info = computed<Record<string, any>>(() => basicInfo.value || {})
+const pick = (...keys: string[]) => {
+  for (const k of keys) {
+    const v = info.value[k]
+    if (v !== undefined && v !== null && v !== '') return v
+  }
+  return ''
+}
+
+const firstName = computed(() => String(pick('firstName', 'first_name') || ''))
+const lastName = computed(() => String(pick('lastName', 'last_name') || ''))
+const fullName = computed(() => [firstName.value, lastName.value].filter(Boolean).join(' ') || '---')
+
+const initials = computed(() => {
+  const a = firstName.value.charAt(0)
+  const b = lastName.value.charAt(0)
+  return (a + b) || '—'
+})
+
+const nationalId = computed(() => String(pick('nationalId', 'national_id') || ''))
+const phone = computed(() => String(pick('phone') || ''))
+const birthDate = computed(() => String(pick('birthDate', 'birth_date') || ''))
+const birthDateExact = computed(() => pick('birthDateExact', 'birth_date_exact'))
+const insuranceType = computed(() => String(pick('insuranceType') || ''))
+const insuranceCode = computed(() => String(pick('insuranceCode') || ''))
+const maritalStatus = computed(() => String(pick('maritalStatus') || ''))
+const createdAt = computed(() => String(pick('createdAt', 'created_at') || ''))
+const isForeign = computed(() => pick('isForeign', 'is_foreign') === true)
+const nationality = computed(() => String(pick('nationality') || ''))
+
 const countryFlag = ref('')
 watch(
-    () => basicInfo.value?.nationality,
-    async (code) => {
-        countryFlag.value = ''
-        if (code) countryFlag.value = await loadFlagSvg(code)
-    },
-    { immediate: true },
+  () => nationality.value,
+  async (code) => {
+    countryFlag.value = ''
+    if (code) countryFlag.value = await loadFlagSvg(code)
+  },
+  { immediate: true },
 )
 
-// Loading states
-const reproSaving = ref(false)
-const lifestyleSaving = ref(false)
+const nationalityLabel = computed(
+  () => (nationality.value ? countryName(nationality.value, 'fa') || nationality.value : ''),
+)
 
-// Attachments tab
-const newAttachments = ref({ ultrasound: [], lab: [], prescription: [], patientFiles: [] })
-const existingAttachmentsModel = computed({
-  get: () => profile.value?.attachments || { ultrasound: [], lab: [], prescription: [], patientFiles: [] },
-  set: (val) => { if (profile.value) (profile.value as any).attachments = val },
+const age = computed(() => {
+  if (!birthDate.value) return null
+  const dob = new Date(birthDate.value)
+  if (Number.isNaN(dob.getTime())) return null
+  const now = new Date()
+  let years = now.getFullYear() - dob.getFullYear()
+  const m = now.getMonth() - dob.getMonth()
+  if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) years -= 1
+  return years >= 0 ? years : null
 })
 
-// Pregnancy tab
-const pregnancyRecords = computed({
-  get: () => obstetricHistory.value?.records ?? [],
-  set: (val) => { if (obstetricHistory.value) obstetricHistory.value.records = val },
+const birthLabel = computed(() => {
+  if (!birthDate.value) return '---'
+  const text = formatDate(birthDate.value)
+  if (age.value === null) return text
+  return `${text} (${toPersianNum(age.value)})`
 })
-const pregnancyGeneralNotes = computed({
-  get: () => obstetricHistory.value?.general_notes ?? '',
-  set: (val) => { if (obstetricHistory.value) obstetricHistory.value.general_notes = val },
-})
-const pregnancySaving = ref(false)
 
-// Screening tab
-const screeningsLoading = ref(false)
-
-// Consent tab
-const consentsLoading = ref(false)
-
-// ─────────────────────────────────────────────────────────────
-// Computed aliases for clarity
-// ─────────────────────────────────────────────────────────────
-const loadError = computed(() => profileError.value)
-const screeningSchedules = computed(() => screenings.value?.schedules || [])
-const screeningResults = computed(() => screenings.value?.results || [])
-const overdueSchedules = computed(() => screenings.value?.overdue || [])
-
-// ─────────────────────────────────────────────────────────────
-// Form Options
-// ─────────────────────────────────────────────────────────────
-const flowVolumeOptions = ['کم', 'متوسط', 'زیاد', 'خیلی زیاد']
-const yesNoOptions = ['بله', 'خیر']
-const yesNoUnknownOptions = ['بله', 'خیر', 'نامشخص']
-
-// ─────────────────────────────────────────────────────────────
-// Utility Functions
-// ─────────────────────────────────────────────────────────────
-const formatDate = (date: string | null | undefined) => {
-  if (!date) return '---'
+function formatDate(value: string): string {
   try {
-    return new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(date))
+    const d = new Date(value)
+    if (Number.isNaN(d.getTime())) return value
+    return new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: 'long', day: 'numeric' }).format(d)
   } catch {
-    return date
+    return value
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-// Save Handlers
-// ─────────────────────────────────────────────────────────────
-const saveLifestyleHandler = async () => {
-  lifestyleSaving.value = true
-  try {
-    await saveLifestyle()
-  } finally {
-    lifestyleSaving.value = false
+const facts = computed(() => {
+  const list: { label: string; value: string; ltr?: boolean; icon?: any }[] = []
+
+  if (birthDate.value) {
+    list.push({ label: t('patientRecord.birthDate'), value: birthLabel.value, icon: Calendar })
   }
-}
-
-const saveReproSection = async (section: string) => {
-  reproSaving.value = true
-  try {
-    await saveReproductiveSection(section, section === 'surgeries' ? reproForm.surgeries :
-      section === 'contraceptives' ? reproForm.contraceptives :
-      section === 'family_history' ? reproForm.family_history :
-      section === 'summary' ? reproForm.summary :
-      section === 'menstrual' ? reproForm.menstrual :
-      section === 'sexual' ? reproForm.sexual : null)
-  } finally {
-    reproSaving.value = false
+  if (phone.value) {
+    list.push({ label: t('patientRecord.phone'), value: phone.value, ltr: true, icon: Profile })
   }
-}
-
-const savePregnancyHistory = async () => {
-  if (!patientId.value) return
-  pregnancySaving.value = true
-  try {
-    const { apiFetch } = useApi()
-    const { $toast } = useNuxtApp()
-    const config = useRuntimeConfig()
-
-    const payload = {
-      pregnancies: pregnancyRecords.value.map((p: any) => ({
-        ...(p.id ? { id: p.id } : {}),
-        gravida_index: p.gravida_index ?? null,
-        status: p.status || 'completed',
-        lmp: p.lmp || null,
-        edd: p.edd || null,
-        end_date: p.end_date || null,
-        gestational_age_weeks: p.gestational_age_weeks ?? null,
-        gestational_age_days: p.gestational_age_days ?? null,
-        outcome: p.outcome || null,
-        delivery_method: p.delivery_method || null,
-        anesthesia_type: p.anesthesia_type || null,
-        maternal_complications: p.maternal_complications || [],
-        prenatal_screenings: p.prenatal_screenings || {},
-        newborns_details: p.newborns_details || [],
-        notes: p.notes || null,
-      }))
-    }
-
-    const formData = new FormData()
-    formData.append('patient', JSON.stringify(payload))
-
-    const res = await apiFetch<any>(`/api/patients/${patientId.value}`, {
-      method: 'PUT',
-      body: formData,
-      baseURL: config.public.apiBase
-    })
-
-    if (res.success) {
-      $toast.success('تاریخچه بارداری با موفقیت ذخیره شد')
-      await refreshProfile()
-    } else {
-      $toast.error(res.error || 'خطا در ذخیره تاریخچه بارداری')
-    }
-  } catch (err: any) {
-    useNuxtApp().$toast.error(err.data?.error || 'خطا در ارتباط با سرور')
-  } finally {
-    pregnancySaving.value = false
+  if (maritalStatus.value) {
+    list.push({ label: t('patientRecord.maritalStatus'), value: maritalStatus.value, icon: UsersGroup })
   }
-}
-
-// ─────────────────────────────────────────────────────────────
-// Screening Functions
-// ─────────────────────────────────────────────────────────────
-const fetchScreenings = async () => {
-  if (!patientId.value) return
-  screeningsLoading.value = true
-  try {
-    // This will be replaced by unified endpoint
-    const { apiFetch } = useApi()
-    const { $toast } = useNuxtApp()
-    const config = useRuntimeConfig()
-
-    const [schedulesRes, resultsRes, overdueRes] = await Promise.all([
-      apiFetch<any>(`/api/screening/schedules?patientId=${patientId.value}`, {
-        baseURL: config.public.apiBase
-      }),
-      apiFetch<any>(`/api/screening/results?patientId=${patientId.value}`, {
-        baseURL: config.public.apiBase
-      }),
-      apiFetch<any>(`/api/screening/schedules/overdue?patientId=${patientId.value}`, {
-        baseURL: config.public.apiBase
-      })
-    ])
-
-    // Update reactive state directly (bypass composable for now)
-    if (screenings.value) {
-      screenings.value.schedules = schedulesRes.success ? schedulesRes.data : []
-      screenings.value.results = resultsRes.success ? resultsRes.data : []
-      screenings.value.overdue = overdueRes.success ? overdueRes.data : []
-    }
-  } catch (err: any) {
-    useNuxtApp().$toast.error('خطا در دریافت اطلاعات غربالگری')
-  } finally {
-    screeningsLoading.value = false
+  if (insuranceType.value) {
+    list.push({ label: t('patientRecord.insuranceType'), value: insuranceType.value, icon: ShieldCheck })
   }
-}
-
-const createScreening = async (formData: any) => {
-  if (!patientId.value) return
-  try {
-    const { apiFetch } = useApi()
-    const config = useRuntimeConfig()
-    const { $toast } = useNuxtApp()
-
-    const res = await apiFetch<any>('/api/screening/schedules', {
-      method: 'POST',
-      body: {
-        patientId: patientId.value,
-        test_name: formData.test_name,
-        scheduled_date: formData.scheduled_date,
-        notes: formData.notes
-      },
-      baseURL: config.public.apiBase
-    })
-
-    if (res.success) {
-      $toast.success('غربالگری با موفقیت ثبت شد')
-      fetchScreenings()
-    } else {
-      $toast.error(res.error || 'خطا در ثبت غربالگری')
-    }
-  } catch (err: any) {
-    useNuxtApp().$toast.error(err.data?.error || 'خطا در ثبت غربالگری')
+  if (insuranceCode.value) {
+    list.push({ label: t('patientRecord.insuranceCode'), value: insuranceCode.value, ltr: true, icon: Task })
   }
-}
-
-// ─────────────────────────────────────────────────────────────
-// Consent Functions
-// ─────────────────────────────────────────────────────────────
-const fetchConsents = async () => {
-  if (!patientId.value) return
-  consentsLoading.value = true
-  try {
-    const { apiFetch } = useApi()
-    const config = useRuntimeConfig()
-
-    const res = await apiFetch<any>(`/api/consent/patient/${patientId.value}`, {
-      baseURL: config.public.apiBase
-    })
-
-    if (consents.value) {
-      consents.value.records = res.success ? res.data : []
-    }
-  } catch (err: any) {
-    useNuxtApp().$toast.error('خطا در دریافت رضایت‌نامه‌ها')
-  } finally {
-    consentsLoading.value = false
+  if (createdAt.value) {
+    list.push({ label: t('patientRecord.registeredAt'), value: formatDate(createdAt.value), icon: Clock })
   }
-}
 
-const createConsent = async (formData: any) => {
-  if (!patientId.value) return
-  try {
-    const { apiFetch } = useApi()
-    const config = useRuntimeConfig()
-    const { $toast } = useNuxtApp()
-
-    const res = await apiFetch<any>(`/api/consent/patient/${patientId.value}`, {
-      method: 'POST',
-      body: {
-        type: formData.type,
-        description: formData.description
-      },
-      baseURL: config.public.apiBase
-    })
-
-    if (res.success) {
-      $toast.success('رضایت‌نامه با موفقیت ثبت شد')
-      fetchConsents()
-    } else {
-      $toast.error(res.error || 'خطا در ثبت رضایت‌نامه')
-    }
-  } catch (err: any) {
-    useNuxtApp().$toast.error(err.data?.error || 'خطا در ثبت رضایت‌نامه')
-  }
-}
-
-const revokeConsent = async (c: any) => {
-  try {
-    const { apiFetch } = useApi()
-    const { $toast } = useNuxtApp()
-
-    const res = await apiFetch<any>(`/api/consent/${c.id}/revoke`, {
-      method: 'PATCH',
-      baseURL: useRuntimeConfig().public.apiBase
-    })
-
-    if (res.success) {
-      $toast.success('رضایت‌نامه با موفقیت لغو شد')
-      fetchConsents()
-    } else {
-      $toast.error(res.error || 'خطا در لغو رضایت‌نامه')
-    }
-  } catch (err: any) {
-    useNuxtApp().$toast.error(err.data?.error || 'خطا در لغو رضایت‌نامه')
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// Watch for tab changes to lazy-load data
-// ─────────────────────────────────────────────────────────────
-watch(activeTab, (tab) => {
-  if (tab === 'screening' && !screenings.value?.schedules?.length && !screeningsLoading.value) {
-    fetchScreenings()
-  }
-  if (tab === 'consent' && !consents.value?.records?.length && !consentsLoading.value) {
-    fetchConsents()
-  }
+  return list
 })
 
-// ─────────────────────────────────────────────────────────────
-// Lifecycle
-// ─────────────────────────────────────────────────────────────
-onMounted(() => {
-  // Primary data already fetched by composable
-  // Lazy-load secondary data based on initial tab
-  if (activeTab.value === 'screening') fetchScreenings()
-  if (activeTab.value === 'consent') fetchConsents()
-})
-
-useSeoMeta({ title: 'پرونده بیمار | سیستم کلینیک' })
+useSeoMeta({ title: () => `${fullName.value} | ${t('patientRecord.title')}` })
 </script>
+
+<style scoped>
+.pr-skel-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.pr-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.pr-head__copy {
+  min-width: 0;
+}
+
+.pr-head__title {
+  margin-top: 0.5rem;
+  font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--asa-label);
+  line-height: 1.15;
+}
+
+.pr-head__date {
+  margin-top: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--asa-label-2);
+}
+
+.pr-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--asa-accent-deep);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: opacity 180ms var(--ease-premium);
+}
+
+.pr-back:hover {
+  opacity: 0.75;
+}
+
+/* ─── Identity hero ─── */
+.pr-hero {
+  position: relative;
+  margin-top: 1.25rem;
+  padding: 1.75rem;
+}
+
+.pr-hero__glow {
+  position: absolute;
+  inset-inline-end: -4rem;
+  top: -6rem;
+  width: 22rem;
+  height: 22rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 62%);
+  pointer-events: none;
+}
+
+.pr-hero__top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.125rem;
+  flex-wrap: wrap;
+}
+
+.pr-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  flex-shrink: 0;
+  border-radius: 1.375rem;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(6px);
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.pr-hero__id {
+  flex: 1;
+  min-width: 0;
+}
+
+.pr-hero__name {
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.pr-hero__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4375rem;
+  margin-top: 0.625rem;
+}
+
+.pr-hero__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.pr-hero__pill--mono {
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.08em;
+}
+
+.pr-hero__badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.875rem 1.125rem;
+  border-radius: 1.125rem;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  color: #fff;
+}
+
+.pr-hero__badge-value {
+  font-size: 1.375rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.pr-hero__badge-label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  opacity: 0.82;
+}
+
+/* ─── Facts strip ─── */
+.pr-facts {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 1rem 1.25rem;
+  margin-top: 1.5rem;
+  padding-top: 1.375rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.pr-facts__cell {
+  min-width: 0;
+}
+
+.pr-facts__label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.pr-facts__value {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 0.3125rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  overflow-wrap: anywhere;
+}
+
+/* ─── Tests section ─── */
+.pr-sec {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2.25rem;
+}
+
+.pr-sec__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.pr-sec__copy {
+  min-width: 0;
+}
+
+/* LabResultsSection brings its own heading; the page already provides
+   one, so suppress the duplicate and keep its action button. */
+.pr-lab :deep(.crm-section-title),
+.pr-lab :deep(.crm-section-subtitle) {
+  display: none;
+}
+
+.pr-lab :deep(.space-y-6 > div:first-child) {
+  justify-content: flex-end;
+}
+
+@media (max-width: 560px) {
+  .pr-hero {
+    padding: 1.25rem;
+  }
+
+  .pr-hero__badge {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.375rem;
+    padding: 0.625rem 0.875rem;
+  }
+
+  .pr-hero__name {
+    font-size: 1.125rem;
+  }
+}
+</style>

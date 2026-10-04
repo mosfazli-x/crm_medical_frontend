@@ -460,14 +460,14 @@ function finishOverlay() {
 }
 
 .curtain-logo__fill {
-  fill: #21C0C7;
+  fill: #A2BFFE;
   fill-rule: evenodd;
   clip-rule: evenodd;
 }
 
 .curtain-logo__stroke {
   fill: none;
-  stroke: #21C0C7;
+  stroke: #A2BFFE;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;

@@ -2206,8 +2206,8 @@
   "booking": {
     "title": "Online Appointment Booking",
     "subtitle": "Choose a service, pick a doctor, and reserve a time that suits you.",
-    "clinicName": "Mohera Clinic",
-    "clinicTagline": "Gynecology & Obstetrics",
+    "clinicName": "Hasti Hoseini Clinic",
+    "clinicTagline": "Advanced medical care",
     "switchLanguage": "Switch language",
     "writeByHand": "Write by hand",
     "backToSite": "Back to site",
@@ -4612,8 +4612,8 @@
     "admin": {
       "title": "Blog Management",
       "subtitle": "Manage articles and comments",
-      "commentsTitle": "Comment Management",
-      "commentsSubtitle": "Approve and manage user comments",
+      "commentsTitle": "Comment Moderation",
+      "commentsSubtitle": "Review, approve or reject comments left on your articles",
       "newPost": "New Article",
       "editPost": "Edit Article",
       "titleFa": "Persian Title",
@@ -4648,7 +4648,7 @@
       "rejected": "Rejected",
       "untitled": "Untitled",
       "confirmDelete": "Are you sure you want to delete this article?",
-      "confirmDeleteText": "\u201c{title}\u201d and all of its comments will be permanently deleted.",
+      "confirmDeleteText": "“{title}” and all of its comments will be permanently deleted.",
       "confirmDeleteComment": "Are you sure you want to delete this comment?",
       "savedSuccess": "Article saved successfully",
       "deletedSuccess": "Deleted successfully",
@@ -4673,10 +4673,7 @@
       "pendingComments": "{count} comments awaiting review",
       "pendingCommentsDesc": "Approve or reject the pending comments so readers can see them on the blog.",
       "reviewComments": "Review comments",
-      "commentsTitle": "Comment Moderation",
-      "commentsSubtitle": "Review, approve or reject comments left on your articles",
       "backToArticles": "Back to articles",
-      "comment": "Comment",
       "readMore": "Read full comment",
       "commentDetails": "Comment details",
       "commentSearchPlaceholder": "Search comments by text, author or article",
@@ -4695,7 +4692,7 @@
       "noCommentsYet": "No comments yet",
       "noCommentsYetDesc": "Comments left on your articles will appear here for review.",
       "noCommentResults": "No matching comments",
-      "commentsPageInfo": "Page {page} of {totalPages} \u00b7 {total} comments",
+      "commentsPageInfo": "Page {page} of {totalPages} · {total} comments",
       "bulkApprovedDone": "{count} comments approved",
       "bulkRejectedDone": "{count} comments rejected",
       "bulkDeletedDone": "{count} comments deleted",
@@ -4703,8 +4700,8 @@
       "bulkPartial": "{done} of the selected comments were updated, {failed} failed",
       "approveAllCapped": "Only the first {done} of {total} pending comments were processed",
       "confirmReject": "Reject this comment?",
-      "confirmRejectText": "\u201c{name}\u201d will no longer be visible on the public blog.",
-      "confirmDeleteCommentText": "\u201c{name}\u201d will be permanently deleted. This cannot be undone.",
+      "confirmRejectText": "“{name}” will no longer be visible on the public blog.",
+      "confirmDeleteCommentText": "“{name}” will be permanently deleted. This cannot be undone.",
       "confirmBulkRejectText": "{count} selected comments will no longer be visible on the public blog.",
       "confirmDeleteSelected": "Delete the selected comments?",
       "confirmBulkDeleteText": "{count} comments will be permanently deleted. This cannot be undone.",
@@ -4742,9 +4739,9 @@
       "clearFilters": "Clear filters",
       "pageInfo": "Page {page} of {totalPages} · {total} articles",
       "confirmUnpublish": "Unpublish this article?",
-      "confirmUnpublishText": "\u201c{title}\u201d will no longer be visible on the public blog.",
+      "confirmUnpublishText": "“{title}” will no longer be visible on the public blog.",
       "confirmDeleteCategory": "Delete this category?",
-      "categoryDeleteText": "\u201c{name}\u201d will be deleted. Its articles are kept and become uncategorized.",
+      "categoryDeleteText": "“{name}” will be deleted. Its articles are kept and become uncategorized.",
       "deleteCategory": "Delete the category {name}",
       "categoryNameEn": "Category name (English)",
       "categoriesSubtitle": "Categories help readers find related articles.",
@@ -4876,5 +4873,336 @@
       "scheduled": "Scheduled",
       "overdue": "Overdue"
     }
+  },
+  "landingPage": {
+    "seo": {
+      "title": "Dr. Hasti Hosseini Clinic — Specialist Women's Health & Aesthetics in Tehran",
+      "desc": "Visit Dr. Hasti Hosseini Clinic for specialist women's health, fertility, pregnancy care and aesthetic treatments, with fast online booking."
+    },
+    "nav": {
+      "home": "Home",
+      "services": "Services",
+      "blog": "Blog",
+      "about": "About Us",
+      "contact": "Contact Us",
+      "login": "Member Login",
+      "book": "Book Appointment",
+      "search": "Search",
+      "langToggle": "Switch language",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    },
+    "hero": {
+      "eyebrow": "A specialist practice for HPV, cervical lesions and recurrent infections",
+      "title": "Dr. Hasti Hosseini",
+      "subtitle": "Specialist women's health and aesthetic care in Tehran",
+      "desc": "Specialist evaluation and follow-up for HPV, cervical concerns and recurrent infections — grounded in current evidence and delivered with genuinely personal care.",
+      "stats": {
+        "patientsValue": "5,000+",
+        "patientsLabel": "Successful treatment records",
+        "yearsValue": "12+",
+        "yearsLabel": "Years of specialist experience"
+      },
+      "ctaReviews": "Patient Stories",
+      "ctaBook": "Book Appointment",
+      "portraitAlt": "Dr. Hasti Hosseini, clinic director and aesthetic physician"
+    },
+    "quickBook": {
+      "title": "Book Your Appointment",
+      "desc": "Choose a service and we'll take you straight to the booking page.",
+      "selected": "Selected",
+      "cta": "Get an appointment online",
+      "items": [
+        {
+          "title": "Consultation & Assessment",
+          "desc": "Specialist examination, history review and a tailored treatment plan"
+        },
+        {
+          "title": "Colposcopy, Laser & Polyp Removal",
+          "desc": "Diagnostic and therapeutic work with modern equipment"
+        },
+        {
+          "title": "Accompanying Visitors",
+          "desc": "Specialist women’s health guidance for accompanying family"
+        },
+        {
+          "title": "Online Consultation",
+          "desc": "Speak with the physician without an in-person visit"
+        }
+      ]
+    },
+    "about": {
+      "eyebrow": "About the clinic and its physician",
+      "title": "Meet Dr. Hasti Hosseini",
+      "p1": "Dr. Hasti Hosseini is among Tehran's most experienced physicians in the treatment of women's infections, and her precision has earned an exceptional level of satisfaction among the patients who visit the clinic — which is why so many people come to her for a second opinion.",
+      "p2": "Her work spans vaginal laser therapy, laser treatment for infection, recurrent infection management, cervical laser therapy, genital wart treatment and Pap smears, and she is widely recommended by the patients she has treated.",
+      "points": [
+        "Official member of the national medical council",
+        "Holds international specialist certificates in cervical infection treatment",
+        "Specialist in operating the latest therapeutic laser equipment"
+      ],
+      "cta": "Learn more",
+      "figureAlt": "Portrait of Dr. Hasti Hosseini at the clinic"
+    },
+    "services": {
+      "title": "The most complete diagnostic and women's care services",
+      "desc": "From consultation and investigation through to specialist and aesthetic treatment, all along one coherent path.",
+      "items": [
+        {
+          "title": "Polyp Removal",
+          "desc": "Safe, painless and fully hygienic removal of skin growths and polyps using modern sterilised equipment, in the shortest possible time."
+        },
+        {
+          "title": "Laser Therapy",
+          "desc": "Rejuvenating laser work addressing atrophy and elasticity concerns, delivering non-invasive women's health treatments with approved technology and international standards."
+        },
+        {
+          "title": "Colposcopy",
+          "desc": "Careful magnified examination of the cervix to detect abnormal cells and any irregular change early, using the most advanced diagnostic equipment."
+        }
+      ],
+      "viewAll": "View all clinic services"
+    },
+    "booking": {
+      "title": "Book Your Appointment",
+      "sub": "Quick booking",
+      "selectedService": "Your selected appointment:",
+      "stepDay": "1. Choose a day",
+      "stepTime": "2. Choose a time",
+      "checkingAvailability": "Checking open times...",
+      "noAvailableDays": "No open appointments in the next two weeks. Please contact the clinic.",
+      "prevWeek": "Previous week",
+      "nextWeek": "Next week",
+      "loading": "Fetching available appointments...",
+      "unavailable": "Unavailable",
+      "selected": "Selected",
+      "summaryHint": "No time selected yet",
+      "continue": "Continue and confirm",
+      "noSlots": "No open times remain on this day.",
+      "openBooking": "Open the full booking page"
+    },
+    "gallery": {
+      "title": "A safe, calm, sterilised environment for women's specialist care",
+      "desc": "Inside the clinic: natural light, sterilised equipment and complete privacy for every patient.",
+      "items": [
+        {
+          "title": "Examination room",
+          "desc": "Equipped with a colposcope and standard clinical lighting"
+        },
+        {
+          "title": "Reception",
+          "desc": "A calm, welcoming space for patients"
+        },
+        {
+          "title": "Laser suite",
+          "desc": "Therapeutic laser equipment held to global standards"
+        },
+        {
+          "title": "Consultation room",
+          "desc": "A private conversation with your physician"
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Reassuring stories from the people who visited us",
+      "sub": "Patient satisfaction",
+      "items": [
+        {
+          "text": "From the first appointment I felt I was with a doctor who genuinely listens. The explanations were thorough and unhurried, and that gave me a great deal of reassurance.",
+          "name": "Sara Mohammadi",
+          "date": "2024/10/25"
+        },
+        {
+          "text": "After several unsuccessful visits elsewhere, the treatment path finally became clear to me here. The follow-ups were consistent and the results have been noticeable.",
+          "name": "Negin Rostami",
+          "date": "2024/08/12"
+        },
+        {
+          "text": "The clinic felt spotless and calm, and the nursing staff took the time to explain everything. It is an experience I still remember.",
+          "name": "Maryam Kazemi",
+          "date": "2024/06/01"
+        }
+      ]
+    },
+    "contact": {
+      "title": "We answer your questions and warmly welcome you in",
+      "desc": "For consultations and appointments, reach us through the online contact form or by phone.",
+      "addressLabel": "Clinic address",
+      "address": "No. 146, Mehra Building, 8th Park, Pasdaran, Tehran, Floor 5, Unit 10",
+      "directions": "Get directions",
+      "phoneLabel": "Clinic phone",
+      "phone": "+98 937 941 2491",
+      "hoursLabel": "Opening hours",
+      "hours": "Saturday to Wednesday 9:00–20:00 — Thursday 9:00–14:00",
+      "cta": "Call the clinic directly",
+      "mapTitle": "Clinic location map"
+    },
+    "blog": {
+      "title": "The specialist journal of Dr. Hasti Hosseini Clinic",
+      "desc": "Educational reading on women's health, fertility and specialist treatment.",
+      "readMore": "Read more",
+      "noComments": "No comments",
+      "viewAll": "View all articles",
+      "empty": "No articles have been published yet."
+    },
+    "footer": {
+      "description": "Dr. Hasti Hosseini Clinic — specialist consultation and women's health care in Tehran.",
+      "disclaimer": "Articles on this site do not replace an individual consultation, diagnosis or treatment.",
+      "servicesTitle": "Clinic services",
+      "servicesLinks": [
+        "Colposcopy and cervical assessment",
+        "Genital wart treatment",
+        "Women's infection treatment",
+        "Therapeutic and rejuvenation laser"
+      ],
+      "topicsTitle": "Educational categories",
+      "topicsLinks": [
+        "HPV and the Gardasil vaccine",
+        "Colposcopy and early detection",
+        "Infection and inflammation",
+        "Polyps and uterine conditions",
+        "Gynaecological surgery and aesthetics"
+      ],
+      "contactTitle": "Contact Dr. Hosseini's clinic",
+      "contactDesc": "For consultations and appointments, reach us through the online contact form or by phone.",
+      "copyright": "All rights reserved for Dr. Hasti Hosseini Clinic.",
+      "loginPrompt": "Sign in to view your records and appointments.",
+      "loginCta": "Log in / Sign up"
+    }
+  },
+  "patientRecord": {
+    "title": "Patient Record",
+    "subtitle": "Case summary, doctor notes and test results",
+    "refresh": "Refresh",
+    "backToList": "Back to patients",
+    "errorTitle": "Failed to load patient",
+    "retry": "Try again",
+    "notFoundTitle": "Patient not found",
+    "notFoundDesc": "No patient is registered with this identifier.",
+    "identity": "Patient details",
+    "age": "Age",
+    "yearsOld": "years old",
+    "noSpecialty": "Specialty not recorded",
+    "unknownDoctor": "Unknown doctor",
+    "statsVisits": "Visits",
+    "statsPrescriptions": "Prescriptions",
+    "statsNotes": "Doctor notes",
+    "statsDoctors": "Doctors",
+    "caseSummary": "Case Summary",
+    "caseSummaryDesc": "Record events in chronological order, with each doctor’s note and specialty",
+    "tests": "Test Results",
+    "testsDesc": "Laboratory results recorded for this patient",
+    "addNote": "New note",
+    "addNoteTitle": "Add doctor note",
+    "noteContent": "Note",
+    "noteContentHint": "Clinical note, observation or instruction",
+    "noteEventType": "Event type (optional)",
+    "noteEventDate": "Event date (optional)",
+    "noteSaved": "Note saved",
+    "noteSaveError": "Failed to save the note",
+    "feedFilterLabel": "Filter by event type",
+    "filterAll": "All",
+    "clearFilters": "Clear filters",
+    "showingCount": "Showing {shown} of {total} events",
+    "noEvents": "No events found",
+    "noEventsDesc": "No events match the current filters",
+    "details": "Details",
+    "hideDetails": "Hide details",
+    "loadingFeed": "Loading record events",
+    "feedError": "Failed to load record events",
+    "noteTypeClinical": "Clinical note",
+    "noteTypeFollowUp": "Follow-up",
+    "noteTypeObservation": "Observation",
+    "noteTypeInstruction": "Instruction",
+    "eventTypes": {
+      "visit": "Visit",
+      "appointment": "Appointment",
+      "prescription": "Prescription",
+      "lab_result": "Lab Result",
+      "lab_order": "Lab Order",
+      "screening": "Screening",
+      "screening_result": "Screening Result",
+      "pregnancy": "Pregnancy",
+      "vaccination": "Vaccination",
+      "assessment": "Assessment",
+      "billing": "Billing",
+      "message": "Message",
+      "daily_report": "Daily Report",
+      "vital_signs": "Vital Signs",
+      "note": "Doctor Note",
+      "disease": "Disease",
+      "medication": "Medication",
+      "allergy": "Allergy"
+    },
+    "detailKeys": {
+      "visitType": "Visit type",
+      "status": "Status",
+      "duration": "Duration",
+      "nextVisit": "Next visit",
+      "startTime": "Start",
+      "endTime": "End",
+      "dosage": "Dosage",
+      "frequency": "Frequency",
+      "route": "Route",
+      "instructions": "Instructions",
+      "isActive": "Active",
+      "testName": "Test name",
+      "value": "Value",
+      "unit": "Unit",
+      "referenceRangeLow": "Reference low",
+      "referenceRangeHigh": "Reference high",
+      "isAbnormal": "Abnormal",
+      "category": "Category",
+      "notes": "Notes",
+      "screeningType": "Screening type",
+      "result": "Result",
+      "resultDetails": "Result details",
+      "nextDueDate": "Next due",
+      "gravidaIndex": "Gravida index",
+      "lmp": "LMP",
+      "edd": "Expected delivery",
+      "outcome": "Outcome",
+      "deliveryMethod": "Delivery method",
+      "vaccineName": "Vaccine",
+      "doseNumber": "Dose number",
+      "manufacturer": "Manufacturer",
+      "lotNumber": "Lot number",
+      "nextDoseDate": "Next dose",
+      "assessmentType": "Assessment type",
+      "amount": "Amount",
+      "insuranceClaimAmount": "Insurance claim",
+      "patientPayAmount": "Patient paid",
+      "subject": "Subject",
+      "isRead": "Read",
+      "isConfidential": "Confidential",
+      "visitTypes": "Visit types",
+      "procedures": "Procedures",
+      "feeCollected": "Fee collected",
+      "paymentMethod": "Payment method",
+      "systolicBp": "Systolic BP",
+      "diastolicBp": "Diastolic BP",
+      "heartRate": "Heart rate",
+      "respiratoryRate": "Respiratory rate",
+      "temperature": "Temperature",
+      "oxygenSaturation": "Oxygen saturation",
+      "weight": "Weight",
+      "height": "Height",
+      "bmi": "BMI",
+      "eventType": "Event type",
+      "doctorName": "Doctor",
+      "name": "Name",
+      "substance": "Substance",
+      "severity": "Severity"
+    },
+    "yes": "Yes",
+    "no": "No",
+    "nationalId": "National ID",
+    "phone": "Phone",
+    "birthDate": "Date of birth",
+    "insuranceType": "Insurance",
+    "insuranceCode": "Insurance code",
+    "maritalStatus": "Marital status",
+    "nationality": "Nationality",
+    "registeredAt": "Registered"
   }
 }

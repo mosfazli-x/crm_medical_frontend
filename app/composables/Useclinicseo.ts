@@ -31,7 +31,7 @@ export function useClinicSeo(options: { titleKey?: string; descriptionKey?: stri
         innerHTML: JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'MedicalClinic',
-          name: 'کلینیک دکتر حسینی',
+          name: 'کلینیک هستی حسینی',
           url,
           image: ogImage,
           telephone: '+98-21-0000-0000',

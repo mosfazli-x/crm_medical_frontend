@@ -337,9 +337,9 @@ const heroStats = computed(() => [
 
 const team = computed(() => [
   { key: 'hasti', img: '/images/about/dr-hosseini-cutout.png', alt: t('aboutPage.team.members.1.alt'), name: t('aboutPage.team.members.1.name'), role: t('aboutPage.team.members.1.role'), bio: t('aboutPage.team.members.1.bio') },
-  { key: 'leyla', img: '/images/about/default_profile.png', alt: t('aboutPage.team.members.2.alt'), name: t('aboutPage.team.members.2.name'), role: t('aboutPage.team.members.2.role'), bio: t('aboutPage.team.members.2.bio') },
-  { key: 'nasrin', img: '/images/about/default_profile.png', alt: t('aboutPage.team.members.3.alt'), name: t('aboutPage.team.members.3.name'), role: t('aboutPage.team.members.3.role'), bio: t('aboutPage.team.members.3.bio') },
-  { key: 'sara', img: '/images/about/default_profile.png', alt: t('aboutPage.team.members.4.alt'), name: t('aboutPage.team.members.4.name'), role: t('aboutPage.team.members.4.role'), bio: t('aboutPage.team.members.4.bio') },
+  // { key: 'leyla', img: '/images/about/default_profile.png', alt: t('aboutPage.team.members.2.alt'), name: t('aboutPage.team.members.2.name'), role: t('aboutPage.team.members.2.role'), bio: t('aboutPage.team.members.2.bio') },
+  // { key: 'nasrin', img: '/images/about/default_profile.png', alt: t('aboutPage.team.members.3.alt'), name: t('aboutPage.team.members.3.name'), role: t('aboutPage.team.members.3.role'), bio: t('aboutPage.team.members.3.bio') },
+  // { key: 'sara', img: '/images/about/default_profile.png', alt: t('aboutPage.team.members.4.alt'), name: t('aboutPage.team.members.4.name'), role: t('aboutPage.team.members.4.role'), bio: t('aboutPage.team.members.4.bio') },
 ])
 
 const services = computed(() => [

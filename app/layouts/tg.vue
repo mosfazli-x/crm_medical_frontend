@@ -23,7 +23,7 @@ onMounted(() => {
 })
 
 useHead({
-  title: 'کلینیک دکتر حسینی',
+  title: 'کلینیک هستی حسینی',
   htmlAttrs: { dir: 'rtl', lang: 'fa' },
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover' },

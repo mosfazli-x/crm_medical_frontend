@@ -10,7 +10,9 @@ export default defineNuxtConfig({
     public: {
       // apiBase: 'https://crmapi.ladiesneeds.com',
       // apiBase: 'http://5.144.134.16:2004',
-      apiBase: ''
+      apiBase: '',
+      // Overridable via NUXT_PUBLIC_NESHAN_MAP_KEY
+      neshanMapKey: ''
     },
   },
   nitro: {

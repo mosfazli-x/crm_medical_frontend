@@ -4,7 +4,7 @@
       <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" style="background: linear-gradient(135deg, var(--tg-btn), var(--tg-accent));">
         <Icon name="lucide:hospital" size="34" style="color: white;" />
       </div>
-      <h1 class="text-[22px] font-black mb-1" style="color: var(--tg-text);">کلینیک دکتر حسینی</h1>
+      <h1 class="text-[22px] font-black mb-1" style="color: var(--tg-text);">کلینیک هستی حسینی</h1>
       <p class="text-sm" style="color: var(--tg-hint);">ورود به حساب کاربری</p>
     </div>
 

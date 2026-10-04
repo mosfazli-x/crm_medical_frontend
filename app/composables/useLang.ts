@@ -1,4 +1,25 @@
 import { computed } from 'vue'
+import faSource from '../../locales/fa.json?raw'
+import enSource from '../../locales/en.json?raw'
+
+/** `JSON.parse` rejects a leading BOM, which editors on Windows like to add. */
+function parseLocale(source: string): Record<string, unknown> {
+  return JSON.parse(source.replace(/^\uFEFF/, ''))
+}
+
+/**
+ * Raw, uncompiled locale sources.
+ *
+ * @nuxtjs/i18n precompiles its locale files, and @intlify/unplugin-vue-i18n
+ * rewrites a plain `import ... from '*.json'` into the same compiled ASTs, so
+ * `t()`, `tm()` and `getLocaleMessage()` all hand back
+ * `{ type, start, end, loc }` nodes instead of strings. `?raw` skips the
+ * transform, and `list()` walks the parsed source to reach array messages.
+ */
+const messageBundles: Record<string, unknown> = {
+  fa: parseLocale(faSource),
+  en: parseLocale(enSource),
+}
 
 const servicesData = [
   { icon: 'heart', titleKey: 'landing.services.cardiologyTitle', descKey: 'landing.services.cardiologyDesc', colorClass: 'blue' },
@@ -28,6 +49,26 @@ export function useLang() {
 
   function t(key: string): string {
     return i18nT(key).toString()
+  }
+
+  /**
+   * Reads a list-shaped (array) message.
+   *
+   * Neither `t()` nor `tm()`/`getLocaleMessage()` can be used for these:
+   * `t()` stringifies its result, so an array of objects collapses to
+   * "[object Object]", and this project's locale files are precompiled by
+   * @nuxtjs/i18n, so `tm()`/`getLocaleMessage()` hand back compiled ASTs
+   * (`{ type, start, end, loc }`) instead of strings. The source JSON is
+   * imported directly so the arrays stay plain, readable data.
+   */
+  function list<T>(key: string): T[] {
+    const bundle = messageBundles[lang.value] ?? messageBundles.fa
+    let node: unknown = bundle
+    for (const part of key.split('.')) {
+      if (node === null || typeof node !== 'object') return []
+      node = (node as Record<string, unknown>)[part]
+    }
+    return Array.isArray(node) ? (node as T[]) : []
   }
 
   async function toggleLang() {
@@ -74,6 +115,7 @@ export function useLang() {
   return {
     lang,
     t,
+    list,
     toggleLang,
     isRtl,
     pn,

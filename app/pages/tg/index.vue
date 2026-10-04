@@ -155,5 +155,5 @@ onMounted(async () => {
   }
 })
 
-useHead({ title: 'کلینیک دکتر حسینی' })
+useHead({ title: 'کلینیک هستی حسینی' })
 </script>
