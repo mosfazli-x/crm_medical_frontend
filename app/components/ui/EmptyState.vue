@@ -1,5 +1,5 @@
 <template>
-  <div class="crm-empty" role="status">
+  <div class="crm-empty gap-2" role="status">
     <div class="crm-empty-icon" aria-hidden="true">
       <slot name="icon" />
     </div>

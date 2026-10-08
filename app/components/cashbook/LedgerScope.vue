@@ -115,7 +115,7 @@
 </template>
 
 <script setup lang="ts">
-import type { CashbookOwner } from '~/types/finance'
+import type { CashbookLedger } from '~/types/finance'
 
 const OWN_KEY = '__own__'
 
@@ -125,7 +125,7 @@ const isRtl = computed(() => locale.value === 'fa')
 
 const props = withDefaults(defineProps<{
   modelValue: string | null
-  owners: CashbookOwner[]
+  ledgers: CashbookLedger[]
   selfName?: string
   selfId?: string
   selectable?: boolean
@@ -151,16 +151,16 @@ function optionId(index: number): string {
 }
 
 const selfName = computed(() => props.selfName || t('cashbook.myLedger'))
-/* The "My ledger" row already represents the signed-in user, so the owner list
-   must not repeat them. */
-const otherOwners = computed(() => props.owners.filter((owner) => owner.id !== props.selfId))
-const selectedOwner = computed(() =>
-  otherOwners.value.find((owner) => owner.id === props.modelValue) || null,
+/* The "My ledger" row already represents the signed-in user, so the ledger list
+   must not repeat them. Everything else here arrived via an explicit owner grant. */
+const sharedLedgers = computed(() => props.ledgers.filter((ledger) => ledger.ownerId !== props.selfId))
+const selectedLedger = computed(() =>
+  sharedLedgers.value.find((ledger) => ledger.ownerId === props.modelValue) || null,
 )
-const isForeign = computed(() => !!selectedOwner.value)
+const isForeign = computed(() => !!selectedLedger.value)
 const selectedKey = computed(() => props.modelValue || OWN_KEY)
-const selectedName = computed(() => selectedOwner.value?.fullName || t('cashbook.myLedger'))
-const showSearch = computed(() => otherOwners.value.length > 5)
+const selectedName = computed(() => selectedLedger.value?.ownerName || t('cashbook.myLedger'))
+const showSearch = computed(() => sharedLedgers.value.length > 5)
 
 interface ScopeOption {
   key: string
@@ -179,14 +179,14 @@ const options = computed<ScopeOption[]>(() => {
     initials: '',
   }]
   const needle = query.value.trim().toLowerCase()
-  for (const owner of otherOwners.value) {
-    const name = owner.fullName || owner.id
+  for (const ledger of sharedLedgers.value) {
+    const name = ledger.ownerName || ledger.ownerId
     if (needle && !name.toLowerCase().includes(needle)) continue
     list.push({
-      key: owner.id,
-      id: owner.id,
+      key: ledger.ownerId,
+      id: ledger.ownerId,
       name,
-      meta: t(owner.role === 'admin_doctor' ? 'cashbook.roleManager' : 'cashbook.roleDoctor'),
+      meta: t(ledger.ownerRole === 'admin_doctor' ? 'cashbook.roleManager' : 'cashbook.roleDoctor'),
       initials: initials(name),
     })
   }

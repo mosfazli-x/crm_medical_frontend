@@ -6,8 +6,10 @@ import type {
   CashbookBudget,
   CashbookCategory,
   CashbookEntry,
+  CashbookGrant,
+  CashbookGrantCandidate,
   CashbookKind,
-  CashbookOwner,
+  CashbookLedger,
   CashbookStatus,
   CashbookSummary,
 } from '~/types/finance'
@@ -44,12 +46,14 @@ export const useFinance = () => {
   const { t } = useI18n()
   const { $toast } = useNuxtApp()
 
-  const isAdmin = computed(() => user.value?.role === 'admin_doctor')
   const canEdit = computed(() => user.value?.role === 'admin_doctor' || user.value?.role === 'doctor')
   const year = ref(moment().format('jYYYY'))
   const month = ref(moment().format('jMM'))
   const ownerId = ref<string | null>(null)
-  const owners = ref<CashbookOwner[]>([])
+  const ledgers = ref<CashbookLedger[]>([])
+  const grants = ref<CashbookGrant[]>([])
+  const candidates = ref<CashbookGrantCandidate[]>([])
+  const accessSaving = ref(false)
   const summary = ref<CashbookSummary | null>(null)
   const entries = ref<CashbookEntry[]>([])
   const categories = ref<CashbookCategory[]>([])
@@ -84,18 +88,73 @@ export const useFinance = () => {
     return `${monthOptions.value[index]?.title || month.value} ${year.value}`
   })
   const period = computed(() => ({ year: year.value, month: month.value }))
-  const isReadOnly = computed(() => isAdmin.value && !!ownerId.value && ownerId.value !== user.value?.id)
+  /**
+   * A ledger is editable only when the signed-in user owns it. Every other ledger is
+   * reachable read-only through an explicit owner grant, so this must key off ownership
+   * rather than role.
+   */
+  const isOwnLedger = computed(() => !ownerId.value || ownerId.value === user.value?.id)
+  const isReadOnly = computed(() => !isOwnLedger.value)
   const ownerQuery = computed(() => ownerId.value && ownerId.value !== user.value?.id ? { userId: ownerId.value } : {})
+  const hasSharedLedgers = computed(() => ledgers.value.some((ledger) => ledger.ownerId !== user.value?.id))
 
   const selectedOwnerLabel = computed(() => {
-    if (!isAdmin.value || !ownerId.value || ownerId.value === user.value?.id) return t('cashbook.myLedger')
-    return owners.value.find((owner) => owner.id === ownerId.value)?.fullName || t('cashbook.selectedLedger')
+    if (!ownerId.value || ownerId.value === user.value?.id) return t('cashbook.myLedger')
+    return ledgers.value.find((ledger) => ledger.ownerId === ownerId.value)?.ownerName || t('cashbook.selectedLedger')
   })
 
-  async function loadOwners() {
-    if (!isAdmin.value) return
-    const response = await apiFetch<CashbookApiResponse<Array<{ id: string; fullName: string | null; role: string }>>>('/api/users/doctors')
-    owners.value = (response.data || []).filter((item) => ['admin_doctor', 'doctor'].includes(item.role))
+  /**
+   * Ledgers the backend will actually let us read. The switcher is populated from the
+   * grant table rather than the full doctor list, so it can never offer a ledger whose
+   * owner never shared it.
+   */
+  async function loadLedgers() {
+    const response = await apiFetch<CashbookApiResponse<CashbookLedger[]>>('/api/cashbook/access/ledgers')
+    ledgers.value = response?.success ? response.data || [] : []
+    // Drop a selection that is no longer authorised, e.g. after a revocation.
+    if (ownerId.value && !ledgers.value.some((ledger) => ledger.ownerId === ownerId.value)) {
+      ownerId.value = null
+    }
+  }
+
+  async function loadAccess() {
+    const [grantsResponse, candidatesResponse] = await Promise.all([
+      apiFetch<CashbookApiResponse<CashbookGrant[]>>('/api/cashbook/access/grants'),
+      apiFetch<CashbookApiResponse<CashbookGrantCandidate[]>>('/api/cashbook/access/candidates'),
+    ])
+    grants.value = grantsResponse?.success ? grantsResponse.data || [] : []
+    candidates.value = candidatesResponse?.success ? candidatesResponse.data || [] : []
+  }
+
+  async function grantAccess(granteeId: string) {
+    if (!granteeId || accessSaving.value) return
+    accessSaving.value = true
+    try {
+      await apiFetch<CashbookApiResponse<CashbookGrant>>('/api/cashbook/access/grants', {
+        method: 'POST',
+        body: { granteeId },
+      })
+      await Promise.all([loadAccess(), loadLedgers()])
+      $toast.success(t('cashbook.accessGranted'))
+    } finally {
+      accessSaving.value = false
+    }
+  }
+
+  async function revokeAccess(grantId: string) {
+    if (accessSaving.value) return
+    accessSaving.value = true
+    try {
+      await apiFetch(`/api/cashbook/access/grants/${grantId}`, { method: 'DELETE' })
+      // A revoked ledger may be the one currently on screen; reset it if so.
+      if (ownerId.value && grants.value.some((grant) => grant.id === grantId && grant.granteeId === ownerId.value)) {
+        ownerId.value = null
+      }
+      await Promise.all([loadAccess(), loadLedgers()])
+      $toast.success(t('cashbook.accessRevoked'))
+    } finally {
+      accessSaving.value = false
+    }
   }
 
   async function load() {
@@ -144,7 +203,7 @@ export const useFinance = () => {
 
   async function refresh() {
     try {
-      await Promise.all([loadOwners(), load()])
+      await Promise.all([loadLedgers(), load()])
     } catch {
       loadError.value = t('cashbook.loadError')
     }
@@ -296,8 +355,9 @@ export const useFinance = () => {
   }
 
   async function downloadReceipt(receiptId: string, fallbackName = 'cashbook-receipt') {
-    const params = queryString(ownerQuery.value)
-    const response = await fetch(`${useRuntimeConfig().public.apiBase}/api/cashbook/receipts/${receiptId}${params}`, {
+    // No userId is sent: the receipt's own owner is authoritative server-side, so a
+    // supplied owner could only ever be redundant.
+    const response = await fetch(`${useRuntimeConfig().public.apiBase}/api/cashbook/receipts/${receiptId}`, {
       headers: { Authorization: `Bearer ${token.value || ''}` },
     })
     if (!response.ok) throw new Error('Receipt download failed')
@@ -342,17 +402,24 @@ export const useFinance = () => {
   })
 
   return {
-    isAdmin,
     canEdit,
     isReadOnly,
+    isOwnLedger,
+    hasSharedLedgers,
     year,
     month,
     period,
     monthOptions,
     monthLabel,
-    owners,
+    ledgers,
+    grants,
+    candidates,
+    accessSaving,
     ownerId,
     selectedOwnerLabel,
+    loadAccess,
+    grantAccess,
+    revokeAccess,
     range,
     summary,
     entries,

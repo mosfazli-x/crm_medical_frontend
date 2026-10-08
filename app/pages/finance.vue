@@ -21,6 +21,10 @@
                 @click="runExport('csv')" />
             </v-list>
           </v-menu>
+          <button class="asa-btn asa-btn--ghost" @click="openAccess()">
+            <v-icon size="17">mdi-account-key-outline</v-icon>
+            <span>{{ t('cashbook.manageAccess') }}</span>
+          </button>
           <button v-if="!isReadOnly" class="asa-btn asa-btn--primary" @click="openEntry()">
             <v-icon size="17">mdi-plus</v-icon>
             <span>{{ t('cashbook.addEntry') }}</span>
@@ -31,7 +35,7 @@
       <div v-if="isReadOnly" class="asa-alert asa-alert--amber mt-4!" role="status">
         <div class="asa-alert__body">
           <p class="asa-alert__title">{{ t('cashbook.readOnlyTitle') }}</p>
-          <p class="asa-alert__desc">{{ t('cashbook.readOnlyDesc') }}</p>
+          <p class="asa-alert__desc">{{ t('cashbook.sharedReadOnlyDesc') }}</p>
         </div>
       </div>
 
@@ -59,7 +63,7 @@
         </div>
 
         <section class="asa-card cb-bar" :aria-label="t('cashbook.controls')">
-          <CashbookLedgerScope v-model="ownerId" :owners="owners" :selectable="isAdmin" :self-name="selfName"
+          <CashbookLedgerScope v-model="ownerId" :ledgers="ledgers" :selectable="hasSharedLedgers" :self-name="selfName"
             :self-id="selfId" />
           <CashbookPeriodPicker :model-value="period" :months="monthOptions" :label="monthLabel"
             :range-from="range.from" :range-to="range.to" @update:model-value="setPeriod" @shift="shiftMonth"
@@ -514,6 +518,51 @@
                 t('cashbook.upload') }}</button></v-card-actions>
         </v-card>
       </v-dialog>
+
+      <v-dialog v-model="accessDialog" max-width="560" persistent>
+        <v-card class="asa-dialog overflow-hidden!" elevation="0">
+          <div class="asa-dialog__head">
+            <div>
+              <h2 class="asa-dialog__title">{{ t('cashbook.manageAccess') }}</h2>
+              <span class="asa-dialog__sub">{{ t('cashbook.manageAccessSubtitle') }}</span>
+            </div><button class="sc-x" :aria-label="t('common.close')" @click="accessDialog = false"><v-icon
+                size="18">mdi-close</v-icon></button>
+          </div>
+          <v-card-text class="asa-dialog__body">
+            <div class="asa-alert asa-alert--amber mb-4!" role="note">
+              <div class="asa-alert__body">
+                <p class="asa-alert__desc">{{ t('cashbook.accessPrivacyNote') }}</p>
+              </div>
+            </div>
+
+            <p class="asa-sec__label">{{ t('cashbook.sharedWith') }}</p>
+            <ul v-if="grants.length" class="cb-access-list">
+              <li v-for="grant in grants" :key="grant.id" class="cb-access-list__item">
+                <span class="cb-access-list__avatar" aria-hidden="true">{{ initials(grant.granteeName) }}</span>
+                <span class="cb-access-list__copy">
+                  <span class="cb-access-list__name">{{ grant.granteeName || grant.granteeId }}</span>
+                  <span class="cb-access-list__meta">{{ t(grant.granteeRole === 'admin_doctor' ? 'cashbook.roleManager' : 'cashbook.roleDoctor') }}</span>
+                </span>
+                <button class="sc-icon-btn sc-icon-btn--danger" :aria-label="t('cashbook.revokeAccess')"
+                  :disabled="accessSaving" @click="confirmRevoke(grant)"><v-icon size="17">mdi-account-off-outline</v-icon></button>
+              </li>
+            </ul>
+            <p v-else class="cb-access-empty">{{ t('cashbook.noSharedLedgers') }}</p>
+
+            <template v-if="candidates.length">
+              <p class="asa-sec__label mt-5!">{{ t('cashbook.shareWithSomeone') }}</p>
+              <div class="cb-access-add">
+                <v-select v-model="accessTarget" :items="candidateOptions" item-title="title" item-value="value"
+                  variant="solo" hide-details="auto" :label="t('cashbook.pickUserToShare')" />
+                <button class="asa-btn asa-btn--primary" :disabled="accessSaving || !accessTarget" @click="submitGrant">
+                  <v-icon size="16">mdi-share-variant-outline</v-icon>{{ t('cashbook.grantAccess') }}</button>
+              </div>
+            </template>
+          </v-card-text>
+          <v-card-actions class="asa-dialog__foot"><v-spacer /><button class="asa-btn asa-btn--ghost asa-btn--sm"
+              @click="accessDialog = false">{{ t('common.close') }}</button></v-card-actions>
+        </v-card>
+      </v-dialog>
     </UiPageContainer>
   </div>
 </template>
@@ -526,10 +575,11 @@ const { t, locale } = useI18n()
 const { user } = useAuth()
 const { formatGregorianDate } = useFormatting()
 const {
-  isAdmin, canEdit, isReadOnly, period, monthOptions, monthLabel, owners, ownerId,
-  range, summary, entries, categories, accounts, loading, loadError, page, pagination, filters,
+  canEdit, isReadOnly, hasSharedLedgers, period, monthOptions, monthLabel, ledgers, ownerId, grants, candidates,
+  accessSaving, range, summary, entries, categories, accounts, loading, loadError, page, pagination, filters,
   load, applyFilters, changePage, shiftMonth, setPeriod, goToday, saveEntry, updateEntry, voidEntry, saveCategory, updateCategory,
   saveAccount, updateAccount, saveBudget, deleteBudget, uploadReceipt, downloadReceipt, exportData,
+  loadAccess, grantAccess, revokeAccess,
 } = useFinance()
 const { $toast } = useNuxtApp()
 
@@ -545,6 +595,8 @@ const accountDialog = ref(false)
 const budgetDialog = ref(false)
 const voidDialog = ref(false)
 const receiptDialog = ref(false)
+const accessDialog = ref(false)
+const accessTarget = ref<string | null>(null)
 const editingEntry = ref<CashbookEntry | null>(null)
 const editingCategory = ref<CashbookCategory | null>(null)
 const editingAccount = ref<CashbookAccount | null>(null)
@@ -676,7 +728,7 @@ async function submitEntry() {
 }
 function openVoid(entry: CashbookEntry) { voidEntryData.value = entry; voidForm.reason = ''; voidDialog.value = true }
 async function submitVoid() {
-  if (!voidEntryData.value || !voidForm.reason.trim()) return
+  if (!voidEntryData.value || !voidForm.reason.trim() || isReadOnly.value) return
   saving.value = true
   try { await voidEntry(voidEntryData.value.id, voidForm.reason.trim()); voidDialog.value = false } catch { $toast.error(t('cashbook.saveError')) } finally { saving.value = false }
 }
@@ -720,6 +772,34 @@ async function submitReceipt() {
 async function downloadCurrentReceipt() { if (receiptEntry.value?.receipt) { try { await downloadReceipt(receiptEntry.value.receipt.id, receiptEntry.value.receipt.originalName) } catch { $toast.error(t('cashbook.loadError')) } } }
 async function runExport(format: 'xlsx' | 'csv') { exporting.value = true; try { await exportData(format) } catch { $toast.error(t('cashbook.exportError')) } finally { exporting.value = false } }
 
+/* Ledger sharing. The owner manages access to their own ledger only; grants issued by
+   other users are not editable here. */
+const candidateOptions = computed(() => candidates.value.map((candidate) => ({
+  value: candidate.id,
+  title: candidate.fullName || candidate.id,
+})))
+function initials(name: string | null): string {
+  const parts = (name || '').trim().split(/\s+/).filter(Boolean)
+  if (!parts.length) return '—'
+  if (parts.length === 1) return parts[0]!.slice(0, 1)
+  return `${parts[0]![0]}${parts[parts.length - 1]![0]}`
+}
+async function openAccess() {
+  accessTarget.value = null
+  accessDialog.value = true
+  try { await loadAccess() } catch { $toast.error(t('cashbook.loadError')) }
+}
+async function submitGrant() {
+  if (!accessTarget.value || accessSaving.value) return
+  try {
+    await grantAccess(accessTarget.value)
+    accessTarget.value = null
+  } catch { $toast.error(t('cashbook.accessError')) }
+}
+function confirmRevoke(grant: { id: string; granteeName: string | null }) {
+  if (accessSaving.value) return
+  revokeAccess(grant.id).catch(() => $toast.error(t('cashbook.accessError')))
+}
 </script>
 
 <style scoped>
@@ -1238,6 +1318,74 @@ async function runExport(format: 'xlsx' | 'csv') { exporting.value = true; try {
 
 .cb-form-grid__wide {
   grid-column: 1 / -1;
+}
+
+.cb-access-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cb-access-list__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--asa-sep);
+  border-radius: 0.875rem;
+}
+
+.cb-access-list__avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--asa-accent) 14%, transparent);
+  color: var(--asa-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.cb-access-list__copy {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.cb-access-list__name {
+  overflow: hidden;
+  color: var(--asa-label);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cb-access-list__meta {
+  color: var(--asa-label-2);
+  font-size: 0.6875rem;
+}
+
+.cb-access-empty {
+  color: var(--asa-label-2);
+  font-size: 0.75rem;
+}
+
+.cb-access-add {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cb-access-add> :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .cb-date-picker {

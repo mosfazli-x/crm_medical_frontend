@@ -2,6 +2,7 @@ export type DashboardSectionId =
   | 'alerts'
   | 'quickActions'
   | 'keyMetrics'
+  | 'statistics'
   | 'insights'
   | 'dailyBreakdowns'
   | 'supplementary'
@@ -27,6 +28,7 @@ export const DASHBOARD_SECTION_IDS: DashboardSectionId[] = [
   'alerts',
   'quickActions',
   'keyMetrics',
+  'statistics',
   'insights',
   'dailyBreakdowns',
   'supplementary',

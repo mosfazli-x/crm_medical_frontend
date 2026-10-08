@@ -123,7 +123,8 @@
         <section class="asa-sec">
           <p class="asa-sec__label">{{ $t('dashboard.appointmentsUpcoming') }}</p>
           <div class="asa-card asa-list-card">
-            <UiEmptyState v-if="!patientData.appointments.length" :title="$t('dashboard.noAppointments')"
+            <UiEmptyState
+v-if="!patientData.appointments.length" :title="$t('dashboard.noAppointments')"
               :description="$t('dashboard.noAppointmentsDesc')" class="py-12!">
               <template #icon>
                 <Calendar class="w-10! h-10! text-slate-300! dark:!text-zinc-600! fill-current" />
@@ -323,6 +324,466 @@
           </div>
         </section>
 
+        <!-- Clinic Statistics -->
+        <section v-else-if="sec.id === 'statistics' && sec.visible" :class="sectionSpanOf(sec)" class="asa-sec">
+          <p class="asa-sec__label">{{ sectionTitleOf(sec) }}</p>
+
+          <div v-if="!statsData" class="space-y-3! sm:space-y-4!">
+            <template v-if="loading">
+              <div class="grid! grid-cols-1! min-[480px]:grid-cols-2! xl:grid-cols-4! gap-3! sm:gap-4!">
+                <div v-for="n in 4" :key="`st-k-${n}`" class="asa-skel h-32! rounded-[22px]!" />
+              </div>
+              <div class="asa-skel h-80! rounded-[22px]!" />
+            </template>
+            <UiEmptyState v-else :title="$t('dashboard.statsUnavailable')" class="py-10!">
+              <template #icon>
+                <LineChart class="w-8! h-8! text-slate-300! dark:!text-zinc-600! fill-current" />
+              </template>
+            </UiEmptyState>
+          </div>
+
+          <div v-else class="space-y-3! sm:space-y-4! xl:space-y-5!">
+            <!-- Overview KPIs -->
+            <div class="grid! grid-cols-1! min-[480px]:grid-cols-2! xl:grid-cols-4! gap-3! sm:gap-4! xl:gap-5!">
+              <article class="asa-card asa-metric">
+                <span class="asa-metric__icon asa-tint asa-tint--teal">
+                  <UsersGroup class="w-5! h-5! fill-current" />
+                </span>
+                <div class="asa-metric__copy">
+                  <p class="asa-metric__value">{{ formatNumber(statsData.overview.patientsTotal) }}</p>
+                  <p class="asa-metric__label">{{ $t('dashboard.totalPatients') }}</p>
+                </div>
+                <p class="asa-metric__foot">
+                  <span class="asa-dot asa-dot--green" aria-hidden="true" />
+                  <span>+{{ formatNumber(statsData.overview.patientsThisMonth) }} {{ $t('dashboard.thisMonth') }}</span>
+                </p>
+              </article>
+
+              <article class="asa-card asa-metric">
+                <span class="asa-metric__icon asa-tint asa-tint--green">
+                  <HeartPulse class="w-5! h-5! fill-current" />
+                </span>
+                <div class="asa-metric__copy">
+                  <p class="asa-metric__value">{{ formatNumber(statsData.overview.visitsTotal) }}</p>
+                  <p class="asa-metric__label">{{ $t('dashboard.totalVisits') }}</p>
+                </div>
+                <p class="asa-metric__foot">
+                  <span>{{ $t('dashboard.thisMonth') }}: {{ formatNumber(statsData.overview.visitsThisMonth) }}</span>
+                  <span class="asa-dot" aria-hidden="true" />
+                  <span>{{ $t('common.today') }}: {{ formatNumber(statsData.overview.visitsToday) }}</span>
+                </p>
+              </article>
+
+              <article class="asa-card asa-metric">
+                <span class="asa-metric__icon asa-tint asa-tint--indigo">
+                  <Microscope class="w-5! h-5! fill-current" />
+                </span>
+                <div class="asa-metric__copy">
+                  <p class="asa-metric__value">{{ formatNumber(statsData.clinical.labResultsTotal) }}</p>
+                  <p class="asa-metric__label">{{ $t('dashboard.labTests') }}</p>
+                </div>
+                <p class="asa-metric__foot">
+                  <span>{{ $t('dashboard.thisMonth') }}: {{ formatNumber(statsData.clinical.labResultsThisMonth) }}</span>
+                  <span
+v-if="statsData.clinical.labResultsAbnormal > 0"
+                    class="text-rose-500! dark:!text-rose-400!">
+                    {{ $t('dashboard.abnormal') }}: {{ formatNumber(statsData.clinical.labResultsAbnormal) }}
+                  </span>
+                </p>
+              </article>
+
+              <article class="asa-card asa-metric">
+                <span class="asa-metric__icon asa-tint asa-tint--orange">
+                  <DocumentText class="w-5! h-5! fill-current" />
+                </span>
+                <div class="asa-metric__copy">
+                  <p class="asa-metric__value">{{ formatNumber(statsData.clinical.patientNotesTotal) }}</p>
+                  <p class="asa-metric__label">{{ $t('dashboard.doctorNotes') }}</p>
+                </div>
+                <p class="asa-metric__foot">
+                  <span>{{ $t('dashboard.thisWeek') }}: {{ formatNumber(statsData.clinical.patientNotesThisWeek) }}</span>
+                  <span class="asa-dot" aria-hidden="true" />
+                  <span>{{ $t('dashboard.thisMonth') }}: {{ formatNumber(statsData.clinical.patientNotesThisMonth) }}</span>
+                </p>
+              </article>
+
+              <article class="asa-card asa-metric">
+                <span class="asa-metric__icon asa-tint asa-tint--rose">
+                  <ChatDots class="w-5! h-5! fill-current" />
+                </span>
+                <div class="asa-metric__copy">
+                  <p class="asa-metric__value">
+                    {{ statsData.communication.smsSent == null ? '—' : formatNumber(statsData.communication.smsSent) }}
+                  </p>
+                  <p class="asa-metric__label">{{ $t('dashboard.smsMessages') }}</p>
+                </div>
+                <p class="asa-metric__foot">
+                  <span v-if="statsData.communication.messagesUnread > 0" class="text-rose-500! dark:!text-rose-400!">
+                    {{ $t('dashboard.unreadCount', { count: formatNumber(statsData.communication.messagesUnread) }) }}
+                  </span>
+                  <span v-else>{{ $t('dashboard.unreadCount', { count: '0' }) }}</span>
+                </p>
+              </article>
+
+              <article class="asa-card asa-metric">
+                <span class="asa-metric__icon asa-tint asa-tint--teal">
+                  <MedicalKit class="w-5! h-5! fill-current" />
+                </span>
+                <div class="asa-metric__copy">
+                  <p class="asa-metric__value">{{ formatNumber(statsData.clinical.prescriptionsTotal) }}</p>
+                  <p class="asa-metric__label">{{ $t('dashboard.prescriptions') }}</p>
+                </div>
+                <p class="asa-metric__foot">
+                  <span class="asa-dot asa-dot--green" aria-hidden="true" />
+                  <span>{{ $t('dashboard.active') }}: {{ formatNumber(statsData.clinical.prescriptionsActive) }}</span>
+                </p>
+              </article>
+
+              <article class="asa-card asa-metric">
+                <span class="asa-metric__icon asa-tint asa-tint--indigo">
+                  <UserPlus class="w-5! h-5! fill-current" />
+                </span>
+                <div class="asa-metric__copy">
+                  <p class="asa-metric__value">{{ formatNumber(statsData.leads.leadsTotal) }}</p>
+                  <p class="asa-metric__label">{{ $t('dashboard.leads') }}</p>
+                </div>
+                <p class="asa-metric__foot">
+                  <span>{{ $t('dashboard.conversionRate') }}: {{ statsData.leads.conversionRate }}%</span>
+                </p>
+              </article>
+
+              <article class="asa-card asa-metric">
+                <span class="asa-metric__icon asa-tint asa-tint--green">
+                  <Wallet class="w-5! h-5! fill-current" />
+                </span>
+                <div class="asa-metric__copy">
+                  <p class="asa-metric__value">
+                    {{ formatCompactToman(statsData.financial.revenueThisMonth) }}<span class="stat-unit">
+                      {{ $t('common.toman') }}</span>
+                  </p>
+                  <p class="asa-metric__label">{{ $t('dashboard.revenueThisMonthLabel') }}</p>
+                </div>
+                <p class="asa-metric__foot">
+                  <span>{{ $t('dashboard.reportsThisMonth') }}: {{ formatNumber(statsData.financial.dailyReportsThisMonth) }}</span>
+                </p>
+              </article>
+            </div>
+
+            <!-- Monthly trend + appointment status / leads -->
+            <div class="grid! grid-cols-1! lg:grid-cols-3! gap-3! sm:gap-4! xl:gap-5!">
+              <div class="asa-card lg:col-span-2! asa-trend">
+                <div class="asa-trend__head">
+                  <div class="asa-trend__titles">
+                    <h3 class="asa-card-title">{{ $t('dashboard.monthlyActivity') }}</h3>
+                    <p class="asa-card-sub">{{ $t('dashboard.monthlyActivityDesc') }}</p>
+                  </div>
+                  <div class="stat-switch" role="tablist">
+                    <button
+v-for="opt in statTrendOptions" :key="opt.key" type="button" class="asa-pill"
+                      :class="statTrendMetric === opt.key ? 'asa-pill--teal' : 'stat-switch__idle'" role="tab"
+                      :aria-selected="statTrendMetric === opt.key" @click="statTrendMetric = opt.key">
+                      {{ opt.label }}
+                    </button>
+                  </div>
+                </div>
+
+                <div v-if="statTrendHasData" class="relative! mt-4! animate-fade-in-up">
+                  <svg
+viewBox="0 0 600 210" class="w-full! h-auto! select-none!" role="img"
+                    :aria-label="$t('dashboard.monthlyActivity')">
+                    <line
+v-for="gy in statTrendGrid" :key="gy.id" x1="0" x2="600" :y1="gy.y" :y2="gy.y"
+                      class="asa-chart-grid" stroke-width="1" />
+                    <text
+v-for="gy in statTrendGrid" :key="gy.id" x="600" :y="gy.y - 5" text-anchor="end"
+                      class="asa-chart-axis">
+                      {{ gy.label }}
+                    </text>
+                    <g v-for="(bar, idx) in statTrendBars" :key="bar.key">
+                      <rect
+:x="bar.x" :y="bar.y" :width="bar.w" :height="bar.h" rx="5" fill="var(--asa-accent)"
+                        :fill-opacity="idx === statTrendBars.length - 1 ? 1 : 0.38">
+                        <title>{{ bar.title }}</title>
+                      </rect>
+                      <text
+v-if="idx === statTrendPeakIdx" :x="bar.x + bar.w / 2" :y="bar.y - 6" text-anchor="middle"
+                        class="asa-chart-axis">
+                        {{ bar.valueLabel }}
+                      </text>
+                    </g>
+                    <text
+v-for="xl in statTrendXLabels" :key="xl.key" :x="xl.x" y="196" text-anchor="middle"
+                      class="asa-chart-axis">
+                      {{ xl.label }}
+                    </text>
+                  </svg>
+                </div>
+
+                <UiEmptyState
+v-else :title="$t('dashboard.statsNoTrend')" :description="$t('dashboard.statsNoTrendDesc')"
+                  class="py-10!">
+                  <template #icon>
+                    <LineChart class="w-8! h-8! text-slate-300! dark:!text-zinc-600! fill-current" />
+                  </template>
+                </UiEmptyState>
+
+                <div v-if="statTrendHasData" class="asa-trend__foot">
+                  <span class="asa-legend">
+                    <span class="asa-legend__dot" aria-hidden="true" />
+                    {{ statTrendOptionLabel }}
+                  </span>
+                  <span class="asa-legend">{{ $t('dashboard.monthlyActivityDesc') }}</span>
+                </div>
+              </div>
+
+              <div class="flex! flex-col! gap-3! sm:gap-4! xl:gap-5!">
+                <!-- Appointment status donut -->
+                <div class="asa-card asa-meter">
+                  <div class="asa-meter__head">
+                    <span class="asa-meter__icon asa-tint asa-tint--indigo">
+                      <Calendar class="w-5! h-5! fill-current" />
+                    </span>
+                    <div>
+                      <h3 class="asa-card-title">{{ $t('dashboard.appointmentStatus') }}</h3>
+                      <p class="asa-card-sub">{{ $t('dashboard.appointments') }}:
+                        {{ formatNumber(statsData.overview.appointmentsTotal) }}</p>
+                    </div>
+                  </div>
+
+                  <div v-if="apptSegments.length" class="stat-donut-wrap">
+                    <svg
+viewBox="0 0 120 120" class="stat-donut" role="img"
+                      :aria-label="$t('dashboard.appointmentStatus')">
+                      <circle cx="60" cy="60" r="46" fill="none" stroke="var(--asa-track)" stroke-width="13" />
+                      <circle
+v-for="seg in apptSegments" :key="seg.key" cx="60" cy="60" r="46" fill="none"
+                        :stroke="seg.color" stroke-width="13" :stroke-dasharray="seg.dash" :stroke-dashoffset="seg.offset"
+                        transform="rotate(-90 60 60)">
+                        <title>{{ seg.label }}: {{ formatNumber(seg.value) }}</title>
+                      </circle>
+                      <text x="60" y="57" text-anchor="middle" class="stat-donut__value">
+                        {{ formatNumber(statsData.overview.appointmentsTotal) }}
+                      </text>
+                      <text x="60" y="75" text-anchor="middle" class="stat-donut__caption">
+                        {{ $t('dashboard.appointments') }}
+                      </text>
+                    </svg>
+                    <ul class="stat-legend">
+                      <li v-for="seg in apptSegments" :key="seg.key" class="stat-legend__row">
+                        <span class="stat-legend__dot" :style="{ background: seg.color }" aria-hidden="true" />
+                        <span class="stat-legend__label">{{ seg.label }}</span>
+                        <span class="stat-legend__value">{{ formatNumber(seg.value) }}</span>
+                        <span class="stat-legend__pct">{{ seg.pct }}%</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <p v-else class="text-center! py-7! asa-card-sub">{{ $t('dashboard.noAppointments') }}</p>
+                </div>
+
+                <!-- Leads funnel -->
+                <div class="asa-card asa-panel flex-1!">
+                  <div class="asa-panel__head">
+                    <span class="asa-panel__icon asa-tint asa-tint--orange asa-tint--sm">
+                      <UserPlus class="w-4! h-4! fill-current" />
+                    </span>
+                    <h3 class="asa-panel__title">{{ $t('dashboard.leads') }}</h3>
+                    <span class="asa-pill asa-pill--teal" style="margin-inline-start: auto">{{ statsData.leads.conversionRate }}%</span>
+                  </div>
+                  <div class="asa-break">
+                    <BreakdownRow :label="$t('dashboard.totalCounts')" :value="statsData.leads.leadsTotal" />
+                    <BreakdownRow :label="$t('dashboard.newLabel')" :value="statsData.leads.leadsNew" />
+                    <BreakdownRow :label="$t('dashboard.converted')" :value="statsData.leads.leadsConverted" highlight />
+                    <BreakdownRow :label="$t('dashboard.leadsLostLabel')" :value="statsData.leads.leadsLost" muted />
+                    <BreakdownRow :label="$t('dashboard.thisMonth')" :value="statsData.leads.leadsThisMonth" />
+                  </div>
+                  <div class="px-5! pt-4! pb-5!">
+                    <div
+class="asa-bar" role="progressbar" :aria-valuenow="statsData.leads.conversionRate"
+                      aria-valuemin="0" aria-valuemax="100">
+                      <div
+class="asa-bar__fill asa-bar__fill--teal"
+                        :style="{ width: statsData.leads.conversionRate + '%' }" />
+                    </div>
+                    <p class="asa-card-sub mt-2!">{{ $t('dashboard.conversionRate') }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Detail panels -->
+            <div class="grid! grid-cols-1! md:grid-cols-2! xl:grid-cols-4! gap-3! sm:gap-4! xl:gap-5!">
+              <!-- Laboratory activity -->
+              <div class="asa-card asa-panel">
+                <div class="asa-panel__head">
+                  <span class="asa-panel__icon asa-tint asa-tint--indigo asa-tint--sm">
+                    <Microscope class="w-4! h-4! fill-current" />
+                  </span>
+                  <h3 class="asa-panel__title">{{ $t('dashboard.labActivity') }}</h3>
+                </div>
+                <div class="asa-break">
+                  <p class="stat-group-label">{{ $t('dashboard.labOrders') }}</p>
+                  <BreakdownRow :label="$t('dashboard.totalCounts')" :value="statsData.clinical.labOrdersTotal" />
+                  <BreakdownRow :label="$t('dashboard.pending')" :value="statsData.clinical.labOrdersPending" />
+                  <BreakdownRow :label="$t('dashboard.completed')" :value="statsData.clinical.labOrdersCompleted" />
+                  <p class="stat-group-label">{{ $t('dashboard.labResults') }}</p>
+                  <BreakdownRow :label="$t('dashboard.totalCounts')" :value="statsData.clinical.labResultsTotal" />
+                  <BreakdownRow :label="$t('dashboard.thisMonth')" :value="statsData.clinical.labResultsThisMonth" />
+                  <BreakdownRow
+:label="$t('dashboard.abnormal')" :value="statsData.clinical.labResultsAbnormal"
+                    :highlight="statsData.clinical.labResultsAbnormal > 0" :muted="statsData.clinical.labResultsAbnormal === 0" />
+                </div>
+              </div>
+
+              <!-- Prescriptions & notes -->
+              <div class="asa-card asa-panel">
+                <div class="asa-panel__head">
+                  <span class="asa-panel__icon asa-tint asa-tint--teal asa-tint--sm">
+                    <MedicalKit class="w-4! h-4! fill-current" />
+                  </span>
+                  <h3 class="asa-panel__title">{{ $t('dashboard.prescriptionsNotes') }}</h3>
+                </div>
+                <div class="asa-break">
+                  <p class="stat-group-label">{{ $t('dashboard.prescriptions') }}</p>
+                  <BreakdownRow :label="$t('dashboard.totalCounts')" :value="statsData.clinical.prescriptionsTotal" />
+                  <BreakdownRow :label="$t('dashboard.active')" :value="statsData.clinical.prescriptionsActive" />
+                  <BreakdownRow :label="$t('dashboard.thisMonth')" :value="statsData.clinical.prescriptionsThisMonth" />
+                  <p class="stat-group-label">{{ $t('dashboard.doctorNotes') }}</p>
+                  <BreakdownRow :label="$t('dashboard.totalCounts')" :value="statsData.clinical.patientNotesTotal" />
+                  <BreakdownRow :label="$t('dashboard.thisWeek')" :value="statsData.clinical.patientNotesThisWeek" />
+                  <BreakdownRow :label="$t('dashboard.thisMonth')" :value="statsData.clinical.patientNotesThisMonth" />
+                </div>
+              </div>
+
+              <!-- Communication -->
+              <div class="asa-card asa-panel">
+                <div class="asa-panel__head">
+                  <span class="asa-panel__icon asa-tint asa-tint--orange asa-tint--sm">
+                    <ChatDots class="w-4! h-4! fill-current" />
+                  </span>
+                  <h3 class="asa-panel__title">{{ $t('dashboard.communication') }}</h3>
+                </div>
+                <div class="asa-break">
+                  <BreakdownRow :label="$t('dashboard.smsMessages')" :value="statsData.communication.smsSent ?? 0" />
+                  <BreakdownRow :label="$t('dashboard.messagesTab')" :value="statsData.communication.messagesTotal" />
+                  <BreakdownRow
+:label="$t('dashboard.unreadLabel')"
+                    :value="statsData.communication.messagesUnread"
+                    :highlight="statsData.communication.messagesUnread > 0" />
+                  <BreakdownRow :label="$t('dashboard.thisMonth')" :value="statsData.communication.messagesThisMonth" />
+                </div>
+              </div>
+
+              <!-- Financial -->
+              <div class="asa-card asa-panel">
+                <div class="asa-panel__head">
+                  <span class="asa-panel__icon asa-tint asa-tint--green asa-tint--sm">
+                    <Wallet class="w-4! h-4! fill-current" />
+                  </span>
+                  <h3 class="asa-panel__title">{{ $t('dashboard.financialSummary') }}</h3>
+                </div>
+                <div class="asa-break">
+                  <div class="stat-row stat-row--highlight">
+                    <span class="stat-row__label">{{ $t('dashboard.revenueThisMonthLabel') }}</span>
+                    <span class="stat-row__value">{{ formatToman(statsData.financial.revenueThisMonth) }}</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-row__label">{{ $t('dashboard.reportsThisMonth') }}</span>
+                    <span class="stat-row__value">{{ formatNumber(statsData.financial.dailyReportsThisMonth) }}</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-row__label">{{ $t('dashboard.totalRevenue') }}</span>
+                    <span class="stat-row__value">{{ formatToman(statsData.financial.billingPaidAmount) }}</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-row__label">{{ $t('dashboard.pendingPayment') }}</span>
+                    <span class="stat-row__value">{{ formatToman(statsData.financial.billingPendingAmount) }}</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-row__label">{{ $t('dashboard.invoices') }}</span>
+                    <span class="stat-row__value">{{ formatNumber(statsData.financial.billingTotal) }}</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-row__label">{{ $t('dashboard.paidCount') }}</span>
+                    <span class="stat-row__value">{{ formatNumber(statsData.financial.billingPaid) }}</span>
+                  </div>
+                  <div class="stat-row">
+                    <span class="stat-row__label">{{ $t('dashboard.pendingCount') }}</span>
+                    <span class="stat-row__value">{{ formatNumber(statsData.financial.billingPending) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent activity -->
+            <div class="grid! grid-cols-1! lg:grid-cols-3! gap-3! sm:gap-4! xl:gap-5!">
+              <div class="asa-card asa-panel">
+                <div class="asa-panel__head">
+                  <span class="asa-panel__icon asa-tint asa-tint--teal asa-tint--sm">
+                    <UsersGroup class="w-4! h-4! fill-current" />
+                  </span>
+                  <h3 class="asa-panel__title">{{ $t('dashboard.recentPatients') }}</h3>
+                  <NuxtLink to="/patients" class="asa-link asa-link--start-end">{{ $t('common.viewAll') }}</NuxtLink>
+                </div>
+                <ul v-if="statsData.recent.recentPatients.length" class="asa-list">
+                  <li v-for="p in statsData.recent.recentPatients" :key="p.id" class="asa-row">
+                    <div class="asa-row__main">
+                      <div class="asa-row__text">
+                        <h4 class="asa-row__title">{{ statName(p.firstName, p.lastName) }}</h4>
+                        <div class="asa-row__sub"><span dir="ltr">{{ p.phone || '---' }}</span></div>
+                      </div>
+                    </div>
+                    <span class="asa-pill stat-date-pill">{{ statDate(p.createdAt) }}</span>
+                  </li>
+                </ul>
+                <p v-else class="text-center! py-7! asa-card-sub">{{ $t('dashboard.noRecentData') }}</p>
+              </div>
+
+              <div class="asa-card asa-panel">
+                <div class="asa-panel__head">
+                  <span class="asa-panel__icon asa-tint asa-tint--green asa-tint--sm">
+                    <HeartPulse class="w-4! h-4! fill-current" />
+                  </span>
+                  <h3 class="asa-panel__title">{{ $t('dashboard.recentVisits') }}</h3>
+                  <NuxtLink to="/appointments" class="asa-link asa-link--start-end">{{ $t('common.viewAll') }}</NuxtLink>
+                </div>
+                <ul v-if="statsData.recent.recentVisits.length" class="asa-list">
+                  <li v-for="v in statsData.recent.recentVisits" :key="v.id" class="asa-row">
+                    <div class="asa-row__main">
+                      <div class="asa-row__text">
+                        <h4 class="asa-row__title">{{ v.patientName || '---' }}</h4>
+                        <div class="asa-row__sub"><span>{{ v.visitType || '---' }}</span></div>
+                      </div>
+                    </div>
+                    <span class="asa-pill stat-date-pill">{{ statDate(v.visitDate) }}</span>
+                  </li>
+                </ul>
+                <p v-else class="text-center! py-7! asa-card-sub">{{ $t('dashboard.noRecentData') }}</p>
+              </div>
+
+              <div class="asa-card asa-panel">
+                <div class="asa-panel__head">
+                  <span class="asa-panel__icon asa-tint asa-tint--orange asa-tint--sm">
+                    <DocumentText class="w-4! h-4! fill-current" />
+                  </span>
+                  <h3 class="asa-panel__title">{{ $t('dashboard.recentNotes') }}</h3>
+                </div>
+                <ul v-if="statsData.recent.recentNotes.length" class="asa-list">
+                  <li v-for="n in statsData.recent.recentNotes" :key="n.id" class="asa-row">
+                    <div class="asa-row__main">
+                      <div class="asa-row__text">
+                        <h4 class="asa-row__title">{{ n.patientName || '---' }}</h4>
+                        <div class="asa-row__sub stat-sub-truncate">{{ n.content || '---' }}</div>
+                      </div>
+                    </div>
+                    <span class="asa-pill stat-date-pill">{{ statDate(n.createdAt) }}</span>
+                  </li>
+                </ul>
+                <p v-else class="text-center! py-7! asa-card-sub">{{ $t('dashboard.noRecentData') }}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- Insights & Resource Usage -->
         <section v-else-if="sec.id === 'insights' && sec.visible" :class="sectionSpanOf(sec)" class="asa-sec">
           <p class="asa-sec__label">{{ sectionTitleOf(sec) }}</p>
@@ -342,7 +803,8 @@
               </div>
 
               <div v-if="hasTrendData" class="relative! mt-4! animate-fade-in-up">
-                <svg :viewBox="`0 0 600 210`" class="w-full! h-auto! select-none!" role="img"
+                <svg
+:viewBox="`0 0 600 210`" class="w-full! h-auto! select-none!" role="img"
                   :aria-label="$t('dashboard.revenueTrend')">
                   <defs>
                     <linearGradient id="dash-rev-fill" x1="0" y1="0" x2="0" y2="1">
@@ -351,27 +813,33 @@
                     </linearGradient>
                   </defs>
 
-                  <line v-for="gy in yGridLines" :key="gy.id" :x1="0" :x2="600" :y1="gy.y" :y2="gy.y"
+                  <line
+v-for="gy in yGridLines" :key="gy.id" :x1="0" :x2="600" :y1="gy.y" :y2="gy.y"
                     class="asa-chart-grid" stroke-width="1" />
-                  <text v-for="gy in yGridLines" :key="gy.id" :x="600" :y="gy.y - 5" text-anchor="end"
+                  <text
+v-for="gy in yGridLines" :key="gy.id" :x="600" :y="gy.y - 5" text-anchor="end"
                     class="asa-chart-axis">
                     {{ gy.label }}
                   </text>
 
                   <path :d="trendLayout.area" fill="url(#dash-rev-fill)" />
-                  <path :d="trendLayout.line" fill="none" stroke="var(--asa-accent)" stroke-width="2.5"
+                  <path
+:d="trendLayout.line" fill="none" stroke="var(--asa-accent)" stroke-width="2.5"
                     stroke-linecap="round" stroke-linejoin="round" />
-                  <circle v-for="pt in trendLayout.dots" :key="pt.key" :cx="pt.x" :cy="pt.y" r="3"
+                  <circle
+v-for="pt in trendLayout.dots" :key="pt.key" :cx="pt.x" :cy="pt.y" r="3"
                     fill="var(--asa-accent)" />
 
-                  <text v-for="xl in xLabels" :key="xl.key" :x="xl.x" :y="196" text-anchor="middle"
+                  <text
+v-for="xl in xLabels" :key="xl.key" :x="xl.x" :y="196" text-anchor="middle"
                     class="asa-chart-axis">
                     {{ xl.label }}
                   </text>
                 </svg>
               </div>
 
-              <UiEmptyState v-else :title="$t('dashboard.noTrendData')" :description="$t('dashboard.noTrendDataDesc')"
+              <UiEmptyState
+v-else :title="$t('dashboard.noTrendData')" :description="$t('dashboard.noTrendDataDesc')"
                 class="py-10!">
                 <template #icon>
                   <LineChart class="w-8! h-8! text-slate-300! dark:!text-zinc-600! fill-current" />
@@ -411,13 +879,15 @@
                   </div>
 
                   <div class="asa-bar" role="progressbar" :aria-valuenow="smsPercent" aria-valuemin="0" aria-valuemax="100">
-                    <div class="asa-bar__fill"
+                    <div
+class="asa-bar__fill"
                       :class="smsPercent > 20 ? 'asa-bar__fill--teal' : smsPercent > 5 ? 'asa-bar__fill--amber' : 'asa-bar__fill--rose'"
                       :style="{ width: smsPercent + '%' }" />
                   </div>
 
                   <div class="asa-meter__meta">
-                    <span class="asa-pill"
+                    <span
+class="asa-pill"
                       :class="smsPercent > 20 ? 'asa-pill--teal' : smsPercent > 5 ? 'asa-pill--amber' : 'asa-pill--rose'">
                       {{ $t('dashboard.smsRemaining', { percent: smsPercent }) }}
                     </span>
@@ -593,7 +1063,8 @@
           <div class="asa-card asa-list-card">
             <UiLoadingSpinner v-if="loadingSchedule" class="my-8!" />
 
-            <UiEmptyState v-else-if="!todayAppointments.length" :title="$t('dashboard.noTodayAppointments')"
+            <UiEmptyState
+v-else-if="!todayAppointments.length" :title="$t('dashboard.noTodayAppointments')"
               :description="$t('dashboard.todayScheduleEmpty')" class="py-12!">
               <template #icon>
                 <Calendar class="w-8! h-8! text-slate-300! dark:!text-zinc-600! fill-current" />
@@ -629,7 +1100,8 @@
     </UiPageContainer>
 
     <!-- ─── Edit Profile Dialog ─── -->
-    <v-dialog v-model="editDialogOpen" max-width="600" persistent scrollable transition="dialog-bottom-transition"
+    <v-dialog
+v-model="editDialogOpen" max-width="600" persistent scrollable transition="dialog-bottom-transition"
       @keydown.esc="editDialogOpen = false">
       <v-card class="asa-dialog overflow-hidden!" elevation="0">
         <div class="asa-dialog__head">
@@ -637,7 +1109,8 @@
             <h2 class="asa-dialog__title">{{ $t('dashboard.editProfileTitle') }}</h2>
             <span class="asa-dialog__sub">{{ $t('dashboard.editProfileSubtitle') }}</span>
           </div>
-          <v-btn icon variant="text" size="small" class="!text-slate-400 hover:!text-slate-800"
+          <v-btn
+icon variant="text" size="small" class="!text-slate-400 hover:!text-slate-800"
             @click="editDialogOpen = false">
             <CloseCircle class="w-6! h-6! fill-slate-600! dark:!fill-slate-200!" />
           </v-btn>
@@ -647,17 +1120,20 @@
           <div class="space-y-5!">
             <div>
               <label class="asa-field-label">{{ $t('dashboard.phone') }}</label>
-              <v-text-field v-model="editForm.phone" variant="outlined" density="comfortable" placeholder="09123456789"
+              <v-text-field
+v-model="editForm.phone" variant="outlined" density="comfortable" placeholder="09123456789"
                 dir="ltr" hide-details class="rounded-xl!" />
             </div>
             <div>
               <label class="asa-field-label">{{ $t('dashboard.address') }}</label>
-              <v-textarea v-model="editForm.address" variant="outlined" density="comfortable"
+              <v-textarea
+v-model="editForm.address" variant="outlined" density="comfortable"
                 :placeholder="$t('dashboard.addressPlaceholder')" rows="2" hide-details class="rounded-xl!" />
             </div>
             <div>
               <label class="asa-field-label">{{ $t('dashboard.insuranceType') }}</label>
-              <v-select v-model="editForm.insurance_type" :items="insuranceOptions" item-title="label"
+              <v-select
+v-model="editForm.insurance_type" :items="insuranceOptions" item-title="label"
                 item-value="key" variant="outlined" density="comfortable"
                 :placeholder="$t('dashboard.selectInsurance')" hide-details class="rounded-xl!" />
             </div>
@@ -697,6 +1173,9 @@ import Activity from '~/components/icons/Activity.vue'
 import Wallet from '~/components/icons/Wallet.vue'
 import FileText from '~/components/icons/FileText.vue'
 import LineChart from '~/components/icons/LineChart.vue'
+import Microscope from '~/components/icons/Microscope.vue'
+import MedicalKit from '~/components/icons/MedicalKit.vue'
+import UserPlus from '~/components/icons/UserPlus.vue'
 import BreakdownRow from '~/components/dashboard/BreakdownRow.vue'
 import CustomizeDashboardDialog from '~/components/dashboard/CustomizeDashboardDialog.vue'
 import { INSURANCE_TYPES, INSURANCE_TYPE_KEYS } from '~/types/insurance'
@@ -1032,12 +1511,267 @@ function formatCompactToman(rials: number): string {
   return new Intl.NumberFormat('fa-IR', { notation: 'compact', maximumFractionDigits: 1 }).format(toman)
 }
 
+function formatCompactNumber(n: number): string {
+  return new Intl.NumberFormat('fa-IR', { notation: 'compact', maximumFractionDigits: 1 }).format(
+    Math.max(0, Math.round(n))
+  )
+}
+
+interface StatsOverview {
+  patientsTotal: number
+  patientsThisMonth: number
+  patientsThisWeek: number
+  patientsToday: number
+  visitsTotal: number
+  visitsThisMonth: number
+  visitsThisWeek: number
+  visitsToday: number
+  appointmentsTotal: number
+  appointmentsPending: number
+  appointmentsConfirmed: number
+  appointmentsCompleted: number
+  appointmentsToday: number
+}
+
+interface StatsClinical {
+  prescriptionsTotal: number
+  prescriptionsActive: number
+  prescriptionsThisMonth: number
+  labOrdersTotal: number
+  labOrdersPending: number
+  labOrdersCompleted: number
+  labResultsTotal: number
+  labResultsThisMonth: number
+  labResultsAbnormal: number
+  patientNotesTotal: number
+  patientNotesThisMonth: number
+  patientNotesThisWeek: number
+}
+
+interface StatsCommunication {
+  smsSent: number | null
+  messagesTotal: number
+  messagesUnread: number
+  messagesThisMonth: number
+}
+
+interface StatsFinancial {
+  revenueThisMonth: number
+  dailyReportsThisMonth: number
+  billingTotal: number
+  billingPaid: number
+  billingPending: number
+  billingPaidAmount: number
+  billingPendingAmount: number
+}
+
+interface StatsLeads {
+  leadsTotal: number
+  leadsNew: number
+  leadsConverted: number
+  leadsLost: number
+  leadsThisMonth: number
+  conversionRate: number
+}
+
+interface StatsTrends {
+  patientsByMonth: { month: string; count: number }[]
+  visitsByMonth: { month: string; count: number }[]
+  revenueByMonth: { month: string; revenue: number }[]
+}
+
+interface StatsRecentItem {
+  id: string
+  firstName?: string | null
+  lastName?: string | null
+  phone?: string | null
+  patientName?: string | null
+  visitDate?: string | null
+  visitType?: string | null
+  content?: string | null
+  createdAt?: string | null
+}
+
+interface StatsRecent {
+  recentPatients: StatsRecentItem[]
+  recentVisits: StatsRecentItem[]
+  recentNotes: StatsRecentItem[]
+}
+
+interface DashboardStatsData {
+  overview: StatsOverview
+  clinical: StatsClinical
+  communication: StatsCommunication
+  financial: StatsFinancial
+  leads: StatsLeads
+  trends: StatsTrends
+  recent: StatsRecent
+}
+
+const statsData = ref<DashboardStatsData | null>(null)
+
+const statTrendMetric = ref<'visits' | 'patients' | 'revenue'>('visits')
+
+const statTrendOptions = computed(() => [
+  { key: 'visits' as const, label: t('dashboard.totalVisits') },
+  { key: 'patients' as const, label: t('dashboard.totalPatients') },
+  { key: 'revenue' as const, label: t('dashboard.totalRevenue') },
+])
+
+const statTrendOptionLabel = computed(
+  () => statTrendOptions.value.find((o) => o.key === statTrendMetric.value)?.label ?? ''
+)
+
+const statTrendPoints = computed(() => {
+  const trends = statsData.value?.trends
+  if (!trends) return []
+  const src =
+    statTrendMetric.value === 'patients'
+      ? trends.patientsByMonth.map((p) => ({ month: p.month, value: p.count }))
+      : statTrendMetric.value === 'revenue'
+        ? trends.revenueByMonth.map((p) => ({ month: p.month, value: p.revenue }))
+        : trends.visitsByMonth.map((p) => ({ month: p.month, value: p.count }))
+  const map = new Map(src.map((p) => [p.month, p.value]))
+  const now = new Date()
+  const pts: { key: string; label: string; value: number }[] = []
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+    pts.push({ key, label: moment(d).format('jMM'), value: map.get(key) ?? 0 })
+  }
+  return pts
+})
+
+const statTrendHasData = computed(() => statTrendPoints.value.some((p) => p.value > 0))
+
+const statTrendMax = computed(() => {
+  const m = Math.max(...statTrendPoints.value.map((p) => p.value), 0)
+  if (m <= 0) return 1
+  const magnitude = Math.pow(10, Math.floor(Math.log10(m)))
+  return Math.max(1, magnitude * Math.ceil((m * 1.12) / magnitude))
+})
+
+const statTrendGrid = computed(() => {
+  const H = 210
+  const PT = 18
+  const PB = 26
+  const innerH = H - PT - PB
+  const steps = [1, 0.75, 0.5, 0.25]
+  return steps.map((f, i) => ({
+    id: `sg-${i}`,
+    y: PT + innerH - f * innerH,
+    label:
+      statTrendMetric.value === 'revenue'
+        ? formatCompactToman(statTrendMax.value * f)
+        : formatCompactNumber(statTrendMax.value * f),
+  }))
+})
+
+const statTrendBars = computed(() => {
+  const pts = statTrendPoints.value
+  const W = 600
+  const H = 210
+  const PX = 8
+  const PT = 18
+  const PB = 26
+  const innerH = H - PT - PB
+  const n = Math.max(pts.length, 1)
+  const band = (W - PX * 2) / n
+  const barW = Math.min(26, band * 0.56)
+  const maxV = statTrendMax.value
+  return pts.map((p, i) => {
+    const ratio = maxV > 0 ? p.value / maxV : 0
+    const h = p.value > 0 ? Math.max(3, ratio * innerH) : 0
+    const x = PX + i * band + (band - barW) / 2
+    const y = PT + innerH - h
+    const formatted =
+      statTrendMetric.value === 'revenue' ? formatToman(p.value) : formatNumber(p.value)
+    return {
+      key: p.key,
+      x,
+      y,
+      w: barW,
+      h,
+      title: `${p.label}: ${formatted}`,
+      valueLabel:
+        statTrendMetric.value === 'revenue' ? formatCompactToman(p.value) : formatCompactNumber(p.value),
+    }
+  })
+})
+
+const statTrendPeakIdx = computed(() => {
+  const pts = statTrendPoints.value
+  let idx = -1
+  let maxV = 0
+  pts.forEach((p, i) => {
+    if (p.value > maxV) {
+      maxV = p.value
+      idx = i
+    }
+  })
+  return idx
+})
+
+const statTrendXLabels = computed(() => {
+  const pts = statTrendPoints.value
+  const PX = 8
+  const band = (600 - PX * 2) / Math.max(pts.length, 1)
+  return pts.map((p, i) => ({ key: p.key, label: p.label, x: PX + i * band + band / 2 }))
+})
+
+const apptSegments = computed(() => {
+  const o = statsData.value?.overview
+  if (!o || o.appointmentsTotal <= 0) return []
+  const total = o.appointmentsTotal
+  const circ = 2 * Math.PI * 46
+  const parts = [
+    { key: 'confirmed', value: o.appointmentsConfirmed, color: 'var(--asa-accent)', label: t('dashboard.confirmed') },
+    { key: 'pending', value: o.appointmentsPending, color: 'var(--asa-amber)', label: t('dashboard.pending') },
+    { key: 'completed', value: o.appointmentsCompleted, color: 'var(--asa-green)', label: t('dashboard.completed') },
+    {
+      key: 'other',
+      value: Math.max(0, total - o.appointmentsConfirmed - o.appointmentsPending - o.appointmentsCompleted),
+      color: '#94a3b8',
+      label: t('dashboard.statsOther'),
+    },
+  ]
+  let acc = 0
+  return parts
+    .filter((p) => p.value > 0)
+    .map((p) => {
+      const len = (p.value / total) * circ
+      const seg = {
+        ...p,
+        dash: `${len.toFixed(2)} ${(circ - len).toFixed(2)}`,
+        offset: -acc,
+        pct: Math.round((p.value / total) * 100),
+      }
+      acc += len
+      return seg
+    })
+})
+
+function statName(first?: string | null, last?: string | null): string {
+  const name = `${first ?? ''} ${last ?? ''}`.trim()
+  return name || '---'
+}
+
+function statDate(value?: string | null): string {
+  return value ? formatJalaliDate(String(value).slice(0, 10)) : '---'
+}
+
 async function fetchDashboard() {
   loading.value = true
   try {
-    const res = await apiFetch<{ success: boolean; data: DashboardData }>('/api/dashboard')
+    const [res, statsRes] = await Promise.all([
+      apiFetch<{ success: boolean; data: DashboardData }>('/api/dashboard'),
+      apiFetch<{ success: boolean; data: DashboardStatsData }>('/api/dashboard/stats').catch(() => null)
+    ])
     if (res.success) {
       data.value = res.data
+    }
+    if (statsRes?.success) {
+      statsData.value = statsRes.data
     }
   } catch {
     // Degrade gracefully
@@ -2315,6 +3049,180 @@ useSeoMeta({ title: () => `${t('dashboard.title')} | ${t('seo.systemManagement')
 
   .asa-skel::after {
     animation: none;
+  }
+}
+
+/* ── Statistics section ─────────────────────────────── */
+
+.stat-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.stat-switch button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
+}
+
+.stat-switch__idle {
+  background: var(--asa-track);
+  color: var(--asa-label-2);
+}
+
+.stat-switch__idle:hover {
+  color: var(--asa-label);
+}
+
+.stat-group-label {
+  padding: 0.875rem 1.25rem 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--asa-label-3);
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 1.25rem;
+  transition: background-color 150ms var(--ease-default);
+}
+
+.stat-row:hover {
+  background: rgba(120, 120, 128, 0.06);
+}
+
+.stat-row__label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--asa-label-2);
+}
+
+.stat-row__value {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--asa-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-row--highlight .stat-row__label,
+.stat-row--highlight .stat-row__value {
+  color: var(--asa-accent-deep);
+}
+
+.dark .stat-row--highlight .stat-row__label,
+.dark .stat-row--highlight .stat-row__value {
+  color: var(--asa-accent);
+}
+
+.stat-donut-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-donut {
+  width: 132px;
+  height: 132px;
+  flex-shrink: 0;
+}
+
+.stat-donut__value {
+  font-size: 21px;
+  font-weight: 700;
+  fill: var(--asa-label);
+}
+
+.stat-donut__caption {
+  font-size: 10px;
+  font-weight: 600;
+  fill: var(--asa-label-3);
+}
+
+.stat-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 160px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stat-legend__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.stat-legend__dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.stat-legend__label {
+  flex: 1;
+  color: var(--asa-label-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stat-legend__value {
+  font-weight: 700;
+  color: var(--asa-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-legend__pct {
+  min-width: 2.4rem;
+  text-align: end;
+  font-size: 0.75rem;
+  color: var(--asa-label-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-date-pill {
+  flex-shrink: 0;
+}
+
+.stat-unit {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--asa-label-2);
+  letter-spacing: 0;
+}
+
+.stat-sub-truncate {
+  max-width: 26ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .stat-donut-wrap {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stat-donut {
+    align-self: center;
+  }
+
+  .stat-legend {
+    min-width: 0;
   }
 }
 </style>

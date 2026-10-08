@@ -734,8 +734,8 @@
   }
 
   .dark .crm-empty-icon {
-    background-color: var(--color-border);
-    border-color: var(--color-border);
+    background-color: #242426;
+    border-color: var(--color-dark-grey);
   }
 
   .crm-empty-title {

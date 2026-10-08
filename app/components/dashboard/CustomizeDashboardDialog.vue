@@ -360,6 +360,10 @@ async function save() {
   background: var(--asa-green);
 }
 
+.cst-dot--statistics {
+  background: var(--asa-indigo);
+}
+
 .cst-dot--insights {
   background: var(--asa-indigo);
 }

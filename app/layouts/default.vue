@@ -582,9 +582,6 @@ const activeGroupKey = computed(() => {
   z-index: -1;
 }
 
-.crm-header__inner.is-scrolled::before {
-  background: rgba(255, 255, 255, 0.9);
-}
 
 :global(.dark) .crm-header__inner::before {
   background: rgba(15, 17, 23, 0.78);
@@ -617,12 +614,20 @@ const activeGroupKey = computed(() => {
   flex-shrink: 0;
 }
 
+.dark .crm-brand__logo {
+  filter: brightness(15.2) contrast(1.1);
+}
+
 .crm-brand__name {
   font-size: 0.9375rem;
   font-weight: 700;
   color: #1e293b;
   line-height: 1.25;
   white-space: nowrap;
+}
+
+.dark .crm-brand__name {
+  color: #adb3be;
 }
 
 :global(.dark) .crm-brand__name {
@@ -657,6 +662,11 @@ const activeGroupKey = computed(() => {
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+.dark .crm-nav {
+  background-color: #242426;
+  color: white
+}
+
 :global(.dark) .crm-nav {
   background: rgba(15, 17, 23, 0.5);
   border-color: rgba(255, 255, 255, 0.06);
@@ -680,6 +690,10 @@ const activeGroupKey = computed(() => {
   outline: none;
   -webkit-tap-highlight-color: transparent;
   transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.dark .crm-nav-toggle {
+  color: #afb3b9;
 }
 
 .crm-nav-toggle:hover {
@@ -758,6 +772,10 @@ const activeGroupKey = computed(() => {
   outline: none;
 }
 
+.dark .crm-nav__trigger {
+  color: #afb3b9;
+}
+
 .crm-nav__trigger:hover {
   background: rgba(0, 173, 181, 0.08);
   color: #00838f;
@@ -770,6 +788,10 @@ const activeGroupKey = computed(() => {
   font-weight: 600;
 }
 
+.dark .crm-nav__trigger--active {
+  color: #000000;
+}
+
 :global(.dark) .crm-nav__trigger {
   color: #94a3b8;
 }
@@ -778,6 +800,12 @@ const activeGroupKey = computed(() => {
   background: rgba(0, 173, 181, 0.1);
   color: #22d3ee;
 }
+
+.dark .crm-nav__trigger:hover {
+  background: rgba(11, 231, 243, 0.695);
+  color: #000000;
+}
+
 
 :global(.dark) .crm-nav__trigger--active {
   background: rgba(0, 173, 181, 0.14);
@@ -825,6 +853,10 @@ const activeGroupKey = computed(() => {
   backdrop-filter: blur(24px) saturate(1.6);
   -webkit-backdrop-filter: blur(24px) saturate(1.6);
   z-index: 110;
+}
+
+.dark .crm-nav__dropdown {
+  background: #29292C;
 }
 
 :global(.dark) .crm-nav__dropdown {
@@ -879,6 +911,10 @@ const activeGroupKey = computed(() => {
   text-decoration: none;
   transition: all 0.15s ease;
   outline: none;
+}
+
+.dark .crm-nav__item {
+  color: #afb3b9;
 }
 
 .crm-nav__item:hover {
@@ -1312,6 +1348,10 @@ const activeGroupKey = computed(() => {
   text-overflow: ellipsis;
 }
 
+.dark .crm-user-chip__name {
+  color: #adb3be;
+}
+
 :global(.dark) .crm-user-chip__name {
   color: #e2e8f0;
 }
@@ -1371,17 +1411,14 @@ const activeGroupKey = computed(() => {
 }
 
 :global(.dark) .dash-orb-a {
-  opacity: 0.32;
   background: radial-gradient(circle, rgba(0, 173, 181, 0.4), transparent 70%);
 }
 
 :global(.dark) .dash-orb-b {
-  opacity: 0.26;
   background: radial-gradient(circle, rgba(99, 102, 241, 0.32), transparent 70%);
 }
 
 :global(.dark) .dash-orb-c {
-  opacity: 0.22;
   background: radial-gradient(circle, rgba(16, 185, 129, 0.3), transparent 70%);
 }
 
@@ -1481,6 +1518,10 @@ const activeGroupKey = computed(() => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.dark .crm-drawer__brand-text h2 {
+  color: #adb3be;
 }
 
 :global(.dark) .crm-drawer__brand-text h2 {
@@ -1777,6 +1818,11 @@ const activeGroupKey = computed(() => {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.dark .crm-drawer__user-name {
+  color: #adb3be;
+}
+
 
 :global(.dark) .crm-drawer__user-name {
   color: #e2e8f0;

@@ -100,10 +100,27 @@ export interface CashbookEntryPage {
   }
 }
 
-export interface CashbookOwner {
+/** A ledger the signed-in user may read: their own, or one shared with them. */
+export interface CashbookLedger {
+  ownerId: string
+  ownerName: string | null
+  ownerRole: string
+}
+
+/** A user the ledger owner may still share with. */
+export interface CashbookGrantCandidate {
   id: string
   fullName: string | null
   role: string
+}
+
+/** An active grant the signed-in user has issued on their own ledger. */
+export interface CashbookGrant {
+  id: string
+  granteeId: string
+  granteeName: string | null
+  granteeRole: string
+  createdAt: string
 }
 
 export interface CashbookApiResponse<T> {

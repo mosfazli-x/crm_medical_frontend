@@ -3,9 +3,22 @@
     <!-- Cinematic curtain loader — draws the logo, then parts to reveal the page -->
     <LandingCurtainLoader @finished="onLoaderFinished" />
 
-    <!-- Time-of-day background video (shared with the aesthetic landing) -->
+    <!-- Background: the clinic film on desktop, the hero video on mobile -->
     <div class="ln-backdrop" aria-hidden="true">
-      <LandingTimeOfDayBackground />
+      <video
+        v-if="isMobile && !mobileVideoFailed"
+        ref="mobileVideoRef"
+        class="ln-backdrop__video"
+        src="/background-videos/mobile-hero.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        tabindex="-1"
+        @error="mobileVideoFailed = true"
+      />
+      <LandingTimeOfDayBackground v-else />
       <div class="ln-backdrop__veil" />
     </div>
 
@@ -88,6 +101,56 @@ const loaderShown = ref(false)
 function onLoaderFinished() {
   loaderShown.value = true
 }
+
+/* ── Mobile background ───────────────────────────────────────────────
+   Below the site's 48rem "laptop and up" breakpoint the hero film
+   replaces the time-of-day player, so phones download one video, not
+   four. Detected after hydration (isMobile starts false on both the
+   server and the client) to keep SSR markup matchable. */
+const isMobile = ref(false)
+const mobileVideoFailed = ref(false)
+const mobileVideoRef = ref<HTMLVideoElement | null>(null)
+
+const MOBILE_QUERY = '(max-width: 47.9375rem)'
+let mobileMq: MediaQueryList | null = null
+let mobileGestureHooked = false
+
+function onMobileMqChange(e: MediaQueryListEvent) {
+  isMobile.value = e.matches
+}
+
+function onFirstTouch() {
+  mobileVideoRef.value?.play().catch(() => {})
+}
+
+/** Some engines still refuse the implicit autoplay — retry explicitly,
+    then fall back to the first tap. */
+function tryPlayMobileVideo() {
+  const el = mobileVideoRef.value
+  if (!el) return
+  el.play().catch(() => {
+    if (mobileGestureHooked) return
+    mobileGestureHooked = true
+    window.addEventListener('pointerdown', onFirstTouch, { once: true })
+  })
+}
+
+onMounted(() => {
+  mobileMq = window.matchMedia(MOBILE_QUERY)
+  isMobile.value = mobileMq.matches
+  mobileMq.addEventListener('change', onMobileMqChange)
+})
+
+watch(isMobile, (active) => {
+  if (active) nextTick(tryPlayMobileVideo)
+})
+
+onBeforeUnmount(() => {
+  mobileMq?.removeEventListener('change', onMobileMqChange)
+  if (mobileGestureHooked) {
+    window.removeEventListener('pointerdown', onFirstTouch)
+  }
+})
 
 const dir = computed(() => (locale.value === 'fa' ? 'rtl' : 'ltr'))
 
@@ -260,6 +323,17 @@ useHead({
 /* Lift the shared background player from its 0.5 default so the film is
    actually the subject. Scoped override — the component itself is untouched. */
 .ln-backdrop :deep(.tod-bg__video--active) {
+  opacity: 0.94;
+}
+
+/* Mobile hero film — matches the lifted desktop treatment so the veil
+   and grain sit on it identically. */
+.ln-backdrop__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   opacity: 0.94;
 }
 
@@ -599,6 +673,10 @@ useHead({
 
   /* Without the film's midtones to lean on, protection goes back to global */
   .ln-backdrop :deep(.tod-bg__video--active) {
+    opacity: 0.45;
+  }
+
+  .ln-backdrop__video {
     opacity: 0.45;
   }
 
