@@ -919,7 +919,7 @@ useSeoMeta({ title: () => t('messaging.titleSeo') })
   margin-bottom: 1.125rem;
   padding: 1.375rem 1.5rem;
   border-radius: 1.5rem;
-  background: linear-gradient(135deg, #00adb5 0%, #0b8f99 52%, #0d6f86 100%);
+  background: linear-gradient(135deg, #5f8feb 0%, #0b8f99 52%, #0d6f86 100%);
   box-shadow: 0 1px 2px rgba(17, 24, 39, 0.06), 0 18px 34px -18px rgba(0, 122, 130, 0.65);
   color: #fff;
 }

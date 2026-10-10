@@ -367,7 +367,7 @@
               :length="productPages"
               :total-visible="5"
               density="comfortable"
-              color="#00adb5"
+              color="#5f8feb"
               rounded="circle"
             />
           </div>
@@ -700,7 +700,7 @@
               :length="movementPages"
               :total-visible="5"
               density="comfortable"
-              color="#00adb5"
+              color="#5f8feb"
               rounded="circle"
             />
           </div>
@@ -879,7 +879,7 @@
               :length="usagePages"
               :total-visible="5"
               density="comfortable"
-              color="#00adb5"
+              color="#5f8feb"
               rounded="circle"
             />
           </div>

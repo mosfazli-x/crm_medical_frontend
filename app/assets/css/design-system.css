@@ -12,47 +12,77 @@
    ───────────────────────────────────────── */
 
 :root {
+  /* Surfaces */
   --asa-bg-card: #ffffff;
-  --asa-card-ring: rgba(0, 0, 0, 0.055);
-  --asa-card-shadow: 0 1px 2px rgba(17, 24, 39, 0.04), 0 10px 22px -14px rgba(17, 24, 39, 0.16);
-  --asa-label: #1d1d1f;
-  --asa-label-2: #6e6e73;
-  --asa-label-3: #aeaeb2;
-  --asa-sep: rgba(60, 60, 67, 0.16);
-  --asa-track: rgba(120, 120, 128, 0.18);
-  --asa-accent: #00adb5;
-  --asa-accent-deep: #008c93;
-  --asa-accent-soft: rgba(0, 173, 181, 0.14);
-  --asa-green: #1a7f37;
-  --asa-green-soft: rgba(52, 199, 89, 0.16);
-  --asa-amber: #a15c00;
-  --asa-amber-soft: rgba(255, 149, 0, 0.16);
-  --asa-rose: #d70015;
-  --asa-rose-soft: rgba(255, 59, 48, 0.14);
-  --asa-indigo: #4b47b3;
-  --asa-indigo-soft: rgba(88, 86, 214, 0.16);
+  --asa-card-ring: rgba(30, 41, 59, 0.055);
+  --asa-card-shadow:
+    0 1px 2px rgba(30, 41, 59, 0.04),
+    0 10px 22px -14px rgba(30, 41, 59, 0.14);
+
+  /* Text */
+  --asa-label: #1e293b;
+  --asa-label-2: #64748b;
+  --asa-label-3: #94a3b8;
+
+  /* Borders / Separators */
+  --asa-sep: rgba(71, 85, 105, 0.14);
+  --asa-track: rgba(100, 116, 139, 0.16);
+
+  /* Primary / Blue */
+  --asa-accent: #7ba7f7;
+  --asa-accent-deep: #5f8fea;
+  --asa-accent-soft: rgba(123, 167, 247, 0.16);
+
+  /* Semantic Colors */
+  --asa-green: #5fae7f;
+  --asa-green-soft: rgba(134, 207, 168, 0.18);
+
+  --asa-amber: #c9954d;
+  --asa-amber-soft: rgba(244, 201, 130, 0.2);
+
+  --asa-rose: #d97878;
+  --asa-rose-soft: rgba(232, 154, 154, 0.18);
+
+  /* Secondary Accent */
+  --asa-indigo: #7f86d9;
+  --asa-indigo-soft: rgba(127, 134, 217, 0.16);
 }
 
 :root.dark {
-  --asa-bg-card: #1c1c1e;
-  --asa-card-ring: rgba(255, 255, 255, 0.09);
-  --asa-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 36px -20px rgba(0, 0, 0, 0.7);
-  --asa-label: #f5f5f7;
-  --asa-label-2: rgba(235, 235, 245, 0.6);
-  --asa-label-3: rgba(235, 235, 245, 0.3);
-  --asa-sep: rgba(255, 255, 255, 0.09);
-  --asa-track: rgba(120, 120, 128, 0.34);
-  --asa-accent: #22d3ee;
-  --asa-accent-deep: #67e8f9;
-  --asa-accent-soft: rgba(34, 211, 238, 0.16);
-  --asa-green: #30d158;
-  --asa-green-soft: rgba(48, 209, 88, 0.16);
-  --asa-amber: #ff9f0a;
-  --asa-amber-soft: rgba(255, 159, 10, 0.16);
-  --asa-rose: #ff453a;
-  --asa-rose-soft: rgba(255, 69, 58, 0.14);
-  --asa-indigo: #9290f8;
-  --asa-indigo-soft: rgba(94, 92, 230, 0.2);
+  /* Surfaces */
+  --asa-bg-card: #191e24;
+  --asa-card-ring: rgba(231, 236, 243, 0.07);
+  --asa-card-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.32),
+    0 18px 36px -20px rgba(0, 0, 0, 0.62);
+
+  /* Text */
+  --asa-label: #e7ecf3;
+  --asa-label-2: #98a4b3;
+  --asa-label-3: #667281;
+
+  /* Borders / Separators */
+  --asa-sep: rgba(231, 236, 243, 0.08);
+  --asa-track: rgba(148, 163, 184, 0.22);
+
+  /* Primary / Blue */
+  --asa-accent: #8bb8ff;
+  --asa-accent-deep: #78a9f5;
+  --asa-accent-soft: rgba(139, 184, 255, 0.16);
+
+  /* Semantic Colors */
+  --asa-green: #8dd8b0;
+  --asa-green-soft: rgba(141, 216, 176, 0.16);
+
+  --asa-amber: #f5cf8e;
+  --asa-amber-soft: rgba(245, 207, 142, 0.16);
+
+  --asa-rose: #eeaaaa;
+  --asa-rose-soft: rgba(238, 170, 170, 0.15);
+
+  /* Secondary Accent */
+  --asa-indigo: #a2a8ee;
+  --asa-indigo-soft: rgba(162, 168, 238, 0.18);
 }
 
 @layer components {
@@ -2488,6 +2518,10 @@
   scrollbar-width: none;
 }
 
+.dark .v-navigation-drawer__content {
+  background-color: #222831;
+}
+
 .v-navigation-drawer__content::-webkit-scrollbar {
   display: none;
 }
@@ -2943,7 +2977,7 @@
 }
 
 /* The library paints the selected day with the `color` prop
-   (#00adb5) and white text, which is only 2.75:1. A dark
+   (#5f8feb) and white text, which is only 2.75:1. A dark
    label on the same accent clears AA comfortably. */
 .vpd-day.vpd-selected .vpd-day-text,
 .vpd-day.vpd-selected .vpd-day-effect {

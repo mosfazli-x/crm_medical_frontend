@@ -136,7 +136,7 @@
           {{ t('mySessions.pageInfo', { page: currentPage, totalPages, total: totalCount }) }}
         </p>
         <v-pagination v-if="totalPages > 1" v-model="currentPage" :length="totalPages" :total-visible="5"
-          density="comfortable" color="#00adb5" rounded="circle" :disabled="loading" />
+          density="comfortable" color="#5f8feb" rounded="circle" :disabled="loading" />
       </div>
     </div>
 

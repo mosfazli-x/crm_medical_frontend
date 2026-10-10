@@ -157,7 +157,7 @@
         <v-card-actions class="px-6 pb-6 pt-2 flex gap-3 bg-white dark:bg-slate-800">
           <v-btn variant="text" color="slate-600" class="dark:text-slate-400" @click="closeAddDialog">{{ $t('common.cancel') }}</v-btn>
           <v-spacer />
-          <v-btn variant="flat" color="#00ADB5" :loading="saving" @click="submitNewRange">{{ $t('common.save') }}</v-btn>
+          <v-btn variant="flat" color="#5f8feb" :loading="saving" @click="submitNewRange">{{ $t('common.save') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -192,7 +192,7 @@
           </v-btn>
           <v-spacer />
           <v-btn variant="text" color="slate-600" class="dark:text-slate-400" @click="closeEditDialog">{{ $t('common.cancel') }}</v-btn>
-          <v-btn variant="flat" color="#00ADB5" :loading="saving" @click="submitEditRange">{{ $t('common.save') }}</v-btn>
+          <v-btn variant="flat" color="#5f8feb" :loading="saving" @click="submitEditRange">{{ $t('common.save') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

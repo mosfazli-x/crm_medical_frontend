@@ -171,7 +171,7 @@
                 <p class="pf-row__sub">{{ t('myProfile.smsNotificationsDesc') }}</p>
               </div>
             </div>
-            <v-switch :model-value="smsEnabled" color="#00adb5" hide-details :loading="smsToggleLoading"
+            <v-switch :model-value="smsEnabled" color="#5f8feb" hide-details :loading="smsToggleLoading"
               @update:model-value="(val: boolean) => togglePref('sms', val)" />
           </div>
 
@@ -188,12 +188,12 @@
             <v-tooltip v-if="telegramToggleDisabled" :text="t('myProfile.connectTelegramFirst')" location="top">
               <template #activator="{ props }">
                 <div v-bind="props">
-                  <v-switch :model-value="telegramEnabled" color="#00adb5" hide-details disabled
+                  <v-switch :model-value="telegramEnabled" color="#5f8feb" hide-details disabled
                     :loading="telegramToggleLoading" />
                 </div>
               </template>
             </v-tooltip>
-            <v-switch v-else :model-value="telegramEnabled" color="#00adb5" hide-details
+            <v-switch v-else :model-value="telegramEnabled" color="#5f8feb" hide-details
               :loading="telegramToggleLoading"
               @update:model-value="(val: boolean) => togglePref('telegram', val)" />
           </div>

@@ -15,30 +15,38 @@
       >
         <span class="cbpp__eyebrow">{{ t('cashbook.period') }}</span>
         <span class="cbpp__value">
-          <v-icon size="17" class="cbpp__cal">{{ isCurrent ? 'mdi-calendar-month' : 'mdi-calendar-month-outline' }}</v-icon>
+          <v-icon size="17" class="cbpp__cal">{{ mode === 'custom' ? 'mdi-calendar-range' : (isCurrent ? 'mdi-calendar-month' : 'mdi-calendar-month-outline') }}</v-icon>
           <span class="cbpp__value-text">{{ label }}</span>
         </span>
         <span class="cbpp__span" dir="auto">{{ rangeText }}</span>
       </button>
 
-      <span class="cbpp__rule" aria-hidden="true" />
-      <button
-        type="button"
-        class="cbpp__nav cbpp__nav--prev"
-        :aria-label="t('cashbook.previousMonth')"
-        @click="$emit('shift', -1)"
-      >
-        <v-icon size="18">mdi-chevron-left</v-icon>
-      </button>
-      <span class="cbpp__rule" aria-hidden="true" />
-      <button
-        type="button"
-        class="cbpp__nav"
-        :aria-label="t('cashbook.nextMonth')"
-        @click="$emit('shift', 1)"
-      >
-        <v-icon size="18">mdi-chevron-right</v-icon>
-      </button>
+      <template v-if="mode === 'month'">
+        <span class="cbpp__rule" aria-hidden="true" />
+        <button
+          type="button"
+          class="cbpp__nav cbpp__nav--prev"
+          :aria-label="t('cashbook.previousMonth')"
+          @click="$emit('shift', -1)"
+        >
+          <v-icon size="18">mdi-chevron-left</v-icon>
+        </button>
+        <span class="cbpp__rule" aria-hidden="true" />
+        <button
+          type="button"
+          class="cbpp__nav"
+          :aria-label="t('cashbook.nextMonth')"
+          @click="$emit('shift', 1)"
+        >
+          <v-icon size="18">mdi-chevron-right</v-icon>
+        </button>
+      </template>
+      <template v-else>
+        <span class="cbpp__rule" aria-hidden="true" />
+        <button type="button" class="cbpp__nav" :aria-label="t('cashbook.customRange')" @click="toggle">
+          <v-icon size="18">mdi-calendar-edit</v-icon>
+        </button>
+      </template>
     </div>
 
     <Transition name="cbpp-pop">
@@ -50,8 +58,28 @@
         @keydown.esc="close(true)"
       >
         <div class="cbpp__head">
-          <span class="cbpp__head-title">{{ t('cashbook.pickPeriod') }}</span>
+          <div class="cbpp__tabs" role="tablist" :aria-label="t('cashbook.period')">
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="activeTab === 'month'"
+              :class="{ 'is-on': activeTab === 'month' }"
+              @click="switchTab('month')"
+            >
+              {{ t('cashbook.rangeModeMonth') }}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="activeTab === 'custom'"
+              :class="{ 'is-on': activeTab === 'custom' }"
+              @click="switchTab('custom')"
+            >
+              {{ t('cashbook.rangeModeCustom') }}
+            </button>
+          </div>
           <button
+            v-if="activeTab === 'month'"
             type="button"
             class="cbpp__today"
             :disabled="isCurrent"
@@ -62,6 +90,7 @@
           </button>
         </div>
 
+        <template v-if="activeTab === 'month'">
         <div class="cbpp__years" role="radiogroup" :aria-label="t('cashbook.year')" @keydown="onYearKey">
           <button
             v-for="year in years"
@@ -109,6 +138,72 @@
           <v-icon size="15">mdi-calendar-range-outline</v-icon>
           <span class="cbpp__foot-text">{{ t('cashbook.periodCovers', { from: rangeFrom, to: rangeTo }) }}</span>
         </div>
+        </template>
+
+        <template v-else>
+          <div class="cbpp__custom">
+            <label class="cbpp__field">
+              <span class="cbpp__field-label">{{ t('cashbook.fromDate') }}</span>
+              <PersianDatetimePicker
+                v-model="draftFrom"
+                type="date"
+                format="YYYY-MM-DD"
+                display-format="jYYYY/jMM/jDD"
+                color="#5f8feb"
+                auto-submit
+                clearable
+                custom-input
+                :placeholder="t('cashbook.datePlaceholder')"
+                class="cbpp__picker"
+                input-class="cbpp__picker-input"
+              />
+            </label>
+            <label class="cbpp__field">
+              <span class="cbpp__field-label">{{ t('cashbook.toDate') }}</span>
+              <PersianDatetimePicker
+                v-model="draftTo"
+                type="date"
+                format="YYYY-MM-DD"
+                display-format="jYYYY/jMM/jDD"
+                color="#5f8feb"
+                auto-submit
+                clearable
+                custom-input
+                :placeholder="t('cashbook.datePlaceholder')"
+                class="cbpp__picker"
+                input-class="cbpp__picker-input"
+              />
+            </label>
+          </div>
+
+          <div class="cbpp__presets" role="group" :aria-label="t('cashbook.customRange')">
+            <button
+              v-for="preset in presets"
+              :key="preset.key"
+              type="button"
+              class="cbpp__preset"
+              :class="{ 'is-on': draftFrom === preset.from && draftTo === preset.to }"
+              @click="usePreset(preset)"
+            >
+              {{ t(`cashbook.rangePresets.${preset.key}`) }}
+            </button>
+          </div>
+
+          <div class="cbpp__custom-foot">
+            <span class="cbpp__foot-text">
+              {{ customValid ? customRangeText : t('cashbook.rangeInvalid') }}
+            </span>
+            <button
+              type="button"
+              class="asa-btn asa-btn--primary asa-btn--sm"
+              :disabled="!customValid"
+              @click="applyCustom"
+            >
+              <v-icon size="15">mdi-check</v-icon>
+              {{ t('cashbook.applyRange') }}
+            </button>
+          </div>
+        </template>
       </div>
     </Transition>
   </div>
@@ -130,10 +225,16 @@ const props = defineProps<{
   label: string
   rangeFrom: string
   rangeTo: string
+  mode: 'month' | 'custom'
+  customFrom: string
+  customTo: string
+  presets: Array<{ key: string; from: string; to: string }>
 }>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: CashbookPeriod]
+  'update:mode': [value: 'month' | 'custom']
+  'update:custom': [value: { from: string; to: string }]
   'shift': [delta: number]
   'today': []
 }>()
@@ -143,6 +244,9 @@ const faceEl = ref<HTMLButtonElement>()
 const yearEls = ref<HTMLButtonElement[]>([])
 const monthEls = ref<HTMLButtonElement[]>([])
 const isOpen = ref(false)
+const activeTab = ref<'month' | 'custom'>('month')
+const draftFrom = ref('')
+const draftTo = ref('')
 
 const isRtl = computed(() => locale.value === 'fa')
 const currentYear = moment().format('jYYYY')
@@ -156,6 +260,30 @@ const rangeFrom = computed(() => formatSpanDay(props.rangeFrom))
 const rangeTo = computed(() => formatSpanDay(props.rangeTo))
 const rangeText = computed(() => `${rangeFrom.value} – ${rangeTo.value}`)
 const triggerLabel = computed(() => `${t('cashbook.period')}: ${props.label}`)
+
+const customValid = computed(
+  () => /^\d{4}-\d{2}-\d{2}$/.test(draftFrom.value)
+    && /^\d{4}-\d{2}-\d{2}$/.test(draftTo.value)
+    && draftFrom.value <= draftTo.value,
+)
+const customRangeText = computed(() => `${formatSpanDay(draftFrom.value)} – ${formatSpanDay(draftTo.value)}`)
+
+function switchTab(tab: 'month' | 'custom') {
+  activeTab.value = tab
+  if (tab === 'month') emit('update:mode', 'month')
+}
+
+function usePreset(preset: { from: string; to: string }) {
+  draftFrom.value = preset.from
+  draftTo.value = preset.to
+}
+
+function applyCustom() {
+  if (!customValid.value) return
+  emit('update:mode', 'custom')
+  emit('update:custom', { from: draftFrom.value, to: draftTo.value })
+  close()
+}
 
 function formatSpanDay(value: string): string {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return '---'
@@ -173,7 +301,11 @@ function toggle() {
 
 function open() {
   isOpen.value = true
+  activeTab.value = props.mode
+  draftFrom.value = props.customFrom
+  draftTo.value = props.customTo
   nextTick(() => {
+    if (activeTab.value !== 'month') return
     const focusYear = yearEls.value.find((el) => el?.getAttribute('aria-checked') === 'true')
     const focusMonth = monthEls.value.find((el) => el?.getAttribute('aria-checked') === 'true')
     focusMonth?.focus()
@@ -457,6 +589,134 @@ onUnmounted(() => document.removeEventListener('mousedown', onPointerDown))
 .cbpp__today:focus-visible {
   outline: 2px solid var(--asa-accent);
   outline-offset: 2px;
+}
+
+.cbpp__tabs {
+  display: inline-flex;
+  gap: 0.125rem;
+  padding: 0.18rem;
+  border-radius: 0.7rem;
+  background: color-mix(in srgb, var(--asa-label) 7%, transparent);
+}
+
+.cbpp__tabs button {
+  border: 0;
+  border-radius: 0.55rem;
+  padding: 0.32rem 0.7rem;
+  background: transparent;
+  color: var(--asa-label-2);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
+}
+
+.cbpp__tabs button.is-on {
+  background: var(--asa-bg-card);
+  color: var(--asa-label);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.cbpp__tabs button:focus-visible {
+  outline: 2px solid var(--asa-accent);
+  outline-offset: 1px;
+}
+
+.cbpp__custom {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.625rem;
+}
+
+.cbpp__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.cbpp__field-label {
+  color: var(--asa-label-2);
+  font-size: 0.625rem;
+  font-weight: 700;
+}
+
+.cbpp__picker {
+  display: block;
+  width: 100%;
+}
+
+.cbpp__picker :deep(input),
+.cbpp__picker :deep(.cbpp__picker-input) {
+  width: 100%;
+  min-height: 2.6rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--asa-sep);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--asa-label) 3%, transparent);
+  color: var(--asa-label);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cbpp__picker :deep(input):focus,
+.cbpp__picker :deep(.cbpp__picker-input):focus {
+  outline: none;
+  border-color: var(--asa-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--asa-accent) 18%, transparent);
+}
+
+.cbpp__presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.75rem;
+}
+
+.cbpp__preset {
+  padding: 0.32rem 0.65rem;
+  border: 1px solid var(--asa-sep);
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--asa-label-2);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 140ms var(--ease-default), color 140ms var(--ease-default),
+    border-color 140ms var(--ease-default);
+}
+
+.cbpp__preset:hover {
+  background: color-mix(in srgb, var(--asa-label) 6%, transparent);
+  color: var(--asa-label);
+}
+
+.cbpp__preset.is-on {
+  border-color: color-mix(in srgb, var(--asa-accent) 42%, transparent);
+  background: var(--asa-accent-soft);
+  color: var(--asa-accent-deep);
+}
+
+.dark .cbpp__preset.is-on {
+  color: var(--asa-accent);
+}
+
+.cbpp__preset:focus-visible {
+  outline: 2px solid var(--asa-accent);
+  outline-offset: 1px;
+}
+
+.cbpp__custom-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--asa-sep);
+  color: var(--asa-label-2);
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .cbpp__years {

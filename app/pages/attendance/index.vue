@@ -71,7 +71,7 @@
               input-format="jYYYY-jMM-jDD"
               display-format="jYYYY/jMM/jDD"
               format="jYYYY-jMM-jDD"
-              color="#00ADB5"
+              color="#5f8feb"
               auto-submit
               clearable
               :max="today"
@@ -88,7 +88,7 @@
               input-format="jYYYY-jMM-jDD"
               display-format="jYYYY/jMM/jDD"
               format="jYYYY-jMM-jDD"
-              color="#00ADB5"
+              color="#5f8feb"
               auto-submit
               clearable
               :max="today"
@@ -1257,7 +1257,7 @@ useSeoMeta({ title: t('attendance.titleSeo') })
   display: block;
   block-size: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #00adb5, #34d399);
+  background: linear-gradient(90deg, #5f8feb, #34d399);
   transition: inline-size 0.35s ease;
 }
 
@@ -1307,7 +1307,7 @@ useSeoMeta({ title: t('attendance.titleSeo') })
 }
 
 .att-punch__btn--in {
-  background: linear-gradient(135deg, #00adb5, #0ea5a4);
+  background: linear-gradient(135deg, #5f8feb, #0ea5a4);
 }
 
 .att-punch__btn--out {

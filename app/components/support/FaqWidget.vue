@@ -544,7 +544,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.875rem 1.125rem 0.625rem 0;
+  padding: 0.875rem 1.125rem 0.625rem 0.875rem;
 }
 
 .help-panel__brand {

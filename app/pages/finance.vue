@@ -66,10 +66,11 @@
           <CashbookLedgerScope v-model="ownerId" :ledgers="ledgers" :selectable="hasSharedLedgers" :self-name="selfName"
             :self-id="selfId" />
           <CashbookPeriodPicker :model-value="period" :months="monthOptions" :label="monthLabel"
-            :range-from="range.from" :range-to="range.to" @update:model-value="setPeriod" @shift="shiftMonth"
-            @today="goToday" />
+            :range-from="range.from" :range-to="range.to" :mode="rangeMode" :custom-from="customFrom"
+            :custom-to="customTo" :presets="rangePresets" @update:model-value="setPeriod"
+            @update:mode="setRangeMode" @update:custom="applyCustomRange" @shift="shiftMonth" @today="goToday" />
           <button class="cb-bar__refresh" :class="{ 'is-spinning': loading }" :aria-label="t('common.refresh')"
-            :title="t('common.refresh')" :disabled="loading" @click="load">
+            :title="t('common.refresh')" :disabled="loading" @click="refresh">
             <v-icon size="18">mdi-refresh</v-icon>
           </button>
         </section>
@@ -78,35 +79,114 @@
           <p class="asa-sec__label">{{ t('cashbook.overview') }} · {{ monthLabel }}</p>
           <div class="grid grid-cols-2 gap-3 xl:grid-cols-4 sm:gap-4">
             <article class="asa-card cb-metric">
-              <span class="asa-tint asa-tint--teal"><v-icon size="19">mdi-arrow-down-left</v-icon></span>
+              <div class="cb-metric__head">
+                <span class="asa-tint asa-tint--teal"><v-icon size="19">mdi-arrow-down-left</v-icon></span>
+                <span class="cb-delta" :class="deltaClass(deltas.income)">
+                  <v-icon size="13">{{ deltaIcon(deltas.income) }}</v-icon>{{ pctText(deltas.income) }}
+                </span>
+              </div>
               <div class="cb-metric__copy">
                 <p class="cb-metric__value asa-green" dir="ltr">{{ formatRial(summary?.totals.incomeRial) }}</p>
                 <p class="cb-metric__label">{{ t('cashbook.income') }}</p>
               </div>
+              <div class="cb-metric__spark"><CashbookSparkline :values="incomeSpark" tone="income" /></div>
             </article>
             <article class="asa-card cb-metric">
-              <span class="asa-tint asa-tint--rose"><v-icon size="19">mdi-arrow-up-right</v-icon></span>
+              <div class="cb-metric__head">
+                <span class="asa-tint asa-tint--rose"><v-icon size="19">mdi-arrow-up-right</v-icon></span>
+                <span class="cb-delta" :class="deltaClass(deltas.expense, true)">
+                  <v-icon size="13">{{ deltaIcon(deltas.expense) }}</v-icon>{{ pctText(deltas.expense) }}
+                </span>
+              </div>
               <div class="cb-metric__copy">
                 <p class="cb-metric__value text-rose-500! dark:!text-rose-400!" dir="ltr">{{
                   formatRial(summary?.totals.expenseRial) }}</p>
                 <p class="cb-metric__label">{{ t('cashbook.expense') }}</p>
               </div>
+              <div class="cb-metric__spark"><CashbookSparkline :values="expenseSpark" tone="expense" /></div>
             </article>
             <article class="asa-card cb-metric">
-              <span class="asa-tint" :class="isNetPositive ? 'asa-tint--green' : 'asa-tint--rose'"><v-icon
-                  size="19">mdi-swap-vertical</v-icon></span>
+              <div class="cb-metric__head">
+                <span class="asa-tint" :class="isNetPositive ? 'asa-tint--green' : 'asa-tint--rose'"><v-icon
+                    size="19">mdi-swap-vertical</v-icon></span>
+                <span class="cb-delta" :class="deltaClass(deltas.net)">
+                  <v-icon size="13">{{ deltaIcon(deltas.net) }}</v-icon>{{ pctText(deltas.net) }}
+                </span>
+              </div>
               <div class="cb-metric__copy">
                 <p class="cb-metric__value" :class="isNetPositive ? 'asa-green' : 'text-rose-500!'" dir="ltr">{{
                   formatRial(summary?.totals.netRial) }}</p>
                 <p class="cb-metric__label">{{ t('cashbook.net') }}</p>
               </div>
+              <div class="cb-metric__spark"><CashbookSparkline :values="netSpark" tone="net" /></div>
             </article>
             <article class="asa-card cb-metric">
-              <span class="asa-tint asa-tint--orange"><v-icon size="19">mdi-calendar-check-outline</v-icon></span>
+              <div class="cb-metric__head">
+                <span class="asa-tint asa-tint--orange"><v-icon size="19">mdi-calendar-check-outline</v-icon></span>
+                <span class="cb-delta" :class="deltaClass(deltas.entryCount)">
+                  <v-icon size="13">{{ deltaIcon(deltas.entryCount) }}</v-icon>{{ pctText(deltas.entryCount) }}
+                </span>
+              </div>
               <div class="cb-metric__copy">
                 <p class="cb-metric__value" dir="ltr">{{ formatNumber(summary?.totals.entryCount || 0) }}</p>
                 <p class="cb-metric__label">{{ t('cashbook.entriesCount') }}</p>
               </div>
+              <div class="cb-metric__spark"><CashbookSparkline :values="netSpark" tone="neutral" /></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="asa-sec mt-6">
+          <div class="cb-sec-head">
+            <div>
+              <h2 class="asa-card-title">{{ t('cashbook.comparison') }}</h2>
+              <p class="asa-card-sub">{{ t('cashbook.comparisonDesc') }}</p>
+            </div>
+            <div class="cb-seg" role="tablist" :aria-label="t('cashbook.comparison')">
+              <button type="button" role="tab" :aria-selected="comparisonCount === 6"
+                :class="{ 'is-on': comparisonCount === 6 }" @click="comparisonCount = 6">{{ t('cashbook.last6')
+                }}</button>
+              <button type="button" role="tab" :aria-selected="comparisonCount === 12"
+                :class="{ 'is-on': comparisonCount === 12 }" @click="comparisonCount = 12">{{ t('cashbook.last12')
+                }}</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 mt-3">
+            <article class="asa-card lg:col-span-2" :aria-busy="analyticsLoading">
+              <div class="cb-section-head">
+                <div>
+                  <p class="cb-card-title">{{ t('cashbook.monthlyTrend') }}</p>
+                  <p class="cb-card-sub">{{ t('cashbook.vsPrevious') }}: <span dir="ltr">{{
+                    formatRial(previousTotals?.netRial) }}</span></p>
+                </div>
+              </div>
+              <CashbookMonthlyBars v-if="comparisonSeries.length" :series="comparisonSeries" :format="formatRial"
+                :chart-label="t('cashbook.monthlyTrend')" />
+              <UiEmptyState v-else :title="t('cashbook.noFlow')" :description="t('cashbook.noFlowDesc')" class="py-8!">
+                <template #icon><v-icon size="34">mdi-chart-bar</v-icon></template>
+              </UiEmptyState>
+            </article>
+
+            <article class="asa-card">
+              <div class="cb-section-head">
+                <div>
+                  <p class="cb-card-title">{{ t('cashbook.categorySplit') }}</p>
+                  <p class="cb-card-sub">{{ t('cashbook.categorySplitDesc') }}</p>
+                </div>
+              </div>
+              <div class="cb-tabs">
+                <button :class="{ 'cb-tabs__btn--on': categoryTab === 'expense' }" @click="categoryTab = 'expense'">{{
+                  t('cashbook.expense') }}</button>
+                <button :class="{ 'cb-tabs__btn--on': categoryTab === 'income' }" @click="categoryTab = 'income'">{{
+                  t('cashbook.income') }}</button>
+              </div>
+              <CashbookDonutChart v-if="donutSlices.length" :slices="donutSlices" :format="formatRial"
+                :chart-label="t('cashbook.categorySplit')" />
+              <UiEmptyState v-else :title="t('cashbook.noCategories')" :description="t('cashbook.noCategoriesDesc')"
+                class="py-7!">
+                <template #icon><v-icon size="34">mdi-chart-donut</v-icon></template>
+              </UiEmptyState>
             </article>
           </div>
         </section>
@@ -118,24 +198,30 @@
                 <h2 class="asa-card-title">{{ t('cashbook.cashFlow') }}</h2>
                 <p class="asa-card-sub">{{ t('cashbook.cashFlowDesc') }}</p>
               </div>
-              <div class="cb-legend">
-                <span><i class="cb-dot cb-dot--in" />{{ t('cashbook.income') }}</span>
-                <span><i class="cb-dot cb-dot--out" />{{ t('cashbook.expense') }}</span>
-              </div>
             </div>
-            <div v-if="dayRows.length" class="cb-chart" role="img" :aria-label="t('cashbook.cashFlow')">
-              <div v-for="day in dayRows" :key="day.date" class="cb-chart__day">
-                <div class="cb-chart__bars">
-                  <span class="cb-chart__bar cb-chart__bar--in" :style="{ height: barHeight(day.incomeRial) }" />
-                  <span class="cb-chart__bar cb-chart__bar--out" :style="{ height: barHeight(day.expenseRial) }" />
-                </div>
-                <span class="cb-chart__label">{{ shortDate(day.date) }}</span>
-              </div>
-            </div>
+            <CashbookTrendChart v-if="dayRows.length" :points="dayRows" :format="formatRial" :label-for="dayLabel"
+              :chart-label="t('cashbook.cashFlow')" />
             <UiEmptyState v-else :title="t('cashbook.noFlow')" :description="t('cashbook.noFlowDesc')" class="py-8!">
               <template #icon><v-icon size="34">mdi-chart-bar</v-icon></template>
             </UiEmptyState>
           </article>
+
+          <article class="asa-card">
+            <div class="cb-section-head">
+              <div>
+                <h2 class="asa-card-title">{{ t('cashbook.weekdayTitle') }}</h2>
+                <p class="asa-card-sub">{{ t('cashbook.weekdayDesc') }}</p>
+              </div>
+            </div>
+            <CashbookWeekdayBars v-if="weekdaySeries.length" :series="weekdaySeries" :labels="weekdayLabels"
+              :format="formatRial" :chart-label="t('cashbook.weekdayTitle')" />
+            <UiEmptyState v-else :title="t('cashbook.noFlow')" :description="t('cashbook.noFlowDesc')" class="py-8!">
+              <template #icon><v-icon size="34">mdi-calendar-week</v-icon></template>
+            </UiEmptyState>
+          </article>
+        </section>
+
+        <section class="grid grid-cols-1 gap-4 lg:grid-cols-3 mt-5">
 
           <article class="asa-card">
             <div class="cb-section-head">
@@ -168,9 +254,7 @@
               <template #icon><v-icon size="34">mdi-wallet-outline</v-icon></template>
             </UiEmptyState>
           </article>
-        </section>
 
-        <section class="grid grid-cols-1 gap-4 lg:grid-cols-2 mt-5">
           <article class="asa-card">
             <div class="cb-section-head">
               <div>
@@ -349,7 +433,7 @@
                   hide-details="auto" /></div>
               <div><span class="asa-field-label">{{ t('cashbook.date') }}</span>
                 <PersianDatetimePicker v-model="entryForm.entryDate" type="date" format="YYYY-MM-DD"
-                  display-format="jYYYY/jMM/jDD" color="#00adb5" auto-submit clearable custom-input
+                  display-format="jYYYY/jMM/jDD" color="#5f8feb" auto-submit clearable custom-input
                   :placeholder="t('cashbook.datePlaceholder')" class="cb-date-picker" input-class="cb-date-input" />
               </div>
               <div><span class="asa-field-label">{{ t('cashbook.amountToman') }}</span><v-text-field
@@ -570,14 +654,17 @@
 <script setup lang="ts">
 import moment from 'moment-jalaali'
 import type { CashbookAccount, CashbookAccountType, CashbookCategory, CashbookEntry, CashbookKind, CashbookStatus } from '~/types/finance'
+import type { CashbookMonthlyPoint } from '~/composables/useFinance'
 
 const { t, locale } = useI18n()
 const { user } = useAuth()
 const { formatGregorianDate } = useFormatting()
 const {
   canEdit, isReadOnly, hasSharedLedgers, period, monthOptions, monthLabel, ledgers, ownerId, grants, candidates,
-  accessSaving, range, summary, entries, categories, accounts, loading, loadError, page, pagination, filters,
-  load, applyFilters, changePage, shiftMonth, setPeriod, goToday, saveEntry, updateEntry, voidEntry, saveCategory, updateCategory,
+  accessSaving, range, rangeMode, customFrom, customTo, setRangeMode, setCustomRange, rangePresets,
+  summary, entries, categories, accounts, loading, loadError, page, pagination, filters,
+  comparisonCount, comparisonSeries, weekdaySeries, previousTotals, deltas, analyticsLoading,
+  refresh, applyFilters, changePage, shiftMonth, setPeriod, goToday, saveEntry, updateEntry, voidEntry, saveCategory, updateCategory,
   saveAccount, updateAccount, saveBudget, deleteBudget, uploadReceipt, downloadReceipt, exportData,
   loadAccess, grantAccess, revokeAccess,
 } = useFinance()
@@ -641,7 +728,6 @@ const accountRows = computed(() => {
 })
 const budgetRows = computed(() => summary.value?.budgets || [])
 const maxCategory = computed(() => Math.max(0, ...categoryRows.value.map((row) => Number(row.amountRial))))
-const maxDay = computed(() => Math.max(0, ...dayRows.value.map((row) => Math.max(Number(row.incomeRial), Number(row.expenseRial)))))
 const activeAccounts = computed(() => accounts.value.filter((item) => !item.isArchived))
 const entryCategories = computed(() => categories.value.filter((item) => !item.isArchived && item.kind === entryForm.kind))
 const expenseCategories = computed(() => categories.value.filter((item) => !item.isArchived && item.kind === 'expense'))
@@ -675,7 +761,6 @@ function formatNumber(value: number | string | null | undefined): string {
   try { return new Intl.NumberFormat(isFa.value ? 'fa-IR' : 'en-US').format(BigInt(value ?? 0)) } catch { return '0' }
 }
 function formatDate(value: string | null | undefined): string { return formatGregorianDate(value) }
-function shortDate(value: string): string { return moment(value, 'YYYY-MM-DD').format('jDD') }
 function toRial(value: string | number): string {
   const text = String(value).replace(/,/g, '').trim()
   if (!/^\d+(?:\.\d{0,1})?$/.test(text)) return '0'
@@ -698,11 +783,46 @@ function toToman(value: string): string {
     return '0'
   }
 }
-function barHeight(value: string): string { return `${maxDay.value ? Math.max(3, (Number(value) / maxDay.value) * 100) : 3}%` }
 function categoryPercent(value: string): number { return maxCategory.value ? Math.max(3, Math.round((Number(value) / maxCategory.value) * 100)) : 0 }
 function budgetPercent(budget: { amountRial: string; spentRial: string }): number { return Number(budget.amountRial) ? Math.min(100, Math.round((Number(budget.spentRial) / Number(budget.amountRial)) * 100)) : 0 }
 function dotStyle(color: string | null): Record<string, string> { return { backgroundColor: color || '#94a3b8' } }
 function tagStyle(color: string | null, kind: CashbookKind): Record<string, string> { return { backgroundColor: `${color || (kind === 'income' ? '#3ddc84' : '#ff6961')}22`, color: color || (kind === 'income' ? '#16803e' : '#b42332') } }
+
+const weekdayLabels = computed(() => Array.from({ length: 7 }, (_, index) => t(`cashbook.weekdays.m${index}`)))
+const donutSlices = computed(() =>
+  (summary.value?.byCategory || [])
+    .filter((row) => row.kind === categoryTab.value)
+    .map((row) => ({ id: row.categoryId, name: row.categoryName, value: row.amountRial, color: row.color })),
+)
+function seriesValues(pick: (point: CashbookMonthlyPoint) => string): number[] {
+  return comparisonSeries.value.map((point) => Number(pick(point)) / 10)
+}
+const incomeSpark = computed(() => seriesValues((point) => point.incomeRial))
+const expenseSpark = computed(() => seriesValues((point) => point.expenseRial))
+const netSpark = computed(() => seriesValues((point) => point.netRial))
+const decimalFormat = computed(() => new Intl.NumberFormat(isFa.value ? 'fa-IR' : 'en-US', { maximumFractionDigits: 1 }))
+function pctText(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return '—'
+  const rounded = Math.round(value * 10) / 10
+  return `${rounded > 0 ? '+' : ''}${decimalFormat.value.format(rounded)}%`
+}
+function deltaClass(value: number | null | undefined, invert = false): string {
+  if (value === null || value === undefined || !Number.isFinite(value) || value === 0) return 'is-flat'
+  const up = value > 0
+  return (invert ? !up : up) ? 'is-up' : 'is-down'
+}
+function deltaIcon(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value) || value === 0) return 'mdi-minus'
+  return value > 0 ? 'mdi-trending-up' : 'mdi-trending-down'
+}
+function dayLabel(date: string): string {
+  const value = moment(date, 'YYYY-MM-DD')
+  const name = monthOptions.value[Number(value.format('jM')) - 1]?.title || value.format('jMMMM')
+  return `${Number(value.format('jDD'))} ${name} ${value.format('jYYYY')}`
+}
+function applyCustomRange(value: { from: string; to: string }) {
+  setCustomRange(value.from, value.to)
+}
 
 function openEntry(entry?: CashbookEntry) {
   editingEntry.value = entry || null
@@ -857,15 +977,107 @@ function confirmRevoke(grant: { id: string; granteeName: string | null }) {
 }
 
 .cb-metric {
-  display: grid;
-  grid-template-columns: auto 1fr;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.cb-metric__head {
+  display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .cb-metric__copy {
   min-width: 0;
-  text-align: end;
+}
+
+.cb-metric__spark {
+  height: 2.1rem;
+  margin-top: 0.05rem;
+  opacity: 0.92;
+}
+
+.cb-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.cb-delta :deep(.v-icon) {
+  opacity: 0.9;
+}
+
+.cb-delta.is-up {
+  background: var(--asa-green-soft);
+  color: var(--asa-green);
+}
+
+.cb-delta.is-down {
+  background: var(--asa-rose-soft);
+  color: var(--asa-rose);
+}
+
+.cb-delta.is-flat {
+  background: color-mix(in srgb, var(--asa-label) 8%, transparent);
+  color: var(--asa-label-3);
+}
+
+.cb-sec-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cb-seg {
+  display: inline-flex;
+  gap: 0.125rem;
+  padding: 0.18rem;
+  border-radius: 0.7rem;
+  background: color-mix(in srgb, var(--asa-label) 7%, transparent);
+}
+
+.cb-seg button {
+  border: 0;
+  border-radius: 0.55rem;
+  padding: 0.32rem 0.75rem;
+  background: transparent;
+  color: var(--asa-label-2);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-default), color 150ms var(--ease-default);
+}
+
+.cb-seg button.is-on {
+  background: var(--asa-bg-card);
+  color: var(--asa-label);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.cb-seg button:focus-visible {
+  outline: 2px solid var(--asa-accent);
+  outline-offset: 1px;
+}
+
+.cb-card-title {
+  color: var(--asa-label);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.cb-card-sub {
+  margin-top: 0.2rem;
+  color: var(--asa-label-2);
+  font-size: 0.75rem;
 }
 
 .cb-metric__value {

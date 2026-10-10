@@ -290,6 +290,10 @@ const languages = [
 const switchLanguage = async (code: 'fa' | 'en') => {
   useCookie('i18n_lang', { sameSite: 'lax', maxAge: 60 * 60 * 24 * 365, path: '/' }).value = code
   await setLocale(code)
+  if (typeof document !== 'undefined') {
+    document.documentElement.lang = code
+    document.documentElement.dir = code === 'fa' ? 'rtl' : 'ltr'
+  }
 }
 
 const isLoading = ref(true)
@@ -604,7 +608,7 @@ const activeGroupKey = computed(() => {
 }
 
 .crm-brand:focus-visible {
-  outline: 2px solid #00adb5;
+  outline: 2px solid #5f8feb;
   outline-offset: 2px;
 }
 
@@ -638,7 +642,7 @@ const activeGroupKey = computed(() => {
   display: block;
   font-size: 0.6875rem;
   font-weight: 600;
-  color: #00adb5;
+  color: #5f8feb;
   line-height: 1.25;
   white-space: nowrap;
 }
@@ -782,9 +786,9 @@ const activeGroupKey = computed(() => {
 }
 
 .crm-nav__trigger--active {
-  background: #00adb5;
+  background: #5f8feb;
   color: #f8f9fb;
-  fill: #00adb5;
+  fill: #5f8feb;
   font-weight: 600;
 }
 
@@ -813,7 +817,7 @@ const activeGroupKey = computed(() => {
 }
 
 .crm-nav__trigger:focus-visible {
-  outline: 2px solid #00adb5;
+  outline: 2px solid #5f8feb;
   outline-offset: 2px;
 }
 
@@ -889,7 +893,7 @@ const activeGroupKey = computed(() => {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #00adb5;
+  color: #5f8feb;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   margin-bottom: 0.375rem;
 }
@@ -924,7 +928,7 @@ const activeGroupKey = computed(() => {
 
 .crm-nav__item--active {
   background: rgba(0, 173, 181, 0.1);
-  color: #00adb5;
+  color: #5f8feb;
   font-weight: 600;
 }
 
@@ -943,7 +947,7 @@ const activeGroupKey = computed(() => {
 }
 
 .crm-nav__item:focus-visible {
-  outline: 2px solid #00adb5;
+  outline: 2px solid #5f8feb;
   outline-offset: -2px;
 }
 
@@ -967,12 +971,12 @@ const activeGroupKey = computed(() => {
 
 .crm-nav__item:hover .crm-nav__item-icon {
   background: rgba(0, 173, 181, 0.12);
-  color: #00adb5;
+  color: #5f8feb;
 }
 
 .crm-nav__item--active .crm-nav__item-icon {
   background: rgba(0, 173, 181, 0.14);
-  color: #00adb5;
+  color: #5f8feb;
 }
 
 :global(.dark) .crm-nav__item:hover .crm-nav__item-icon {
@@ -1040,7 +1044,7 @@ const activeGroupKey = computed(() => {
 }
 
 .crm-search__btn:focus-visible {
-  outline: 2px solid #00adb5;
+  outline: 2px solid #5f8feb;
   outline-offset: -2px;
   border-radius: 8px;
 }
@@ -1252,12 +1256,12 @@ const activeGroupKey = computed(() => {
 
 .crm-lang__option:hover {
   background: rgba(0, 173, 181, 0.07);
-  color: #00adb5;
+  color: #5f8feb;
 }
 
 .crm-lang__option--active {
   background: rgba(0, 173, 181, 0.1);
-  color: #00adb5;
+  color: #5f8feb;
   font-weight: 600;
 }
 
@@ -1276,7 +1280,7 @@ const activeGroupKey = computed(() => {
 }
 
 .crm-lang__option:focus-visible {
-  outline: 2px solid #00adb5;
+  outline: 2px solid #5f8feb;
   outline-offset: -2px;
 }
 
@@ -1317,7 +1321,7 @@ const activeGroupKey = computed(() => {
 }
 
 .crm-user-chip:focus-visible {
-  outline: 2px solid #00adb5;
+  outline: 2px solid #5f8feb;
   outline-offset: 2px;
 }
 
@@ -1328,7 +1332,7 @@ const activeGroupKey = computed(() => {
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #00adb5, #0ea5e9);
+  background: linear-gradient(135deg, #5f8feb, #0ea5e9);
   color: white;
   font-size: 0.8125rem;
   font-weight: 700;
@@ -1360,7 +1364,7 @@ const activeGroupKey = computed(() => {
   display: block;
   font-size: 0.6875rem;
   font-weight: 500;
-  color: #00adb5;
+  color: #5f8feb;
   line-height: 1.2;
   text-align: start;
   white-space: nowrap;
@@ -1494,7 +1498,7 @@ const activeGroupKey = computed(() => {
 }
 
 .crm-drawer__brand:focus-visible {
-  outline: 2px solid #00adb5;
+  outline: 2px solid #5f8feb;
   outline-offset: 2px;
 }
 
@@ -1531,7 +1535,7 @@ const activeGroupKey = computed(() => {
 .crm-drawer__brand-text span {
   font-size: 0.6875rem;
   font-weight: 600;
-  color: #00adb5;
+  color: #5f8feb;
   line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
@@ -1640,7 +1644,7 @@ const activeGroupKey = computed(() => {
 
 .crm-drawer__group-trigger--active .crm-drawer__group-icon {
   background: rgba(0, 173, 181, 0.14);
-  color: #00adb5;
+  color: #5f8feb;
 }
 
 .crm-drawer__chevron {
@@ -1718,7 +1722,7 @@ const activeGroupKey = computed(() => {
 
 .crm-drawer__item--active .crm-drawer__item-icon {
   background: rgba(0, 173, 181, 0.14);
-  color: #00adb5;
+  color: #5f8feb;
 }
 
 :global(.dark) .crm-drawer__group-trigger {
@@ -1797,7 +1801,7 @@ const activeGroupKey = computed(() => {
   height: 40px;
   flex-shrink: 0;
   border-radius: 12px;
-  background: linear-gradient(135deg, #00adb5, #0ea5e9);
+  background: linear-gradient(135deg, #5f8feb, #0ea5e9);
   color: white;
   font-size: 0.9375rem;
   font-weight: 700;
@@ -1831,7 +1835,7 @@ const activeGroupKey = computed(() => {
 .crm-drawer__user-role {
   font-size: 0.6875rem;
   font-weight: 500;
-  color: #00adb5;
+  color: #5f8feb;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

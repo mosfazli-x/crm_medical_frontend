@@ -152,7 +152,7 @@ definePageMeta({ layout: false })
 .auth-link-sm {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #00ADB5;
+  color: #5f8feb;
   text-decoration: none;
   transition: color 0.2s;
 }
@@ -200,14 +200,14 @@ definePageMeta({ layout: false })
 }
 
 .auth-input:focus {
-  border-color: #00ADB5;
+  border-color: #5f8feb;
   box-shadow: 0 0 0 3px rgba(0, 173, 181, 0.2);
   background: #2B3138;
 }
 
 .auth-input:focus + .auth-input-icon,
 .auth-input-wrap:focus-within .auth-input-icon {
-  color: #00ADB5;
+  color: #5f8feb;
 }
 
 .auth-input--ltr {
@@ -304,7 +304,7 @@ definePageMeta({ layout: false })
   font-weight: 700;
   font-family: var(--font-body);
   color: #222831;
-  background: linear-gradient(135deg, #00ADB5, #39C6D6);
+  background: linear-gradient(135deg, #5f8feb, #39C6D6);
   border: none;
   border-radius: 0.75rem;
   cursor: pointer;
@@ -365,7 +365,7 @@ definePageMeta({ layout: false })
 
 .auth-footer__link {
   font-weight: 700;
-  color: #00ADB5;
+  color: #5f8feb;
   text-decoration: none;
   margin-inline-start: 0.25rem;
   transition: color 0.2s;

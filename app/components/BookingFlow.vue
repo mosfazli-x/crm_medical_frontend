@@ -14,13 +14,8 @@
         </NuxtLink>
 
         <div class="bk__bar-tools">
-          <button
-            type="button"
-            class="asa-btn asa-btn--ghost asa-btn--sm"
-            :aria-label="t('booking.switchLanguage')"
-            :title="t('booking.switchLanguage')"
-            @click="toggleLang"
-          >
+          <button type="button" class="asa-btn asa-btn--ghost asa-btn--sm" :aria-label="t('booking.switchLanguage')"
+            :title="t('booking.switchLanguage')" @click="toggleLang">
             <v-icon size="15">mdi-translate</v-icon>
             <span>{{ otherLangLabel }}</span>
           </button>
@@ -38,22 +33,12 @@
       <!-- ══════════ Stepper ══════════ -->
       <nav class="bk__steps" :aria-label="t('booking.title')">
         <ol class="bk__steps-list">
-          <li
-            v-for="(s, i) in visibleSteps"
-            :key="s.key"
-            class="bk__step"
-            :class="{
-              'bk__step--on': i === stepIndex,
-              'bk__step--done': i < stepIndex,
-            }"
-          >
-            <button
-              type="button"
-              class="bk__step-btn"
-              :disabled="i > stepIndex"
-              :aria-current="i === stepIndex ? 'step' : undefined"
-              @click="goToStep(i)"
-            >
+          <li v-for="(s, i) in visibleSteps" :key="s.key" class="bk__step" :class="{
+            'bk__step--on': i === stepIndex,
+            'bk__step--done': i < stepIndex,
+          }">
+            <button type="button" class="bk__step-btn" :disabled="i > stepIndex"
+              :aria-current="i === stepIndex ? 'step' : undefined" @click="goToStep(i)">
               <span class="bk__step-dot">
                 <v-icon v-if="i < stepIndex" size="12">mdi-check</v-icon>
                 <template v-else>{{ pn(i + 1) }}</template>
@@ -65,7 +50,10 @@
         <div class="bk__progress" aria-hidden="true">
           <span :style="{ width: `${progressPercent}%` }" />
         </div>
-        <p class="bk__counter">{{ t('booking.stepCounter', { current: pn(stepIndex + 1), total: pn(visibleSteps.length) }) }}</p>
+        <p class="bk__counter">{{ t('booking.stepCounter', {
+          current: pn(stepIndex + 1), total: pn(visibleSteps.length)
+          }) }}
+        </p>
       </nav>
 
       <!-- ══════════ Selection summary rail ══════════ -->
@@ -82,13 +70,7 @@
       </aside>
 
       <!-- ══════════ Step panel ══════════ -->
-      <section
-        v-show="!success"
-        ref="panelEl"
-        class="bk__panel asa-card"
-        tabindex="-1"
-        :aria-busy="busy"
-      >
+      <section v-show="!success" ref="panelEl" class="bk__panel asa-card" tabindex="-1" :aria-busy="busy">
         <!-- ───── 0 · Service ───── -->
         <template v-if="step === 'service'">
           <div class="bk__panel-head">
@@ -131,9 +113,11 @@
               <button type="button" class="bk__tile" @click="selectService(svc)">
                 <span class="bk__tile-top">
                   <span class="bk__tile-title">{{ svc.name }}</span>
-                  <span class="asa-pill asa-pill--teal">{{ pn(svc.doctors.length) }} {{ t('booking.doctorsSuffix') }}</span>
+                  <span class="asa-pill asa-pill--teal">{{ pn(svc.doctors.length) }} {{ t('booking.doctorsSuffix')
+                    }}</span>
                 </span>
-                <span class="bk__tile-desc">{{ t('booking.serviceByDoctors', { count: pn(svc.doctors.length) }) }}</span>
+                <span class="bk__tile-desc">{{ t('booking.serviceByDoctors', { count: pn(svc.doctors.length) })
+                  }}</span>
               </button>
             </li>
           </ul>
@@ -174,11 +158,8 @@
           <ul v-else class="bk__grid">
             <li v-for="doc in doctorsInService" :key="doc.doctorId + doc.visitTypeId">
               <button type="button" class="bk__tile bk__tile--doc" @click="selectDoctor(doc)">
-                <span
-                  class="bk__avatar"
-                  :style="doc.color ? { background: doc.color, color: doc.onColor } : undefined"
-                  aria-hidden="true"
-                >{{ getInitials(doc.doctorName) }}</span>
+                <span class="bk__avatar" :style="doc.color ? { background: doc.color, color: doc.onColor } : undefined"
+                  aria-hidden="true">{{ getInitials(doc.doctorName) }}</span>
                 <span class="bk__tile-body">
                   <span class="bk__tile-title">{{ doc.doctorName }}</span>
                   <span v-if="doc.name" class="bk__tile-desc">{{ doc.name }}</span>
@@ -227,16 +208,9 @@
             </div>
 
             <div v-else class="pf-seg bk__segs" role="radiogroup" :aria-label="t('booking.visitType')">
-              <button
-                v-for="vt in visitTypes"
-                :key="vt.id"
-                type="button"
-                role="radio"
-                class="pf-seg__btn bk__seg"
+              <button v-for="vt in visitTypes" :key="vt.id" type="button" role="radio" class="pf-seg__btn bk__seg"
                 :class="{ 'pf-seg__btn--on': selectedVisitType?.id === vt.id }"
-                :aria-checked="selectedVisitType?.id === vt.id"
-                @click="selectVisitType(vt)"
-              >
+                :aria-checked="selectedVisitType?.id === vt.id" @click="selectVisitType(vt)">
                 <span class="bk__seg-text">{{ vt.name }}</span>
                 <span v-if="vt.price" class="bk__seg-price">{{ formatPrice(vt.price) }}</span>
               </button>
@@ -246,13 +220,8 @@
           <!-- Calendar -->
           <div class="asa-sec">
             <p class="asa-sec__label">{{ t('booking.appointmentDate') }}</p>
-            <HijriCalendar
-              v-model="selectedJalaliDate"
-              :marked-dates="markedDates"
-              :loading="calendarLoading"
-              :has-marks="availabilityLoaded"
-              @month-change="onMonthChange"
-            />
+            <HijriCalendar v-model="selectedJalaliDate" :marked-dates="markedDates" :loading="calendarLoading"
+              :has-marks="availabilityLoaded" @month-change="onMonthChange" />
           </div>
         </template>
 
@@ -308,15 +277,9 @@
           </div>
 
           <div v-if="availableSlots.length" class="bk__slots">
-            <button
-              v-for="slot in availableSlots"
-              :key="slot.startTime"
-              type="button"
-              class="bk__slot"
+            <button v-for="slot in availableSlots" :key="slot.startTime" type="button" class="bk__slot"
               :class="{ 'bk__slot--on': selectedSlot?.startTime === slot.startTime }"
-              :aria-pressed="selectedSlot?.startTime === slot.startTime"
-              @click="selectSlot(slot)"
-            >
+              :aria-pressed="selectedSlot?.startTime === slot.startTime" @click="selectSlot(slot)">
               <span class="bk__slot-time">{{ slot.startTime }}</span>
               <span class="bk__slot-end">{{ slot.endTime }}</span>
             </button>
@@ -337,15 +300,12 @@
             </div>
             <div class="pf-info-cell">
               <p class="pf-info-label">{{ t('booking.visitTime') }}</p>
-              <p class="pf-info-value">{{ selectedSlot ? `${selectedSlot.startTime} ${t('booking.timeTo')} ${selectedSlot.endTime}` : '—' }}</p>
+              <p class="pf-info-value">{{ selectedSlot ? `${selectedSlot.startTime} ${t('booking.timeTo')}
+                ${selectedSlot.endTime}` : '—' }}</p>
             </div>
           </div>
 
-          <div
-            v-if="errorCount"
-            class="asa-alert bk__alert"
-            role="alert"
-          >
+          <div v-if="errorCount" class="asa-alert bk__alert" role="alert">
             <v-icon size="18" class="stroke-current">mdi-alert-circle-outline</v-icon>
             <span>{{ t('booking.stepInvalid', { count: pn(errorCount) }) }}</span>
           </div>
@@ -354,25 +314,13 @@
             <div class="bk__field">
               <label class="asa-field-label" for="bk-firstName">{{ t('booking.firstName') }}</label>
               <div class="bk__input-wrap">
-                <input
-                  id="bk-firstName"
-                  v-model.trim="form.firstName"
-                  type="text"
-                  class="asa-input"
-                  :class="{ 'asa-input--err': errors.firstName }"
-                  :placeholder="t('booking.firstNamePlaceholder')"
+                <input id="bk-firstName" v-model.trim="form.firstName" type="text" class="asa-input"
+                  :class="{ 'asa-input--err': errors.firstName }" :placeholder="t('booking.firstNamePlaceholder')"
                   :aria-invalid="!!errors.firstName"
-                  :aria-describedby="errors.firstName ? 'bk-err-firstName' : undefined"
-                  autocomplete="given-name"
-                  @input="clearError('firstName')"
-                >
-                <button
-                  type="button"
-                  class="bk__hand"
-                  :aria-label="t('booking.writeByHand')"
-                  :title="t('booking.writeByHand')"
-                  @click="openHandwriting('firstName')"
-                >
+                  :aria-describedby="errors.firstName ? 'bk-err-firstName' : undefined" autocomplete="given-name"
+                  @input="clearError('firstName')">
+                <button type="button" class="bk__hand" :aria-label="t('booking.writeByHand')"
+                  :title="t('booking.writeByHand')" @click="openHandwriting('firstName')">
                   <v-icon size="16" class="stroke-current">mdi-gesture-tap-button</v-icon>
                 </button>
               </div>
@@ -382,25 +330,12 @@
             <div class="bk__field">
               <label class="asa-field-label" for="bk-lastName">{{ t('booking.lastName') }}</label>
               <div class="bk__input-wrap">
-                <input
-                  id="bk-lastName"
-                  v-model.trim="form.lastName"
-                  type="text"
-                  class="asa-input"
-                  :class="{ 'asa-input--err': errors.lastName }"
-                  :placeholder="t('booking.lastNamePlaceholder')"
-                  :aria-invalid="!!errors.lastName"
-                  :aria-describedby="errors.lastName ? 'bk-err-lastName' : undefined"
-                  autocomplete="family-name"
-                  @input="clearError('lastName')"
-                >
-                <button
-                  type="button"
-                  class="bk__hand"
-                  :aria-label="t('booking.writeByHand')"
-                  :title="t('booking.writeByHand')"
-                  @click="openHandwriting('lastName')"
-                >
+                <input id="bk-lastName" v-model.trim="form.lastName" type="text" class="asa-input"
+                  :class="{ 'asa-input--err': errors.lastName }" :placeholder="t('booking.lastNamePlaceholder')"
+                  :aria-invalid="!!errors.lastName" :aria-describedby="errors.lastName ? 'bk-err-lastName' : undefined"
+                  autocomplete="family-name" @input="clearError('lastName')">
+                <button type="button" class="bk__hand" :aria-label="t('booking.writeByHand')"
+                  :title="t('booking.writeByHand')" @click="openHandwriting('lastName')">
                   <v-icon size="16" class="stroke-current">mdi-gesture-tap-button</v-icon>
                 </button>
               </div>
@@ -410,28 +345,13 @@
             <div class="bk__field">
               <label class="asa-field-label" for="bk-nationalId">{{ t('booking.nationalId') }}</label>
               <div class="bk__input-wrap">
-                <input
-                  id="bk-nationalId"
-                  :value="form.nationalId"
-                  type="text"
-                  inputmode="numeric"
-                  class="asa-input"
-                  :class="{ 'asa-input--err': errors.nationalId }"
-                  :placeholder="t('booking.nationalIdPlaceholder')"
+                <input id="bk-nationalId" :value="form.nationalId" type="text" inputmode="numeric" class="asa-input"
+                  :class="{ 'asa-input--err': errors.nationalId }" :placeholder="t('booking.nationalIdPlaceholder')"
                   :aria-invalid="!!errors.nationalId"
-                  :aria-describedby="errors.nationalId ? 'bk-err-nationalId' : undefined"
-                  maxlength="12"
-                  autocomplete="off"
-                  @input="onNationalIdInput"
-                  @blur="validateField('nationalId')"
-                >
-                <button
-                  type="button"
-                  class="bk__hand"
-                  :aria-label="t('booking.writeByHand')"
-                  :title="t('booking.writeByHand')"
-                  @click="openHandwriting('nationalId')"
-                >
+                  :aria-describedby="errors.nationalId ? 'bk-err-nationalId' : undefined" maxlength="12"
+                  autocomplete="off" @input="onNationalIdInput" @blur="validateField('nationalId')">
+                <button type="button" class="bk__hand" :aria-label="t('booking.writeByHand')"
+                  :title="t('booking.writeByHand')" @click="openHandwriting('nationalId')">
                   <v-icon size="16" class="stroke-current">mdi-gesture-tap-button</v-icon>
                 </button>
               </div>
@@ -441,27 +361,12 @@
             <div class="bk__field">
               <label class="asa-field-label" for="bk-phone">{{ t('booking.phone') }}</label>
               <div class="bk__input-wrap">
-                <input
-                  id="bk-phone"
-                  :value="form.phone"
-                  type="tel"
-                  inputmode="tel"
-                  class="asa-input"
-                  :class="{ 'asa-input--err': errors.phone }"
-                  :placeholder="t('booking.phonePlaceholder')"
-                  :aria-invalid="!!errors.phone"
-                  :aria-describedby="errors.phone ? 'bk-err-phone' : undefined"
-                  autocomplete="tel"
-                  @input="onPhoneInput"
-                  @blur="validateField('phone')"
-                >
-                <button
-                  type="button"
-                  class="bk__hand"
-                  :aria-label="t('booking.writeByHand')"
-                  :title="t('booking.writeByHand')"
-                  @click="openHandwriting('phone')"
-                >
+                <input id="bk-phone" :value="form.phone" type="tel" inputmode="tel" class="asa-input"
+                  :class="{ 'asa-input--err': errors.phone }" :placeholder="t('booking.phonePlaceholder')"
+                  :aria-invalid="!!errors.phone" :aria-describedby="errors.phone ? 'bk-err-phone' : undefined"
+                  autocomplete="tel" @input="onPhoneInput" @blur="validateField('phone')">
+                <button type="button" class="bk__hand" :aria-label="t('booking.writeByHand')"
+                  :title="t('booking.writeByHand')" @click="openHandwriting('phone')">
                   <v-icon size="16" class="stroke-current">mdi-gesture-tap-button</v-icon>
                 </button>
               </div>
@@ -494,7 +399,8 @@
               </div>
               <div class="pf-info-cell">
                 <p class="pf-info-label">{{ t('booking.summary.time') }}</p>
-                <p class="pf-info-value">{{ selectedSlot ? `${selectedSlot.startTime} ${t('booking.timeTo')} ${selectedSlot.endTime}` : '—' }}</p>
+                <p class="pf-info-value">{{ selectedSlot ? `${selectedSlot.startTime} ${t('booking.timeTo')}
+                  ${selectedSlot.endTime}` : '—' }}</p>
               </div>
               <div class="pf-info-cell">
                 <p class="pf-info-label">{{ t('booking.summary.patient') }}</p>
@@ -541,7 +447,8 @@
           </div>
           <div class="pf-info-cell">
             <p class="pf-info-label">{{ t('booking.visitTime') }}</p>
-            <p class="pf-info-value">{{ selectedSlot?.startTime }} {{ t('booking.timeTo') }} {{ selectedSlot?.endTime }}</p>
+            <p class="pf-info-value">{{ selectedSlot?.startTime }} {{ t('booking.timeTo') }} {{ selectedSlot?.endTime }}
+            </p>
           </div>
           <div class="pf-info-cell">
             <p class="pf-info-label">{{ t('booking.summary.doctor') }}</p>
@@ -559,49 +466,29 @@
 
       <!-- ══════════ Actions ══════════ -->
       <footer v-if="!success" class="bk__actions">
-        <button
-          v-if="stepIndex > 0"
-          type="button"
-          class="asa-btn asa-btn--ghost"
-          :disabled="busy"
-          @click="goToStep(stepIndex - 1)"
-        >
-          <v-icon size="16" class="stroke-current">mdi-arrow-{{ isRtl ? 'left' : 'right' }}</v-icon>
+        <button v-if="stepIndex > 0" type="button" class="asa-btn asa-btn--ghost" :disabled="busy"
+          @click="goToStep(stepIndex - 1)">
+          <v-icon size="16" class="stroke-current">mdi-arrow-{{ isRtl ? 'right' : 'left' }}</v-icon>
           <span>{{ t('booking.back') }}</span>
         </button>
         <span v-else />
 
-        <button
-          v-if="step === 'review'"
-          type="button"
-          class="asa-btn asa-btn--primary bk__confirm"
-          :disabled="submitting"
-          @click="submit"
-        >
+        <button v-if="step === 'review'" type="button" class="asa-btn asa-btn--primary bk__confirm"
+          :disabled="submitting" @click="submit">
           <v-icon v-if="submitting" size="16" class="pf-spin">mdi-loading</v-icon>
           <v-icon v-else size="16" class="stroke-current">mdi-check-circle-outline</v-icon>
           <span>{{ submitting ? t('booking.submitting') : t('booking.confirmBooking') }}</span>
         </button>
 
-        <button
-          v-else
-          type="button"
-          class="asa-btn asa-btn--primary"
-          :disabled="!canGoNext"
-          @click="goNext"
-        >
+        <button v-else type="button" class="asa-btn asa-btn--primary" :disabled="!canGoNext" @click="goNext">
           <span>{{ t('booking.continue') }}</span>
-          <v-icon size="16" class="stroke-current">mdi-arrow-{{ isRtl ? 'right' : 'left' }}</v-icon>
+          <v-icon size="16" class="stroke-current">mdi-arrow-{{ isRtl ? 'left' : 'right' }}</v-icon>
         </button>
       </footer>
     </main>
 
-    <HandwritingDialog
-      v-model="handwritingOpen"
-      :label="handwritingLabel"
-      :numeric="handwritingNumeric"
-      @insert="applyHandwriting"
-    />
+    <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric"
+      @insert="applyHandwriting" />
   </div>
 </template>
 
@@ -860,12 +747,12 @@ function validateField(field: FieldKey): string {
 
 function validateForm(): boolean {
   let ok = true
-  ;(Object.keys(errors.value) as FieldKey[]).forEach((field) => {
-    touched.value[field] = true
-    const message = validateField(field)
-    errors.value[field] = message
-    if (message) ok = false
-  })
+    ; (Object.keys(errors.value) as FieldKey[]).forEach((field) => {
+      touched.value[field] = true
+      const message = validateField(field)
+      errors.value[field] = message
+      if (message) ok = false
+    })
   return ok
 }
 
@@ -1806,6 +1693,7 @@ onMounted(() => {
   font-weight: 700;
   letter-spacing: 0.02em;
 }
+
 .bk__skel-card {
   height: 6.5rem;
 }
@@ -2038,7 +1926,7 @@ onMounted(() => {
   background: linear-gradient(to top, var(--asa-bg-page, #f5f5f7) 62%, transparent);
 }
 
-.bk__actions > span {
+.bk__actions>span {
   display: none;
 }
 
@@ -2047,7 +1935,7 @@ onMounted(() => {
 }
 
 @media (min-width: 640px) {
-  .bk__actions > span {
+  .bk__actions>span {
     display: block;
   }
 }
@@ -2061,7 +1949,7 @@ onMounted(() => {
     width: 100%;
   }
 
-  .bk__actions > span {
+  .bk__actions>span {
     display: none;
   }
 }

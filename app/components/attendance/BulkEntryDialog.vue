@@ -40,7 +40,7 @@
               input-format="jYYYY-jMM-jDD"
               display-format="jYYYY/jMM/jDD"
               format="jYYYY-jMM-jDD"
-              color="#00ADB5"
+              color="#5f8feb"
               auto-submit
               :max="today"
               :placeholder="t('attendance.bulkDatePlaceholder')"

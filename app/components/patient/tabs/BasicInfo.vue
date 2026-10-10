@@ -14,7 +14,7 @@
             <v-col cols="12" md="6">
                 <div class="rounded-lg border border-slate-200 dark:border-slate-600 p-3 mb-2">
                     <v-checkbox v-model="form.is_foreign" :label="$t('basicInfo.foreignToggle')" density="compact"
-                        color="#00ADB5" hide-details class="!mt-0" />
+                        color="#5f8feb" hide-details class="!mt-0" />
                 </div>
                 <template v-if="form.is_foreign">
                     <v-autocomplete v-model="form.nationality" :items="countryOptions" item-title="name"
@@ -94,7 +94,7 @@
             </v-col>
             <v-col cols="12" md="4">
                 <v-checkbox v-model="ageOnly" :label="$t('basicInfo.birthDateApprox')" density="compact"
-                    color="#00ADB5" hide-details class="!mt-0 mb-1" />
+                    color="#5f8feb" hide-details class="!mt-0 mb-1" />
                 <div v-if="ageOnly" class="relative">
                     <v-text-field v-model="ageInput" :label="$t('basicInfo.age') + ' *'" variant="outlined"
                         density="comfortable" type="number" min="1" max="120" inputmode="numeric"

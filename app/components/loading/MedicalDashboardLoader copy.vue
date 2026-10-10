@@ -17,7 +17,7 @@
           <div ref="logoRef" class="flex items-center gap-3">
             <div class="relative flex-shrink-0">
               <img src="../../assets/images/hastihoseinilogo.png" class="h-11">
-              <div class="absolute -inset-1 rounded-xl bg-[#00ADB5]/10 blur-md -z-10"></div>
+              <div class="absolute -inset-1 rounded-xl bg-[#5f8feb]/10 blur-md -z-10"></div>
             </div>
             <span class="text-md font-bold tracking-tight text-[#EEEEEE]/90">{{ resolvedClinicName }}</span>
           </div>
@@ -29,16 +29,16 @@
           <div ref="statusRef" class="flex flex-col items-center gap-1">
             <Transition name="status-fade" mode="out-in">
               <p :key="currentIndex" class="text-sm font-medium text-center text-[#B8BDC5]">
-                <span class="text-[#00ADB5] mr-1 inline-block">✦</span>
+                <span class="text-[#5f8feb] mr-1 inline-block">✦</span>
                 {{ translatedStatuses[currentIndex] }}
               </p>
             </Transition>
             <div class="flex gap-1.5 mt-1" :class="isRtl ? 'flex-row-reverse' : ''">
               <span v-for="i in translatedStatuses.length" :key="i" class="h-1 rounded-full transition-all duration-500"
                 :class="i - 1 === currentIndex
-                  ? 'w-5 bg-[#00ADB5]'
+                  ? 'w-5 bg-[#5f8feb]'
                   : i - 1 < currentIndex
-                    ? 'w-1.5 bg-[#00ADB5]/40'
+                    ? 'w-1.5 bg-[#5f8feb]/40'
                     : 'w-1.5 bg-[#4A505A]/70'" />
             </div>
           </div>
@@ -46,7 +46,7 @@
 
         <div class="h-[3px] transition-all duration-500 ease-out" :style="{
           width: progress + '%',
-          background: 'linear-gradient(90deg, #00ADB5, #39C6D6, #0E7C82)',
+          background: 'linear-gradient(90deg, #5f8feb, #39C6D6, #0E7C82)',
         }" />
       </div>
     </div>
@@ -113,7 +113,7 @@ let mouseX = 0
 let mouseY = 0
 
 // Teal accent family — matches the navy/teal landing palette.
-const COLORS = { primary: '#00ADB5', secondary: '#39C6D6', accent: '#6EE7B7' }
+const COLORS = { primary: '#5f8feb', secondary: '#39C6D6', accent: '#6EE7B7' }
 
 function applyThemeToScene() {
   if (!scene) return
@@ -245,7 +245,7 @@ function initScene() {
 
   const ambient = new THREE.AmbientLight(0x3ee8c6, 0.5)
   scene.add(ambient)
-  const key = new THREE.DirectionalLight(0x00adb5, 1.6)
+  const key = new THREE.DirectionalLight(0x5f8feb, 1.6)
   key.position.set(2, 3, 4)
   scene.add(key)
   const fill = new THREE.DirectionalLight(0x6ee7b7, 0.5)

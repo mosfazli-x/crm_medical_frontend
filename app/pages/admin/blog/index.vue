@@ -272,7 +272,7 @@
             <div class="pf-roster__actions">
               <v-switch
                 :model-value="post.isPublished"
-                color="#00adb5"
+                color="#5f8feb"
                 density="compact"
                 hide-details
                 inset
@@ -319,7 +319,7 @@
             :length="totalPages"
             :total-visible="5"
             density="comfortable"
-            color="#00adb5"
+            color="#5f8feb"
             rounded="circle"
             :disabled="loading"
           />
@@ -396,7 +396,7 @@
 
               <label class="asa-field-label">{{ t('blog.admin.contentFa') }} <span class="bl-req">*</span></label>
               <div v-if="contentLoading" class="bl-editor-loading">
-                <v-progress-linear indeterminate color="#00adb5" height="2" />
+                <v-progress-linear indeterminate color="#5f8feb" height="2" />
                 <div class="asa-skel mt-3 h-40! rounded-xl!" />
               </div>
               <template v-else>
@@ -417,7 +417,7 @@
                 <span class="bl-switch-row__label">{{ t('blog.admin.publish') }}</span>
                 <v-switch
                   v-model="form.is_published"
-                  color="#00adb5"
+                  color="#5f8feb"
                   density="compact"
                   hide-details
                   inset

@@ -27,6 +27,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* English keeps Latin-friendly Karla; Persian retains IRANSansX / AriaWeb from @theme. */
+html[lang="en"] {
+  --font-sans: 'Karla', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Karla', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Karla', ui-sans-serif, system-ui, sans-serif;
+}
+
 /* ── Dark Mode Base ── */
 .dark body,
 .dark {

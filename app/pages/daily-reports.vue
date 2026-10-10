@@ -44,7 +44,7 @@
               <span class="asa-field-label">{{ t('dailyReports.selectDate') }}</span>
               <div class="sc-date">
                 <PersianDatetimePicker v-model="form.reportDate" type="date" :placeholder="t('dailyReports.selectDate')"
-                  display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#00ADB5" auto-submit clearable custom-input />
+                  display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#5f8feb" auto-submit clearable custom-input />
               </div>
             </div>
             <div class="sc-field">
@@ -191,14 +191,14 @@
             <span class="asa-field-label">{{ t('dailyReports.fromDate') }}</span>
             <div class="sc-date">
               <PersianDatetimePicker v-model="listFilters.from" type="date" display-format="jYYYY/jMM/jDD"
-                format="YYYY-MM-DD" color="#00ADB5" auto-submit clearable custom-input />
+                format="YYYY-MM-DD" color="#5f8feb" auto-submit clearable custom-input />
             </div>
           </div>
           <div class="sc-field">
             <span class="asa-field-label">{{ t('dailyReports.toDate') }}</span>
             <div class="sc-date">
               <PersianDatetimePicker v-model="listFilters.to" type="date" display-format="jYYYY/jMM/jDD"
-                format="YYYY-MM-DD" color="#00ADB5" auto-submit clearable custom-input />
+                format="YYYY-MM-DD" color="#5f8feb" auto-submit clearable custom-input />
             </div>
           </div>
           <div class="sc-field">
@@ -308,7 +308,7 @@
             <p class="asa-card-sub">{{ t('dailyReports.visitTypesSubtitle') }}</p>
           </div>
           <div class="sc-card__head-actions">
-            <v-switch v-model="includeInactive" color="#00ADB5" hide-details density="compact"
+            <v-switch v-model="includeInactive" color="#5f8feb" hide-details density="compact"
               :label="t('dailyReports.includeInactive')" />
             <button class="asa-btn asa-btn--primary asa-btn--sm" @click="openVisitTypeDialog()">
               <v-icon size="14">mdi-plus</v-icon>
@@ -473,14 +473,14 @@
             <span class="asa-field-label">{{ t('dailyReports.fromDate') }}</span>
             <div class="sc-date">
               <PersianDatetimePicker v-model="statsFilters.from" type="date" display-format="jYYYY/jMM/jDD"
-                format="YYYY-MM-DD" color="#00ADB5" auto-submit clearable custom-input />
+                format="YYYY-MM-DD" color="#5f8feb" auto-submit clearable custom-input />
             </div>
           </div>
           <div class="sc-field">
             <span class="asa-field-label">{{ t('dailyReports.toDate') }}</span>
             <div class="sc-date">
               <PersianDatetimePicker v-model="statsFilters.to" type="date" display-format="jYYYY/jMM/jDD"
-                format="YYYY-MM-DD" color="#00ADB5" auto-submit clearable custom-input />
+                format="YYYY-MM-DD" color="#5f8feb" auto-submit clearable custom-input />
             </div>
           </div>
           <div class="sc-field">
@@ -1046,7 +1046,7 @@ const emptyVisitTypeForm = () => ({
   name: '',
   description: '',
   price: null as number | null,
-  color: '#00ADB5',
+  color: '#5f8feb',
 })
 
 const visitTypeForm = ref(emptyVisitTypeForm())
@@ -1072,7 +1072,7 @@ const openVisitTypeDialog = (visitType?: DailyReportVisitType) => {
         name: visitType.name,
         description: visitType.description || '',
         price: visitType.price != null ? Number(visitType.price) : null,
-        color: visitType.color || '#00ADB5',
+        color: visitType.color || '#5f8feb',
       }
     : emptyVisitTypeForm()
   visitTypeDialog.value = true

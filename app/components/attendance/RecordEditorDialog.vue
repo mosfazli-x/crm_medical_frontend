@@ -485,7 +485,7 @@ async function submit() {
 }
 
 .attd-time__input:focus-visible {
-  outline: 2px solid #00adb5;
+  outline: 2px solid #5f8feb;
   outline-offset: 1px;
 }
 

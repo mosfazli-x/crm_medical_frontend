@@ -94,7 +94,7 @@
                 type="date"
                 format="jYYYY-jMM-jDD"
                 display-format="jYYYY/jMM/jDD"
-                color="#00ADB5"
+                color="#5f8feb"
                 clearable
                 :disabled="readonly"
                 :placeholder="t('schedule.form.dueDateHint')"

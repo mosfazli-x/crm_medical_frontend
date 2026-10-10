@@ -17,7 +17,7 @@
       </div>
 
       <div class="px-8 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800!">
-        <v-tabs v-model="activeTab" color="#00ADB5" bg-color="transparent" height="56">
+        <v-tabs v-model="activeTab" color="#5f8feb" bg-color="transparent" height="56">
           <v-tab value="basic" class="text-sm text-slate-700! dark:text-slate-300! font-medium">{{ t('leads.tabs.basic') }}</v-tab>
           <v-tab value="attribution" class="text-sm text-slate-700! dark:text-slate-300! font-medium">{{ t('leads.tabs.attribution') }}</v-tab>
           <v-tab value="details" class="text-sm text-slate-700! dark:text-slate-300! font-medium">{{ t('leads.tabs.details') }}</v-tab>
@@ -110,7 +110,7 @@
                   append-inner-icon="mdi-draw-pen" @click:append-inner="openHandwriting('referrerUrl')" />
               </div>
               <div class="md:col-span-2">
-                <v-switch v-model="form.marketingConsent" color="#00ADB5" :label="t('leads.marketingConsent')"
+                <v-switch v-model="form.marketingConsent" color="#5f8feb" :label="t('leads.marketingConsent')"
                   hide-details />
               </div>
             </div>
@@ -164,7 +164,7 @@
                   :placeholder="t('leads.tagsPlaceholder')" hide-details="auto" bg-color="white" rounded="lg"
                   @keydown="onTagKeydown">
                   <template #append-inner>
-                    <v-btn icon size="small" variant="text" color="#00ADB5" @click="addTag">
+                    <v-btn icon size="small" variant="text" color="#5f8feb" @click="addTag">
                       <Plus class="w-4 h-4" />
                     </v-btn>
                   </template>

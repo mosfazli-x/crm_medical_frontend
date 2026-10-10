@@ -204,7 +204,7 @@ onBeforeUnmount(() => {
   --ld-card: #393E46;
   --ld-card-soft: #2B3138;
   --ld-border: #4A505A;
-  --ld-primary: #00ADB5;
+  --ld-primary: #5f8feb;
   --ld-primary-soft: #39C6D6;
   --ld-primary-bright: #4FD6E4;
   --ld-font-display: 'Fraunces', ui-serif, Georgia, serif;
@@ -228,7 +228,7 @@ onBeforeUnmount(() => {
   --ld-card: #ffffff;
   --ld-card-soft: #eef1f6;
   --ld-border: #d5dbe4;
-  --ld-primary: #00ADB5;
+  --ld-primary: #5f8feb;
   --ld-primary-soft: #17c1c9;
   --ld-primary-bright: #2dd3db;
   background:
@@ -405,7 +405,7 @@ onBeforeUnmount(() => {
 }
 
 .ld-shell--light .ld-logo-gradient {
-  background-image: linear-gradient(90deg, #008b92, #00ADB5 50%, #1ec6cf);
+  background-image: linear-gradient(90deg, #008b92, #5f8feb 50%, #1ec6cf);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

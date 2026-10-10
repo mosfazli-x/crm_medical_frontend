@@ -140,7 +140,7 @@
             </div>
             <v-switch
               v-model="form.isActive"
-              color="#00adb5"
+              color="#5f8feb"
               hide-details
               density="compact"
               inset

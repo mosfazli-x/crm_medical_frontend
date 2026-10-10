@@ -357,7 +357,7 @@ const defaultForm = (): VisitTypeForm => ({
   description: '',
   durationMinutes: 30,
   price: null,
-  color: '#00adb5',
+  color: '#5f8feb',
   isActive: true,
 })
 
@@ -438,7 +438,7 @@ const tintOf = (vt: VisitTypeItem) => {
 }
 
 const avatarStyle = (vt: VisitTypeItem) => {
-  const color = vt.color || '#00adb5'
+  const color = vt.color || '#5f8feb'
   return {
     backgroundColor: `color-mix(in srgb, ${color} 16%, transparent)`,
     color,
@@ -466,7 +466,7 @@ async function fetchVisitTypes() {
         description: vt.description || undefined,
         durationMinutes: Number(vt.durationMinutes) || 30,
         price: vt.price !== null && vt.price !== undefined ? Number(vt.price) : null,
-        color: vt.color || '#00adb5',
+        color: vt.color || '#5f8feb',
         isActive: vt.isActive ?? true,
       }))
     }

@@ -1,4 +1,30 @@
 {
+  "pwa": {
+    "eyebrow": "Clinic App",
+    "title": "Install the clinic on your device",
+    "desc": "Add the app to your home screen or desktop for one-tap access, a full-screen native feel and faster loading.",
+    "install": "Install app",
+    "installing": "Installing…",
+    "installedShort": "Installed",
+    "later": "Later",
+    "never": "Don't show this again",
+    "gotIt": "Got it",
+    "offline": "You're offline",
+    "updateTitle": "Update available",
+    "updateDesc": "A new version is ready.",
+    "update": "Update",
+    "iosLead": "Follow these steps in Safari to add the app to your home screen:",
+    "perks": {
+      "fast": "Quick access from your home screen",
+      "fullscreen": "Full-screen, just like a native app",
+      "offline": "Faster loading and better offline support"
+    },
+    "iosSteps": {
+      "one": "Tap the Share button in Safari's toolbar.",
+      "two": "Choose \"Add to Home Screen\".",
+      "three": "Tap \"Add\" to place the clinic icon on your device."
+    }
+  },
   "notFound": {
     "badge": "Error 404",
     "title": "Page Not Found",
@@ -3626,6 +3652,45 @@
     "pickPeriod": "Choose a period",
     "currentMonth": "This month",
     "periodCovers": "Covers {from} to {to}",
+    "rangeModeMonth": "Month",
+    "rangeModeCustom": "Custom range",
+    "customRange": "Custom date range",
+    "fromDate": "From",
+    "toDate": "To",
+    "rangeInvalid": "Pick a valid range",
+    "applyRange": "Apply range",
+    "rangePresets": {
+      "thisMonth": "This month",
+      "lastMonth": "Last month",
+      "last3": "Last 3 months",
+      "last6": "Last 6 months",
+      "last12": "Last 12 months",
+      "thisYear": "This year",
+      "lastYear": "Last year"
+    },
+    "total": "Total",
+    "comparison": "Period comparison",
+    "comparisonDesc": "Month-over-month income, expenses and net cash flow",
+    "last6": "6 months",
+    "last12": "12 months",
+    "monthlyTrend": "Monthly trend",
+    "vsPrevious": "Previous period net",
+    "categorySplit": "Category split",
+    "categorySplitDesc": "Share of each category in the selected period",
+    "weekdayTitle": "By weekday",
+    "weekdayDesc": "Income and expenses across the week",
+    "weekdays": {
+      "m0": "Saturday",
+      "m1": "Sunday",
+      "m2": "Monday",
+      "m3": "Tuesday",
+      "m4": "Wednesday",
+      "m5": "Thursday",
+      "m6": "Friday"
+    },
+    "netTrend": "Net",
+    "flowView": "Flow",
+    "balanceView": "Balance",
     "overview": "Overview",
     "income": "Income",
     "expense": "Expense",
@@ -4226,6 +4291,10 @@
     },
     "hero": {
       "eyebrow": "About the practice",
+      "credential": {
+        "label": "Board Certified",
+        "text": "A board-certified aesthetic physician"
+      },
       "title": {
         "line1": "A small practice,",
         "line2": "deliberately so."
@@ -4946,7 +5015,8 @@
       "search": "Search",
       "langToggle": "Switch language",
       "openMenu": "Open menu",
-      "closeMenu": "Close menu"
+      "closeMenu": "Close menu",
+      "mainSite": "Main Site"
     },
     "hero": {
       "eyebrow": "A specialist practice for HPV, cervical lesions and recurrent infections",

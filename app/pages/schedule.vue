@@ -452,7 +452,7 @@
             :length="totalPages"
             :total-visible="5"
             density="comfortable"
-            color="#00ADB5"
+            color="#5f8feb"
             rounded="circle"
             :disabled="loading"
           />

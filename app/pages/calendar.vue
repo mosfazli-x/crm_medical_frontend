@@ -118,13 +118,13 @@
               <div class="pf-field">
                 <span class="asa-field-label">{{ t('calendar.startTime') }} <span class="text-red-500!">{{ t('calendar.required') }}</span></span>
                 <PersianDatetimePicker v-model="newVisit.start" type="datetime" display-format="jYYYY/jMM/jDD - HH:mm"
-                  format="YYYY-MM-DD HH:mm:ss" color="#00ADB5" auto-submit custom-input class="w-full" />
+                  format="YYYY-MM-DD HH:mm:ss" color="#5f8feb" auto-submit custom-input class="w-full" />
               </div>
 
               <div class="pf-field">
                 <span class="asa-field-label">{{ t('calendar.endTime') }}</span>
                 <PersianDatetimePicker v-model="newVisit.end" type="datetime" display-format="jYYYY/jMM/jDD - HH:mm"
-                  format="YYYY-MM-DD HH:mm:ss" color="#00ADB5" auto-submit custom-input class="w-full" />
+                  format="YYYY-MM-DD HH:mm:ss" color="#5f8feb" auto-submit custom-input class="w-full" />
               </div>
 
               <div class="pf-field">
@@ -148,10 +148,10 @@
             <!-- ── Follow-up / return visit ── -->
             <div class="fu-section">
               <div class="fu-section__head">
-                <v-icon size="18" color="#00ADB5">mdi-calendar-sync</v-icon>
+                <v-icon size="18" color="#5f8feb">mdi-calendar-sync</v-icon>
                 <span class="asa-field-label mb-0!">{{ t('followups.returnVisit') }}</span>
                 <v-spacer />
-                <v-btn size="small" variant="text" color="#00ADB5" class="text-none!"
+                <v-btn size="small" variant="text" color="#5f8feb" class="text-none!"
                   :prepend-icon="newVisit.nextVisitDate ? 'mdi-close' : 'mdi-plus'"
                   @click="toggleReturnVisit">
                   {{ newVisit.nextVisitDate ? t('followups.remove') : t('followups.add') }}
@@ -166,7 +166,7 @@
                 <div class="pf-field">
                   <span class="asa-field-label">{{ t('followups.nextVisitDate') }}</span>
                   <PersianDatetimePicker v-model="newVisit.nextVisitDate" type="date"
-                    display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#00ADB5" auto-submit
+                    display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD" color="#5f8feb" auto-submit
                     custom-input class="w-full" clearable />
                 </div>
 

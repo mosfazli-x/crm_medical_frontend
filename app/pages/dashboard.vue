@@ -3242,7 +3242,7 @@ useSeoMeta({ title: () => `${t('dashboard.title')} | ${t('seo.systemManagement')
   --asa-label-3: #aeaeb2;
   --asa-sep: rgba(60, 60, 67, 0.16);
   --asa-track: rgba(120, 120, 128, 0.18);
-  --asa-accent: #00adb5;
+  --asa-accent: #5f8feb;
   --asa-accent-deep: #008c93;
   --asa-accent-soft: rgba(0, 173, 181, 0.14);
   --asa-green: #1a7f37;

@@ -102,7 +102,7 @@ const dir = computed(() => (locale.value === 'fa' ? 'rtl' : 'ltr'))
 .auth-shell {
   --auth-background: #222831;
   --auth-foreground: #EEEEEE;
-  --auth-primary: #00ADB5;
+  --auth-primary: #5f8feb;
   --auth-primary-hover: #39C6D6;
   --auth-card: #393E46;
   --auth-card-raised: #2B3138;

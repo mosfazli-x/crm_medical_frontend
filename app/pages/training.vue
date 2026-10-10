@@ -107,8 +107,8 @@ useHead({
 .ln-shell {
   --ln-background: #222831;
   --ln-foreground: #EEEEEE;
-  --ln-primary: #00ADB5;
-  --ln-accent: #00ADB5;
+  --ln-primary: #5f8feb;
+  --ln-accent: #5f8feb;
   --ln-card: #393E46;
   --ln-muted-foreground: #B8BDC5;
   --ln-border: #4A505A;

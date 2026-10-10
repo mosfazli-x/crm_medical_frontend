@@ -445,7 +445,7 @@
                 type="number" />
             </div>
             <div class="asa-field sm:col-span-2! us-switch-field">
-              <v-switch v-model="profileForm.showOnLanding" color="#00ADB5" inset :label="t('users.showOnLanding')"
+              <v-switch v-model="profileForm.showOnLanding" color="#5f8feb" inset :label="t('users.showOnLanding')"
                 :hint="t('users.showOnLandingHint')" persistent-hint />
             </div>
             <div class="asa-field sm:col-span-2!">

@@ -17,7 +17,7 @@
         {{ t('aboutPage.masthead.brand') }}
       </a>
       <a href="/"
-        class="about-back !flex !items-center !gap-3 !text-[0.65rem] !tracking-[0.4em] text-[#B8BDC5]/60 !uppercase !transition-colors !duration-700 hover:text-[#00ADB5]">
+        class="about-back !flex !items-center !gap-3 !text-[0.65rem] !tracking-[0.4em] text-[#B8BDC5]/60 !uppercase !transition-colors !duration-700 hover:text-[#5f8feb]">
         <span class="about-back__arrow" aria-hidden="true">←</span>
         {{ t('aboutPage.masthead.back') }}
       </a>
@@ -28,7 +28,7 @@
       class="scene-3d !relative !z-10 !grid !grid-cols-1 !items-center !gap-12 !px-8 !pt-16 !pb-32 sm:!px-16 lg:!grid-cols-[1fr_0.9fr] lg:!gap-24 lg:!pt-24">
       <div class="!flex !flex-col !justify-center">
         <p class="about-eyebrow !mb-8 !flex !items-center !gap-4">
-          <span class="!h-px !w-12 bg-[#00ADB5]/50" aria-hidden="true" />
+          <span class="!h-px !w-12 bg-[#5f8feb]/50" aria-hidden="true" />
           {{ t('aboutPage.hero.eyebrow') }}
         </p>
         <h1 class="about-hero-title !font-bold font-bon">
@@ -36,7 +36,7 @@
             <span class="anim-line !block" style="animation-delay: 120ms">{{ t('aboutPage.hero.title.line1') }}</span>
           </span>
           <span class="!block !overflow-hidden">
-            <span class="anim-line !block text-[#00ADB5]" style="animation-delay: 260ms">{{
+            <span class="anim-line !block text-[#5f8feb]" style="animation-delay: 260ms">{{
                 t('aboutPage.hero.title.line2') }}</span>
           </span>
         </h1>
@@ -106,13 +106,13 @@
             </div>
             <div class="layer-3d !relative !-mt-20 !z-10 !flex !flex-grow !flex-col !justify-end !p-8">
               <span
-                class="!mb-3 !inline-block !w-fit !rounded-full !border !border-[#00ADB5]/30 !px-3 !py-1 !text-[0.55rem] !tracking-[0.24em] text-[#00ADB5]/80 !uppercase">
+                class="!mb-3 !inline-block !w-fit !rounded-full !border !border-[#5f8feb]/30 !px-3 !py-1 !text-[0.55rem] !tracking-[0.24em] text-[#5f8feb]/80 !uppercase">
                 {{ member.role }}
               </span>
               <h3 class="!text-2xl !font-light !leading-none text-[#EEEEEE]">{{ member.name }}</h3>
               <p class="!mt-4 !text-sm !leading-relaxed text-[#B8BDC5]/70 line-clamp-2">{{ member.bio }}</p>
               <span
-                class="!mt-5 !block !h-px !w-8 !bg-[#00ADB5] !transition-all !duration-500 group-hover:!w-16 group-hover:!bg-[#4FD6E4]"
+                class="!mt-5 !block !h-px !w-8 !bg-[#5f8feb] !transition-all !duration-500 group-hover:!w-16 group-hover:!bg-[#4FD6E4]"
                 aria-hidden="true" />
             </div>
           </article>
@@ -146,9 +146,9 @@
           <article class="card-3d glass-panel group !flex !h-full !flex-col !justify-between !rounded-xl !p-10">
             <div>
               <div
-                class="!mb-7 !flex !h-12 !w-12 !items-center !justify-center !rounded-full !border !border-[#00ADB5]/25 !transition-colors !duration-500 group-hover:!border-[#00ADB5]/60">
+                class="!mb-7 !flex !h-12 !w-12 !items-center !justify-center !rounded-full !border !border-[#5f8feb]/25 !transition-colors !duration-500 group-hover:!border-[#5f8feb]/60">
                 <svg viewBox="0 0 24 24"
-                  class="!h-5 !w-5 text-[#00ADB5]/80 !transition-colors !duration-500 group-hover:!text-[#00ADB5]"
+                  class="!h-5 !w-5 text-[#5f8feb]/80 !transition-colors !duration-500 group-hover:!text-[#5f8feb]"
                   fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path v-for="(d, i) in serviceIcon(service.key)" :key="i" :d="d" />
                 </svg>
@@ -188,14 +188,14 @@
         <div class="reveal-in !h-full lg:!col-span-7 lg:!row-span-2">
           <div class="card-3d glass-panel !h-full !rounded-xl !p-10 lg:!p-14">
             <h3
-              class="!mb-10 !flex !items-center !gap-4 !text-[0.65rem] !tracking-[0.34em] text-[#00ADB5]/80 !uppercase">
-              <span class="!h-2 !w-2 !animate-pulse !rounded-full bg-[#00ADB5]/80" />
+              class="!mb-10 !flex !items-center !gap-4 !text-[0.65rem] !tracking-[0.34em] text-[#5f8feb]/80 !uppercase">
+              <span class="!h-2 !w-2 !animate-pulse !rounded-full bg-[#5f8feb]/80" />
               {{ t('aboutPage.visit.contact.heading') }}
             </h3>
             <ul class="layer-3d !space-y-10">
               <li class="!flex !items-start !gap-4">
                 <span
-                  class="!mt-1 !flex !h-9 !w-9 !flex-shrink-0 !items-center !justify-center !rounded-full !border !border-[#00ADB5]/25 text-[#00ADB5]/70"
+                  class="!mt-1 !flex !h-9 !w-9 !flex-shrink-0 !items-center !justify-center !rounded-full !border !border-[#5f8feb]/25 text-[#5f8feb]/70"
                   aria-hidden="true">
                   <svg viewBox="0 0 24 24" class="!h-4 !w-4" fill="none" stroke="currentColor" stroke-width="1.5"
                     stroke-linecap="round" stroke-linejoin="round">
@@ -208,13 +208,13 @@
                   <span class="!mb-3 !block !text-[0.6rem] !tracking-[0.28em] text-[#B8BDC5]/50 !uppercase">{{
                       t('aboutPage.visit.contact.phoneLabel') }}</span>
                   <a href="tel:+982188004120"
-                    class="!text-3xl !font-light text-[#EEEEEE] !transition-colors !duration-700 hover:text-[#00ADB5] lg:!text-4xl">{{
+                    class="!text-3xl !font-light text-[#EEEEEE] !transition-colors !duration-700 hover:text-[#5f8feb] lg:!text-4xl">{{
                       t('aboutPage.visit.contact.phone') }}</a>
                 </div>
               </li>
               <li class="!flex !items-start !gap-4">
                 <span
-                  class="!mt-1 !flex !h-9 !w-9 !flex-shrink-0 !items-center !justify-center !rounded-full !border !border-[#00ADB5]/25 text-[#00ADB5]/70"
+                  class="!mt-1 !flex !h-9 !w-9 !flex-shrink-0 !items-center !justify-center !rounded-full !border !border-[#5f8feb]/25 text-[#5f8feb]/70"
                   aria-hidden="true">
                   <svg viewBox="0 0 24 24" class="!h-4 !w-4" fill="none" stroke="currentColor" stroke-width="1.5"
                     stroke-linecap="round" stroke-linejoin="round">
@@ -226,13 +226,13 @@
                   <span class="!mb-3 !block !text-[0.6rem] !tracking-[0.28em] text-[#B8BDC5]/50 !uppercase">{{
                       t('aboutPage.visit.contact.emailLabel') }}</span>
                   <a href="mailto:care@hastihosseini.clinic"
-                    class="!text-2xl !font-light text-[#EEEEEE] !transition-colors !duration-700 hover:text-[#00ADB5] lg:!text-3xl">{{
+                    class="!text-2xl !font-light text-[#EEEEEE] !transition-colors !duration-700 hover:text-[#5f8feb] lg:!text-3xl">{{
                       t('aboutPage.visit.contact.email') }}</a>
                 </div>
               </li>
               <li class="!flex !items-start !gap-4">
                 <span
-                  class="!mt-1 !flex !h-9 !w-9 !flex-shrink-0 !items-center !justify-center !rounded-full !border !border-[#00ADB5]/25 text-[#00ADB5]/70"
+                  class="!mt-1 !flex !h-9 !w-9 !flex-shrink-0 !items-center !justify-center !rounded-full !border !border-[#5f8feb]/25 text-[#5f8feb]/70"
                   aria-hidden="true">
                   <svg viewBox="0 0 24 24" class="!h-4 !w-4" fill="none" stroke="currentColor" stroke-width="1.5"
                     stroke-linecap="round" stroke-linejoin="round">
@@ -256,7 +256,7 @@
         <!-- Hours (Top Right Card) -->
         <div class="reveal-in !h-full lg:!col-span-5 lg:!row-span-1">
           <div class="card-3d glass-panel !h-full !rounded-xl !p-8 lg:!p-10">
-            <h3 class="!mb-8 !text-[0.6rem] !tracking-[0.34em] text-[#00ADB5]/80 !uppercase">{{
+            <h3 class="!mb-8 !text-[0.6rem] !tracking-[0.34em] text-[#5f8feb]/80 !uppercase">{{
                 t('aboutPage.visit.hours.heading') }}</h3>
             <ul class="layer-3d !space-y-6">
               <li v-for="row in hours" :key="row.key"
@@ -274,13 +274,13 @@
         <!-- Social (Bottom Right Card) -->
         <div class="reveal-in !h-full lg:!col-span-5 lg:!row-span-1">
           <div class="card-3d glass-panel !h-full !rounded-xl !p-8 lg:!p-10">
-            <h3 class="!mb-6 !text-[0.6rem] !tracking-[0.34em] text-[#00ADB5]/80 !uppercase">{{
+            <h3 class="!mb-6 !text-[0.6rem] !tracking-[0.34em] text-[#5f8feb]/80 !uppercase">{{
                 t('aboutPage.visit.social.heading') }}</h3>
             <ul class="!grid !grid-cols-2 !gap-4">
               <li v-for="item in social" :key="item.key">
                 <a :href="item.href" target="_blank" rel="noreferrer noopener"
-                  class="glass-panel group !flex !flex-col !items-start !gap-2 !rounded-lg !p-5 !transition-all !duration-500 hover:!border-[#00ADB5]/30 hover:!bg-[#2B3138]/60">
-                  <span class="!text-lg !font-light text-[#EEEEEE] !transition-colors !duration-500 group-hover:text-[#00ADB5]">{{
+                  class="glass-panel group !flex !flex-col !items-start !gap-2 !rounded-lg !p-5 !transition-all !duration-500 hover:!border-[#5f8feb]/30 hover:!bg-[#2B3138]/60">
+                  <span class="!text-lg !font-light text-[#EEEEEE] !transition-colors !duration-500 group-hover:text-[#5f8feb]">{{
                       item.name }}</span>
                   <span class="!text-[0.55rem] !tracking-[0.24em] text-[#B8BDC5]/50 !uppercase">{{ item.handle
                   }}</span>
@@ -296,7 +296,7 @@
     <footer
       class="about-footer !relative !z-10 !flex !flex-wrap !items-center !justify-between !gap-6 !px-8 !py-12 !text-[0.6rem] !tracking-[0.35em] text-[#B8BDC5]/40 !uppercase sm:!px-16">
       <span>{{ t('aboutPage.footer.note') }}</span>
-      <a href="/" class="!transition-colors !duration-700 hover:text-[#00ADB5]">{{
+      <a href="/" class="!transition-colors !duration-700 hover:text-[#5f8feb]">{{
           t('aboutPage.footer.return') }}</a>
       <span>© {{ year }}</span>
     </footer>
@@ -409,7 +409,7 @@ useSeoMeta({
   --about-fg: #EEEEEE;
   --about-muted: #B8BDC5;
   --about-border: #4A505A;
-  --about-accent: #00ADB5;
+  --about-accent: #5f8feb;
   --about-accent-soft: #39C6D6;
   --about-accent-bright: #4FD6E4;
   --ease-luxe: cubic-bezier(0.16, 1, 0.3, 1);

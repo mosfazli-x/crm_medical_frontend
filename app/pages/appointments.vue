@@ -150,7 +150,7 @@
                     </td>
                     <td>
                       <span class="flex items-center gap-2">
-                        <span class="pa-vtype-dot" :style="{ backgroundColor: appt.visitTypeColor || '#00adb5' }" aria-hidden="true" />
+                        <span class="pa-vtype-dot" :style="{ backgroundColor: appt.visitTypeColor || '#5f8feb' }" aria-hidden="true" />
                         <span>{{ appt.visitTypeName || '—' }}</span>
                       </span>
                     </td>
@@ -219,7 +219,7 @@
                 <span class="crm-ltr font-mono font-semibold!">&lrm;{{ timeRange(appt) }}</span>
                 <span class="asa-dot-inline" aria-hidden="true" />
                 <span class="flex items-center gap-1.5">
-                  <span class="pa-vtype-dot" :style="{ backgroundColor: appt.visitTypeColor || '#00adb5' }" aria-hidden="true" />
+                  <span class="pa-vtype-dot" :style="{ backgroundColor: appt.visitTypeColor || '#5f8feb' }" aria-hidden="true" />
                   {{ appt.visitTypeName || '—' }}
                 </span>
               </p>

@@ -9,7 +9,7 @@
         </h3>
       </div>
       
-      <v-btn color="#00ADB5" variant="flat" prepend-icon="mdi-plus" class="rounded" size="small"
+      <v-btn color="#5f8feb" variant="flat" prepend-icon="mdi-plus" class="rounded" size="small"
       @click="records.push({
         gravida_index: records.length + 1,
         status: 'current',
@@ -98,10 +98,10 @@
                 {{ t('pregnancy.testsAndScreenings') }}
               </h4>
               <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
-                <v-checkbox v-model="rec.prenatal_screenings.nt_done" :label="t('pregnancy.ntUltrasound')" density="compact" hide-details color="#00ADB5" />
-                <v-checkbox v-model="rec.prenatal_screenings.anomaly_done" :label="t('pregnancy.anomalyScan')" density="compact" hide-details color="#00ADB5" />
-                <v-checkbox v-model="rec.prenatal_screenings.nipt_done" :label="t('pregnancy.niptTest')" density="compact" hide-details color="#00ADB5" />
-                <v-checkbox v-model="rec.prenatal_screenings.gdm_done" :label="t('pregnancy.gdmTest')" density="compact" hide-details color="#00ADB5" />
+                <v-checkbox v-model="rec.prenatal_screenings.nt_done" :label="t('pregnancy.ntUltrasound')" density="compact" hide-details color="#5f8feb" />
+                <v-checkbox v-model="rec.prenatal_screenings.anomaly_done" :label="t('pregnancy.anomalyScan')" density="compact" hide-details color="#5f8feb" />
+                <v-checkbox v-model="rec.prenatal_screenings.nipt_done" :label="t('pregnancy.niptTest')" density="compact" hide-details color="#5f8feb" />
+                <v-checkbox v-model="rec.prenatal_screenings.gdm_done" :label="t('pregnancy.gdmTest')" density="compact" hide-details color="#5f8feb" />
               </div>
             </div>
 
@@ -136,7 +136,7 @@
                   <v-icon icon="mdi-baby-face-outline" size="small" class="text-electric-sapphire" />
                   {{ t('pregnancy.newbornInfo') }}
                 </h4>
-                <v-btn size="small" color="#00ADB5" variant="tonal" prepend-icon="mdi-plus"
+                <v-btn size="small" color="#5f8feb" variant="tonal" prepend-icon="mdi-plus"
                        @click="rec.newborns_details.push({ gender: '', weight: null, height: null, head_circumference: null, apgar1: null, apgar5: null, nicu: false })">
                   {{ t('pregnancy.addNewborn') }}
                 </v-btn>

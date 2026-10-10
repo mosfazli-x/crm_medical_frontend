@@ -70,43 +70,91 @@
   /* ── Brand Primitive Scale ── */
   --color-brand-800: #222831;
   --color-brand-700: #393e46;
-  --color-brand-500: #00adb5;
+  --color-brand-500: #5f8feb;
   --color-brand-100: #eeeeee;
 
   /* ── Semantic Color Tokens ── */
-  --color-bg: #eeeeee;
+  /* Background / Surface */
+  --color-bg: #f8fafc;
   --color-surface: #ffffff;
   --color-surface-elevated: #ffffff;
-  --color-surface-muted: #f6f6f6;
-  --color-border: #e2e4e8;
-  --color-border-subtle: #eceef0;
-
-  --color-text-primary: #222831;
-  --color-text-secondary: #393e46;
-  --color-text-muted: #6b7280;
-  --color-text-disabled: #a6a9ad;
-
-  --color-primary: #00adb5;
-  --color-primary-hover: #009ca3;
-  --color-primary-active: #00868c;
-  --color-primary-subtle: #e0f7f8;
+  --color-surface-muted: #f1f5f9;
+  /* Border */
+  --color-border: #e2e8f0;
+  --color-border-subtle: #edf1f5;
+  /* Text */
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-text-disabled: #94a3b8;
+  /* Primary / Blue */
+  --color-primary: #7ba7f7;
+  --color-primary-hover: #5f8fea;
+  --color-primary-active: #4f80dc;
+  --color-primary-subtle: #eaf2ff;
   --color-primary-foreground: #ffffff;
+  /* Secondary */
+  --color-secondary: #475569;
+  --color-secondary-subtle: #f1f5f9;
+  /* Accent */
+  --color-accent: #7ba7f7;
+  --color-accent-subtle: #eaf2ff;
+  /* Semantic */
+  --color-success: #5fae7f;
+  --color-success-subtle: #edf8f2;
+  --color-warning: #c9954d;
+  --color-warning-subtle: #fff8ea;
+  --color-danger: #d97878;
+  --color-danger-subtle: #fdf0f0;
+  --color-info: #7ba7f7;
+  --color-info-subtle: #eaf2ff;
+  --color-info-strong: #5f8fea;
 
-  --color-secondary: #393e46;
-  --color-secondary-subtle: #eceef0;
-  --color-accent: #00adb5;
-  --color-accent-subtle: #e0f7f8;
+    /* ── Font Families ── */
+  --font-sans: 'IRANSansX', 'AriaWeb', system-ui, -apple-system, sans-serif;
+  --font-display: 'AriaWeb', 'IRANSansX', sans-serif;
+  --font-body: 'IRANSansX', 'AriaWeb', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
 
-  --color-success: #059669;
-  --color-success-subtle: #ecfdf5;
-  --color-warning: #d97706;
-  --color-warning-subtle: #fffbeb;
-  --color-danger: #dc2626;
-  --color-danger-subtle: #fef2f2;
-  --color-info: #00adb5;
-  --color-info-subtle: #e0f7f8;
-  --color-info-strong: #00868c;
+:root.dark {
+  /* Background / Surface */
+  --color-bg: #111418;
+  --color-surface: #191e24;
+  --color-surface-elevated: #20262e;
+  --color-surface-muted: #171c22;
+  /* Border */
+  --color-border: #2a323c;
+  --color-border-subtle: #232a33;
+  /* Text */
+  --color-text-primary: #e7ecf3;
+  --color-text-secondary: #b2bdc9;
+  --color-text-muted: #98a4b3;
+  --color-text-disabled: #667281;
+  /* Primary / Blue */
+  --color-primary: #8bb8ff;
+  --color-primary-hover: #78a9f5;
+  --color-primary-active: #6899e5;
+  --color-primary-subtle: #1d2a3d;
+  --color-primary-foreground: #111418;
+  /* Secondary */
+  --color-secondary: #b2bdc9;
+  --color-secondary-subtle: #20262e;
+  /* Accent */
+  --color-accent: #8bb8ff;
+  --color-accent-subtle: #1d2a3d;
+  /* Semantic */
+  --color-success: #8dd8b0;
+  --color-success-subtle: #172a21;
+  --color-warning: #f5cf8e;
+  --color-warning-subtle: #30291c;
+  --color-danger: #eeaaaa;
+  --color-danger-subtle: #301f22;
+  --color-info: #8bb8ff;
+  --color-info-subtle: #1d2a3d;
+  --color-info-strong: #78a9f5;
 
+  
   /* ── Font Families ── */
   --font-sans: 'IRANSansX', 'AriaWeb', system-ui, -apple-system, sans-serif;
   --font-display: 'AriaWeb', 'IRANSansX', sans-serif;
@@ -239,11 +287,11 @@
   --radius-5xl: 2.75rem;
 
   /* ── Legacy Shadows ── */
-  --shadow-soft: 0 8px 30px -8px rgba(11,12,14,0.10);
-  --shadow-floaty: 0 24px 60px -16px rgba(11,12,14,0.22);
-  --shadow-glass: inset 0 1px 0 0 rgba(255,255,255,0.4), 0 20px 45px -18px rgba(11,12,14,0.28);
-  --shadow-glow: 0 0 40px -8px rgba(23,168,116,0.3);
-  --shadow-card-hover: 0 32px 64px -12px rgba(11,12,14,0.28), 0 0 0 1px rgba(23,168,116,0.08);
+  --shadow-soft: 0 8px 30px -8px rgba(11, 12, 14, 0.10);
+  --shadow-floaty: 0 24px 60px -16px rgba(11, 12, 14, 0.22);
+  --shadow-glass: inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 0 20px 45px -18px rgba(11, 12, 14, 0.28);
+  --shadow-glow: 0 0 40px -8px rgba(23, 168, 116, 0.3);
+  --shadow-card-hover: 0 32px 64px -12px rgba(11, 12, 14, 0.28), 0 0 0 1px rgba(23, 168, 116, 0.08);
 
   /* ── Backdrop ── */
   --blur-xs: 2px;
@@ -281,121 +329,293 @@
    ═══════════════════════════════════════════════ */
 
 @keyframes floaty {
-  0%, 100% { transform: translateY(0px) rotate(var(--tilt, 0deg)); }
-  50% { transform: translateY(-14px) rotate(var(--tilt, 0deg)); }
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(var(--tilt, 0deg));
+  }
+
+  50% {
+    transform: translateY(-14px) rotate(var(--tilt, 0deg));
+  }
 }
 
 @keyframes pulseDot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.4); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(1.4);
+  }
 }
 
 @keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(32px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes scale-in {
-  from { opacity: 0; transform: scale(0.92); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes slide-in-right {
-  from { opacity: 0; transform: translateX(40px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes slide-in-left {
-  from { opacity: 0; transform: translateX(-40px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 20px -4px rgba(0,173,181,0.35); }
-  50% { box-shadow: 0 0 40px -4px rgba(0,173,181,0.55); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px -4px rgba(0, 173, 181, 0.35);
+  }
+
+  50% {
+    box-shadow: 0 0 40px -4px rgba(0, 173, 181, 0.55);
+  }
 }
 
 @keyframes border-flow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @keyframes morph {
-  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-  50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+
+  0%,
+  100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
 }
 
 @keyframes blur-in {
-  from { opacity: 0; filter: blur(12px); transform: translateY(16px); }
-  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+  from {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
 }
 
 @keyframes clip-reveal {
-  from { clip-path: inset(0 100% 0 0); }
-  to { clip-path: inset(0 0 0 0); }
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
 }
 
 @keyframes ripple {
-  from { transform: scale(0); opacity: 0.6; }
-  to { transform: scale(4); opacity: 0; }
+  from {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
 }
 
 @keyframes float-gentle {
-  0%, 100% { transform: translateY(0px) translateX(0px); }
-  25% { transform: translateY(-8px) translateX(4px); }
-  50% { transform: translateY(-4px) translateX(-2px); }
-  75% { transform: translateY(-12px) translateX(2px); }
+
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+
+  25% {
+    transform: translateY(-8px) translateX(4px);
+  }
+
+  50% {
+    transform: translateY(-4px) translateX(-2px);
+  }
+
+  75% {
+    transform: translateY(-12px) translateX(2px);
+  }
 }
 
 @keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 1; }
-  100% { transform: scale(2.2); opacity: 0; }
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
 }
 
 @keyframes hero-text {
-  from { opacity: 0; transform: translateY(40px) rotateX(15deg); filter: blur(6px); }
-  to { opacity: 1; transform: translateY(0) rotateX(0deg); filter: blur(0); }
+  from {
+    opacity: 0;
+    transform: translateY(40px) rotateX(15deg);
+    filter: blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+    filter: blur(0);
+  }
 }
 
 @keyframes counter-pop {
-  0% { transform: scale(0.6); opacity: 0; }
-  60% { transform: scale(1.08); }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes section-reveal {
-  from { opacity: 0; transform: translateY(48px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(48px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @keyframes wiggle {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-2deg); }
-  75% { transform: rotate(2deg); }
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-2deg);
+  }
+
+  75% {
+    transform: rotate(2deg);
+  }
 }
 
 @keyframes blink {
-  from, to { border-color: transparent; }
-  50% { border-color: currentColor; }
+
+  from,
+  to {
+    border-color: transparent;
+  }
+
+  50% {
+    border-color: currentColor;
+  }
 }
 
 @keyframes typing {
-  from { width: 0; }
-  to { width: 100%; }
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
 }

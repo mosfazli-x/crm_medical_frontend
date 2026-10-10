@@ -86,7 +86,7 @@ class="asa-btn asa-btn--ghost" :disabled="loading" :aria-label="t('adminSettings
               </span>
               <v-switch
                 :model-value="smsEnabled"
-                color="#00adb5"
+                color="#5f8feb"
                 hide-details
                 density="compact"
                 :loading="savingMaster"
@@ -374,7 +374,7 @@ class="asa-btn asa-btn--ghost" :disabled="loading" :aria-label="t('adminSettings
                               <v-icon :icon="ch.glyph" size="16" :class="ch.iconClass" />
                               <v-switch
                                 :model-value="ev.state[ch.value] === true"
-                                color="#00adb5"
+                                color="#5f8feb"
                                 hide-details
                                 density="compact"
                                 disabled
@@ -388,7 +388,7 @@ class="asa-btn asa-btn--ghost" :disabled="loading" :aria-label="t('adminSettings
                           <v-icon :icon="ch.glyph" size="16" :class="ch.iconClass" />
                           <v-switch
                             :model-value="ev.state[ch.value] === true"
-                            color="#00adb5"
+                            color="#5f8feb"
                             hide-details
                             density="compact"
                             :loading="isPending(ev.key, ch.value)"

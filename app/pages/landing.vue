@@ -31,6 +31,11 @@
             <Icon name="lucide:globe" size="18" />
           </button>
 
+          <NuxtLink to="/" class="lh-login">
+            <Icon name="lucide:house" size="16" />
+            <span>{{ t('landingPage.nav.mainSite') }}</span>
+          </NuxtLink>
+
           <NuxtLink to="/auth/login" class="lh-login">
             <Icon name="lucide:user" size="16" />
             <span>{{ t('landingPage.nav.login') }}</span>
@@ -56,6 +61,7 @@
         <a href="#lh-booking" @click="menuOpen = false">{{ t('landingPage.nav.book') }}</a>
         <NuxtLink to="/blog" @click="menuOpen = false">{{ t('landingPage.nav.blog') }}</NuxtLink>
         <a href="#lh-contact" @click="menuOpen = false">{{ t('landingPage.nav.contact') }}</a>
+        <NuxtLink to="/" @click="menuOpen = false">{{ t('landingPage.nav.mainSite') }}</NuxtLink>
         <NuxtLink to="/auth/login" @click="menuOpen = false">{{ t('landingPage.nav.login') }}</NuxtLink>
       </nav>
     </header>
@@ -88,9 +94,6 @@
             </div>
           </div>
 
-          <figure class="lh-hero__portrait">
-            <img src="../assets/images/dr-hosseini-cutout.png" :alt="t('landingPage.hero.portraitAlt')" />
-          </figure>
         </div>
       </section>
 
@@ -114,7 +117,7 @@
               <p>{{ item.desc }}</p>
               <span class="lh-quickcard__cta">
                 {{ t('landingPage.nav.book') }}
-                <Icon name="lucide:arrow-left" size="15" class="lh-flip-rtl" />
+                <Icon name="lucide:arrow-left" size="15" class="lh-flip-ltr" />
               </span>
             </NuxtLink>
           </div>
@@ -125,7 +128,7 @@
       <section id="lh-about" class="lh-section lh-section--sage">
         <div class="lh-shell lh-about">
           <figure class="lh-about__figure">
-            <img src="../assets/images/dr_hasti_hosseini.jpg" :alt="t('landingPage.about.figureAlt')" loading="lazy" />
+            <img src="../assets/images/dr_hasti_hosseini2.jpg" :alt="t('landingPage.about.figureAlt')" loading="lazy" />
           </figure>
 
           <div class="lh-about__copy">
@@ -925,6 +928,14 @@ useHead({
     lang: computed(() => (isRtl.value ? 'fa' : 'en')),
     dir: computed(() => (isRtl.value ? 'rtl' : 'ltr')),
   },
+  link: [
+    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+    {
+      rel: 'stylesheet',
+      href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Karla:wght@300;400;500;600;700&display=swap',
+    },
+  ],
 })
 </script>
 
@@ -937,10 +948,10 @@ useHead({
 */
 
 .lh {
-  --ink: #384539;
-  --ink-head: #566455;
-  --green: #768775;
-  --gold: #bc8a5f;
+  --ink: #131e34;
+  --ink-head: #5f8fea;
+  --green: #003099;
+  --gold: #005cfa;
   --magenta: #cc3366;
   --cream: #f8f1e8;
   --sage: #eef2eb;
@@ -962,6 +973,12 @@ useHead({
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.8;
+}
+
+/* English / LTR — same Latin pairing used on the other public pages. */
+.lh[dir='ltr'] {
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Karla', ui-sans-serif, system-ui, sans-serif;
 }
 
 .lh ::selection {
@@ -1118,16 +1135,17 @@ useHead({
   align-items: center;
   gap: 0.4rem;
   padding: 0.5rem 0.9rem;
-  border: 1px solid var(--gold);
+  border: 1px solid var(--color-blue-600);
   border-radius: 30px;
   font-size: 0.85rem;
-  color: var(--gold);
+  background: #ececec;
+  color: var(--color-blue-600);
   text-decoration: none;
   transition: background 0.25s ease, color 0.25s ease;
 }
 
 .lh-login:hover {
-  background: var(--gold);
+  background: var(--color-blue-600);
   color: #fff;
 }
 
@@ -1166,16 +1184,16 @@ useHead({
 }
 
 .lh-btn--solid {
-  background: var(--green);
+  background: var(--color-blue-400);
   color: #fff;
 }
 
 .lh-btn--solid:hover {
-  background: var(--ink-head);
+  background: var(--color-blue-500);
 }
 
 .lh-btn--gold {
-  background: var(--gold);
+  background: var(--blue);
   color: #fff;
 }
 
@@ -1184,19 +1202,20 @@ useHead({
 }
 
 .lh-btn--ghost {
-  border: 1px solid var(--gold);
+  border: 1px solid var(--color-blue-400);
   background: #fff;
-  color: var(--gold);
+  color: var(--color-blue-400);
 }
 
 .lh-btn--ghost:hover {
-  background: var(--gold);
+  background: var(--color-blue-500);
   color: #fff;
 }
 
 /* ==================== Hero ==================== */
 
 .lh-hero {
+  height: 100vh;
   position: relative;
   margin-top: -89px;
   padding-top: 89px;
@@ -1207,11 +1226,28 @@ useHead({
   position: absolute;
   inset: 0;
   background-color: var(--sage);
-  background-image: linear-gradient(180deg, rgba(238, 242, 235, 0.86) 0%, rgba(255, 255, 255, 0.96) 100%),
-    url('/images/hero-poster.jpg');
+
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(238, 242, 235, 0.14) 37%,
+      rgba(255, 255, 255, 0.96) 100%
+    ),
+    url('/images/hero-poster.png');
+
   background-size: cover;
-  background-position: center;
-  opacity: 0.55;
+  background-position: top;
+  opacity: 1;
+}
+
+/* English / LTR */
+:dir(ltr) .lh-hero__bg {
+  transform: scaleX(-1);
+}
+
+/* Persian / RTL */
+:dir(rtl) .lh-hero__bg {
+  transform: scaleX(1);
 }
 
 .lh-hero__inner {
@@ -1452,6 +1488,16 @@ useHead({
   border-radius: 16px;
   background: #fff;
   box-shadow: var(--shadow-card);
+}
+
+/* English / LTR */
+:dir(ltr) .lh-about__figure {
+  transform: scaleX(-1);
+}
+
+/* Persian / RTL */
+:dir(rtl) .lh-about__figure {
+  transform: scaleX(1);
 }
 
 .lh-about__figure img {
@@ -2155,5 +2201,7 @@ useHead({
     animation: none !important;
   }
 }
+
+
 
 </style>

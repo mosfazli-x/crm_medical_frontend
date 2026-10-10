@@ -13,7 +13,7 @@
         <div class="flex items-center justify-between mb-3">
           <span class="text-xs font-bold text-slate-500 dark:text-slate-400">{{ $t('leads.stats.total') }}</span>
           <span class="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-500/20 flex items-center justify-center">
-            <v-icon size="18" color="#00ADB5">mdi-account-outline</v-icon>
+            <v-icon size="18" color="#5f8feb">mdi-account-outline</v-icon>
           </span>
         </div>
         <p class="text-2xl font-extrabold text-slate-800 dark:text-slate-100">{{ summary?.totalLeads ?? 0 }}</p>
@@ -236,7 +236,7 @@
         <span class="text-xs text-slate-500 font-medium">
           {{ $t('leads.showing', { from: (pagination.page - 1) * pagination.limit + 1, to: Math.min(pagination.page * pagination.limit, pagination.total), total: pagination.total }) }}
         </span>
-        <v-pagination v-model="pagination.page" :length="pagination.totalPages" density="compact" color="#00ADB5"
+        <v-pagination v-model="pagination.page" :length="pagination.totalPages" density="compact" color="#5f8feb"
           :total-visible="4" @update:model-value="fetchLeads" />
       </div>
     </UiContentCard>

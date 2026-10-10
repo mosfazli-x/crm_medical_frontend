@@ -84,7 +84,7 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const uploading = ref(false)
 
 /** Keeps the progress bar on the same teal as the rest of the admin theme. */
-const accent = '#00adb5'
+const accent = '#5f8feb'
 
 const editor = useEditor({
   content: props.modelValue,

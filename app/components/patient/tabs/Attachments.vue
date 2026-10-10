@@ -38,7 +38,7 @@
                        @click="viewFile(file, cat.key)"
                        :title="t('attachments.viewFile')" />
 
-                <v-btn icon="mdi-download-outline" variant="text" color="#00ADB5" density="compact" size="small"
+                <v-btn icon="mdi-download-outline" variant="text" color="#5f8feb" density="compact" size="small"
                        :loading="loadingDownload.has(file.id)"
                        @click="downloadFile(file, cat.key)"
                        :title="t('attachments.downloadFile')" />
@@ -114,7 +114,7 @@ const loadingDownload = reactive(new Set<string>())
 const categories = [
   { key: 'ultrasound', titleKey: 'attachments.categories.ultrasound', icon: 'mdi-camera-iris', color: 'purple-darken-1', accept: 'image/*,application/pdf' },
   { key: 'lab', titleKey: 'attachments.categories.lab', icon: 'mdi-flask-outline', color: 'teal-darken-1', accept: '.pdf,.jpg,.jpeg,.png' },
-  { key: 'prescription', titleKey: 'attachments.categories.prescription', icon: 'mdi-prescription', color: '#00ADB5', accept: 'image/*,application/pdf' },
+  { key: 'prescription', titleKey: 'attachments.categories.prescription', icon: 'mdi-prescription', color: '#5f8feb', accept: 'image/*,application/pdf' },
   { key: 'patientFiles', titleKey: 'attachments.categories.patientFiles', icon: 'mdi-folder-multiple-outline', color: 'amber-darken-1', accept: 'image/*,application/pdf' }
 ]
 
