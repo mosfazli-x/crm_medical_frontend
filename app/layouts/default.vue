@@ -273,6 +273,10 @@ import ClipboardCheck from '~/components/icons/ClipboardCheck.vue'
 import Basket from '~/components/icons/Basket.vue'
 import FaqIcon from '~/components/icons/FaqIcon.vue'
 import Magnify from '~/components/icons/Magnify.vue'
+import Repeat from '~/components/icons/Repeat.vue'
+import MoneyBag from '~/components/icons/MoneyBag.vue'
+import Bill from '~/components/icons/Bill.vue'
+import Card from '~/components/icons/Card.vue'
 
 const route = useRoute()
 const { user, logout } = useAuth()
@@ -492,7 +496,7 @@ const ALL_MENUS = computed(() => [
   { title: t('myProfile.title'), to: '/my-profile', icon: Profile, roles: ['all'], group: 'main' },
   { title: t('mySessions.title'), to: '/my-sessions', icon: ShieldCheck, roles: ['all'], group: 'main' },
   { title: t('calendar.title'), to: '/calendar', icon: Calendar, roles: ['admin_doctor', 'doctor'], group: 'clinical' },
-  { title: t('followups.title'), to: '/follow-ups', icon: Bell, roles: ['admin_doctor', 'doctor'], group: 'clinical' },
+  { title: t('followups.title'), to: '/follow-ups', icon: Repeat, roles: ['admin_doctor', 'doctor'], group: 'clinical' },
   { title: t('scheduling.title'), to: '/scheduling', icon: Clock, roles: ['admin_doctor', 'doctor'], group: 'clinical' },
   { title: t('appointments.title'), to: '/appointments', icon: Grid, roles: ['admin_doctor', 'doctor'], group: 'clinical' },
   { title: t('visitTypes.title'), to: '/visit-types', icon: DocumentText, roles: ['admin_doctor', 'doctor'], group: 'clinical' },
@@ -507,7 +511,7 @@ const ALL_MENUS = computed(() => [
   { title: t('patientMessaging.title'), to: '/patient/messaging', icon: ChatDots, roles: ['patient'], group: 'communication' },
   { title: t('users.title'), to: '/users', icon: Users, roles: ['admin_doctor'], group: 'management' },
   { title: t('staff.title'), to: '/staff', icon: UsersGroup, roles: ['admin_doctor'], group: 'management' },
-  { title: t('attendance.title'), to: '/attendance', icon: Bell, roles: ['admin_doctor', 'doctor'], group: 'management' },
+  { title: t('attendance.title'), to: '/attendance', icon: Card, roles: ['admin_doctor', 'doctor'], group: 'management' },
   { title: t('schedule.title'), to: '/schedule', icon: ClipboardCheck, roles: ['admin_doctor', 'doctor', 'lab', 'pharmacy', 'clinic_staff'], group: 'management' },
   { title: t('adminSchedule.title'), to: '/admin/schedule', icon: Clock, roles: ['admin_doctor'], group: 'management' },
   { title: t('adminSettings.title'), to: '/admin/settings', icon: Settings, roles: ['admin_doctor'], group: 'management' },
@@ -516,10 +520,10 @@ const ALL_MENUS = computed(() => [
   { title: t('support.admin.title'), to: '/admin/faq-management', icon: FaqIcon, roles: ['admin_doctor'], group: 'management' },
   { title: t('blog.admin.title'), to: '/admin/blog', icon: FileText, roles: ['admin_doctor'], group: 'management' },
   { title: t('blog.admin.commentsTitle'), to: '/admin/blog/comments', icon: ChatDots, roles: ['admin_doctor'], group: 'management' },
-  { title: t('billing.title'), to: '/billing', icon: Wallet, roles: ['admin_doctor'], group: 'finance' },
+  { title: t('billing.title'), to: '/billing', icon: Bill, roles: ['admin_doctor'], group: 'finance' },
   { title: t('finance.title'), to: '/finance', icon: Wallet, roles: ['admin_doctor', 'doctor'], group: 'finance' },
   { title: t('inventory.title'), to: '/inventory', icon: Box, roles: ['admin_doctor', 'pharmacy'], group: 'finance' },
-  { title: t('accounting.title'), to: '/accounting', icon: BookOpen, roles: ['admin_doctor'], group: 'finance' },
+  { title: t('accounting.title'), to: '/accounting', icon: MoneyBag, roles: ['admin_doctor'], group: 'finance' },
   { title: t('consumables.title'), to: '/consumables', icon: Basket, roles: ['admin_doctor', 'doctor'], group: 'finance' },
   { title: t('dailyReports.title'), to: '/daily-reports', icon: FileText, roles: ['admin_doctor', 'doctor'], group: 'finance' },
 ])

@@ -38,7 +38,7 @@
         <div class="attd-grid">
           <!-- Status -->
           <div class="attd-field">
-            <label class="asa-field-label">{{ t('attendance.status') }} *</label>
+            <label class="asa-field-label">{{ t('attendance.statusTitle') }} *</label>
             <v-select
               v-model="form.status"
               :items="statusItems"

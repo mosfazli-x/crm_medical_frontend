@@ -96,7 +96,7 @@
             />
           </div>
 
-          <div class="pf-seg" role="group" :aria-label="t('attendance.status')">
+          <div class="pf-seg" role="group" :aria-label="t('attendance.statusTitle')">
             <button
               v-for="seg in statusSegments"
               :key="seg.value"
@@ -239,7 +239,7 @@
                       :aria-sort="ariaSort('status')"
                       @click="toggleSort('status')"
                     >
-                      <span>{{ t('attendance.status') }}</span>
+                      <span>{{ t('attendance.statusTitle') }}</span>
                       <v-icon size="13" :class="['pf-th-ic', { 'pf-th-ic--on': sortKey === 'status' }]">
                         {{ sortIcon('status') }}
                       </v-icon>
@@ -541,7 +541,7 @@
               <thead>
                 <tr>
                   <th class="pf-pl0">{{ t('common.date') }}</th>
-                  <th>{{ t('attendance.status') }}</th>
+                  <th>{{ t('attendance.statusTitle') }}</th>
                   <th>{{ t('attendance.workHours') }}</th>
                   <th>{{ t('attendance.workDuration') }}</th>
                   <th>{{ t('attendance.workLocation') }}</th>

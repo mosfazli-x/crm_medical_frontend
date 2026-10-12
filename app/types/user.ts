@@ -1,4 +1,4 @@
-export type UserRole = 'admin_doctor' | 'doctor' | 'lab' | 'pharmacy' | 'patient'
+export type UserRole = 'admin_doctor' | 'doctor' | 'lab' | 'pharmacy' | 'patient' | 'clinic_staff'
 export type UserStatus = 'pending' | 'approved' | 'rejected'
 
 export interface User {
@@ -11,5 +11,6 @@ export interface User {
   email?: string
   smsEnabled: boolean
   telegramEnabled: boolean
+  showActiveBookings?: boolean
   createdAt?: string
 }

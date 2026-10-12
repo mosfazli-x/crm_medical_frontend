@@ -145,6 +145,36 @@
       </article>
     </div>
 
+    <!-- ─── Manager booking visibility ─── -->
+    <article v-if="isManager" class="pf-card pf-card--telegram" style="animation-delay: 160ms">
+      <div class="pf-card__head">
+        <div class="asa-tint asa-tint--rose">
+          <v-icon size="24">mdi-eye-off-outline</v-icon>
+        </div>
+        <div class="min-w-0!">
+          <h2 class="asa-card-title">{{ t('myProfile.visibilityTitle') }}</h2>
+          <p class="asa-card-sub">{{ t('myProfile.visibilityDesc') }}</p>
+        </div>
+      </div>
+      <div class="pf-card__body">
+        <div class="pf-list">
+          <div class="pf-row">
+            <div class="pf-row__main">
+              <div class="asa-tint asa-tint--rose asa-tint--sm">
+                <v-icon size="18">mdi-calendar-clock-outline</v-icon>
+              </div>
+              <div class="min-w-0!">
+                <p class="pf-row__title">{{ t('myProfile.showActiveBookings') }}</p>
+                <p class="pf-row__sub">{{ t('myProfile.showActiveBookingsDesc') }}</p>
+              </div>
+            </div>
+            <v-switch :model-value="showActiveBookings" color="#5f8feb" inset hide-details
+              :loading="visibilityLoading" @update:model-value="toggleShowActiveBookings" />
+          </div>
+        </div>
+      </div>
+    </article>
+
     <!-- Notification settings — intentionally disabled for now
     <article v-if="isDoctor" class="pf-card pf-card--telegram" style="animation-delay: 240ms">
       <div class="pf-card__head">
@@ -450,10 +480,18 @@ const isDoctor = computed(() => {
   return role === 'admin_doctor' || role === 'doctor'
 })
 
+const isManager = computed(() => {
+  return userData.value?.role === 'admin_doctor'
+})
+
+const showActiveBookings = ref(true)
+const visibilityLoading = ref(false)
+
 onMounted(() => {
   if (userData.value) {
     profileForm.fullName = userData.value.fullName || ''
     profileForm.organizationName = userData.value.organizationName || ''
+    showActiveBookings.value = userData.value.showActiveBookings ?? true
   }
   loadNotificationPrefs()
   checkTelegramStatus()
@@ -537,6 +575,29 @@ async function handleChangePassword() {
     }
   } finally {
     passwordLoading.value = false
+  }
+}
+
+async function toggleShowActiveBookings(val: boolean) {
+  visibilityLoading.value = true
+  const prev = showActiveBookings.value
+  showActiveBookings.value = val
+  try {
+    const res = await apiFetch<{ success: boolean; message?: string; user?: typeof authUser.value }>('/api/auth/profile', {
+      method: 'PATCH',
+      body: { showActiveBookings: val },
+    })
+    if (res.success) {
+      if (res.user) {
+        authUser.value = res.user
+      }
+      toast.success(res.message || t('myProfile.showActiveBookingsUpdated'))
+    }
+  } catch (err: any) {
+    showActiveBookings.value = prev
+    toast.error(err?.data?.error || t('myProfile.showActiveBookingsError'))
+  } finally {
+    visibilityLoading.value = false
   }
 }
 

@@ -8,7 +8,7 @@
         <NuxtLink to="/landing" class="lh-brand">
           <img src="../assets/images/hastihoseinilogo.png" alt="" width="40" height="40" />
           <span class="lh-brand__text">
-            <strong>{{ t('landing.clinicName') }}</strong>
+            <strong class="text-sm md:text-md lg:text-xl">{{ t('landing.clinicName') }}</strong>
             <small>{{ t('aboutPage.team.members.1.role') }}</small>
           </span>
         </NuxtLink>
@@ -1035,7 +1035,7 @@ useHead({
   gap: 1.5rem;
   max-width: var(--maxw);
   margin-inline: auto;
-  padding: 1rem 20px;
+  padding: 1rem 0px;
 }
 
 .lh-brand {
@@ -1059,7 +1059,6 @@ useHead({
 
 .lh-brand__text strong {
   font-family: var(--font-display);
-  font-size: 1.05rem;
   font-weight: 800;
   color: var(--ink-head);
 }
@@ -1226,7 +1225,6 @@ useHead({
   position: absolute;
   inset: 0;
   background-color: var(--sage);
-
   background-image:
     linear-gradient(
       180deg,

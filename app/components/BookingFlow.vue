@@ -14,6 +14,12 @@
         </NuxtLink>
 
         <div class="bk__bar-tools">
+          <button type="button" class="asa-btn asa-btn--ghost asa-btn--sm bk__bar-back"
+            :aria-label="t('booking.backToSite')" :title="t('booking.backToSite')" @click="goBack">
+            <v-icon size="15" class="stroke-current">mdi-arrow-{{ isRtl ? 'right' : 'left' }}</v-icon>
+            <span>{{ t('booking.backToSite') }}</span>
+          </button>
+
           <button type="button" class="asa-btn asa-btn--ghost asa-btn--sm" :aria-label="t('booking.switchLanguage')"
             :title="t('booking.switchLanguage')" @click="toggleLang">
             <v-icon size="15">mdi-translate</v-icon>
@@ -507,6 +513,7 @@ const props = defineProps<{
 }>()
 
 const { t, locale } = useI18n()
+const router = useRouter()
 const { apiFetch } = useApi()
 const { $toast } = useNuxtApp()
 const { pn, isRtl, toggleLang, lang } = useLang()
@@ -514,6 +521,14 @@ const { formatPrice, formatJalaliLong } = useFormatting()
 
 const dir = computed(() => (locale.value === 'fa' ? 'rtl' : 'ltr'))
 const otherLangLabel = computed(() => (lang.value === 'fa' ? t('layout.langEn') : t('layout.langFa')))
+
+function goBack() {
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    navigateTo('/')
+  }
+}
 
 /* ══════════════════════════════════════════════════════════
    Step model
@@ -1950,6 +1965,10 @@ onMounted(() => {
   }
 
   .bk__actions>span {
+    display: none;
+  }
+
+  .bk__bar-back span {
     display: none;
   }
 }
