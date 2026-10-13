@@ -1898,6 +1898,16 @@
       "timeoutError": "مدت زمان پاسخ‌دهی سرور به پایان رسید. دوباره تلاش کنید",
       "loginError": "خطا در ورود به سیستم"
     },
+    "mobile": {
+      "eyebrowLogin": "ورود به حساب",
+      "eyebrowSignup": "ساخت حساب جدید",
+      "loginTitle": "خوش آمدید",
+      "signupTitle": "به کلینیک بپیوندید",
+      "tabLogin": "ورود",
+      "tabSignup": "ثبت‌نام",
+      "switchLang": "تغییر زبان",
+      "secure": "اتصال امن و رمزنگاری‌شده"
+    },
     "backToHome": "صفحه اصلی",
     "loggedOut": "با موفقیت خارج شدید"
   },

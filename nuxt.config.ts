@@ -60,6 +60,7 @@ export default defineNuxtConfig({
     './app/assets/css/fonts.css',
     './app/assets/css/main.css',
     './app/assets/css/design-system.css',
+    './app/assets/css/mobile-auth.css',
     './app/assets/css/landing-page.css',
     './app/assets/css/immersive.css',
     './app/assets/css/scroll-story.css',

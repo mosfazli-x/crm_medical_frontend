@@ -1897,6 +1897,16 @@
       "timeoutError": "Server response timeout. Please try again",
       "loginError": "Login error"
     },
+    "mobile": {
+      "eyebrowLogin": "Account access",
+      "eyebrowSignup": "Create account",
+      "loginTitle": "Welcome back",
+      "signupTitle": "Join the clinic",
+      "tabLogin": "Login",
+      "tabSignup": "Sign up",
+      "switchLang": "Switch language",
+      "secure": "Secure, encrypted connection"
+    },
     "backToHome": "Back to Home",
     "loggedOut": "Logged out successfully"
   },

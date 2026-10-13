@@ -1,76 +1,40 @@
 <script setup lang="ts">
 /**
- * Register — Premium registration page.
- * Uses AuthShell for split-screen layout with role selection.
+ * Register — a purpose-built mobile sign-up screen on small viewports, and the
+ * split-screen desktop shell otherwise. Both surfaces share `useRegisterForm`.
  */
 const { t } = useI18n()
-const { register } = useAuth()
+const isMobile = useIsMobile()
+const {
+  phone,
+  fullName,
+  password,
+  role,
+  website,
+  loading,
+  errors,
+  roleItems,
+  validate,
+  submit,
+} = useRegisterForm()
 
-const phone = ref('')
-const fullName = ref('')
-const password = ref('')
-const role = ref<string>('doctor')
-const website = ref('')
-const loading = ref(false)
 const showPassword = ref(false)
-
-const errors = reactive({
-  phone: '',
-  fullName: '',
-  password: '',
-})
-
-const roleItems = computed(() => [
-  { label: t('users.roles.doctor'), value: 'doctor', icon: 'M4.26 10.147a60 60 0 0 0-.491 6.347A48.6 48.6 0 0 1 12 20.904a48.6 48.6 0 0 1 8.232-4.41 60.5 60.5 0 0 0-.491-6.347m-15.482 0a50 50 0 0 0-2.658-.813A50 50 0 0 1 12 3.493a50 50 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.7 50.7 0 0 1 12 13.489a50.7 50.7 0 0 1 7.74-3.342' },
-  { label: t('users.roles.lab'), value: 'lab', icon: 'M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.3 24.3 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5' },
-  { label: t('users.roles.pharmacy'), value: 'pharmacy', icon: 'M13.5 3v3.75m0 0L18 11.25m-4.5-8.25L9 11.25m4.5-8.25V11.25m-9 7.5h16.5a1.5 1.5 0 0 0 1.5-1.5v-6a1.5 1.5 0 0 0-1.5-1.5H6a1.5 1.5 0 0 0-1.5 1.5v6a1.5 1.5 0 0 0 1.5 1.5Zm13.5-9a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v9a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-9Z' },
-  { label: t('users.roles.patient'), value: 'patient', icon: 'M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z' },
-])
-
-function validate(field?: string) {
-  if (!field || field === 'phone') {
-    errors.phone = ''
-    if (!phone.value.trim()) errors.phone = t('auth.register.phoneRequired')
-    else if (!/^09\d{9}$/.test(phone.value)) errors.phone = t('auth.register.phoneInvalid')
-  }
-  if (!field || field === 'fullName') {
-    errors.fullName = ''
-    if (!fullName.value.trim()) errors.fullName = t('auth.register.fullNameRequired')
-    else if (fullName.value.trim().length < 3) errors.fullName = t('auth.register.fullNameMinLength')
-  }
-  if (!field || field === 'password') {
-    errors.password = ''
-    if (!password.value) errors.password = t('auth.register.passwordRequired')
-    else if (password.value.length < 8) errors.password = t('auth.register.passwordMinLength')
-  }
-}
-
-function hasErrors(): boolean {
-  validate()
-  return !!(errors.phone || errors.fullName || errors.password)
-}
-
-const handleRegister = async () => {
-  if (hasErrors()) return
-
-  loading.value = true
-  await register({
-    phone: phone.value,
-    fullName: fullName.value,
-    password: password.value,
-    role: role.value as any,
-    website: website.value,
-  })
-  loading.value = false
-}
 
 useSeoMeta({ title: t('auth.register.titleSeo') })
 definePageMeta({ layout: false })
+
+useHead({
+  meta: [
+    { key: 'viewport', name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+  ],
+})
 </script>
 
 <template>
-  <AuthShell :title="t('auth.register.title')" :subtitle="t('auth.register.subtitle')">
-    <form class="auth-form" @submit.prevent="handleRegister">
+  <AuthMobileSignup v-if="isMobile" />
+
+  <AuthShell v-else :title="t('auth.register.title')" :subtitle="t('auth.register.subtitle')">
+    <form class="auth-form" @submit.prevent="submit">
       <!-- Honeypot: hidden from humans, bots auto-fill it -->
       <div aria-hidden="true" class="auth-honeypot">
         <label for="reg-website">Website</label>
@@ -146,7 +110,7 @@ definePageMeta({ layout: false })
               class="sr-only"
             />
             <span class="auth-role-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path :d="item.icon" /></svg>
+              <Icon :name="item.icon" size="20" />
             </span>
             <span class="auth-role-label">{{ item.label }}</span>
           </label>

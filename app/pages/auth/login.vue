@@ -1,51 +1,29 @@
 <script setup lang="ts">
 /**
- * Login — Premium authentication page.
- * Uses AuthShell for split-screen layout with custom form fields.
+ * Login — a purpose-built mobile screen on small viewports, and the
+ * split-screen desktop shell otherwise. Both surfaces share `useLoginForm`.
  */
 const { t } = useI18n()
-const { login } = useAuth()
+const isMobile = useIsMobile()
+const { phone, password, loading, phoneError, formError, validatePhone, submit } = useLoginForm()
 
-const phone = ref('')
-const password = ref('')
-const loading = ref(false)
 const showPassword = ref(false)
-const phoneError = ref('')
-const formError = ref('')
-
-function validatePhone(): boolean {
-  phoneError.value = ''
-  if (!phone.value.trim()) {
-    phoneError.value = t('auth.login.phoneRequired')
-    return false
-  }
-  if (!/^09\d{9}$/.test(phone.value)) {
-    phoneError.value = t('auth.login.phoneInvalid')
-    return false
-  }
-  return true
-}
-
-const handleLogin = async () => {
-  formError.value = ''
-  if (!validatePhone()) return
-  if (!password.value) {
-    formError.value = t('auth.login.passwordRequired')
-    return
-  }
-
-  loading.value = true
-  await login({ phone: phone.value, password: password.value })
-  loading.value = false
-}
 
 useSeoMeta({ title: t('auth.login.titleSeo') })
 definePageMeta({ layout: false })
+
+useHead({
+  meta: [
+    { key: 'viewport', name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+  ],
+})
 </script>
 
 <template>
-  <AuthShell :title="t('auth.login.title')" :subtitle="t('auth.login.subtitle')">
-    <form class="auth-form" @submit.prevent="handleLogin">
+  <AuthMobileLogin v-if="isMobile" />
+
+  <AuthShell v-else :title="t('auth.login.title')" :subtitle="t('auth.login.subtitle')">
+    <form class="auth-form" @submit.prevent="submit">
       <!-- Phone -->
       <div class="auth-field" :class="{ 'auth-field--error': phoneError }">
         <label class="auth-label" for="login-phone">{{ t('auth.login.phoneLabel') }}</label>
