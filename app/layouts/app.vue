@@ -70,6 +70,8 @@
 
       <AppBottomNav />
     </div>
+
+    <AppSplashScreen />
   </div>
 </template>
 

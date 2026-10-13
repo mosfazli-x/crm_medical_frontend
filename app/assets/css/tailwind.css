@@ -160,6 +160,9 @@
   --font-display: 'AriaWeb', 'IRANSansX', sans-serif;
   --font-body: 'IRANSansX', 'AriaWeb', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+:root {
 
   /* ── Font Sizes (type scale) ── */
   --text-2xs: 0.6875rem;

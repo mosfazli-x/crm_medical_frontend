@@ -102,7 +102,9 @@ export default defineNuxtConfig({
       display_override: ['window-controls-overlay', 'standalone', 'minimal-ui'],
       orientation: 'portrait-primary',
       theme_color: '#1e3754',
-      background_color: '#ffffff',
+      // Matches the in-app boot splash background so the OS-generated splash
+      // blends seamlessly into AppSplashScreen on launch.
+      background_color: '#0a231a',
       categories: ['health', 'medical', 'lifestyle'],
       icons: [
         {

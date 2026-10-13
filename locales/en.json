@@ -1,4 +1,17 @@
 {
+  "splash": {
+    "brand": "Hasti Hoseini Clinic",
+    "brandSub": "Companion Panel",
+    "tagline": "Smart care, always with you",
+    "loadingLabel": "Loading",
+    "status": {
+      "booting": "Waking up the clinic…",
+      "records": "Loading patient records…",
+      "schedule": "Syncing schedule and visits…",
+      "finance": "Preparing financial data…",
+      "finalizing": "Ready to begin…"
+    }
+  },
   "pwa": {
     "eyebrow": "Clinic App",
     "title": "Install the clinic on your device",

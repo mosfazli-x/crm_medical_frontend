@@ -92,6 +92,7 @@ async function dismissUpdate() {
 }
 
 .pwa-update {
+  width: fit-content;
   position: fixed;
   z-index: 9998;
   bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
