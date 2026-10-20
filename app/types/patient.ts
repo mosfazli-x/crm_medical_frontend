@@ -248,6 +248,263 @@ export interface PatientProfile {
   attachments: Attachments
 }
 
+// ─────────────────────────────────────────────────────────────
+// Accurate shape of GET /api/patients/:id/profile
+// The endpoint returns camelCase (see PatientProfileService), unlike
+// the legacy GET /api/patients/:id which mixes both casings.
+// ─────────────────────────────────────────────────────────────
+
+export interface ProfileDisease {
+  id: string
+  name: string
+  diagnosedAt?: string | null
+  isActive?: boolean | null
+  notes?: string | null
+}
+
+export interface ProfileMedication {
+  id: string
+  name: string
+  dosage?: string | null
+  isCurrent?: boolean | null
+  notes?: string | null
+}
+
+export interface ProfileAllergy {
+  id: string
+  substance: string
+  severity?: string | null
+  createdAt?: string | null
+}
+
+export interface ProfileVaccination {
+  id: string
+  vaccineName: string
+  doseNumber?: string | null
+  dateAdministered?: string | null
+  lotNumber?: string | null
+  manufacturer?: string | null
+  site?: string | null
+  administeredBy?: string | null
+  nextDoseDate?: string | null
+  status?: string | null
+  notes?: string | null
+}
+
+export interface ProfilePregnancy {
+  id: string
+  gravidaIndex?: number | null
+  status?: string | null
+  lmp?: string | null
+  edd?: string | null
+  endDate?: string | null
+  gestationalAgeWeeks?: number | null
+  gestationalAgeDays?: number | null
+  outcome?: string | null
+  deliveryMethod?: string | null
+  anesthesiaType?: string | null
+  maternalComplications?: unknown[] | null
+  prenatalScreenings?: Record<string, unknown> | null
+  newbornsDetails?: unknown[] | null
+  notes?: string | null
+}
+
+export interface ProfileVisit {
+  id: string
+  visitType?: string | null
+  visitReason?: string | null
+  notes?: string | null
+  visitDate: string
+  durationMinutes?: number | null
+  status?: string | null
+  nextVisitDate?: string | null
+  doctorId?: string | null
+}
+
+export interface ProfileScreeningSchedule {
+  id: string
+  screeningType: string
+  dueDate: string
+  status?: string | null
+  riskLevel?: string | null
+  notes?: string | null
+}
+
+export interface ProfileScreeningResult {
+  id: string
+  screeningType: string
+  performedDate: string
+  result?: string | null
+  resultDetails?: Record<string, unknown> | null
+  facilityName?: string | null
+  notes?: string | null
+  nextDueDate?: string | null
+}
+
+export interface ProfileLabResult {
+  id: string
+  category: string
+  testName: string
+  value?: string | null
+  unit?: string | null
+  referenceRangeLow?: string | null
+  referenceRangeHigh?: string | null
+  isAbnormal?: boolean | null
+  performedDate: string
+  notes?: string | null
+}
+
+export interface ProfileMenstrualHistory {
+  menarcheAge?: number | null
+  cycleLength?: number | null
+  cycleLengthMax?: number | null
+  flowDuration?: number | null
+  flowSeverity?: string | null
+  lmpDate?: string | null
+  dysmenorrheaSeverity?: string | null
+  dysmenorrheaVAS?: number | null
+  pmsPmdd?: string | null
+  intermenstrualBleeding?: boolean | null
+  notes?: string | null
+}
+
+export interface ProfileSexualHistory {
+  isActive?: boolean | null
+  partnersCount?: number | null
+  dyspareunia?: string | null
+  dyspareuniaNotes?: string | null
+  notes?: string | null
+}
+
+export interface ProfileSurgery {
+  id: string
+  surgeryType: string
+  surgeryDate?: string | null
+  hospital?: string | null
+  surgeonName?: string | null
+  indication?: string | null
+  findings?: string | null
+  notes?: string | null
+}
+
+export interface ProfileContraceptive {
+  id: string
+  method: string
+  startDate?: string | null
+  endDate?: string | null
+  isCurrent?: boolean | null
+  reasonForDiscontinuation?: string | null
+  notes?: string | null
+}
+
+export interface ProfileFamilyHistory {
+  id: string
+  relationship: string
+  condition: string
+  ageAtDiagnosis?: number | null
+  isDeceased?: boolean | null
+  notes?: string | null
+}
+
+export interface ProfileReproductiveSummary {
+  gravida?: number | null
+  para?: number | null
+  abortus?: number | null
+  ectopics?: number | null
+  liveBirths?: number | null
+  pretermBirths?: number | null
+  stillbirths?: number | null
+  cSections?: number | null
+  vaginalDeliveries?: number | null
+}
+
+export interface ProfileAttachment {
+  id: string
+  fileType: string
+  fileName: string
+  filePath: string
+  fileSize: number
+  mimeType: string
+  storagePath: string
+  createdAt: string
+  downloadUrl: string | null
+}
+
+export interface ProfileConsent {
+  id: string
+  consentType?: string
+  type?: string
+  grantedAt?: string
+  date?: string
+  revokedAt?: string | null
+  status?: string
+}
+
+export interface PatientFullProfile {
+  basicInfo: {
+    id: string
+    firstName: string | null
+    lastName: string | null
+    nationalId: string | null
+    isForeign?: boolean | null
+    nationality?: string | null
+    insuranceCode: string | null
+    insuranceType: string | null
+    insuranceInfo?: { key: string; label: string; logo: string } | null
+    birthDate: string | null
+    birthDateExact?: boolean | null
+    phone: string | null
+    address: string | null
+    maritalStatus: string | null
+    smoking?: string | null
+    bmi?: string | number | null
+    exercise?: string | null
+    alcohol?: string | null
+    confidentialNotes?: string | null
+    createdAt?: string
+    updatedAt?: string
+  }
+  medicalHistory: {
+    diseases: ProfileDisease[]
+    medications: ProfileMedication[]
+    allergies: ProfileAllergy[]
+    vaccinations: ProfileVaccination[]
+  }
+  reproductiveHealth: {
+    menstrualHistory: ProfileMenstrualHistory | null
+    sexualHistory: ProfileSexualHistory | null
+    surgeries: ProfileSurgery[]
+    contraceptives: ProfileContraceptive[]
+    familyHistory: ProfileFamilyHistory[]
+    summary: ProfileReproductiveSummary | null
+  }
+  obstetricHistory: {
+    pregnancies: ProfilePregnancy[]
+    prenatalVisits: unknown[]
+    fetalMeasurements: unknown[]
+    postpartumCare: unknown | null
+  }
+  visits: ProfileVisit[]
+  screenings: {
+    schedules: ProfileScreeningSchedule[]
+    results: ProfileScreeningResult[]
+  }
+  labResults: ProfileLabResult[]
+  consents: ProfileConsent[]
+  attachments: {
+    ultrasound: ProfileAttachment[]
+    lab: ProfileAttachment[]
+    prescription: ProfileAttachment[]
+    patientFiles: ProfileAttachment[]
+    other: ProfileAttachment[]
+  }
+}
+
+export interface PatientProfileResponse {
+  success: boolean
+  data: PatientFullProfile
+}
+
 // Form models for editing
 export interface LifestyleForm {
   smoking: string
