@@ -884,6 +884,281 @@
 }
 .app-scroll-x::-webkit-scrollbar { display: none; }
 
+/* ── Bottom sheet ──────────────────────────────── */
+/* Native-style overlay: anchored to the bottom edge on phones and
+   centred on tablets/desktops. Used for every in-app editor. */
+
+.app-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(16, 24, 20, 0.44);
+  backdrop-filter: blur(3px);
+}
+
+.app-sheet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 640px;
+  max-height: 88dvh;
+  background: var(--app-surface);
+  border-radius: var(--app-radius-lg) var(--app-radius-lg) 0 0;
+  box-shadow: 0 -20px 50px -26px rgba(16, 24, 20, 0.55);
+  overflow: hidden;
+}
+
+.dark .app-sheet {
+  box-shadow: 0 -20px 50px -20px rgba(0, 0, 0, 0.8);
+}
+
+.app-sheet__grip {
+  width: 42px;
+  height: 4px;
+  margin: 10px auto 0;
+  border-radius: 999px;
+  background: var(--app-border-strong);
+}
+
+.app-sheet__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px 12px;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.app-sheet__title {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--app-text);
+}
+
+.app-sheet__sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--app-muted);
+}
+
+.app-sheet__body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  padding: 16px;
+}
+
+.app-sheet__footer {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--app-border);
+  background: var(--app-surface);
+}
+
+.app-sheet__footer .app-btn {
+  flex: 1 1 auto;
+}
+
+.app-sheet-enter-active,
+.app-sheet-leave-active {
+  transition: opacity 0.22s ease;
+}
+
+.app-sheet-enter-active .app-sheet,
+.app-sheet-leave-active .app-sheet {
+  transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.app-sheet-enter-from,
+.app-sheet-leave-to {
+  opacity: 0;
+}
+
+.app-sheet-enter-from .app-sheet,
+.app-sheet-leave-to .app-sheet {
+  transform: translateY(100%);
+}
+
+/* ── Filter chips ──────────────────────────────── */
+
+.app-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.app-chips::-webkit-scrollbar { display: none; }
+
+.app-chip {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text-2);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.app-chip--on {
+  background: var(--app-brand-soft);
+  color: var(--app-brand-deep);
+  border-color: transparent;
+}
+
+.dark .app-chip--on {
+  color: var(--app-brand-ink);
+}
+
+.app-chip__count {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+/* ── Progress bar ──────────────────────────────── */
+
+.app-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--app-surface-2);
+  overflow: hidden;
+}
+
+.app-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--app-brand);
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.app-bar__fill--amber { background: var(--app-amber); }
+.app-bar__fill--rose { background: var(--app-expense); }
+.app-bar__fill--indigo { background: var(--app-indigo); }
+
+/* ── Month heatmap ─────────────────────────────── */
+
+.app-heat__head {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.app-heat__head span {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--app-muted);
+}
+
+.app-heat {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.app-heat__cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  min-height: 38px;
+  border-radius: 11px;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface-2);
+  color: var(--app-muted);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: default;
+}
+
+.app-heat__cell--out {
+  opacity: 0.34;
+}
+
+.app-heat__cell--today {
+  outline: 2px solid var(--app-brand);
+  outline-offset: 1px;
+}
+
+.app-heat__cell--present { background: var(--app-green-soft); color: var(--app-income); border-color: transparent; }
+.app-heat__cell--late { background: var(--app-amber-soft); color: var(--app-amber); border-color: transparent; }
+.app-heat__cell--absent { background: var(--app-rose-soft); color: var(--app-expense); border-color: transparent; }
+.app-heat__cell--leave { background: var(--app-indigo-soft); color: var(--app-indigo); border-color: transparent; }
+.app-heat__cell--holiday { background: var(--app-surface-2); color: var(--app-muted); }
+
+.app-heat__dot {
+  position: absolute;
+  bottom: 5px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+/* ── Live timer ────────────────────────────────── */
+
+.app-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+.app-timer__pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--app-income);
+  animation: app-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes app-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-timer__pulse { animation: none; }
+}
+
+/* ── Connectivity banner ───────────────────────── */
+
+.app-offline {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 13px;
+  border-radius: 14px;
+  background: var(--app-amber-soft);
+  color: var(--app-amber);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.app-offline--pending {
+  background: var(--app-indigo-soft);
+  color: var(--app-indigo);
+}
+
 /* ── Responsive ────────────────────────────────── */
 
 @media (min-width: 640px) {
@@ -919,5 +1194,29 @@
 
   .app-hero__title {
     font-size: 25px;
+  }
+
+  /* The sheet becomes a centred dialog once there is room for one. */
+  .app-sheet-backdrop {
+    align-items: center;
+    padding: 24px;
+  }
+
+  .app-sheet {
+    border-radius: var(--app-radius-lg);
+    max-height: 84dvh;
+  }
+
+  .app-sheet__grip {
+    display: none;
+  }
+
+  .app-sheet__header {
+    padding-top: 16px;
+  }
+
+  .app-sheet-enter-from .app-sheet,
+  .app-sheet-leave-to .app-sheet {
+    transform: translateY(18px) scale(0.98);
   }
 }

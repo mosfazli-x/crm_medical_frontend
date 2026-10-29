@@ -69,3 +69,50 @@ export interface BulkAttendanceRow {
   adminNotes: string | null
   sessions: AttendanceSessionInput[]
 }
+
+/** A clinic team member that can hold an attendance record. */
+export interface AttendanceStaffOption {
+  id: string
+  fullName: string
+  role: string
+}
+
+export type PunchAction = 'check-in' | 'check-out'
+
+/**
+ * A punch that was recorded while the device was offline.
+ *
+ * The queue is replayed against the regular check-in / check-out endpoints once
+ * connectivity returns, so the backend never needs an offline-aware code path.
+ */
+export interface PendingPunch {
+  id: string
+  action: PunchAction
+  /** ISO timestamp of the moment the user punched. */
+  at: string
+  /** Jalali date the punch belongs to. */
+  date: string
+  workLocation: WorkLocation
+  notes: string | null
+}
+
+/** Aggregated figures derived from a set of attendance records. */
+export interface AttendanceKpis {
+  totalDays: number
+  presentDays: number
+  lateDays: number
+  absentDays: number
+  leaveDays: number
+  holidayDays: number
+  workedDays: number
+  totalMinutes: number
+  avgMinutes: number
+  /** Share of recorded days that were worked, in percent. */
+  rate: number
+  /** Consecutive worked days ending at the most recent record. */
+  streak: number
+  /** Longest run of consecutive worked days in the set. */
+  bestStreak: number
+  /** Minutes worked beyond a standard 8-hour day. */
+  overtimeMinutes: number
+}

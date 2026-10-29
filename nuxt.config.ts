@@ -141,6 +141,20 @@ export default defineNuxtConfig({
           icons: [{ src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
         },
         {
+          name: 'حضور و غیاب',
+          short_name: 'حضور و غیاب',
+          description: 'ثبت ورود و خروج و مشاهده سوابق کارکنان',
+          url: '/app/attendance',
+          icons: [{ src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
+        },
+        {
+          name: 'ثبت ورود',
+          short_name: 'ثبت ورود',
+          description: 'ثبت سریع ورود به کلینیک',
+          url: '/app/attendance?action=checkin',
+          icons: [{ src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
+        },
+        {
           name: 'رزرو نوبت',
           short_name: 'رزرو',
           description: 'رزرو نوبت آنلاین',
@@ -172,11 +186,17 @@ export default defineNuxtConfig({
       clientsClaim: true,
       runtimeCaching: [
         {
+          // Attendance stays out of the cache on purpose: the punch button
+          // reads the records back, and a cached answer would show a state the
+          // server has already moved past. The screen keeps its own snapshot
+          // for the offline case.
           urlPattern: ({ url, request }) =>
-            request.method === 'GET' && url.pathname.startsWith('/api/'),
+            request.method === 'GET' &&
+            url.pathname.startsWith('/api/') &&
+            !url.pathname.startsWith('/api/staff/attendance/'),
           handler: 'NetworkFirst',
           options: {
-            cacheName: 'api-responses',
+            cacheName: 'api-responses-v2',
             networkTimeoutSeconds: 5,
             expiration: { maxEntries: 64, maxAgeSeconds: 60 * 60 * 24 },
             cacheableResponse: { statuses: [200] },

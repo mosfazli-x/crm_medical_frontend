@@ -318,6 +318,8 @@ export interface ProfileVisit {
   durationMinutes?: number | null
   status?: string | null
   nextVisitDate?: string | null
+  reminderDaysBefore?: number | null
+  reminderSentAt?: string | null
   doctorId?: string | null
 }
 

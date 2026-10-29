@@ -1,4 +1,4 @@
-import { computed, watch, onMounted } from 'vue'
+import { computed, watch, onMounted, getCurrentInstance } from 'vue'
 import type { User } from '~/types/user'
 
 export const useAuth = () => {
@@ -20,14 +20,18 @@ export const useAuth = () => {
     return _t(key)
   }
 
-  onMounted(() => {
-    if (process.client) {
-      const storedToken = localStorage.getItem('auth_token')
-      const storedUser = localStorage.getItem('auth_user')
-      if (storedToken) token.value = storedToken
-      if (storedUser) user.value = JSON.parse(storedUser)
-    }
-  })
+  // Route middleware and plugins call this composable outside of a component,
+  // where there is no instance to attach the hook to.
+  if (getCurrentInstance()) {
+    onMounted(() => {
+      if (process.client) {
+        const storedToken = localStorage.getItem('auth_token')
+        const storedUser = localStorage.getItem('auth_user')
+        if (storedToken) token.value = storedToken
+        if (storedUser) user.value = JSON.parse(storedUser)
+      }
+    })
+  }
 
   watch(token, (newToken) => {
     if (process.client) {

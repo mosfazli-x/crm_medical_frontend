@@ -1,5 +1,12 @@
 <template>
   <div class="app-rise">
+    <div class="app-header-actions">
+      <button type="button" class="app-btn app-btn--primary" style="width: auto;" @click="openAddPatient">
+        <Icon name="lucide:plus" size="18" />
+        <span>ثبت بیمار جدید</span>
+      </button>
+    </div>
+
     <div class="app-search">
       <Icon class="app-search__icon" name="lucide:search" size="19" />
       <input
@@ -7,8 +14,8 @@
         class="app-input"
         type="search"
         inputmode="search"
-        placeholder="جستجوی نام، شماره تماس یا کد ملی…"
-        aria-label="جستجوی بیمار"
+        placeholder="جستجوی نام، نام خانوادگی، شماره تماس یا کدملی"
+        aria-label="جستجوی بیماران"
       >
     </div>
 
@@ -142,17 +149,26 @@
         <button type="button" class="app-btn app-btn--primary" @click="applyFilters">اعمال فیلتر</button>
       </template>
     </UiDialog>
+
+    <PatientFormDialog />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { PatientListItem } from '~/types/patient'
 import { INSURANCE_TYPE_VALUES, getInsuranceInfo } from '~/types/insurance'
+import { usePatientFormDialog } from '~/composables/usePatientFormDialog'
+import PatientFormDialog from '~/components/PatientFormDialog.vue'
 
 definePageMeta({ layout: 'app', appTitle: 'بیماران', appSubtitle: 'پرونده‌ها' })
 
 const { listPatients } = usePatients()
 const { pn } = useLang()
+const { openCreate } = usePatientFormDialog()
+
+const openAddPatient = () => {
+  openCreate()
+}
 
 const LIMIT = 20
 
@@ -446,5 +462,11 @@ onBeforeUnmount(() => {
 .app-filter__range .app-input {
   flex: 1 1 0;
   min-width: 0;
+}
+
+.app-header-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 12px;
 }
 </style>

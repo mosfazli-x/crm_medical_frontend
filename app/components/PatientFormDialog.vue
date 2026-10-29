@@ -5,6 +5,7 @@
     persistent
     scrollable
     transition="dialog-bottom-transition"
+    :content-props="{ dir: isRtl ? 'rtl' : 'ltr' }"
     @update:model-value="(val: boolean) => !val && close()"
     @keydown.esc="close"
   >
@@ -19,7 +20,7 @@
             {{ mode === 'edit' ? t('patientForm.editInfo') : t('patientForm.initialInfo') }}
           </span>
         </div>
-        <button class="pf-x" type="button" :aria-label="t('common.close')" @click="close">
+        <button class="pf-x" type="button" :disabled="followUpSaving" :aria-label="t('common.close')" @click="close">
           <v-icon size="18">mdi-close</v-icon>
         </button>
       </div>
@@ -71,6 +72,16 @@
             :patient-id="patientId"
           />
         </section>
+        <section v-if="isOpen && mode === 'edit' && patientData" v-show="activeTab === 'followups'" role="tabpanel">
+          <PatientTabsFollowUps
+            :key="followUpSession"
+            :patient-id="patientId || ''"
+            :visits="profileVisits"
+            :disabled="loading"
+            @saving="followUpSaving = $event"
+            @saved="onFollowUpSaved"
+          />
+        </section>
       </v-card-text>
 
       <!-- ─── Footer ─── -->
@@ -79,10 +90,10 @@
           {{ t('patientForm.step', { current: toPersianNum(tabIndex + 1), total: toPersianNum(tabs.length) }) }}
         </span>
         <v-spacer />
-        <button class="asa-btn asa-btn--ghost" type="button" @click="close">
+        <button class="asa-btn asa-btn--ghost" type="button" :disabled="followUpSaving" @click="close">
           {{ t('common.cancel') }}
         </button>
-        <button class="asa-btn asa-btn--primary" type="button" :disabled="loading" @click="submitForm">
+        <button class="asa-btn asa-btn--primary" type="button" :disabled="loading || followUpSaving" @click="submitForm">
           <v-icon v-if="loading" size="16" class="pf-spin">mdi-loading</v-icon>
           {{ submitLabel }}
         </button>
@@ -97,9 +108,11 @@ import PatientTabsMedicalHistory from '~/components/patient/tabs/MedicalHistory.
 import PatientTabsPregnancyHistory from '~/components/patient/tabs/PregnancyHistory.vue'
 import PatientTabsVaccination from '~/components/patient/tabs/VaccinationTab.vue'
 import PatientTabsAttachments from '~/components/patient/tabs/Attachments.vue'
+import PatientTabsFollowUps from '~/components/patient/tabs/FollowUps.vue'
+import type { ProfileVisit } from '~/types/patient'
 
 const { t } = useI18n()
-const { toPersianNum } = useLang()
+const { toPersianNum, isRtl } = useLang()
 const { emit } = useEventBus()
 const { $toast } = useNuxtApp()
 const { apiFetch } = useApi()
@@ -110,9 +123,10 @@ const {
   patientId,
   patientData,
   close: dialogClose,
+  openEdit,
 } = usePatientFormDialog()
 
-type TabValue = 'basic' | 'medical' | 'pregnancy' | 'vaccination' | 'attachments'
+type TabValue = 'basic' | 'medical' | 'pregnancy' | 'vaccination' | 'attachments' | 'followups'
 type RawObject = Record<string, unknown>
 
 interface RawDisease {
@@ -259,6 +273,19 @@ interface VaccinationRecord {
 }
 
 const loading = ref(false)
+const followUpSaving = ref(false)
+const followUpSession = ref(0)
+const profileVisits = computed<ProfileVisit[]>(() => patientData.value?.visits ?? [])
+let followUpProfileUpdate: unknown = null
+
+function onFollowUpSaved(visit: ProfileVisit, savedPatientId: string) {
+  // Ignore a response for a patient that was switched by another dialog opener.
+  if (!isOpen.value || patientId.value !== savedPatientId || !patientData.value) return
+  const visits = profileVisits.value.map((existing) => existing.id === visit.id ? { ...existing, ...visit } : existing)
+  // Use the composable's setter: patientData is deeply readonly.
+  openEdit(savedPatientId, { ...patientData.value, visits })
+  followUpProfileUpdate = patientData.value
+}
 const activeTab = ref<TabValue>('basic')
 
 const tabs = computed<{ value: TabValue; label: string; icon: string }[]>(() => [
@@ -267,6 +294,9 @@ const tabs = computed<{ value: TabValue; label: string; icon: string }[]>(() => 
   { value: 'pregnancy', label: t('patientForm.tabs.pregnancy'), icon: 'mdi-human-pregnant' },
   { value: 'vaccination', label: t('patientForm.tabs.vaccination'), icon: 'mdi-needle' },
   { value: 'attachments', label: t('patientForm.tabs.attachments'), icon: 'mdi-paperclip' },
+  ...(mode.value === 'edit'
+    ? [{ value: 'followups' as const, label: t('patientForm.tabs.followups'), icon: 'mdi-calendar-sync' }]
+    : []),
 ])
 
 const tabIndex = computed(() => tabs.value.findIndex((tab) => tab.value === activeTab.value))
@@ -388,7 +418,7 @@ function buildPayload() {
 }
 
 async function submitForm() {
-  if (!validateBasic()) return
+  if (loading.value || followUpSaving.value || !validateBasic()) return
 
   loading.value = true
   try {
@@ -464,6 +494,7 @@ function resetForm() {
 }
 
 function close() {
+  if (followUpSaving.value) return
   resetForm()
   dialogClose()
 }
@@ -548,8 +579,15 @@ function fillForm(data: PatientDialogData) {
 }
 
 watch(
-  () => [isOpen.value, mode.value, patientData.value] as const,
-  ([open]) => {
+  () => [isOpen.value, mode.value, patientId.value, patientData.value] as const,
+  ([open], previous) => {
+    if (open && previous?.[0] && previous[2] === patientId.value && patientData.value === followUpProfileUpdate) {
+      followUpProfileUpdate = null
+      return // A row save must not discard other patient-form or follow-up drafts.
+    }
+    followUpProfileUpdate = null
+    followUpSession.value++
+    followUpSaving.value = false
     if (!open) return
     activeTab.value = 'basic'
     if (mode.value === 'edit' && patientData.value) {
