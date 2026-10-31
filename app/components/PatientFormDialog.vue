@@ -281,7 +281,10 @@ let followUpProfileUpdate: unknown = null
 function onFollowUpSaved(visit: ProfileVisit, savedPatientId: string) {
   // Ignore a response for a patient that was switched by another dialog opener.
   if (!isOpen.value || patientId.value !== savedPatientId || !patientData.value) return
-  const visits = profileVisits.value.map((existing) => existing.id === visit.id ? { ...existing, ...visit } : existing)
+  const exists = profileVisits.value.some((existing) => existing.id === visit.id)
+  const visits = exists
+    ? profileVisits.value.map((existing) => existing.id === visit.id ? { ...existing, ...visit } : existing)
+    : [visit, ...profileVisits.value]
   // Use the composable's setter: patientData is deeply readonly.
   openEdit(savedPatientId, { ...patientData.value, visits })
   followUpProfileUpdate = patientData.value

@@ -2308,8 +2308,15 @@
       "followups": "Follow-ups"
     },
     "followups": {
-      "independentSave": "Follow-ups belong to existing visits. Save each row separately. Saved follow-ups are kept even if you cancel the patient form; the main Save Changes button does not save unsaved follow-up edits.",
-      "empty": "No existing visits. Create a visit in the calendar before setting a follow-up.",
+      "independentSave": "Each follow-up belongs to a visit. Add a new visit with a follow-up here, or save changes to an existing row separately. Saved visits and follow-ups are kept even if you cancel the patient form; the main Save Changes button does not save unsaved follow-up edits.",
+      "empty": "No visits yet. Use Add follow-up to create a visit with a follow-up for this patient.",
+      "add": "Add follow-up",
+      "newVisit": "New visit & follow-up",
+      "visitDate": "Visit date & time (required)",
+      "create": "Create visit & follow-up",
+      "newReminderHint": "Leave blank to use the clinic default. Enter a whole number from 0 to 90; 0 means the same day.",
+      "invalidVisitDate": "Choose a valid visit date and time.",
+      "createError": "Could not create the visit and follow-up. Your entries are kept; please try again.",
       "visit": "Visit {number}",
       "reminderHint": "Leave blank to use the clinic default. Enter a whole number from 0 to 90; 0 means the same day. Clear the date and save to remove the follow-up.",
       "save": "Save follow-up",

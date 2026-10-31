@@ -2,7 +2,58 @@
   <div class="patient-followups">
     <p class="patient-followups__hint" role="note">{{ t('patientForm.followups.independentSave') }}</p>
 
-    <div v-if="!rows.length" class="patient-followups__empty" role="status">
+    <div>
+      <button type="button" class="asa-btn asa-btn--primary" :disabled="blocked" :aria-expanded="showCreate" aria-controls="patient-followup-create" @click="toggleCreate">
+        <v-icon size="18" aria-hidden="true">mdi-plus</v-icon>
+        {{ t('patientForm.followups.add') }}
+      </button>
+    </div>
+
+    <section v-if="showCreate" id="patient-followup-create" class="patient-followups__row" :aria-busy="creating" aria-labelledby="patient-followup-create-title">
+      <h3 id="patient-followup-create-title" class="patient-followups__title">{{ t('patientForm.followups.newVisit') }}</h3>
+      <fieldset class="patient-followups__fields" :disabled="blocked" :aria-label="t('patientForm.followups.newVisit')">
+        <div class="pf-field">
+          <label for="followup-create-visit-date" class="asa-field-label">{{ t('patientForm.followups.visitDate') }}</label>
+          <PersianDatetimePicker
+            v-model="newVisitDate"
+            :input-attrs="{ id: 'followup-create-visit-date', 'aria-label': t('patientForm.followups.visitDate'), 'aria-required': 'true' }"
+            type="datetime" display-format="jYYYY/jMM/jDD - HH:mm" format="YYYY-MM-DD HH:mm:ss"
+            color="#5f8feb" auto-submit custom-input :disabled="blocked" @update:model-value="createError = ''"
+          />
+        </div>
+        <div class="pf-field">
+          <label for="followup-create-date" class="asa-field-label">{{ t('followups.nextVisitDate') }}</label>
+          <PersianDatetimePicker
+            v-model="newFollowUpDate"
+            :input-attrs="{ id: 'followup-create-date', 'aria-label': t('followups.nextVisitDate'), 'aria-required': 'true' }"
+            type="date" display-format="jYYYY/jMM/jDD" format="YYYY-MM-DD"
+            color="#5f8feb" auto-submit custom-input clearable :disabled="blocked" @update:model-value="createError = ''"
+          />
+        </div>
+        <div class="pf-field">
+          <label for="followup-create-reminder" class="asa-field-label">{{ t('followups.remindDaysBefore') }}</label>
+          <v-text-field
+            id="followup-create-reminder" v-model="newReminder" type="number" min="0" max="90" step="1"
+            variant="solo" density="comfortable" hide-details="auto" :suffix="t('followups.daysUnit')"
+            :placeholder="t('followups.clinicDefault')" :disabled="blocked" clearable @update:model-value="createError = ''"
+          />
+          <p class="patient-followups__meta">{{ t('patientForm.followups.newReminderHint') }}</p>
+        </div>
+      </fieldset>
+      <div class="patient-followups__actions">
+        <p v-if="createError" class="patient-followups__error" role="alert">{{ createError }}</p>
+        <span v-else />
+        <div class="patient-followups__actions">
+          <button type="button" class="asa-btn asa-btn--ghost" :disabled="blocked" @click="showCreate = false">{{ t('patientForm.cancel') }}</button>
+          <button type="button" class="asa-btn asa-btn--primary" :disabled="blocked" @click="createFollowUp">
+            <v-progress-circular v-if="creating" indeterminate size="16" width="2" />
+            {{ creating ? t('patientForm.saving') : t('patientForm.followups.create') }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div v-if="!rows.length && !showCreate" class="patient-followups__empty" role="status">
       <v-icon size="28" aria-hidden="true">mdi-calendar-blank-outline</v-icon>
       <p>{{ t('patientForm.followups.empty') }}</p>
     </div>
@@ -114,7 +165,13 @@ function makeRow(visit: ProfileVisit): VisitRow {
 
 // The parent remounts this tab for each dialog/profile session, not for row saves.
 const rows = ref<VisitRow[]>(props.visits.map(makeRow))
-const saving = computed(() => rows.value.some((row) => row.saving))
+const showCreate = ref(false)
+const creating = ref(false)
+const newVisitDate = ref<string | null>(null)
+const newFollowUpDate = ref<string | null>(null)
+const newReminder = ref<string | number | null>(null)
+const createError = ref('')
+const saving = computed(() => creating.value || rows.value.some((row) => row.saving))
 const blocked = computed(() => Boolean(props.disabled) || saving.value)
 let disposed = false
 onBeforeUnmount(() => { disposed = true })
@@ -138,6 +195,61 @@ function clearDate(row: VisitRow) {
   clearFeedback(row)
 }
 
+function toggleCreate() {
+  if (blocked.value) return
+  if (!newVisitDate.value) newVisitDate.value = moment().format('YYYY-MM-DD HH:mm:ss')
+  createError.value = ''
+  showCreate.value = !showCreate.value
+}
+
+async function createFollowUp() {
+  if (blocked.value) return
+  createError.value = ''
+  const visitDate = moment(newVisitDate.value || '', 'YYYY-MM-DD HH:mm:ss', true)
+  if (!visitDate.isValid()) {
+    createError.value = t('patientForm.followups.invalidVisitDate')
+    return
+  }
+  if (!newFollowUpDate.value || !moment(newFollowUpDate.value, 'YYYY-MM-DD', true).isValid()) {
+    createError.value = t('patientForm.followups.invalidDate')
+    return
+  }
+  const reminder = newReminder.value == null || String(newReminder.value).trim() === '' ? null : Number(newReminder.value)
+  if (reminder !== null && (!Number.isInteger(reminder) || reminder < 0 || reminder > 90)) {
+    createError.value = t('patientForm.followups.invalidReminder')
+    return
+  }
+
+  const patientId = props.patientId
+  creating.value = true
+  emit('saving', true)
+  try {
+    const response = await apiFetch<{ success: boolean; visit: ProfileVisit }>('/api/visits', {
+      method: 'POST',
+      body: {
+        patientId,
+        visitDate: visitDate.toISOString(),
+        nextVisitDate: newFollowUpDate.value,
+        reminderDaysBefore: reminder,
+        durationMinutes: 30,
+      },
+    })
+    if (!response.success || !response.visit?.id) throw new Error(t('patientForm.followups.createError'))
+    if (disposed) return
+    rows.value.unshift({ ...makeRow(response.visit), success: true })
+    emit('saved', response.visit, patientId)
+    showCreate.value = false
+    newVisitDate.value = null
+    newFollowUpDate.value = null
+    newReminder.value = null
+  } catch {
+    if (!disposed) createError.value = t('patientForm.followups.createError')
+  } finally {
+    creating.value = false
+    if (!disposed) emit('saving', false)
+  }
+}
+
 async function save(row: VisitRow) {
   if (blocked.value || !isChanged(row)) return
   clearFeedback(row)
@@ -159,14 +271,14 @@ async function save(row: VisitRow) {
   row.saving = true
   emit('saving', true)
   try {
-    const response = await apiFetch<{ success: boolean; data: ProfileVisit }>(`/api/visits/${row.visit.id}`, {
+    const response = await apiFetch<{ success: boolean; visit: ProfileVisit }>(`/api/visits/${row.visit.id}`, {
       method: 'PUT',
       body,
     })
-    if (!response.success || !response.data || response.data.id !== row.visit.id) throw new Error(t('patientForm.followups.saveError'))
+    if (!response.success || !response.visit || response.visit.id !== row.visit.id) throw new Error(t('patientForm.followups.saveError'))
     if (disposed) return
     // The returned visit is authoritative, including server-reset reminder metadata.
-    const visit = { ...row.visit, ...response.data }
+    const visit = { ...row.visit, ...response.visit }
     Object.assign(row, makeRow(visit), { saving: true, success: true })
     emit('saved', visit, patientId)
   } catch {
