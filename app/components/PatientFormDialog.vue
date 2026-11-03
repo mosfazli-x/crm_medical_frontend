@@ -100,6 +100,55 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+<!-- ─── Existing patient conflict dialog ─── -->
+  <v-dialog
+    v-model="showExistingPatientDialog"
+    max-width="500"
+    persistent
+    transition="dialog-bottom-transition"
+    :content-props="{ dir: isRtl ? 'rtl' : 'ltr' }"
+    @keydown.esc="closeExistingPatientDialog"
+  >
+    <v-card class="asa-dialog overflow-hidden! flex! flex-col!" elevation="0">
+      <div class="asa-dialog__head">
+        <div class="min-w-0!">
+          <h2 class="asa-dialog__title">{{ t('patientForm.existingPatient.title', 'بیمار تکراری') }}</h2>
+          <span class="asa-dialog__sub">
+            {{ t('patientForm.existingPatient.subtitle', 'کد ملی وارد شده قبلاً ثبت شده است') }}
+          </span>
+        </div>
+        <button class="pf-x" type="button" :aria-label="t('common.close')" @click="closeExistingPatientDialog">
+          <v-icon size="18">mdi-close</v-icon>
+        </button>
+      </div>
+
+      <v-card-text class="asa-dialog__body pf-form-body p-6">
+        <div class="d-flex align-start gap-3">
+          <v-icon size="32" color="amber-darken-1">mdi-account-alert-outline</v-icon>
+          <div class="space-y-1">
+            <p class="pf-conflict__msg font-medium">
+              {{ t('patientForm.existingPatient.message', 'بیماری با این کد ملی در پرونده‌ها موجود است. مایلید به پرونده این بیمار هدایت شوید؟') }}
+            </p>
+            <span v-if="form.national_id" class="text-xs text-stone-500 font-mono">
+              {{ t('patientForm.nationalId', 'کد ملی') }}: {{ toPersianNum(form.national_id) }}
+            </span>
+          </div>
+        </div>
+      </v-card-text>
+
+      <v-card-actions class="asa-dialog__foot">
+        <v-spacer />
+        <button class="asa-btn asa-btn--ghost" type="button" @click="closeExistingPatientDialog">
+          {{ t('common.cancel', 'انصراف') }}
+        </button>
+        <button class="asa-btn asa-btn--primary" type="button" @click="viewExistingPatient">
+          <v-icon size="16" class="me-1">mdi-arrow-left</v-icon>
+          {{ t('patientForm.existingPatient.viewButton', 'مشاهده و انتقال به پرونده') }}
+        </button>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
@@ -277,6 +326,8 @@ const followUpSaving = ref(false)
 const followUpSession = ref(0)
 const profileVisits = computed<ProfileVisit[]>(() => patientData.value?.visits ?? [])
 let followUpProfileUpdate: unknown = null
+const showExistingPatientDialog = ref(false)
+const existingPatientId = ref<string | null>(null)
 
 function onFollowUpSaved(visit: ProfileVisit, savedPatientId: string) {
   // Ignore a response for a patient that was switched by another dialog opener.
@@ -453,13 +504,49 @@ async function submitForm() {
     $toast.success(successMsg)
     emit('patient:changed')
     close()
-  } catch (error: unknown) {
-    const err = error as { data?: { error?: string }; message?: string }
-    $toast.error(err?.data?.error || err?.message || t('patientForm.submitError'))
+  } catch (error: any) {
+    // استخراج وضعیت و داده خطا از fetch یا axios
+    const status = error?.statusCode || error?.response?.status || error?.status
+    const errorData = error?.data || error?.response?.data || {}
+
+    // استخراج شناسه بیمار موجود بر اساس نام‌گذاری‌های رایج بک‌اند
+    const foundPatientId =
+      errorData.patientId ||
+      errorData.patient_id ||
+      errorData.id ||
+      errorData.data?.id ||
+      errorData.data?.patientId
+
+    if (status === 409 && foundPatientId) {
+      existingPatientId.value = String(foundPatientId)
+      showExistingPatientDialog.value = true
+    } else {
+      $toast.error(errorData?.error || errorData?.message || error?.message || t('patientForm.submitError'))
+    }
     console.error('Submit Error:', error)
   } finally {
     loading.value = false
   }
+}
+
+function closeExistingPatientDialog() {
+  showExistingPatientDialog.value = false
+  existingPatientId.value = null
+}
+
+async function viewExistingPatient() {
+  const targetId = existingPatientId.value
+  if (!targetId) return
+
+  // بستن دیالوگ‌ها و فرم فعلی
+  closeExistingPatientDialog()
+  close()
+
+  // سناریو ۱: اگر صفحات سامانه داینامیک است و صفحه اختصاصی /patients/[id] دارید:
+  await navigateTo(`/patients/${targetId}`)
+
+  // سناریو ۲ (جایگزین): اگر مدیریت بیماران تک‌صفحه‌ای (SPA Modal) است و می‌خواهید فرم ویرایش همان بیمار باز شود:
+  // openEdit(targetId)
 }
 
 function resetForm() {

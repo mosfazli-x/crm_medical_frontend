@@ -2334,7 +2334,13 @@
     "createSuccessWithPhone": "New patient registered successfully. Username and initial password: phone number (change on first login)",
     "createSuccessNoAccount": "New patient registered successfully (without user account)",
     "submitError": "Error saving information",
-    "addNewPatient": "Register New Patient"
+    "addNewPatient": "Register New Patient",
+    "existingPatient": {
+      "title": "Patient already registered",
+      "subtitle": "A patient with these details already exists in the system.",
+      "message": "The patient you are trying to register is already registered. You can view their details and update them if needed.",
+      "viewButton": "View Patient"
+    }
   },
   "labReportViewer": {
     "edit": "Edit",
