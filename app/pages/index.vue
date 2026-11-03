@@ -4,14 +4,13 @@
     <LandingCurtainLoader @finished="onLoaderFinished" />
 
     <!-- Background: the clinic film on desktop, the hero video on mobile -->
-    <div class="ln-backdrop" aria-hidden="true">
+    <div ref="backdropRef" class="ln-backdrop" aria-hidden="true">
       <video
         v-if="isMobile && !mobileVideoFailed"
         ref="mobileVideoRef"
         class="ln-backdrop__video"
         src="/background-videos/mobile-hero.mp4"
         autoplay
-        muted
         loop
         playsinline
         preload="auto"
@@ -29,7 +28,32 @@
         </span>
         <span class="ln-wordmark font-bon">{{ t('brand') }}</span>
       </div>
+
       <div class="ln-header-right">
+        <!-- دکمه و اسلایدر کنترل صدا -->
+        <div class="ln-audio-control">
+          <button
+            type="button"
+            class="ln-audio-btn"
+            :aria-label="isMuted ? t('unmuteVideo') : t('muteVideo')"
+            @click="toggleMute"
+          >
+            <Icon :name="isMuted || volume === 0 ? 'lucide:volume-x' : 'lucide:volume-2'" size="18" />
+          </button>
+          <div class="ln-volume-wrapper">
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              :value="isMuted ? 0 : volume"
+              class="ln-volume-slider"
+              :aria-label="t('volumeLabel')"
+              @input="onVolumeChange"
+            />
+          </div>
+        </div>
+
         <button type="button" class="ln-lang" :aria-label="t('langLabel')" @click="toggleLang">
           <span class="ln-lang-globe" aria-hidden="true">
             <Icon name="lucide:globe" size="15" />
@@ -74,6 +98,9 @@ const messages = {
     },
     footerTagline: 'Care · Learning · Community',
     langLabel: 'Switch language',
+    muteVideo: 'Mute background sound',
+    unmuteVideo: 'Unmute background sound',
+    volumeLabel: 'Volume',
   },
   fa: {
     brand: 'کلینیک هستی حسینی',
@@ -87,29 +114,69 @@ const messages = {
     },
     footerTagline: 'مراقبت · آموزش · جامعه',
     langLabel: 'تغییر زبان',
+    muteVideo: 'قطع صدای پس‌زمینه',
+    unmuteVideo: 'وصل صدای پس‌زمینه',
+    volumeLabel: 'میزان صدا',
   },
 } as const
 
 type Locale = keyof typeof messages
 
 const stored = useCookie<string>('i18n_lang', { sameSite: 'lax', maxAge: 60 * 60 * 24 * 365, path: '/' })
-
 const locale = ref<Locale>(stored.value === 'en' ? 'en' : 'fa')
-
 const loaderShown = ref(false)
 
 function onLoaderFinished() {
   loaderShown.value = true
 }
 
-/* ── Mobile background ───────────────────────────────────────────────
-   Below the site's 48rem "laptop and up" breakpoint the hero film
-   replaces the time-of-day player, so phones download one video, not
-   four. Detected after hydration (isMobile starts false on both the
-   server and the client) to keep SSR markup matchable. */
+/* ── Audio Control ─────────────────────────────────────────────────── */
+const backdropRef = ref<HTMLElement | null>(null)
+const mobileVideoRef = ref<HTMLVideoElement | null>(null)
+const isMuted = ref(false)
+const volume = ref(0.7)
+
+function getActiveVideos(): HTMLVideoElement[] {
+  if (isMobile.value && mobileVideoRef.value) {
+    return [mobileVideoRef.value]
+  }
+  if (backdropRef.value) {
+    return Array.from(backdropRef.value.querySelectorAll('video'))
+  }
+  return []
+}
+
+function syncAudioState() {
+  const videos = getActiveVideos()
+  videos.forEach((video) => {
+    video.muted = isMuted.value
+    video.volume = isMuted.value ? 0 : volume.value
+    if (!isMuted.value && video.paused) {
+      video.play().catch(() => {})
+    }
+  })
+}
+
+function toggleMute() {
+  isMuted.value = !isMuted.value
+  syncAudioState()
+}
+
+function onVolumeChange(event: Event) {
+  const target = event.target as HTMLInputElement
+  const val = parseFloat(target.value)
+  volume.value = val
+  if (val === 0) {
+    isMuted.value = true
+  } else if (isMuted.value) {
+    isMuted.value = false
+  }
+  syncAudioState()
+}
+
+/* ── Mobile background ─────────────────────────────────────────────── */
 const isMobile = ref(false)
 const mobileVideoFailed = ref(false)
-const mobileVideoRef = ref<HTMLVideoElement | null>(null)
 
 const MOBILE_QUERY = '(max-width: 47.9375rem)'
 let mobileMq: MediaQueryList | null = null
@@ -117,14 +184,13 @@ let mobileGestureHooked = false
 
 function onMobileMqChange(e: MediaQueryListEvent) {
   isMobile.value = e.matches
+  nextTick(syncAudioState)
 }
 
 function onFirstTouch() {
   mobileVideoRef.value?.play().catch(() => {})
 }
 
-/** Some engines still refuse the implicit autoplay — retry explicitly,
-    then fall back to the first tap. */
 function tryPlayMobileVideo() {
   const el = mobileVideoRef.value
   if (!el) return
@@ -139,10 +205,16 @@ onMounted(() => {
   mobileMq = window.matchMedia(MOBILE_QUERY)
   isMobile.value = mobileMq.matches
   mobileMq.addEventListener('change', onMobileMqChange)
+  nextTick(syncAudioState)
 })
 
 watch(isMobile, (active) => {
-  if (active) nextTick(tryPlayMobileVideo)
+  if (active) {
+    nextTick(() => {
+      tryPlayMobileVideo()
+      syncAudioState()
+    })
+  }
 })
 
 onBeforeUnmount(() => {
@@ -159,7 +231,6 @@ const t = (key: string): string => {
   return key.split('.').reduce<unknown>((acc, part) => (acc as Record<string, unknown>)?.[part], dict) as string ?? key
 }
 
-/** Three destinations, rendered as a ghost rail anchored to the viewport foot. */
 const entries = computed(() => [
   { to: '/booking', label: t('actions.appointments'), lead: true },
   { to: '/landing', label: t('actions.account'), lead: false },
@@ -193,18 +264,9 @@ function toggleLang() {
 useHead({
   htmlAttrs: { lang: locale, dir },
   link: [
+    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
     {
-      rel: 'preconnect',
-      href: 'https://fonts.googleapis.com',
-    },
-    {
-      rel: 'preconnect',
-      href: 'https://fonts.gstatic.com',
-      crossorigin: '',
-    },
-    {
-      /* Cormorant Garamond for display, Karla for everything utilitarian —
-         the pairing already used by the project's landing layout. */
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Karla:wght@300;400;500&display=swap',
     },
@@ -213,61 +275,24 @@ useHead({
 </script>
 
 <style scoped>
-/* ═══════════════════════════════════════════════════════════════════════
-   Hasti Hoseini Clinic — landing
-
-   Direction: luxurious minimalism. The film is the subject; the interface
-   is three outlines and a wordmark. No cards, no glass, no glow — hairlines,
-   one champagne accent, and a print grain to bind the type to the image.
-
-   The scrim is deliberately local, not global: protection is laid only
-   under the header and the action rail so the centre of the frame stays
-   clear. The video layer is lifted from its 0.5 default to near-full so the
-   imagery actually reads.
-
-   Accessibility contract
-   • Text is protected by local gradients plus a text-shadow, never by a
-     full-page wash (WCAG 1.4.3).
-   • Focus rings are restyled, never removed (2.4.7); hover affordances are
-     duplicated in :focus-visible.
-   • Touch targets ≥ 44px (2.5.8).
-   • prefers-reduced-motion and prefers-contrast: more both honoured.
-   ═══════════════════════════════════════════════════════════════════════ */
-
 /* ── Design tokens ──────────────────────────────────────────────────── */
-
 .ln-shell {
-  /* Ink — the field behind the film, warm-shifted a hair toward brass */
   --ink: oklch(17% 0.016 252);
   --ink-deep: oklch(10% 0.012 252);
-
-  /* Paper — a warm off-white, never pure #fff */
   --paper: oklch(95% 0.008 85);
   --paper-muted: oklch(80% 0.012 250);
   --paper-faint: oklch(66% 0.012 250);
-
-  /* Champagne — the single accent */
   --brass: #BDE0FE;
   --brass-wash: oklch(84% 0.075 84 / 0.12);
-
-  /* Hairlines */
   --rule: oklch(100% 0 0 / 0.28);
   --rule-soft: oklch(100% 0 0 / 0.14);
   --rule-brass: #A2D2FF;
-
-  /* Type */
   --display: 'Cormorant Garamond', ui-serif, Georgia, serif;
   --sans: 'Karla', ui-sans-serif, system-ui, sans-serif;
-
-  /* Space — 8px scale */
   --gutter: clamp(1.5rem, 6vw, 7rem);
   --rail-gap: 0.75rem;
-
-  /* Motion */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Legibility shadow — the second half of the text-over-film strategy */
   --lift: 0 1px 2px oklch(var(--ink-deep) / 0.55), 0 2px 22px oklch(var(--ink-deep) / 0.45);
 
   position: relative;
@@ -276,14 +301,12 @@ useHead({
   flex-direction: column;
   height: 100dvh;
   overflow: hidden;
-
   color: var(--paper);
   color-scheme: dark;
   font-family: var(--sans);
   font-synthesis-weight: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
   background: var(--ink);
 }
 
@@ -292,14 +315,10 @@ useHead({
   --sans: 'bon', 'Vazirmatn', 'Karla', ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Display face for every element tagged `.font-bon`.
-   `!important` outranks the global fonts.css `.font-bon` rule so English gets
-   Cormorant while Persian keeps "bon". */
 .font-bon {
   font-family: var(--display) !important;
 }
 
-/* Tracked capitals are a Latin device; zero them for Arabic */
 .ln-shell[dir='rtl'] :is(.ln-wordmark, .ln-footer-brand, .ln-lang-name, .ln-lang-code) {
   text-transform: none;
   letter-spacing: 0 !important;
@@ -311,7 +330,6 @@ useHead({
 }
 
 /* ── Backdrop ──────────────────────────────────────────────────────── */
-
 .ln-backdrop {
   position: absolute;
   inset: 0;
@@ -320,14 +338,10 @@ useHead({
   pointer-events: none;
 }
 
-/* Lift the shared background player from its 0.5 default so the film is
-   actually the subject. Scoped override — the component itself is untouched. */
 .ln-backdrop :deep(.tod-bg__video--active) {
   opacity: 0.94;
 }
 
-/* Mobile hero film — matches the lifted desktop treatment so the veil
-   and grain sit on it identically. */
 .ln-backdrop__video {
   position: absolute;
   inset: 0;
@@ -337,34 +351,15 @@ useHead({
   opacity: 0.94;
 }
 
-/* Local protection only: a light cap under the header, a deeper pool under
-   the action rail, and a whisper of ink to unify. The middle of the frame is
-   left alone so the imagery reads. */
 .ln-backdrop__veil {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(
-      180deg,
-      oklch(10% 0.012 252 / 0.60) 0%,
-      oklch(10% 0.012 252 / 0.22) 16%,
-      transparent 30%
-    ),
-    linear-gradient(
-      0deg,
-      oklch(10% 0.012 252 / 0.82) 0%,
-      oklch(10% 0.012 252 / 0.52) 22%,
-      transparent 46%
-    ),
-    linear-gradient(
-      180deg,
-      oklch(10% 0.012 252 / 0.16) 0%,
-      oklch(10% 0.012 252 / 0.04) 45%,
-      oklch(10% 0.012 252 / 0.24) 100%
-    );
+    linear-gradient(180deg, oklch(10% 0.012 252 / 0.60) 0%, oklch(10% 0.012 252 / 0.22) 16%, transparent 30%),
+    linear-gradient(0deg, oklch(10% 0.012 252 / 0.82) 0%, oklch(10% 0.012 252 / 0.52) 22%, transparent 46%),
+    linear-gradient(180deg, oklch(10% 0.012 252 / 0.16) 0%, oklch(10% 0.012 252 / 0.04) 45%, oklch(10% 0.012 252 / 0.24) 100%);
 }
 
-/* Print grain, its own layer so its weight stays independent of the scrim */
 .ln-backdrop::after {
   content: '';
   position: absolute;
@@ -376,7 +371,6 @@ useHead({
 }
 
 /* ── Reveal choreography ───────────────────────────────────────────── */
-
 .ln-header,
 .ln-footer {
   opacity: 0;
@@ -386,13 +380,8 @@ useHead({
     transform 1100ms var(--ease) var(--ln-delay, 0ms);
 }
 
-.ln-header {
-  --ln-delay: 60ms;
-}
-
-.ln-footer {
-  --ln-delay: 320ms;
-}
+.ln-header { --ln-delay: 60ms; }
+.ln-footer { --ln-delay: 320ms; }
 
 .ln-shell.is-ready :is(.ln-header, .ln-footer) {
   opacity: 1;
@@ -400,7 +389,6 @@ useHead({
 }
 
 /* ── Header ────────────────────────────────────────────────────────── */
-
 .ln-header {
   position: relative;
   z-index: 2;
@@ -414,7 +402,7 @@ useHead({
 .ln-header-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .ln-brand {
@@ -424,7 +412,6 @@ useHead({
   min-width: 0;
 }
 
-/* The mark stands on its own — no tile, no container */
 .ln-mark {
   display: inline-grid;
   place-items: center;
@@ -449,8 +436,62 @@ useHead({
   text-shadow: var(--lift);
 }
 
-/* ── Language switch ───────────────────────────────────────────────── */
+/* ── Audio Control ─────────────────────────────────────────────────── */
+.ln-audio-control {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 
+.ln-audio-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--rule-soft);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--paper-muted);
+  cursor: pointer;
+  transition:
+    color 200ms var(--ease),
+    border-color 200ms var(--ease),
+    background-color 200ms var(--ease);
+}
+
+.ln-audio-btn:hover,
+.ln-audio-btn:focus-visible {
+  color: var(--brass);
+  border-color: var(--rule-brass);
+  background: var(--brass-wash);
+}
+
+.ln-volume-wrapper {
+  display: flex;
+  align-items: center;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: width 300ms var(--ease), opacity 250ms var(--ease);
+}
+
+.ln-audio-control:hover .ln-volume-wrapper,
+.ln-audio-control:focus-within .ln-volume-wrapper {
+  width: 4.5rem;
+  opacity: 1;
+}
+
+.ln-volume-slider {
+  width: 4rem;
+  height: 3px;
+  accent-color: var(--brass);
+  background: var(--rule-soft);
+  outline: none;
+  cursor: pointer;
+}
+
+/* ── Language switch ───────────────────────────────────────────────── */
 .ln-lang {
   position: relative;
   display: inline-flex;
@@ -464,7 +505,6 @@ useHead({
   cursor: pointer;
 }
 
-/* A champagne rule sweeps in from the far edge on hover / focus */
 .ln-lang::after {
   content: '';
   position: absolute;
@@ -521,9 +561,6 @@ useHead({
 }
 
 /* ── Stage ─────────────────────────────────────────────────────────── */
-
-/* Deliberately empty: the film owns the middle of the screen, and the rail
-   stays anchored to the foot of the viewport. */
 .ln-main {
   position: relative;
   z-index: 1;
@@ -532,7 +569,6 @@ useHead({
 }
 
 /* ── Footer / ghost rail ───────────────────────────────────────────── */
-
 .ln-footer {
   position: relative;
   z-index: 2;
@@ -543,7 +579,6 @@ useHead({
   padding: clamp(1.25rem, 3vh, 2rem) var(--gutter) clamp(1.75rem, 4vh, 3rem);
 }
 
-/* Hairline above the rail, dissolving at both ends */
 .ln-footer::before {
   content: '';
   position: absolute;
@@ -559,7 +594,6 @@ useHead({
   );
 }
 
-/* Stacked on mobile; a single row once there's room to breathe (>= 768px) */
 .ln-actions {
   display: flex;
   flex-direction: column;
@@ -606,7 +640,6 @@ useHead({
   transform: translateY(0);
 }
 
-/* The primary is signalled by a champagne outline alone — still a ghost */
 .ln-ghost--primary {
   border-color: var(--rule-brass);
   color: var(--brass);
@@ -618,7 +651,6 @@ useHead({
   background: oklch(84% 0.075 84 / 0.18);
 }
 
-/* Directional affordance — CSS-only chevron, no extra markup */
 .ln-ghost::after {
   content: '';
   flex-shrink: 0;
@@ -660,76 +692,14 @@ useHead({
   text-shadow: var(--lift);
 }
 
-/* ── Focus — restyled, never removed ───────────────────────────────── */
-
-.ln-shell :is(.ln-lang, .ln-ghost):focus-visible {
+/* ── Focus ─────────────────────────────────────────────────────────── */
+.ln-shell :is(.ln-lang, .ln-ghost, .ln-audio-btn):focus-visible {
   outline: 1px solid var(--brass);
   outline-offset: 4px;
 }
 
-/* ── User preference overrides ─────────────────────────────────────── */
-
-@media (prefers-contrast: more) {
-
-  /* Without the film's midtones to lean on, protection goes back to global */
-  .ln-backdrop :deep(.tod-bg__video--active) {
-    opacity: 0.45;
-  }
-
-  .ln-backdrop__video {
-    opacity: 0.45;
-  }
-
-  .ln-backdrop__veil {
-    background: linear-gradient(
-      180deg,
-      oklch(8% 0.012 252 / 0.9) 0%,
-      oklch(8% 0.012 252 / 0.92) 100%
-    );
-  }
-
-  .ln-ghost {
-    border-color: oklch(100% 0 0 / 0.65);
-  }
-
-  .ln-ghost--primary {
-    border-color: var(--brass);
-  }
-
-  .ln-wordmark,
-  .ln-lang-name,
-  .ln-lang-code,
-  .ln-ghost,
-  .ln-footer-brand {
-    text-shadow: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-
-  .ln-header,
-  .ln-footer {
-    transition: opacity 200ms linear;
-    transform: none;
-  }
-
-  .ln-ghost,
-  .ln-ghost::after,
-  .ln-lang::after {
-    transition-duration: 1ms;
-  }
-
-  .ln-ghost:hover,
-  .ln-ghost:focus-visible {
-    transform: none;
-  }
-}
-
 /* ── Responsive ────────────────────────────────────────────────────── */
-
-/* Laptop and up — the rail runs horizontally along the foot of the screen */
 @media (min-width: 48rem) {
-
   .ln-actions {
     flex-direction: row;
     justify-content: center;
@@ -744,7 +714,6 @@ useHead({
 }
 
 @media (min-width: 64rem) {
-
   .ln-mark {
     width: 2.5rem;
     height: 2.5rem;
@@ -757,7 +726,6 @@ useHead({
 }
 
 @media (min-width: 96rem) {
-
   .ln-wordmark {
     font-size: 1.3rem;
   }
