@@ -28,6 +28,10 @@
       </div>
     </div>
 
+    <!-- Keep the worksheet mounted across tabs so unfinished rows are preserved. -->
+    <DailyPaymentsSheet v-if="sheetOpened" v-show="tab === 'sheet'" ref="sheetRef"
+      :patients="patients" :visit-types="visitTypes" />
+
     <!-- ============================= Save report ============================= -->
     <section v-if="tab === 'report'">
       <div class="asa-card sc-card">
@@ -701,6 +705,7 @@ import type {
   ProcedureKey,
 } from '~/types/report'
 import HandwritingDialog from '~/components/HandwritingDialog.vue'
+import DailyPaymentsSheet from '~/components/DailyPaymentsSheet.vue'
 import FileText from '~/components/icons/FileText.vue'
 import Wallet from '~/components/icons/Wallet.vue'
 import Calculator from '~/components/icons/Calculator.vue'
@@ -745,12 +750,15 @@ const procedureOptions = computed(() =>
 
 const tabs = computed(() => [
   { key: 'report', label: t('dailyReports.tabs.report') },
+  { key: 'sheet', label: t('dailyReports.sheet.title') },
   { key: 'reports', label: t('dailyReports.tabs.reports') },
   { key: 'visitTypes', label: t('dailyReports.tabs.visitTypes') },
   { key: 'stats', label: t('dailyReports.tabs.stats') },
 ])
 
-const tab = ref('report')
+const tab = ref(useRoute().query.tab === 'sheet' ? 'sheet' : 'report')
+const sheetOpened = ref(tab.value === 'sheet')
+const sheetRef = ref<InstanceType<typeof DailyPaymentsSheet> | null>(null)
 
 const emptyForm = () => ({
   reportDate: toDateStr(new Date()),
@@ -1144,14 +1152,16 @@ const executeVisitTypeDelete = async () => {
 }
 
 const refreshAll = () => {
-  if (tab.value === 'reports') loadReports()
+  if (tab.value === 'sheet') void sheetRef.value?.refresh()
+  else if (tab.value === 'reports') loadReports()
   else if (tab.value === 'visitTypes') loadVisitTypeList()
   else if (tab.value === 'stats') loadStats()
   else loadPatients()
 }
 
 watch(tab, (value) => {
-  if (value === 'reports') loadReports()
+  if (value === 'sheet') sheetOpened.value = true
+  else if (value === 'reports') loadReports()
   else if (value === 'visitTypes') loadVisitTypeList()
   else if (value === 'stats') loadStats()
 })
