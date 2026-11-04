@@ -20,6 +20,7 @@ const route = useRoute()
 
 const isActive = (path: string) => {
   if (path === '/app') return route.path === '/app'
+  if (path === '/app/finance' && route.path === '/app/daily-reports') return true
   return route.path.startsWith(path)
 }
 </script>

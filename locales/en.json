@@ -4024,6 +4024,15 @@
   "dailyReports": {
     "sheet": {
       "title": "Daily worksheet",
+      "pwaSection": "Finance & Reports · Daily Reports",
+      "pwaDescription": "Daily visits and patient payments, all in one place",
+      "loadingOptions": "Preparing your worksheet…",
+      "optionsError": "Patient and visit-type options could not be loaded. Check your connection and try again.",
+      "offline": "You are offline. Unsaved changes stay on this screen. Reconnect to load, save, or remove entries; do not close the app before saving.",
+      "patientNumber": "Patient {number}",
+      "editRow": "Edit patient row",
+      "collapseRow": "Collapse patient row",
+      "mobileHint": "Tap a patient card to edit visit details and payments. Blank payment amounts count as zero. Save your changes before leaving.",
       "subtitle": "One patient per row. Every payment in its place.",
       "date": "Worksheet date",
       "today": "Today",

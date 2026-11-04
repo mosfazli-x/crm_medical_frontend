@@ -41,6 +41,19 @@ const loading = ref(false)
 const loadError = ref(false)
 const savingAll = ref(false)
 const sheetEl = ref<HTMLElement>()
+const offline = ref(false)
+const collapsedRows = ref(new Set<string>())
+function updateConnectivity() { offline.value = !navigator.onLine }
+function toggleRow(id: string) {
+  if (collapsedRows.value.has(id)) collapsedRows.value.delete(id)
+  else collapsedRows.value.add(id)
+}
+function rowStatus(row: SheetRow) {
+  return t(`dailyReports.sheet.${row.saving || row.deleting ? 'saving' : row.error || (isDirty(row) ? 'unsaved' : 'saved')}`)
+}
+function rowPatient(row: SheetRow) {
+  return patientItems.value.find(patient => patient.id === row.patientId)?.label || t('dailyReports.sheet.patient')
+}
 const busy = computed(() => loading.value || savingAll.value || rows.value.some(row => row.saving || row.deleting))
 const dirtyRows = computed(() => rows.value.filter(isDirty))
 const headingDate = computed(() => formatJalaliLong(new Date(`${selectedDate.value}T12:00:00`)))
@@ -151,19 +164,22 @@ function moveDate(offset: number) {
   void changeDate(toDateStr(date))
 }
 async function addRow() {
-  if (busy.value || loadError.value) return
+  if (offline.value || busy.value || loadError.value) return
   rows.value.push({
     id: crypto.randomUUID(), reportDate: selectedDate.value, patientId: null,
     visitType: '', category: 'visit', bankAmount: '', posAmount: '', cashAmount: '',
     snapshot: null, saving: false, deleting: false, attempted: false, error: null,
   })
   await nextTick()
-  const last = sheetEl.value?.querySelector('tbody tr:last-child')
+  const mobile = window.matchMedia('(max-width: 767px)').matches
+  const last = sheetEl.value?.querySelector(mobile ? '.patient-card:last-child' : 'tbody tr:last-child')
   last?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
   last?.querySelector<HTMLInputElement>('input')?.focus()
 }
 
 async function saveRow(row: SheetRow): Promise<boolean> {
+  // Recheck between save-all requests; never acknowledge a row without a response.
+  if (offline.value) return false
   row.error = null
   const amounts = amountFields.map(field => cents(row[field]))
   if (!row.patientId || !row.visitType.trim() || row.visitType.trim().length > 100
@@ -194,11 +210,11 @@ async function saveRow(row: SheetRow): Promise<boolean> {
   }
 }
 async function saveOne(row: SheetRow) {
-  if (busy.value || !isDirty(row)) return
+  if (offline.value || busy.value || !isDirty(row)) return
   await saveRow(row)
 }
 async function saveAll() {
-  if (busy.value || !dirtyRows.value.length) return
+  if (offline.value || busy.value || !dirtyRows.value.length) return
   const changed = [...dirtyRows.value]
   savingAll.value = true
   try {
@@ -209,7 +225,7 @@ async function saveAll() {
   }
 }
 async function removeRow(row: SheetRow) {
-  if (busy.value || !window.confirm(t('dailyReports.sheet.deleteConfirm'))) return
+  if (offline.value || busy.value || !window.confirm(t('dailyReports.sheet.deleteConfirm'))) return
   if (row.snapshot !== null || row.attempted) {
     row.deleting = true
     row.error = null
@@ -243,10 +259,17 @@ onBeforeRouteLeave((to) => {
   return !dirtyRows.value.length || window.confirm(t('dailyReports.sheet.discardConfirm'))
 })
 onMounted(() => {
+  updateConnectivity()
+  window.addEventListener('online', updateConnectivity)
+  window.addEventListener('offline', updateConnectivity)
   window.addEventListener('beforeunload', beforeUnload)
   void load()
 })
-onBeforeUnmount(() => window.removeEventListener('beforeunload', beforeUnload))
+onBeforeUnmount(() => {
+  window.removeEventListener('online', updateConnectivity)
+  window.removeEventListener('offline', updateConnectivity)
+  window.removeEventListener('beforeunload', beforeUnload)
+})
 </script>
 
 <template>
@@ -260,10 +283,10 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', beforeUnload))
         </div>
       </div>
       <div class="header-actions">
-        <button type="button" class="sheet-button" :disabled="busy || loadError" @click="addRow">
+        <button type="button" class="sheet-button" :disabled="offline || busy || loadError" @click="addRow">
           <Icon name="lucide:plus" aria-hidden="true" />{{ t('dailyReports.sheet.addRow') }}
         </button>
-        <button type="button" class="sheet-button primary" :disabled="busy || !dirtyRows.length || loadError" @click="saveAll">
+        <button type="button" class="sheet-button primary" :disabled="offline || busy || !dirtyRows.length || loadError" @click="saveAll">
           <Icon :name="savingAll ? 'lucide:loader-circle' : 'lucide:save'" :class="{ spinning: savingAll }" aria-hidden="true" />
           {{ t(savingAll ? 'dailyReports.sheet.saving' : 'dailyReports.sheet.saveAll') }}
           <span v-if="dirtyRows.length" class="button-count">{{ dirtyRows.length }}</span>
@@ -271,19 +294,20 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', beforeUnload))
       </div>
     </header>
 
+    <div v-if="offline" class="offline-banner" role="status"><Icon name="lucide:wifi-off" aria-hidden="true" /><span>{{ t('dailyReports.sheet.offline') }}</span></div>
     <div class="date-toolbar">
       <div class="date-navigation">
-        <button type="button" class="icon-button" :aria-label="t('dailyReports.sheet.previousDay')" :disabled="busy" @click="moveDate(-1)">
+        <button type="button" class="icon-button" :aria-label="t('dailyReports.sheet.previousDay')" :disabled="offline || busy" @click="moveDate(-1)">
           <Icon name="lucide:chevron-right" class="date-arrow" aria-hidden="true" />
         </button>
         <div class="date-caption"><span>{{ t('dailyReports.sheet.date') }}</span><strong>{{ headingDate }}</strong></div>
-        <button type="button" class="icon-button" :aria-label="t('dailyReports.sheet.nextDay')" :disabled="busy" @click="moveDate(1)">
+        <button type="button" class="icon-button" :aria-label="t('dailyReports.sheet.nextDay')" :disabled="offline || busy" @click="moveDate(1)">
           <Icon name="lucide:chevron-left" class="date-arrow" aria-hidden="true" />
         </button>
       </div>
       <div class="date-controls">
-        <input type="date" class="date-input" :value="selectedDate" min="0001-01-01" max="9999-12-31" :aria-label="t('dailyReports.sheet.date')" :disabled="busy" @change="pickDate">
-        <button type="button" class="sheet-button quiet" :disabled="busy || selectedDate === toDateStr(new Date())" @click="changeDate(toDateStr(new Date()))">{{ t('dailyReports.sheet.today') }}</button>
+        <input type="date" class="date-input" :value="selectedDate" min="0001-01-01" max="9999-12-31" :aria-label="t('dailyReports.sheet.date')" :disabled="offline || busy" @change="pickDate">
+        <button type="button" class="sheet-button quiet" :disabled="offline || busy || selectedDate === toDateStr(new Date())" @click="changeDate(toDateStr(new Date()))">{{ t('dailyReports.sheet.today') }}</button>
       </div>
     </div>
 
@@ -296,12 +320,12 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', beforeUnload))
     <div v-if="loading" class="sheet-state" role="status"><Icon name="lucide:loader-circle" class="spinning" aria-hidden="true" /><span>{{ t('common.loading') }}</span></div>
     <div v-else-if="loadError" class="sheet-state" role="alert">
       <Icon name="lucide:cloud-off" aria-hidden="true" /><h3>{{ t('dailyReports.sheet.loadError') }}</h3>
-      <button type="button" class="sheet-button" :disabled="busy" @click="refresh"><Icon name="lucide:rotate-cw" aria-hidden="true" />{{ t('dailyReports.sheet.retry') }}</button>
+      <button type="button" class="sheet-button" :disabled="offline || busy" @click="refresh"><Icon name="lucide:rotate-cw" aria-hidden="true" />{{ t('dailyReports.sheet.retry') }}</button>
     </div>
     <div v-else-if="!rows.length" class="sheet-state empty-state">
       <span class="empty-emblem"><Icon name="lucide:table-2" aria-hidden="true" /></span>
       <h3>{{ t('dailyReports.sheet.emptyTitle') }}</h3><p>{{ t('dailyReports.sheet.emptyDescription') }}</p>
-      <button type="button" class="sheet-button" @click="addRow"><Icon name="lucide:plus" aria-hidden="true" />{{ t('dailyReports.sheet.addRow') }}</button>
+      <button type="button" class="sheet-button" :disabled="offline || busy" @click="addRow"><Icon name="lucide:plus" aria-hidden="true" />{{ t('dailyReports.sheet.addRow') }}</button>
     </div>
     <div v-else class="table-scroll" tabindex="0" role="region" :aria-label="t('dailyReports.sheet.title')">
       <table>
@@ -319,16 +343,16 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', beforeUnload))
           <tr v-for="(row, index) in rows" :key="row.id" :class="{ 'dirty-row': isDirty(row), 'error-row': row.error }">
             <th scope="row" class="row-number"><span>{{ index + 1 }}</span><span class="row-marker" :class="{ dirty: isDirty(row) }" :title="t(isDirty(row) ? 'dailyReports.sheet.unsaved' : 'dailyReports.sheet.saved')" /><span class="sr-only">{{ t(isDirty(row) ? 'dailyReports.sheet.unsaved' : 'dailyReports.sheet.saved') }}</span></th>
             <td class="patient-column">
-              <v-autocomplete v-model="row.patientId" :items="patientItems" item-title="label" item-value="id" :aria-label="`${t('dailyReports.sheet.patient')} ${index + 1}`" :placeholder="t('dailyReports.sheet.patient')" :disabled="busy" :error="row.error === 'validation' && !row.patientId" :menu-props="{ attach: 'body', maxHeight: 320 }" density="compact" variant="outlined" hide-details clearable autocomplete="off" class="patient-picker" />
+              <v-autocomplete v-model="row.patientId" :items="patientItems" item-title="label" item-value="id" :aria-label="`${t('dailyReports.sheet.patient')} ${index + 1}`" :placeholder="t('dailyReports.sheet.patient')" :disabled="offline || busy" :error="row.error === 'validation' && !row.patientId" :menu-props="{ attach: 'body', maxHeight: 320 }" density="compact" variant="outlined" hide-details clearable autocomplete="off" class="patient-picker" />
             </td>
-            <td><select v-model="row.visitType" :aria-label="`${t('dailyReports.sheet.visitType')} ${index + 1}`" :aria-invalid="row.error === 'validation' && !row.visitType" :disabled="busy"><option value="" disabled>{{ t('dailyReports.sheet.visitType') }}</option><option v-if="row.visitType && !visitNames.includes(row.visitType)" :value="row.visitType">{{ row.visitType }}</option><option v-for="name in visitNames" :key="name" :value="name">{{ name }}</option></select></td>
-            <td><select v-model="row.category" :aria-label="`${t('dailyReports.sheet.category')} ${index + 1}`" :disabled="busy"><option v-for="category in categories" :key="category" :value="category">{{ t(`dailyReports.sheet.categories.${category}`) }}</option></select></td>
-            <td v-for="field in amountFields" :key="field" class="amount-column"><input v-model="row[field]" type="text" inputmode="decimal" dir="ltr" autocomplete="off" placeholder="0.00" :aria-label="`${amountLabel(field)} ${index + 1}`" :aria-invalid="cents(row[field]) === null" :aria-describedby="cents(row[field]) === null || row.error ? `sheet-error-${row.id}` : undefined" :disabled="busy"></td>
+            <td><select v-model="row.visitType" :aria-label="`${t('dailyReports.sheet.visitType')} ${index + 1}`" :aria-invalid="row.error === 'validation' && !row.visitType" :disabled="offline || busy"><option value="" disabled>{{ t('dailyReports.sheet.visitType') }}</option><option v-if="row.visitType && !visitNames.includes(row.visitType)" :value="row.visitType">{{ row.visitType }}</option><option v-for="name in visitNames" :key="name" :value="name">{{ name }}</option></select></td>
+            <td><select v-model="row.category" :aria-label="`${t('dailyReports.sheet.category')} ${index + 1}`" :disabled="offline || busy"><option v-for="category in categories" :key="category" :value="category">{{ t(`dailyReports.sheet.categories.${category}`) }}</option></select></td>
+            <td v-for="field in amountFields" :key="field" class="amount-column"><input v-model="row[field]" type="text" inputmode="decimal" dir="ltr" autocomplete="off" placeholder="0.00" :aria-label="`${amountLabel(field)} ${index + 1}`" :aria-invalid="cents(row[field]) === null" :aria-describedby="cents(row[field]) === null || row.error ? `sheet-error-${row.id}` : undefined" :disabled="offline || busy"></td>
             <td class="total-column"><strong>{{ money(rowTotal(row)) }}</strong></td>
             <td class="actions-column">
               <div class="row-actions">
-                <button type="button" class="icon-button save-button" :disabled="busy || !isDirty(row)" :aria-label="`${t('dailyReports.sheet.saveRow')} ${index + 1}`" :title="t('dailyReports.sheet.saveRow')" @click="saveOne(row)"><Icon :name="row.saving ? 'lucide:loader-circle' : isDirty(row) ? 'lucide:save' : 'lucide:check'" :class="{ spinning: row.saving }" aria-hidden="true" /></button>
-                <button type="button" class="icon-button remove-button" :disabled="busy" :aria-label="`${t('dailyReports.sheet.remove')} ${index + 1}`" :title="t('dailyReports.sheet.remove')" @click="removeRow(row)"><Icon :name="row.deleting ? 'lucide:loader-circle' : 'lucide:trash-2'" :class="{ spinning: row.deleting }" aria-hidden="true" /></button>
+                <button type="button" class="icon-button save-button" :disabled="offline || busy || !isDirty(row)" :aria-label="`${t('dailyReports.sheet.saveRow')} ${index + 1}`" :title="t('dailyReports.sheet.saveRow')" @click="saveOne(row)"><Icon :name="row.saving ? 'lucide:loader-circle' : isDirty(row) ? 'lucide:save' : 'lucide:check'" :class="{ spinning: row.saving }" aria-hidden="true" /></button>
+                <button type="button" class="icon-button remove-button" :disabled="offline || busy" :aria-label="`${t('dailyReports.sheet.remove')} ${index + 1}`" :title="t('dailyReports.sheet.remove')" @click="removeRow(row)"><Icon :name="row.deleting ? 'lucide:loader-circle' : 'lucide:trash-2'" :class="{ spinning: row.deleting }" aria-hidden="true" /></button>
               </div>
               <p v-if="row.error || amountFields.some(field => cents(row[field]) === null)" :id="`sheet-error-${row.id}`" class="row-error" role="alert">{{ t(`dailyReports.sheet.${row.error || 'validation'}`) }}</p>
             </td>
@@ -337,10 +361,50 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', beforeUnload))
         <tfoot><tr><th colspan="4" scope="row">{{ t('dailyReports.sheet.total') }} <span class="footer-count">{{ rows.length }} {{ t('dailyReports.sheet.rows') }}</span></th><td v-for="field in amountFields" :key="field" class="amount-column">{{ money(totals[field]) }}</td><td class="total-column">{{ money(totals.total) }}</td><td><span class="footer-currency">{{ t('dailyReports.sheet.currency') }}</span></td></tr></tfoot>
       </table>
     </div>
+    <div v-if="!loading && !loadError && rows.length" class="mobile-cards">
+      <article v-for="(row, index) in rows" :key="row.id" class="patient-card" :class="{ 'card-dirty': isDirty(row), 'card-error': row.error }" :aria-labelledby="`card-title-${row.id}`">
+        <header class="card-header">
+          <div class="card-identity">
+            <span class="card-number">{{ t('dailyReports.sheet.patientNumber', { number: index + 1 }) }}</span>
+            <h3 :id="`card-title-${row.id}`">{{ rowPatient(row) }}</h3>
+            <span class="card-status" role="status"><Icon :name="row.saving || row.deleting ? 'lucide:loader-circle' : row.error ? 'lucide:circle-alert' : isDirty(row) ? 'lucide:circle-dot' : 'lucide:check-check'" :class="{ spinning: row.saving || row.deleting }" aria-hidden="true" />{{ rowStatus(row) }}</span>
+          </div>
+          <button type="button" class="icon-button" :aria-expanded="!collapsedRows.has(row.id)" :aria-controls="`card-editor-${row.id}`" :aria-label="`${t(collapsedRows.has(row.id) ? 'dailyReports.sheet.editRow' : 'dailyReports.sheet.collapseRow')} ${index + 1}`" @click="toggleRow(row.id)"><Icon :name="collapsedRows.has(row.id) ? 'lucide:chevron-down' : 'lucide:chevron-up'" aria-hidden="true" /></button>
+        </header>
+        <div class="card-total"><span>{{ t('dailyReports.sheet.total') }}</span><strong>{{ money(rowTotal(row)) }} <small>{{ t('dailyReports.sheet.currency') }}</small></strong></div>
+        <div v-show="!collapsedRows.has(row.id)" :id="`card-editor-${row.id}`" class="card-editor">
+          <div class="card-field card-field-wide">
+            <label :for="`mobile-patient-${row.id}`">{{ t('dailyReports.sheet.patient') }}</label>
+            <v-autocomplete :id="`mobile-patient-${row.id}`" v-model="row.patientId" :items="patientItems" item-title="label" item-value="id" :aria-label="t('dailyReports.sheet.patient')" :disabled="busy" :error="row.error === 'validation' && !row.patientId" :aria-describedby="row.error ? `mobile-error-${row.id}` : undefined" :menu-props="{ attach: 'body', maxHeight: 320 }" variant="outlined" hide-details clearable autocomplete="off" class="patient-picker" />
+          </div>
+          <div class="card-field">
+            <label :for="`mobile-visit-${row.id}`">{{ t('dailyReports.sheet.visitType') }}</label>
+            <select :id="`mobile-visit-${row.id}`" v-model="row.visitType" :disabled="busy" :aria-invalid="row.error === 'validation' && !row.visitType.trim()" :aria-describedby="row.error ? `mobile-error-${row.id}` : undefined"><option value="" disabled>{{ t('dailyReports.sheet.visitType') }}</option><option v-if="row.visitType && !visitNames.includes(row.visitType)" :value="row.visitType">{{ row.visitType }}</option><option v-for="name in visitNames" :key="name" :value="name">{{ name }}</option></select>
+          </div>
+          <div class="card-field">
+            <label :for="`mobile-category-${row.id}`">{{ t('dailyReports.sheet.category') }}</label>
+            <select :id="`mobile-category-${row.id}`" v-model="row.category" :disabled="busy"><option v-for="category in categories" :key="category" :value="category">{{ t(`dailyReports.sheet.categories.${category}`) }}</option></select>
+          </div>
+          <div v-for="field in amountFields" :key="field" class="card-field card-field-wide payment-field">
+            <label :for="`mobile-${field}-${row.id}`">{{ amountLabel(field) }} <small>{{ t('dailyReports.sheet.currency') }}</small></label>
+            <input :id="`mobile-${field}-${row.id}`" v-model="row[field]" type="text" inputmode="decimal" dir="ltr" autocomplete="off" placeholder="0.00" :disabled="busy" :aria-invalid="cents(row[field]) === null" :aria-describedby="cents(row[field]) === null || row.error ? `mobile-error-${row.id}` : undefined">
+          </div>
+          <div class="card-actions card-field-wide">
+            <button type="button" class="sheet-button primary" :disabled="offline || busy || !isDirty(row)" @click="saveOne(row)"><Icon :name="row.saving ? 'lucide:loader-circle' : 'lucide:save'" :class="{ spinning: row.saving }" aria-hidden="true" />{{ t(row.saving ? 'dailyReports.sheet.saving' : 'dailyReports.sheet.saveRow') }}</button>
+            <button type="button" class="sheet-button remove-button" :disabled="offline || busy" @click="removeRow(row)"><Icon :name="row.deleting ? 'lucide:loader-circle' : 'lucide:trash-2'" :class="{ spinning: row.deleting }" aria-hidden="true" />{{ t('dailyReports.sheet.remove') }}</button>
+          </div>
+        </div>
+        <p v-if="row.error || amountFields.some(field => cents(row[field]) === null)" :id="`mobile-error-${row.id}`" class="row-error" role="alert">{{ t(`dailyReports.sheet.${row.error || 'validation'}`) }}</p>
+      </article>
+    </div>
     <footer class="sheet-footer">
       <p><Icon name="lucide:info" aria-hidden="true" />{{ t('dailyReports.sheet.independentNote') }}</p>
-      <p :class="{ 'validation-note': invalidAmounts }" :role="invalidAmounts ? 'alert' : undefined">{{ t(invalidAmounts ? 'dailyReports.sheet.validation' : 'dailyReports.sheet.hint') }}</p>
+      <p :class="{ 'validation-note': invalidAmounts }" :role="invalidAmounts ? 'alert' : undefined"><span class="desktop-hint">{{ t(invalidAmounts ? 'dailyReports.sheet.validation' : 'dailyReports.sheet.hint') }}</span><span class="mobile-hint">{{ t(invalidAmounts ? 'dailyReports.sheet.validation' : 'dailyReports.sheet.mobileHint') }}</span></p>
     </footer>
+    <div class="mobile-action-footer">
+      <button type="button" class="sheet-button" :disabled="offline || busy || loadError" @click="addRow"><Icon name="lucide:plus" aria-hidden="true" />{{ t('dailyReports.sheet.addRow') }}</button>
+      <button type="button" class="sheet-button primary" :disabled="offline || busy || loadError || !dirtyRows.length" @click="saveAll"><Icon :name="savingAll ? 'lucide:loader-circle' : 'lucide:save'" :class="{ spinning: savingAll }" aria-hidden="true" />{{ t(savingAll ? 'dailyReports.sheet.saving' : 'dailyReports.sheet.saveAll') }}<span v-if="dirtyRows.length" class="button-count">{{ dirtyRows.length }}</span></button>
+    </div>
   </section>
 </template>
 
@@ -428,7 +492,43 @@ tfoot th { padding-inline-start: 1.25rem; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .spinning { animation: sheet-spin 1s linear infinite; }
 @keyframes sheet-spin { to { transform: rotate(360deg); } }
-@media (max-width: 640px) {
+.mobile-cards, .mobile-action-footer, .mobile-hint { display: none; }
+.offline-banner { display: flex; align-items: center; gap: .75rem; padding: 1rem 1.5rem; background: var(--asa-amber-soft, var(--asa-accent-soft)); color: var(--asa-label); border-block: 1px solid var(--asa-sep); }
+.offline-banner :deep(svg) { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+@media (max-width: 767px) {
+  .payments-sheet { overflow: visible; }
+  .table-scroll, .header-actions, .desktop-hint { display: none; }
+  .mobile-hint { display: inline; }
+  .sheet-button, .icon-button, .date-input { min-height: 44px; }
+  .icon-button { width: 44px; height: 44px; }
+  .mobile-cards { display: grid; gap: 1rem; padding: 0 1rem 1rem; }
+  .patient-card { min-width: 0; border: 1px solid var(--asa-sep); border-radius: 1rem; background: var(--asa-bg-card); box-shadow: var(--asa-card-shadow); scroll-margin-block: 1rem 12rem; }
+  .card-dirty { border-inline-start: 3px solid var(--asa-amber); }
+  .card-error { border-color: var(--asa-rose); }
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; padding: 1rem; }
+  .card-identity { min-width: 0; }
+  .card-number { color: var(--asa-label-2); font-size: .75rem; }
+  .card-identity h3 { margin: .25rem 0 .5rem; font-size: 1rem; font-weight: 700; overflow-wrap: anywhere; }
+  .card-status { display: flex; align-items: center; gap: .375rem; color: var(--asa-label-2); font-size: .75rem; }
+  .card-status :deep(svg) { width: 1rem; height: 1rem; }
+  .card-total { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; padding: .75rem 1rem; background: var(--asa-accent-soft); font-variant-numeric: tabular-nums; }
+  .card-total > span { color: var(--asa-label-2); }
+  .card-total strong { font-size: 1.125rem; overflow-wrap: anywhere; }
+  .card-total small { font-size: .75rem; font-weight: 400; }
+  .card-editor { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem .75rem; padding: 1rem; }
+  .card-field { display: flex; flex-direction: column; gap: .375rem; min-width: 0; }
+  .card-field-wide { grid-column: 1 / -1; }
+  .card-field label { font-size: .8125rem; font-weight: 600; }
+  .card-field small { color: var(--asa-label-2); font-size: .75rem; font-weight: 400; }
+  .card-field select, .card-field input { width: 100%; min-width: 0; max-width: none; min-height: 48px; border: 1px solid var(--asa-sep); border-radius: .625rem; padding: .625rem; background: var(--asa-bg-card); color: var(--asa-label); font: inherit; font-size: 1rem; }
+  .payment-field input { text-align: end; font-variant-numeric: tabular-nums; }
+  .patient-picker :deep(.v-field__input) { min-height: 48px; font-size: 1rem; }
+  .patient-picker :deep(.v-field__clearable), .patient-picker :deep(.v-field__append-inner) { min-width: 44px; min-height: 44px; align-items: center; justify-content: center; padding-top: 0; margin-inline: 0; }
+  .card-actions { display: flex; flex-wrap: wrap; gap: .5rem; padding-top: .25rem; }
+  .card-actions .primary { flex: 1; }
+  .patient-card > .row-error { margin: 0 1rem 1rem; font-size: .8125rem; min-width: 0; }
+  .mobile-action-footer { display: flex; flex-wrap: wrap; gap: .5rem; position: sticky; bottom: calc(var(--app-nav-h, 0px) + env(safe-area-inset-bottom, 0px)); z-index: 10; padding: .75rem; border-top: 1px solid var(--asa-sep); border-radius: 0 0 1.25rem 1.25rem; background: var(--asa-bg-card); box-shadow: 0 -4px 16px color-mix(in srgb, var(--asa-label) 8%, transparent); }
+  .mobile-action-footer .sheet-button { flex: 1; }
   .sheet-header { flex-direction: column; align-items: stretch; padding: 1rem; }
   .header-actions { flex-wrap: wrap; }
   .header-actions .sheet-button { flex: 1; }

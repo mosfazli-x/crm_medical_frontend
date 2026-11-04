@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import type { LocationQuery } from 'vue-router'
 
 /**
  * Detects whether the app is running as an installed PWA ("standalone" display
@@ -38,6 +39,14 @@ export function isAppEntryRoute(path: string): boolean {
   return (APP_ENTRY_ROUTES as readonly string[]).includes(path)
 }
 
+export function resolveAppEntryRoute(path: string, query: LocationQuery): string | undefined {
+  // Only the worksheet deep link belongs in the app shell; leave the ordinary
+  // desktop report form (and other tab values) on its existing route.
+  if (path === '/daily-reports' && query.tab === 'sheet') return '/app/daily-reports'
+  if (isAppEntryRoute(path)) return APP_HOME
+  return undefined
+}
+
 export function usePwaApp() {
   const init = () => {
     if (!import.meta.client || bound) return
@@ -52,6 +61,7 @@ export function usePwaApp() {
   return {
     isStandalone,
     isAppEntryRoute,
+    resolveAppEntryRoute,
     detectStandalone,
     init,
   }

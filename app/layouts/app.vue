@@ -84,8 +84,9 @@ const { user, logout } = useAuth()
 const { isDark, toggleTheme, initTheme } = useThemeMode()
 const { init: initPwaApp } = usePwaApp()
 
-const pageTitle = computed(() => String(route.meta.appTitle || 'کلینیک هستی حسینی'))
-const pageSubtitle = computed(() => (route.meta.appSubtitle ? String(route.meta.appSubtitle) : ''))
+const { t } = useI18n()
+const pageTitle = computed(() => route.meta.appTitleKey ? t(String(route.meta.appTitleKey)) : String(route.meta.appTitle || 'کلینیک هستی حسینی'))
+const pageSubtitle = computed(() => route.meta.appSubtitleKey ? t(String(route.meta.appSubtitleKey)) : (route.meta.appSubtitle ? String(route.meta.appSubtitle) : ''))
 const backTo = computed(() => (route.meta.appBack ? String(route.meta.appBack) : ''))
 
 const initials = computed(() => (user.value?.fullName || '').trim().slice(0, 2) || '؟')
@@ -102,6 +103,7 @@ const roleLabel = computed(() => {
 
 const isActive = (path: string) => {
   if (path === '/app') return route.path === '/app'
+  if (path === '/app/finance' && route.path === '/app/daily-reports') return true
   return route.path.startsWith(path)
 }
 

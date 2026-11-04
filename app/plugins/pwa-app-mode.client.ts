@@ -1,4 +1,5 @@
-import { APP_HOME, usePwaApp } from '~/composables/usePwaApp'
+import type { RouteLocationNormalizedLoaded } from 'vue-router'
+import { usePwaApp } from '~/composables/usePwaApp'
 
 /**
  * When the clinic PWA is launched as an installed app (standalone display
@@ -9,15 +10,18 @@ import { APP_HOME, usePwaApp } from '~/composables/usePwaApp'
 export default defineNuxtPlugin((nuxtApp) => {
   if (!import.meta.client) return
 
-  const { detectStandalone, isAppEntryRoute } = usePwaApp()
+  const { detectStandalone, resolveAppEntryRoute } = usePwaApp()
   if (!detectStandalone()) return
 
   const router = nuxtApp.$router
 
-  const steer = (path: string) => {
-    if (isAppEntryRoute(path)) void router.replace(APP_HOME)
+  const steer = (route: Pick<RouteLocationNormalizedLoaded, 'path' | 'query' | 'hash'>) => {
+    const target = resolveAppEntryRoute(route.path, route.query)
+    if (target) void router.replace({ path: target, query: route.query, hash: route.hash })
   }
 
-  void router.isReady().then(() => steer(router.currentRoute.value.path))
-  router.afterEach((to) => steer(to.path))
+  void router.isReady().then(() => steer(router.currentRoute.value))
+  router.afterEach((to, _from, failure) => {
+    if (!failure) steer(to)
+  })
 })

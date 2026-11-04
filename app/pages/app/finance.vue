@@ -1,5 +1,13 @@
 <template>
   <div class="fin">
+    <NuxtLink v-if="canView" to="/app/daily-reports" class="app-card app-pad fin-worksheet-link">
+      <span class="fin-worksheet-link__icon"><Icon name="lucide:clipboard-list" size="24" /></span>
+      <span class="fin-worksheet-link__copy">
+        <strong>{{ t('dailyReports.sheet.title') }}</strong>
+        <span>{{ t('dailyReports.sheet.pwaDescription') }}</span>
+      </span>
+      <Icon name="lucide:chevron-left" size="20" class="fin-worksheet-link__arrow" />
+    </NuxtLink>
     <div v-if="loading && !summary" class="app-list" aria-busy="true">
       <div class="fin-stats">
         <div v-for="n in 4" :key="`cb-skel-${n}`" class="app-skel fin-skel" />
@@ -1141,6 +1149,13 @@ async function submitRevoke() {
 </script>
 
 <style scoped>
+.fin-worksheet-link { display: flex; align-items: center; gap: 1rem; margin-block-end: 1rem; text-decoration: none; color: var(--app-text); border: 1px solid var(--app-border-strong); min-height: 5rem; }
+.fin-worksheet-link:focus-visible { outline: 3px solid var(--app-brand); outline-offset: 3px; }
+.fin-worksheet-link:hover { background: var(--app-surface-2); }
+.fin-worksheet-link__icon { display: grid; place-items: center; flex-shrink: 0; width: 3rem; height: 3rem; border-radius: 1rem; background: var(--app-brand-soft); color: var(--app-brand-ink); }
+.fin-worksheet-link__copy { display: grid; gap: .25rem; flex: 1; min-width: 0; line-height: 1.6; }
+.fin-worksheet-link__copy > span { color: var(--app-text-2); font-size: .8125rem; }
+:global([dir="ltr"]) .fin-worksheet-link__arrow { transform: rotate(180deg); }
 .fin {
   display: block;
 }

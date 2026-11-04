@@ -39,6 +39,14 @@
         tint="indigo"
       />
       <AppFeatureTile
+        v-if="canViewWorksheet"
+        to="/app/daily-reports"
+        :title="t('dailyReports.sheet.title')"
+        :description="t('dailyReports.sheet.pwaDescription')"
+        icon="lucide:clipboard-list"
+        tint="green"
+      />
+      <AppFeatureTile
         to="/app/finance"
         title="مالی"
         description="درآمد، هزینه و وضعیت صندوق"
@@ -62,6 +70,8 @@ import moment from 'moment-jalaali'
 definePageMeta({ layout: 'app', appTitle: 'خانه' })
 
 const { user } = useAuth()
+const { t } = useI18n()
+const canViewWorksheet = computed(() => ['admin_doctor', 'doctor'].includes(user.value?.role || ''))
 
 const firstName = computed(() => (user.value?.fullName || '').trim().split(/\s+/)[0] || '')
 const roleLabel = computed(() => {

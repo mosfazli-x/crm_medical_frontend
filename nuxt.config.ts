@@ -148,6 +148,13 @@ export default defineNuxtConfig({
           icons: [{ src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
         },
         {
+          name: 'کاربرگ پرداخت‌های روزانه',
+          short_name: 'کاربرگ روزانه',
+          description: 'مشاهده و مدیریت کاربرگ پرداخت‌های روزانه',
+          url: '/app/daily-reports',
+          icons: [{ src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
+        },
+        {
           name: 'ثبت ورود',
           short_name: 'ثبت ورود',
           description: 'ثبت سریع ورود به کلینیک',
@@ -186,17 +193,27 @@ export default defineNuxtConfig({
       clientsClaim: true,
       runtimeCaching: [
         {
-          // Attendance stays out of the cache on purpose: the punch button
-          // reads the records back, and a cached answer would show a state the
-          // server has already moved past. The screen keeps its own snapshot
-          // for the offline case.
+          // Financial reports and patient records must never use cached responses,
+          // including the browser's HTTP cache. Match before any general cache rule.
+          urlPattern: ({ url }) => /^\/api\/(daily-reports|patients?)(\/|$)/.test(url.pathname),
+          method: 'GET',
+          handler: 'NetworkOnly',
+          options: {
+            fetchOptions: { cache: 'no-store' },
+          },
+        },
+        {
+          // Attendance keeps its own offline snapshot. Sensitive report/patient
+          // reads are also explicitly excluded so this cache cannot serve them.
           urlPattern: ({ url, request }) =>
             request.method === 'GET' &&
             url.pathname.startsWith('/api/') &&
-            !url.pathname.startsWith('/api/staff/attendance/'),
+            !url.pathname.startsWith('/api/staff/attendance/') &&
+            !/^\/api\/(daily-reports|patients?)(\/|$)/.test(url.pathname),
           handler: 'NetworkFirst',
           options: {
-            cacheName: 'api-responses-v2',
+            // Retire the old API cache namespace; never read its cached PHI.
+            cacheName: 'api-responses-v3',
             networkTimeoutSeconds: 5,
             expiration: { maxEntries: 64, maxAgeSeconds: 60 * 60 * 24 },
             cacheableResponse: { statuses: [200] },
