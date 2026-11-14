@@ -431,7 +431,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, .table-scroll:f
 .date-caption { display: flex; flex-direction: column; padding-inline: .5rem; min-width: 12rem; }
 .date-caption > span { font-size: .625rem; color: var(--asa-label-2); }
 .date-caption strong { font-size: .8125rem; font-weight: 650; }
-:host-context([dir='rtl']) .date-arrow, :global([dir='rtl']) .payments-sheet .date-arrow { transform: scaleX(-1); }
+[dir='rtl'] .payments-sheet .date-arrow { transform: scaleX(-1); }
 .date-input { padding: .5rem .625rem; border: 1px solid var(--asa-sep); border-radius: .5rem; background: var(--asa-bg-card); color: var(--asa-label); font: inherit; color-scheme: light dark; direction: ltr; min-width: 0; }
 .sheet-summary { display: flex; align-items: center; flex-wrap: wrap; gap: 1.5rem; padding: 1.25rem 1.5rem; }
 .sheet-summary > div { display: flex; flex-direction: column; gap: .25rem; }
@@ -453,7 +453,7 @@ thead small { display: block; font-size: .5625rem; font-weight: 400; margin-top:
 .row-marker { display: block; width: .25rem; height: .25rem; margin: .25rem auto 0; border-radius: 50%; background: var(--asa-track); }
 .row-marker.dirty { background: var(--asa-amber); }
 .dirty-row > th { box-shadow: inset 3px 0 var(--asa-amber); }
-:global([dir='rtl']) .payments-sheet .dirty-row > th { box-shadow: inset -3px 0 var(--asa-amber); }
+[dir='rtl'] .payments-sheet .dirty-row > th { box-shadow: inset -3px 0 var(--asa-amber); }
 tbody tr:hover { background: color-mix(in srgb, var(--asa-accent) 3%, transparent); }
 .patient-column { width: 17rem; min-width: 17rem; }
 select, .amount-column input { width: 100%; height: 2.5rem; border: 1px solid var(--asa-sep); border-radius: .5rem; background: var(--asa-bg-card); color: var(--asa-label); font: inherit; padding: .5rem; }

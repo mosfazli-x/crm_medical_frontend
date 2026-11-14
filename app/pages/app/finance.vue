@@ -1155,7 +1155,7 @@ async function submitRevoke() {
 .fin-worksheet-link__icon { display: grid; place-items: center; flex-shrink: 0; width: 3rem; height: 3rem; border-radius: 1rem; background: var(--app-brand-soft); color: var(--app-brand-ink); }
 .fin-worksheet-link__copy { display: grid; gap: .25rem; flex: 1; min-width: 0; line-height: 1.6; }
 .fin-worksheet-link__copy > span { color: var(--app-text-2); font-size: .8125rem; }
-:global([dir="ltr"]) .fin-worksheet-link__arrow { transform: rotate(180deg); }
+[dir="ltr"] .fin-worksheet-link__arrow { transform: rotate(180deg); }
 .fin {
   display: block;
 }
