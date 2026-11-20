@@ -254,6 +254,7 @@ import UsersGroup from '~/components/icons/UsersGroup.vue'
 import DocumentText from '~/components/icons/DocumentText.vue'
 import ShieldCheck from '~/components/icons/ShieldCheck.vue'
 import ChatDots from '~/components/icons/ChatDots.vue'
+import SmsSmartphone from '~/components/icons/SmsSmartphone.vue'
 import Calculator from '~/components/icons/Calculator.vue'
 import Wallet from '~/components/icons/Wallet.vue'
 import Profile from '~/components/icons/Profile.vue'
@@ -508,6 +509,7 @@ const ALL_MENUS = computed(() => [
   { title: t('leads.title'), to: '/leads', icon: Activity, roles: ['admin_doctor', 'doctor'], group: 'patients' },
   { title: t('leadSources.title'), to: '/lead-sources', icon: FolderHeart, roles: ['admin_doctor'], group: 'patients' },
   { title: t('messaging.title'), to: '/messaging', icon: ChatDots, roles: ['admin_doctor', 'doctor', 'lab', 'pharmacy'], group: 'communication' },
+  { title: t('smsBroadcast.title'), to: '/sms-broadcasts', icon: SmsSmartphone, roles: ['admin_doctor', 'doctor'], group: 'communication' },
   { title: t('patientMessaging.title'), to: '/patient/messaging', icon: ChatDots, roles: ['patient'], group: 'communication' },
   { title: t('users.title'), to: '/users', icon: Users, roles: ['admin_doctor'], group: 'management' },
   { title: t('staff.title'), to: '/staff', icon: UsersGroup, roles: ['admin_doctor'], group: 'management' },

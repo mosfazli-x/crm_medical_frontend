@@ -185,11 +185,21 @@
                   {{ documentTypeLabel(doc.fileType) }}
                 </span>
                 <span class="!text-[9px] !text-zinc-400 !font-mono">{{ formatSize(doc.fileSize) }}</span>
+                <span v-if="doc.extractionStatus"
+                  :class="['!px-1.5 !py-0.5 !rounded-md !text-[9px] !font-bold', extractionStatusClass(doc.extractionStatus)]">
+                  {{ extractionStatusLabel(doc.extractionStatus) }}
+                </span>
               </div>
               <p class="!text-[10px] !text-zinc-400 !mt-1">{{ formatJalaliDate(doc.createdAt) }}</p>
             </div>
           </div>
           <div class="!flex !items-center !justify-end !gap-1 !border-t !border-zinc-100 !pt-2">
+            <button v-if="isExtractableDocument(doc)"
+              class="!inline-flex !items-center !gap-1 !px-2 !py-1 !text-[10px] !font-semibold !text-emerald-700 hover:!text-emerald-800 hover:!bg-emerald-50 !rounded-lg !transition-colors"
+              @click="openExtraction(doc)">
+              <Microscope class="!w-3 !h-3" />
+              {{ t('labResults.extraction.open') }}
+            </button>
             <button
               class="!inline-flex !items-center !gap-1 !px-2 !py-1 !text-[10px] !font-semibold !text-zinc-500 hover:!text-zinc-900 hover:!bg-zinc-100 !rounded-lg !transition-colors"
               :loading="loadingView.has(doc.id)" @click="viewFile(doc)">
@@ -514,12 +524,21 @@
       </div>
     </v-dialog>
 
+    <DocumentExtractionDialog
+      v-model="extractionDialog"
+      :patient-id="patientId"
+      :attachment-id="extractionDoc?.id || null"
+      :file-name="extractionDoc?.fileName || ''"
+      @confirmed="onExtractionConfirmed"
+      @updated="fetchDocuments"
+    />
+
     <HandwritingDialog v-model="handwritingOpen" :label="handwritingLabel" :numeric="handwritingNumeric" @insert="applyHandwriting" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, reactive } from 'vue'
+import { ref, computed, watch, reactive, onBeforeUnmount } from 'vue'
 import Plus from '~/components/icons/Plus.vue'
 import Microscope from '~/components/icons/Microscope.vue'
 import ClipboardX from '~/components/icons/ClipboardX.vue'
@@ -537,6 +556,7 @@ import UploadCloud from '~/components/icons/UploadCloud.vue'
 import File from '~/components/icons/File.vue'
 import Activity from '~/components/icons/Activity.vue'
 import HandwritingDialog from '~/components/HandwritingDialog.vue'
+import DocumentExtractionDialog from '~/components/lab/DocumentExtractionDialog.vue'
 
 const props = defineProps<{ patientId: string }>()
 
@@ -554,6 +574,10 @@ const documents = ref<any[]>([])
 const loadingResults = ref(false)
 const loadingDocs = ref(false)
 const categoryFilter = ref('all')
+
+const extractionDialog = ref(false)
+const extractionDoc = ref<any>(null)
+let documentPollTimer: ReturnType<typeof setTimeout> | null = null
 
 const addDialog = ref(false)
 const entryMode = ref<'manual' | 'document'>('manual')
@@ -721,6 +745,57 @@ function documentTypeLabel(type: string): string {
   return docTypeLabels.value[type] || categoryLabels.value[type] || type || '---'
 }
 
+function extractionStatusLabel(status: string): string {
+  return t(`labResults.extraction.status.${status}`)
+}
+
+function isExtractableDocument(doc: any): boolean {
+  const mimeType = String(doc?.mimeType || '')
+  const fileName = String(doc?.fileName || '').toLowerCase()
+  return (
+    mimeType.startsWith('image/') ||
+    mimeType === 'application/pdf' ||
+    /\.(jpe?g|png|webp|gif|bmp|pdf)$/.test(fileName)
+  )
+}
+
+function extractionStatusClass(status: string): string {
+  switch (status) {
+    case 'completed':
+      return '!bg-emerald-50 !text-emerald-700 !border !border-emerald-100'
+    case 'confirmed':
+      return '!bg-blue-50 !text-blue-700 !border !border-blue-100'
+    case 'failed':
+      return '!bg-red-50 !text-red-700 !border !border-red-100'
+    case 'processing':
+      return '!bg-amber-50 !text-amber-700 !border !border-amber-100'
+    default:
+      return '!bg-zinc-100 !text-zinc-500'
+  }
+}
+
+function openExtraction(doc: any) {
+  extractionDoc.value = doc
+  extractionDialog.value = true
+}
+
+async function onExtractionConfirmed() {
+  await Promise.all([fetchResults(), fetchDocuments()])
+}
+
+function scheduleDocumentPoll() {
+  if (documentPollTimer) {
+    clearTimeout(documentPollTimer)
+    documentPollTimer = null
+  }
+  const hasActiveExtraction = documents.value.some(
+    (doc: any) => doc.extractionStatus === 'pending' || doc.extractionStatus === 'processing',
+  )
+  if (hasActiveExtraction) {
+    documentPollTimer = setTimeout(() => fetchDocuments(), 4000)
+  }
+}
+
 // ─────────────────────────────────────────────
 // Data Fetching
 // ─────────────────────────────────────────────
@@ -746,8 +821,10 @@ async function fetchDocuments() {
     const res = await apiFetch<any>(`/api/patients/${patientId.value}/attachments`)
     documents.value = res.success ? (res.data || []) : []
     if (!res.success) $toast.error(t('labResults.fetchDocsError'))
+    scheduleDocumentPoll()
   } catch {
     documents.value = []
+    scheduleDocumentPoll()
     $toast.error(t('labResults.serverError'))
   } finally {
     loadingDocs.value = false
@@ -1054,6 +1131,13 @@ if (patientId.value) {
   fetchResults()
   fetchDocuments()
 }
+
+onBeforeUnmount(() => {
+  if (documentPollTimer) {
+    clearTimeout(documentPollTimer)
+    documentPollTimer = null
+  }
+})
 </script>
 
 <style scoped>
