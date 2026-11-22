@@ -77,3 +77,79 @@
   font-style: normal;
   src: url("../fonts/yekan-bakh/OTF/YekanBakhFaNum-Black.otf") format("opentype"), url("../fonts/yekan-bakh/woff2/YekanBakhFaNum-Black.woff2") format("woff2"), url("../fonts/yekan-bakh/woff/YekanBakhFaNum-Black.woff") format("woff"), url("../fonts/yekan-bakh/TTF/YekanBakhFaNum-Black.ttf") format("truetype");
 }
+/* -- Persian numerals ----------------------------------------------
+   Dedicated numeral face so Latin (0-9) and Persian (?-?) digits always
+   render with the same Persian glyphs, independent of the surrounding
+   text font (e.g. Bon/AriaWeb headings). Applied by prepending "fa-num"
+   to RTL font stacks; unicode-range keeps it to digits only. */
+@font-face {
+  font-family: "fa-num";
+  font-display: swap;
+  font-weight: 200;
+  font-style: normal;
+  unicode-range: U+0030-0039, U+0660-0669, U+06F0-06F9, U+066B-066C;
+  src: url("../fonts/yekan-bakh/woff2/YekanBakhFaNum-Thin.woff2") format("woff2"), url("../fonts/yekan-bakh/woff/YekanBakhFaNum-Thin.woff") format("woff"), url("../fonts/yekan-bakh/OTF/YekanBakhFaNum-Thin.otf") format("opentype"), url("../fonts/yekan-bakh/TTF/YekanBakhFaNum-Thin.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "fa-num";
+  font-display: swap;
+  font-weight: 300;
+  font-style: normal;
+  unicode-range: U+0030-0039, U+0660-0669, U+06F0-06F9, U+066B-066C;
+  src: url("../fonts/yekan-bakh/woff2/YekanBakhFaNum-Light.woff2") format("woff2"), url("../fonts/yekan-bakh/woff/YekanBakhFaNum-Light.woff") format("woff"), url("../fonts/yekan-bakh/OTF/YekanBakhFaNum-Light.otf") format("opentype"), url("../fonts/yekan-bakh/TTF/YekanBakhFaNum-Light.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "fa-num";
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+  unicode-range: U+0030-0039, U+0660-0669, U+06F0-06F9, U+066B-066C;
+  src: url("../fonts/yekan-bakh/woff2/YekanBakhFaNum-Regular.woff2") format("woff2"), url("../fonts/yekan-bakh/woff/YekanBakhFaNum-Regular.woff") format("woff"), url("../fonts/yekan-bakh/OTF/YekanBakhFaNum-Regular.otf") format("opentype"), url("../fonts/yekan-bakh/TTF/YekanBakhFaNum-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "fa-num";
+  font-display: swap;
+  font-weight: 500;
+  font-style: normal;
+  unicode-range: U+0030-0039, U+0660-0669, U+06F0-06F9, U+066B-066C;
+  src: url("../fonts/yekan-bakh/woff2/YekanBakhFaNum-Regular.woff2") format("woff2"), url("../fonts/yekan-bakh/woff/YekanBakhFaNum-Regular.woff") format("woff"), url("../fonts/yekan-bakh/OTF/YekanBakhFaNum-Regular.otf") format("opentype"), url("../fonts/yekan-bakh/TTF/YekanBakhFaNum-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "fa-num";
+  font-display: swap;
+  font-weight: 600;
+  font-style: normal;
+  unicode-range: U+0030-0039, U+0660-0669, U+06F0-06F9, U+066B-066C;
+  src: url("../fonts/yekan-bakh/woff2/YekanBakhFaNum-SemiBold.woff2") format("woff2"), url("../fonts/yekan-bakh/woff/YekanBakhFaNum-SemiBold.woff") format("woff"), url("../fonts/yekan-bakh/OTF/YekanBakhFaNum-SemiBold.otf") format("opentype"), url("../fonts/yekan-bakh/TTF/YekanBakhFaNum-SemiBold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "fa-num";
+  font-display: swap;
+  font-weight: 700;
+  font-style: normal;
+  unicode-range: U+0030-0039, U+0660-0669, U+06F0-06F9, U+066B-066C;
+  src: url("../fonts/yekan-bakh/woff2/YekanBakhFaNum-Bold.woff2") format("woff2"), url("../fonts/yekan-bakh/woff/YekanBakhFaNum-Bold.woff") format("woff"), url("../fonts/yekan-bakh/OTF/YekanBakhFaNum-Bold.otf") format("opentype"), url("../fonts/yekan-bakh/TTF/YekanBakhFaNum-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "fa-num";
+  font-display: swap;
+  font-weight: 800;
+  font-style: normal;
+  unicode-range: U+0030-0039, U+0660-0669, U+06F0-06F9, U+066B-066C;
+  src: url("../fonts/yekan-bakh/woff2/YekanBakhFaNum-ExtraBold.woff2") format("woff2"), url("../fonts/yekan-bakh/woff/YekanBakhFaNum-ExtraBold.woff") format("woff"), url("../fonts/yekan-bakh/OTF/YekanBakhFaNum-ExtraBold.otf") format("opentype"), url("../fonts/yekan-bakh/TTF/YekanBakhFaNum-ExtraBold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "fa-num";
+  font-display: swap;
+  font-weight: 900;
+  font-style: normal;
+  unicode-range: U+0030-0039, U+0660-0669, U+06F0-06F9, U+066B-066C;
+  src: url("../fonts/yekan-bakh/woff2/YekanBakhFaNum-Black.woff2") format("woff2"), url("../fonts/yekan-bakh/woff/YekanBakhFaNum-Black.woff") format("woff"), url("../fonts/yekan-bakh/OTF/YekanBakhFaNum-Black.otf") format("opentype"), url("../fonts/yekan-bakh/TTF/YekanBakhFaNum-Black.ttf") format("truetype");
+}

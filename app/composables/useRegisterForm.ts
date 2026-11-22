@@ -15,7 +15,7 @@ export function useRegisterForm() {
   const phone = ref('')
   const fullName = ref('')
   const password = ref('')
-  const role = ref<string>('doctor')
+  const role = ref<string>('patient')
   const website = ref('')
   const loading = ref(false)
 
@@ -26,10 +26,10 @@ export function useRegisterForm() {
   })
 
   const roleItems = computed(() => [
+    { label: t('users.roles.patient'), value: 'patient', icon: 'lucide:user-round' },
     { label: t('users.roles.doctor'), value: 'doctor', icon: 'lucide:stethoscope' },
     { label: t('users.roles.lab'), value: 'lab', icon: 'lucide:flask-conical' },
     { label: t('users.roles.pharmacy'), value: 'pharmacy', icon: 'lucide:pill' },
-    { label: t('users.roles.patient'), value: 'patient', icon: 'lucide:user-round' },
   ])
 
   function validate(field?: RegisterField) {

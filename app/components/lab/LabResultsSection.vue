@@ -1,227 +1,20 @@
 <template>
-  <div class="space-y-6">
-    <!-- Toolbar -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div>
-        <h2 class="crm-section-title !text-base !font-bold !text-zinc-900">{{ t('labResults.sectionTitle') }}</h2>
-        <p class="crm-section-subtitle !text-[11px] !text-zinc-400 !mt-0.5">{{ t('labResults.sectionDesc') }}</p>
-      </div>
-      <button
-        class="!inline-flex !items-center !justify-center !gap-1.5 !px-4 !py-2.5 !bg-zinc-900 hover:!bg-zinc-800 !text-white !text-xs !font-semibold !rounded-xl !transition-all !shadow-sm !w-full sm:!w-auto"
-        @click="openAddDialog">
-        <Plus class="!w-3.5 !h-3.5" />
-        {{ t('labResults.addLabResult') }}
-      </button>
-    </div>
-
-    <!-- Registered Results -->
-    <div
-      class="!bg-white !border !border-zinc-200/80 !rounded-2xl !shadow-[0_1px_3px_rgba(0,0,0,0.02)] !overflow-hidden">
-
-      <div class="!flex !items-center !justify-between !px-5 !py-3.5 !border-b !border-zinc-100">
-        <h3 class="!text-xs !font-bold !text-zinc-900 !flex !items-center !gap-2">
-          <Microscope class="!w-4 !h-4 !text-zinc-400" />
-          {{ t('labResults.resultsTitle') }}
-        </h3>
-        <span class="!px-2 !py-0.5 !bg-zinc-100 !text-zinc-500 !rounded-md !text-[10px] !font-mono !font-bold">
-          {{ results.length }}
-        </span>
-      </div>
-
-      <div class="!flex !items-center !gap-1.5 !px-5 !py-3.5 !overflow-x-auto !scrollbar-none !border-b !border-zinc-100">
-        <button v-for="(label, key) in categoryLabels" :key="key" @click="categoryFilter = key" :class="[
-          '!whitespace-nowrap !px-3 !py-1.5 !rounded-lg !text-[11px] !font-semibold !transition-all !duration-200 !border',
-          categoryFilter === key
-            ? '!bg-zinc-900 !text-white !border-zinc-900 !shadow-sm'
-            : '!bg-white !text-zinc-500 !border-zinc-200/60 hover:!text-zinc-900 hover:!border-zinc-300 hover:!bg-zinc-50/50'
-        ]">
-          {{ label }}
-          <span :class="[
-            '!mr-1 !px-1.5 !py-0.5 !rounded-md !text-[9px] !font-mono !font-bold',
-            categoryFilter === key ? '!bg-zinc-800 !text-zinc-300' : '!bg-zinc-100 !text-zinc-500'
-          ]">
-            {{ categoryCounts[key] || 0 }}
-          </span>
-        </button>
-      </div>
-
-      <div v-if="loadingResults" class="!p-12 !text-center !flex !flex-col !items-center !justify-center">
-        <v-progress-circular indeterminate color="#18181b" size="28" width="2" />
-        <p class="!text-xs !text-zinc-400 !mt-4 !font-medium">{{ t('labResults.fetchingTransactions') }}</p>
-      </div>
-
-      <div v-else-if="filteredResults.length === 0" class="!py-16 !text-center">
-        <div class="!flex !flex-col !items-center !max-w-sm !mx-auto">
-          <div
-            class="!w-10 !h-10 !rounded-xl !bg-zinc-50 !border !border-zinc-100 !flex !items-center !justify-center !mb-3.5">
-            <ClipboardX class="!w-4 !h-4 !text-zinc-400" />
-          </div>
-          <p class="!text-zinc-900 !font-semibold !text-xs">{{ t('labResults.noRecords') }}</p>
-          <p class="!text-[11px] !text-zinc-400 !mt-1">{{ t('labResults.noResultsInCategory') }}</p>
-        </div>
-      </div>
-
-      <div v-else class="!overflow-x-auto">
-        <table class="!w-full !text-right !border-collapse">
-          <thead>
-            <tr class="!bg-zinc-50/60 !border-b !border-zinc-200/60">
-              <th class="!px-5 !py-3 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">{{
-                t('labResults.biomarkerTest') }}</th>
-              <th class="!px-5 !py-3 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">{{
-                t('labResults.registrationDate') }}</th>
-              <th class="!px-5 !py-3 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">{{
-                t('labResults.reportedValue') }}</th>
-              <th class="!px-5 !py-3 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">{{
-                t('labResults.referenceRange') }}</th>
-              <th class="!px-5 !py-3 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap">{{
-                t('labResults.clinicalStatus') }}</th>
-              <th
-                class="!px-5 !py-3 !text-[10px] !font-bold !text-zinc-400 !tracking-wider !whitespace-nowrap !text-left">
-                {{ t('labResults.actions') }}</th>
-            </tr>
-          </thead>
-          <tbody class="!divide-y !divide-zinc-100">
-            <tr v-for="result in filteredResults" :key="result.id"
-              class="hover:!bg-zinc-50/50 !transition-colors !duration-150 group">
-              <td class="!px-5 !py-3.5 !whitespace-nowrap">
-                <div class="!flex !flex-col">
-                  <span class="!text-xs !font-semibold !text-zinc-900 hover:!text-blue-600 !cursor-pointer !transition-colors"
-                    @click="showTrend(result)">
-                    {{ result.testName }}
-                  </span>
-                  <span class="!text-[10px] !text-zinc-400 !font-medium !mt-0.5">{{ categoryLabels[result.category] ||
-                    result.category }}</span>
-                </div>
-              </td>
-
-              <td class="!px-5 !py-3.5 !text-xs !text-zinc-500 !font-medium !whitespace-nowrap">
-                {{ formatJalaliDate(result.performedDate) }}
-              </td>
-
-              <td class="!px-5 !py-3.5 !whitespace-nowrap">
-                <div class="!flex !items-baseline !gap-1">
-                  <span class="!text-xs !text-zinc-900 !font-mono !font-bold">{{ result.value || '---' }}</span>
-                  <span class="!text-[10px] !text-zinc-400 !font-mono">{{ result.unit || '' }}</span>
-                </div>
-              </td>
-
-              <td class="!px-5 !py-3.5 !text-xs !text-zinc-400 !font-mono !whitespace-nowrap">
-                {{ formatReferenceRange(result) }}
-              </td>
-
-              <td class="!px-5 !py-3.5 !whitespace-nowrap">
-                <div class="!flex !items-center !gap-1.5">
-                  <span
-                    :class="['!w-1.5 !h-1.5 !rounded-full', result.isAbnormal ? '!bg-red-500' : '!bg-emerald-500']"></span>
-                  <span
-                    :class="['!text-[11px] !font-semibold', result.isAbnormal ? '!text-red-600' : '!text-zinc-600']">
-                    {{ result.isAbnormal ? t('labResults.outsideRange') : t('labResults.normalStatus') }}
-                  </span>
-                </div>
-              </td>
-
-              <td class="!px-5 !py-3.5 !whitespace-nowrap !text-left">
-                <div
-                  class="!flex !items-center !justify-end !gap-0.5 md:!opacity-0 group-hover:!opacity-100 !transition-opacity">
-                  <button
-                    class="!p-1.5 !text-zinc-400 hover:!text-zinc-900 hover:!bg-zinc-100 !rounded-lg !transition-colors"
-                    :title="t('labResults.trendAnalysis')" @click="showTrend(result)">
-                    <LineChart class="!w-4 !h-4" />
-                  </button>
-                  <button
-                    class="!p-1.5 !text-zinc-400 hover:!text-red-600 hover:!bg-red-50 !rounded-lg !transition-colors"
-                    :title="t('labResults.deleteRecord')" @click="confirmDeleteResult(result)">
-                    <Trash2 class="!w-4 !h-4" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Documents -->
-    <div
-      class="!bg-white !border !border-zinc-200/80 !rounded-2xl !shadow-[0_1px_3px_rgba(0,0,0,0.02)] !overflow-hidden">
-
-      <div class="!flex !items-center !justify-between !px-5 !py-3.5 !border-b !border-zinc-100">
-        <h3 class="!text-xs !font-bold !text-zinc-900 !flex !items-center !gap-2">
-          <FolderOpen class="!w-4 !h-4 !text-zinc-400" />
-          {{ t('labResults.documentsTitle') }}
-        </h3>
-        <span class="!px-2 !py-0.5 !bg-zinc-100 !text-zinc-500 !rounded-md !text-[10px] !font-mono !font-bold">
-          {{ documents.length }}
-        </span>
-      </div>
-
-      <div v-if="loadingDocs" class="!p-12 !text-center !flex !flex-col !items-center !justify-center">
-        <v-progress-circular indeterminate color="#18181b" size="28" width="2" />
-      </div>
-
-      <div v-else-if="documents.length === 0" class="!py-16 !text-center">
-        <div class="!flex !flex-col !items-center !max-w-sm !mx-auto">
-          <div
-            class="!w-10 !h-10 !rounded-xl !bg-zinc-50 !border !border-zinc-100 !flex !items-center !justify-center !mb-3.5">
-            <FileUp class="!w-4 !h-4 !text-zinc-400" />
-          </div>
-          <p class="!text-zinc-900 !font-semibold !text-xs">{{ t('labResults.documentsEmpty') }}</p>
-          <p class="!text-[11px] !text-zinc-400 !mt-1">{{ t('labResults.documentsEmptyDesc') }}</p>
-        </div>
-      </div>
-
-      <div v-else class="!grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-3 !gap-3 !p-4">
-        <div v-for="doc in documents" :key="doc.id"
-          class="!flex !flex-col !justify-between !gap-3 !p-3.5 !bg-zinc-50/40 !border !border-zinc-200/70 !rounded-xl hover:!border-zinc-300 !transition-all group">
-          <div class="!flex !items-start !gap-2.5 !min-w-0">
-            <div
-              class="!w-9 !h-9 !rounded-lg !bg-white !border !border-zinc-200/60 !flex !items-center !justify-center !shrink-0">
-              <FileText class="!w-4 !h-4 !text-zinc-400" />
-            </div>
-            <div class="!flex-1 !min-w-0">
-              <p class="!text-xs !font-semibold !text-zinc-900 !truncate" :title="doc.fileName">{{ doc.fileName }}</p>
-              <div class="!flex !items-center !gap-1.5 !mt-1 !flex-wrap">
-                <span class="!px-1.5 !py-0.5 !bg-zinc-100 !text-zinc-500 !rounded-md !text-[9px] !font-bold">
-                  {{ documentTypeLabel(doc.fileType) }}
-                </span>
-                <span class="!text-[9px] !text-zinc-400 !font-mono">{{ formatSize(doc.fileSize) }}</span>
-                <span v-if="doc.extractionStatus"
-                  :class="['!px-1.5 !py-0.5 !rounded-md !text-[9px] !font-bold', extractionStatusClass(doc.extractionStatus)]">
-                  {{ extractionStatusLabel(doc.extractionStatus) }}
-                </span>
-              </div>
-              <p class="!text-[10px] !text-zinc-400 !mt-1">{{ formatJalaliDate(doc.createdAt) }}</p>
-            </div>
-          </div>
-          <div class="!flex !items-center !justify-end !gap-1 !border-t !border-zinc-100 !pt-2">
-            <button v-if="isExtractableDocument(doc)"
-              class="!inline-flex !items-center !gap-1 !px-2 !py-1 !text-[10px] !font-semibold !text-emerald-700 hover:!text-emerald-800 hover:!bg-emerald-50 !rounded-lg !transition-colors"
-              @click="openExtraction(doc)">
-              <Microscope class="!w-3 !h-3" />
-              {{ t('labResults.extraction.open') }}
-            </button>
-            <button
-              class="!inline-flex !items-center !gap-1 !px-2 !py-1 !text-[10px] !font-semibold !text-zinc-500 hover:!text-zinc-900 hover:!bg-zinc-100 !rounded-lg !transition-colors"
-              :loading="loadingView.has(doc.id)" @click="viewFile(doc)">
-              <Eye class="!w-3 !h-3" />
-              {{ t('labResults.viewDoc') }}
-            </button>
-            <button
-              class="!inline-flex !items-center !gap-1 !px-2 !py-1 !text-[10px] !font-semibold !text-zinc-500 hover:!text-zinc-900 hover:!bg-zinc-100 !rounded-lg !transition-colors"
-              :loading="loadingDownload.has(doc.id)" @click="downloadFile(doc)">
-              <Download class="!w-3 !h-3" />
-              {{ t('labResults.downloadDoc') }}
-            </button>
-            <button
-              class="!inline-flex !items-center !gap-1 !px-2 !py-1 !text-[10px] !font-semibold !text-red-500 hover:!text-red-600 hover:!bg-red-50 !rounded-lg !transition-colors"
-              @click="confirmDeleteDocument(doc)">
-              <Trash2 class="!w-3 !h-3" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
+  <div class="lab-root">
+    <LabReviewPanel
+      ref="reviewRef"
+      :results="results"
+      :documents="documents"
+      :loading="loadingResults"
+      :loading-docs="loadingDocs"
+      @add-result="openAddDialog"
+      @add-document="openAddDocumentDialog"
+      @trend="showTrend"
+      @remove="confirmDeleteResult"
+      @view="viewFile"
+      @download="downloadFile"
+      @remove-document="confirmDeleteDocument"
+      @extract="openExtraction"
+    />
     <!-- Add / Edit Dialog -->
     <v-dialog v-model="addDialog" max-width="580" persistent class="backdrop-blur-sm">
       <div class="!bg-white !rounded-2xl !border !border-zinc-200/80 !shadow-2xl !overflow-hidden">
@@ -557,6 +350,7 @@ import File from '~/components/icons/File.vue'
 import Activity from '~/components/icons/Activity.vue'
 import HandwritingDialog from '~/components/HandwritingDialog.vue'
 import DocumentExtractionDialog from '~/components/lab/DocumentExtractionDialog.vue'
+import LabReviewPanel from '~/components/lab/LabReviewPanel.vue'
 
 const props = defineProps<{ patientId: string }>()
 
@@ -574,6 +368,7 @@ const documents = ref<any[]>([])
 const loadingResults = ref(false)
 const loadingDocs = ref(false)
 const categoryFilter = ref('all')
+const reviewRef = ref<{ showDocuments: () => void } | null>(null)
 
 const extractionDialog = ref(false)
 const extractionDoc = ref<any>(null)
@@ -843,6 +638,17 @@ function openAddDialog() {
   docFilesError.value = ''
   addDialog.value = true
 }
+
+function openAddDocumentDialog() {
+  openAddDialog()
+  entryMode.value = 'document'
+}
+
+function openDocuments() {
+  reviewRef.value?.showDocuments()
+}
+
+defineExpose({ openDocuments })
 
 function resetManualForm() {
   form.value = { category: 'hormone', test_name: '', value: '', unit: '', reference_range: '', abnormal_flag: false, notes: '', performed_date: '' }
@@ -1141,6 +947,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.lab-root {
+  min-width: 0;
+}
+
 :deep(.custom-picker-input) {
   width: 100% !important;
   height: 40px !important;

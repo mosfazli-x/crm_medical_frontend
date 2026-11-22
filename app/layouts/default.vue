@@ -266,11 +266,11 @@ import Settings from '~/components/icons/Settings.vue'
 import Bell from '~/components/icons/Bell.vue'
 import AddClipboard from '~/components/icons/AddClipboard.vue'
 import Box from '~/components/icons/Box.vue'
-import BookOpen from '~/components/icons/BookOpen.vue'
 import Activity from '~/components/icons/Activity.vue'
 import FolderHeart from '~/components/icons/FolderHeart.vue'
 import FileText from '~/components/icons/FileText.vue'
 import ClipboardCheck from '~/components/icons/ClipboardCheck.vue'
+import Microscope from '~/components/icons/Microscope.vue'
 import Basket from '~/components/icons/Basket.vue'
 import FaqIcon from '~/components/icons/FaqIcon.vue'
 import Magnify from '~/components/icons/Magnify.vue'
@@ -504,6 +504,7 @@ const ALL_MENUS = computed(() => [
   { title: t('clinicalTools.title'), to: '/clinical-tools', icon: Calculator, roles: ['admin_doctor', 'doctor'], group: 'clinical' },
   { title: t('screening.title'), to: '/screening', icon: ShieldCheck, roles: ['admin_doctor', 'doctor'], group: 'clinical' },
   { title: t('labResults.title'), to: '/lab-results', icon: DocumentText, roles: ['admin_doctor', 'doctor', 'lab'], group: 'clinical' },
+  { title: t('documentIntelligence.title'), to: '/document-intelligence', icon: Microscope, roles: ['admin_doctor', 'doctor'], group: 'clinical' },
   { title: t('prescriptions.title'), to: '/prescriptions', icon: MedicalKit, roles: ['admin_doctor', 'doctor', 'pharmacy'], group: 'clinical' },
   { title: t('patients.title'), to: '/patients', icon: UsersGroup, roles: ['admin_doctor', 'doctor'], group: 'patients' },
   { title: t('leads.title'), to: '/leads', icon: Activity, roles: ['admin_doctor', 'doctor'], group: 'patients' },

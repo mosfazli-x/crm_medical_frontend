@@ -38,31 +38,21 @@ useHead({
       <!-- Honeypot: hidden from humans, bots auto-fill it -->
       <div aria-hidden="true" class="auth-honeypot">
         <label for="reg-website">Website</label>
-        <input
-          id="reg-website"
-          v-model="website"
-          type="text"
-          name="website"
-          tabindex="-1"
-          autocomplete="off"
-        />
+        <input id="reg-website" v-model="website" type="text" name="website" tabindex="-1" autocomplete="off" />
       </div>
       <!-- Full Name -->
       <div class="auth-field" :class="{ 'auth-field--error': errors.fullName }">
         <label class="auth-label" for="reg-name">{{ t('auth.register.fullNameLabel') }}</label>
         <div class="auth-input-wrap">
           <span class="auth-input-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
           </span>
-          <input
-            id="reg-name"
-            v-model="fullName"
-            type="text"
-            :placeholder="t('auth.register.fullNamePlaceholder')"
-            class="auth-input"
-            autocomplete="name"
-            @blur="validate('fullName')"
-          />
+          <input id="reg-name" v-model="fullName" type="text" :placeholder="t('auth.register.fullNamePlaceholder')"
+            class="auth-input" autocomplete="name" @blur="validate('fullName')" />
         </div>
         <Transition name="auth-err">
           <p v-if="errors.fullName" class="auth-error">{{ errors.fullName }}</p>
@@ -74,19 +64,14 @@ useHead({
         <label class="auth-label" for="reg-phone">{{ t('auth.register.phoneLabel') }}</label>
         <div class="auth-input-wrap">
           <span class="auth-input-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+            </svg>
           </span>
-          <input
-            id="reg-phone"
-            v-model="phone"
-            type="tel"
-            inputmode="numeric"
-            dir="ltr"
-            placeholder="0912 345 6789"
-            class="auth-input auth-input--ltr"
-            autocomplete="tel"
-            @blur="validate('phone')"
-          />
+          <input id="reg-phone" v-model="phone" type="tel" inputmode="numeric" dir="ltr" placeholder="0912 345 6789"
+            class="auth-input auth-input--ltr" autocomplete="tel" @blur="validate('phone')" />
         </div>
         <Transition name="auth-err">
           <p v-if="errors.phone" class="auth-error">{{ errors.phone }}</p>
@@ -97,18 +82,9 @@ useHead({
       <div class="auth-field">
         <label class="auth-label">{{ t('auth.register.roleLabel') }}</label>
         <div class="auth-role-grid">
-          <label
-            v-for="item in roleItems"
-            :key="item.value"
-            class="auth-role-card"
-            :class="{ 'auth-role-card--active': role === item.value }"
-          >
-            <input
-              v-model="role"
-              type="radio"
-              :value="item.value"
-              class="sr-only"
-            />
+          <label v-for="item in roleItems" :key="item.value" class="auth-role-card"
+            :class="{ 'auth-role-card--active': role === item.value }">
+            <input v-model="role" type="radio" :value="item.value" class="sr-only" />
             <span class="auth-role-icon">
               <Icon :name="item.icon" size="20" />
             </span>
@@ -122,21 +98,30 @@ useHead({
         <label class="auth-label" for="reg-password">{{ t('auth.register.password') }}</label>
         <div class="auth-input-wrap">
           <span class="auth-input-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
           </span>
-          <input
-            id="reg-password"
-            v-model="password"
-            :type="showPassword ? 'text' : 'password'"
-            dir="ltr"
+          <input id="reg-password" v-model="password" :type="showPassword ? 'text' : 'password'" dir="ltr"
             :placeholder="t('auth.register.passwordPlaceholder')"
-            class="auth-input auth-input--ltr auth-input--password"
-            autocomplete="new-password"
-            @blur="validate('password')"
-          />
-          <button type="button" class="auth-input-toggle" @click="showPassword = !showPassword" :aria-label="showPassword ? t('auth.login.hidePassword') : t('auth.login.showPassword')">
-            <svg v-if="!showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-            <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+            class="auth-input auth-input--ltr auth-input--password" autocomplete="new-password"
+            @blur="validate('password')" />
+          <button type="button" class="auth-input-toggle" @click="showPassword = !showPassword"
+            :aria-label="showPassword ? t('auth.login.hidePassword') : t('auth.login.showPassword')">
+            <svg v-if="!showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+              <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+              <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+              <line x1="2" x2="22" y1="2" y2="22" />
+            </svg>
           </button>
         </div>
         <Transition name="auth-err">
@@ -149,7 +134,11 @@ useHead({
         <span v-if="loading" class="auth-btn__spinner" />
         <span :class="{ 'opacity-0': loading }">{{ t('auth.register.createAccount') }}</span>
         <span v-if="!loading" class="auth-btn__arrow">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+          </svg>
         </span>
       </button>
     </form>
@@ -286,9 +275,11 @@ useHead({
 .auth-err-enter-active {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .auth-err-leave-active {
   transition: all 0.2s ease;
 }
+
 .auth-err-enter-from,
 .auth-err-leave-to {
   opacity: 0;
@@ -406,7 +397,9 @@ useHead({
 }
 
 @keyframes authSpin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Footer ── */

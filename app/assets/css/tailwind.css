@@ -110,10 +110,10 @@
   --color-info-subtle: #eaf2ff;
   --color-info-strong: #5f8fea;
 
-    /* ── Font Families ── */
-  --font-sans: 'IRANSansX', 'AriaWeb', system-ui, -apple-system, sans-serif;
-  --font-display: 'AriaWeb', 'IRANSansX', sans-serif;
-  --font-body: 'IRANSansX', 'AriaWeb', sans-serif;
+  /* ── Font Families ── */
+  --font-sans: 'IRANSansX', 'fa-num', 'AriaWeb', system-ui, -apple-system, sans-serif;
+  --font-display: 'fa-num', 'AriaWeb', 'IRANSansX', sans-serif;
+  --font-body: 'fa-num', 'IRANSansX', 'AriaWeb', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
@@ -154,11 +154,11 @@
   --color-info-subtle: #1d2a3d;
   --color-info-strong: #78a9f5;
 
-  
+
   /* ── Font Families ── */
-  --font-sans: 'IRANSansX', 'AriaWeb', system-ui, -apple-system, sans-serif;
-  --font-display: 'AriaWeb', 'IRANSansX', sans-serif;
-  --font-body: 'IRANSansX', 'AriaWeb', sans-serif;
+  --font-sans: 'fa-num', 'IRANSansX', 'AriaWeb', system-ui, -apple-system, sans-serif;
+  --font-display: 'fa-num', 'AriaWeb', 'IRANSansX', sans-serif;
+  --font-body: 'fa-num', 'IRANSansX', 'AriaWeb', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 

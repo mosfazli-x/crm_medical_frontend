@@ -434,6 +434,10 @@ function closeDialog() {
   noteDialog.value = false
 }
 
+function openNote() {
+  noteDialog.value = true
+}
+
 async function fetchFeed() {
   if (!props.patientId) return
   loading.value = true
@@ -492,7 +496,7 @@ watch(() => props.patientId, fetchFeed)
 
 watch(stats, value => emit('stats', value), { immediate: true })
 
-defineExpose({ refresh: fetchFeed })
+defineExpose({ refresh: fetchFeed, openNote })
 </script>
 
 <style scoped>

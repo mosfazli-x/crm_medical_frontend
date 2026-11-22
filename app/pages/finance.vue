@@ -414,6 +414,8 @@
               @click="changePage(page + 1)"><v-icon size="17">mdi-chevron-left</v-icon></button>
           </div>
         </section>
+
+        <FinanceSmsPanel v-if="canEdit" :categories="categories" :accounts="accounts" @posted="refresh" />
       </template>
 
       <v-dialog v-model="entryDialog" max-width="680" persistent>

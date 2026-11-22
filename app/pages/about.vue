@@ -673,6 +673,7 @@ a {
 .landing-shell[dir="rtl"] .about-stage .about-hero-title {
   line-height: 1.35 !important;
   letter-spacing: 0 !important;
+  font-family: 'fa-num', "Fraunces", "Cormorant Garamond", Georgia, serif;
 }
 
 .landing-shell[dir="rtl"] .about-stage .about-section-title {
